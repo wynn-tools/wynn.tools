@@ -1,14 +1,36 @@
 <template>
   <main>
-    <h1 class="domain">wynn<span class="dot">.</span>tools</h1>
-    <p class="tools">Builder, Map, Crafter, Atlas.</p>
-    <p class="status">In development</p>
+    <h1 class="domain">{{ error.statusCode }}<span class="dot">.</span></h1>
+    <p class="label">{{ friendlyMessage }}</p>
+    <p v-if="error.message" class="status">{{ error.message }}</p>
+    <nav class="links">
+      <a href="/" @click.prevent="handleError">go home</a>
+    </nav>
   </main>
 
   <footer>
     <span class="footer-note">AGPL-3.0 · Not affiliated with Wynncraft or Mojang</span>
   </footer>
 </template>
+
+<script setup lang="ts">
+import { clearError } from '#app'
+
+const props = defineProps<{ error: { statusCode: number; message?: string } }>()
+
+const friendlyMessage = computed(() => {
+  switch (props.error.statusCode) {
+    case 404: return 'Page not found.'
+    case 403: return 'Access denied.'
+    case 500: return 'Something went wrong.'
+    default:  return 'An error occurred.'
+  }
+})
+
+function handleError() {
+  clearError({ redirect: '/' })
+}
+</script>
 
 <style scoped>
   main {
@@ -31,7 +53,7 @@
 
   .domain .dot { color: var(--copper); }
 
-  .tools {
+  .label {
     font-size: 15px;
     color: var(--muted);
     font-weight: 400;
@@ -53,14 +75,7 @@
     align-items: center;
     gap: 20px;
     list-style: none;
-  }
-
-  .links li { display: flex; align-items: center; gap: 20px; }
-
-  .sep {
-    color: var(--faint);
-    font-size: 12px;
-    user-select: none;
+    margin-top: 52px;
   }
 
   .links a {
@@ -95,18 +110,7 @@
     color: var(--faint);
   }
 
-  .footer-link {
-    font-size: 11px;
-    color: var(--faint);
-    text-decoration: none;
-    transition: color 0.12s ease-out;
-  }
-
-  .footer-link:hover { color: var(--muted); }
-
   @media (max-width: 480px) {
     main { padding: 64px 0; }
-    .links { flex-direction: column; align-items: flex-start; gap: 14px; }
-    .sep { display: none; }
   }
 </style>

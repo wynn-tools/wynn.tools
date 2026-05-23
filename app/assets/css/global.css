@@ -1,0 +1,36 @@
+:root {
+  --bg:     oklch(14% 0.008 250);
+  --border: oklch(21% 0.009 250);
+  --text:   oklch(88% 0.005 250);
+  --muted:  oklch(52% 0.007 250);
+  --faint:  oklch(32% 0.007 250);
+  --copper: oklch(62% 0.11 42);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Geist', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 40px;
+}
+
+#__nuxt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  body { padding: 0 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
