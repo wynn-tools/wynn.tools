@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>wynn.tools</title>
+  <meta name="description" content="Wynncraft community tools. In development.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     oklch(14% 0.008 250);
+      --border: oklch(21% 0.009 250);
+      --text:   oklch(88% 0.005 250);
+      --muted:  oklch(52% 0.007 250);
+      --faint:  oklch(32% 0.007 250);
+      --copper: oklch(62% 0.11 42);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Geist', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 0 40px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 600px;
+      padding: 80px 0;
+    }
+
+    .domain {
+      font-family: 'Geist Mono', 'Courier New', monospace;
+      font-size: clamp(36px, 7vw, 68px);
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      line-height: 1;
+      margin-bottom: 32px;
+    }
+
+    .domain .dot { color: var(--copper); }
+
+    .tools {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 400;
+      margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    .status {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 52px;
+    }
+
+    .links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .links li { display: flex; align-items: center; gap: 20px; }
+
+    .sep {
+      color: var(--faint);
+      font-size: 12px;
+      user-select: none;
+    }
+
+    .links a {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.12s ease-out;
+    }
+
+    .links a:hover { color: var(--text); }
+
+    .links a:focus-visible {
+      outline: 1px solid var(--copper);
+      outline-offset: 4px;
+      border-radius: 2px;
+      color: var(--text);
+    }
+
+    footer {
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-note {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--faint);
+    }
+
+    .footer-link {
+      font-size: 11px;
+      color: var(--faint);
+      text-decoration: none;
+      transition: color 0.12s ease-out;
+    }
+
+    .footer-link:hover { color: var(--muted); }
+
+    @media (max-width: 480px) {
+      body { padding: 0 24px; }
+      main { padding: 64px 0; }
+      .links { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .sep { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <h1 class="domain">wynn<span class="dot">.</span>tools</h1>
+    <p class="tools">Builder, Map, Crafter, Atlas.</p>
+    <p class="status">In development</p>
+  </main>
+
+  <footer>
+    <span class="footer-note">AGPL-3.0 · Not affiliated with Wynncraft or Mojang</span>
+  </footer>
+
+</body>
+</html>
