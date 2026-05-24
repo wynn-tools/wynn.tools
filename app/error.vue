@@ -51,11 +51,11 @@ function handleError() {
     margin-bottom: 32px;
   }
 
-  .domain .dot { color: var(--copper); }
+  .domain .dot { color: var(--color-copper); }
 
   .label {
     font-size: 15px;
-    color: var(--muted);
+    color: var(--color-muted);
     font-weight: 400;
     margin-bottom: 8px;
     letter-spacing: 0.01em;
@@ -66,7 +66,7 @@ function handleError() {
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--faint);
+    color: var(--color-faint);
     margin-bottom: 52px;
   }
 
@@ -80,23 +80,23 @@ function handleError() {
 
   .links a {
     font-size: 14px;
-    color: var(--muted);
+    color: var(--color-muted);
     text-decoration: none;
     transition: color 0.12s ease-out;
   }
 
-  .links a:hover { color: var(--text); }
+  .links a:hover { color: var(--color-text); }
 
   .links a:focus-visible {
-    outline: 1px solid var(--copper);
+    outline: 1px solid var(--color-copper);
     outline-offset: 4px;
     border-radius: 2px;
-    color: var(--text);
+    color: var(--color-text);
   }
 
   footer {
     padding: 20px 0;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--color-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -107,7 +107,7 @@ function handleError() {
   .footer-note {
     font-family: 'Geist Mono', monospace;
     font-size: 11px;
-    color: var(--faint);
+    color: var(--color-faint);
   }
 
   @media (max-width: 480px) {
