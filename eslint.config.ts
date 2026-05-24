@@ -6,7 +6,7 @@ export default withNuxt(
     vue: true,
     typescript: true,
     formatters: true,
-    ignores: ['.agents/**', 'docs/**'],
+    ignores: ['docs/**'],
   }),
   {
     files: ['app/layouts/**/*.vue'],

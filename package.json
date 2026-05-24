@@ -14,10 +14,6 @@
     "test": "vitest",
     "test:run": "vitest run"
   },
-  "lint-staged": {
-    "*.{ts,vue}": "eslint --fix",
-    "**/*.{css,md,json}": "prettier --write"
-  },
   "dependencies": {
     "nuxt": "^4.4.6",
     "reka-ui": "^2.9.8",
@@ -34,5 +30,9 @@
     "prettier": "^3.8.3",
     "tailwindcss": "^4.3.0",
     "vitest": "^4.1.7"
+  },
+  "lint-staged": {
+    "*.{ts,vue}": "eslint --fix",
+    "**/*.{css,md,json}": "prettier --write"
   }
 }
