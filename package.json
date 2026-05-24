@@ -8,10 +8,15 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "prepare": "husky || true",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest",
     "test:run": "vitest run"
+  },
+  "lint-staged": {
+    "*.{ts,vue}": "eslint --fix",
+    "**/*.{css,md,json}": "prettier --write"
   },
   "dependencies": {
     "nuxt": "^4.4.6",
@@ -23,6 +28,8 @@
     "@nuxt/eslint": "^1.15.2",
     "@tailwindcss/vite": "^4.3.0",
     "eslint-plugin-format": "^2.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.3.0",
     "vitest": "^4.1.7"
