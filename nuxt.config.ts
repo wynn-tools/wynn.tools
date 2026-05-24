@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   css: ['~/assets/css/global.css'],
-  modules: ['@nuxt/eslint'],
+  modules: ['@nuxt/eslint', 'reka-ui/nuxt'],
   eslint: {
     config: {
       standalone: false,
