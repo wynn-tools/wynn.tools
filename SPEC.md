@@ -43,6 +43,7 @@ wynn.tools/
 The calculation engine, encoding format, item database, and all game logic are carried over entirely unchanged as plain JS modules. No rewrite. They live in `lib/` and are framework-agnostic.
 
 The tools gain from the port:
+
 - Proper routing and navigation between tools instead of separate HTML files
 - SSR-generated OG cards when a build or crafter link is shared
 - Shared auth session with Wynntils account (optional, for saving builds)
@@ -61,6 +62,7 @@ Saved builds are immutable snapshots. Editing creates a new version. Old links n
 Ported from wynntils-web. The existing implementation is feature-complete.
 
 Additions specific to wynn.tools:
+
 - **Lootrun overlay** — when viewing a shared lootrun (`/l/[id]`), the map opens with the route pre-loaded and highlighted
 - **Deep links from builder** — item slot tooltips can link to the map showing where an ingredient or item is found
 - **Coordinate permalinks** — shareable links to a specific map position and zoom level
@@ -98,6 +100,7 @@ The `version` field is surfaced prominently on the share page and in embeds. Thi
 ### OG embed
 
 Discord/Twitter preview card shows:
+
 - Lootrun name
 - Author
 - A static thumbnail of the route drawn on the map (generated server-side)
@@ -147,6 +150,7 @@ components    array of named components, each with:
 ### OG embed
 
 Discord/Twitter preview card shows:
+
 - Script title
 - Author
 - Description excerpt
@@ -196,6 +200,7 @@ tags        e.g. ["melee", "solo", "dungeon"]
 ### OG embed
 
 Discord/Twitter preview card shows:
+
 - Build name and class
 - Key stats: DPS, EHP, level requirement
 - Item names (weapon + armour)

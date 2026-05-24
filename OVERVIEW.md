@@ -18,16 +18,19 @@ A unified home for Wynncraft community tools and shared content.
 Every piece of shared content gets a short URL (`wynn.tools/b/x7k2`) and a rich Discord/Twitter preview card showing the actual content — not a blank link.
 
 ### Builds
+
 - Save and share builds with a short URL instead of a base64 blob
 - Share page shows full stats, items, and author notes
 - Builds record which Wynncraft version they were made on — outdated builds show a warning
 
 ### Routes
+
 - Upload and share lootrun routes with a map preview
 - Share page shows the route drawn on the map, author notes, and version
 - One-click copy to import into Wynntils
 
 ### Overlays
+
 - Save and share Wynntils info box overlays
 - Each component displayed with syntax highlighting and a one-click copy button
 - Authors can attach an in-game screenshot
