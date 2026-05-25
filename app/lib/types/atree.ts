@@ -15,6 +15,7 @@ export interface AtreeAbility {
   cost: number
   archetype?: string
   archetype_req?: number
+  base_abil?: number
   req_archetype?: string
   display?: unknown
   properties?: unknown
