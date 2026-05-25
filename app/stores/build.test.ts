@@ -313,6 +313,78 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — powder editing (live C
   }, 30_000)
 })
 
+// ---------------------------------------------------------------------------
+// Always-on tests for tome helpers (no network)
+// ---------------------------------------------------------------------------
+
+describe('useBuildStore — tome helpers (no network)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('tomesForSlot(0) deep-equals [] before a build loads', () => {
+    const store = useBuildStore()
+    expect(store.tomesForSlot(0)).toEqual([])
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Live CDN tests for tome editing
+// ---------------------------------------------------------------------------
+
+describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — tome editing (live CDN)', () => {
+  const architectHash = 'CU0131wGiw3lGnKEcoH15am06q6mNiYLrgMrggYPDhJTgDhPDx2lTwN-dx9bBzWRo91'
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('currentTomeId(0) === 98 after loading Architect oracle', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(architectHash, client)
+
+    expect(store.error).toBeNull()
+    expect(store.currentTomeId(0)).toBe(98)
+  }, 30_000)
+
+  it('tomesForSlot(0) is non-empty and every item has type === "weaponTome"', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(architectHash, client)
+
+    expect(store.error).toBeNull()
+    const tomes = store.tomesForSlot(0)
+    expect(tomes.length).toBeGreaterThan(0)
+    for (const t of tomes) {
+      expect(t.type).toBe('weaponTome')
+    }
+  }, 30_000)
+
+  it('setTome(0, null) changes hash+DPS; setTome(0, 98) restores byte-exact hash', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(architectHash, client)
+
+    expect(store.error).toBeNull()
+    const orig = store.currentHash!
+    const origDps = store.result!.melee.averageDps
+
+    store.setTome(0, null)
+    expect(store.currentHash).not.toBe(orig)
+    expect(store.result!.melee.averageDps).not.toBe(origDps)
+
+    store.setTome(0, 98)
+    expect(store.currentHash).toBe(orig)
+  }, 30_000)
+})
+
 describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — atree selection/validation (live CDN)', () => {
   const oracleHash = 'CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0'
 

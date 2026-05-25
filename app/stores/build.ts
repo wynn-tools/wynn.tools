@@ -16,6 +16,16 @@ import { SKP_ORDER } from '~/lib/math/constants'
 
 const SLOT_TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'ring', 'bracelet', 'necklace'] as const
 
+export const TOME_SLOT_TYPES: Record<number, string> = {
+  0: 'weaponTome',
+  1: 'weaponTome',
+  2: 'armorTome',
+  3: 'armorTome',
+  4: 'armorTome',
+  5: 'armorTome',
+  6: 'guildTome',
+}
+
 export const useBuildStore = defineStore('build', () => {
   const rawBuild = shallowRef<RawBuild | null>(null)
   const ctx = shallowRef<BuildContext | null>(null)
@@ -142,6 +152,30 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, powders }
   }
 
+  function setTome(slot: number, id: number | null) {
+    if (!rawBuild.value)
+      return
+    const tomeIds = rawBuild.value.tomeIds.slice()
+    tomeIds[slot] = id
+    rawBuild.value = { ...rawBuild.value, tomeIds }
+  }
+
+  function currentTomeId(slot: number): number | null {
+    return rawBuild.value?.tomeIds[slot] ?? null
+  }
+
+  function tomesForSlot(slot: number): CleanedRawItem[] {
+    const type = TOME_SLOT_TYPES[slot]
+    if (!ctx.value || !type)
+      return []
+    const out: CleanedRawItem[] = []
+    for (const t of ctx.value.tomeIndex.byId.values()) {
+      if (t.type === type)
+        out.push(t)
+    }
+    return out.sort((a, b) => String(a.displayName).localeCompare(String(b.displayName)))
+  }
+
   const atreeNodes = computed(() => {
     if (!ctx.value || !rawBuild.value)
       return []
@@ -172,5 +206,5 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, activeAtree: [...reachable] }
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders }
+  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
 })
