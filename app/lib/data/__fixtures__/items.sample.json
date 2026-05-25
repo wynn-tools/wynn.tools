@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "name": "Adherence",
+      "displayName": "Adherence",
+      "id": 4056,
+      "category": "armor",
+      "type": "chestplate",
+      "armourMaterial": "diamond",
+      "drop": "never",
+      "lvl": 105,
+      "agiReq": 65,
+      "defReq": 65,
+      "intReq": 65,
+      "slots": 2,
+      "tier": "Legendary",
+      "lore": "Adherence to the laws of good is important.",
+      "mr": 10,
+      "spd": -8,
+      "hprPct": 20,
+      "sdRaw": 140,
+      "aDef": 150,
+      "fDef": -100
+    },
+    {
+      "name": "Boundless Lance",
+      "displayName": "Boundless Lance",
+      "id": 2001,
+      "category": "weapon",
+      "type": "spear",
+      "drop": "normal",
+      "lvl": 100,
+      "strReq": 40,
+      "slots": 3,
+      "tier": "Set",
+      "set": "Boundless",
+      "nDam": "100-160",
+      "eDam": "120-200",
+      "atkSpd": "NORMAL"
+    },
+    {
+      "name": "Boundless Helm",
+      "id": 2002,
+      "category": "armor",
+      "type": "helmet",
+      "lvl": 100,
+      "tier": "Set",
+      "set": "Boundless",
+      "hp": 3000
+    }
+  ],
+  "sets": {
+    "Boundless": {
+      "items": ["Boundless Lance", "Boundless Helm"],
+      "bonuses": [{ "hp": 0 }, { "hp": 2000, "mr": 5 }]
+    }
+  }
+}
