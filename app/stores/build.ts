@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 import { loadBuildContext, peekVersionId } from '~/composables/useBuildData'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
+import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
 import { decodeRawBuild, encodeRawBuild } from '~/lib/codec/build-codec'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
@@ -112,5 +113,35 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, sp }
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint }
+  const atreeNodes = computed(() => {
+    if (!ctx.value || !rawBuild.value)
+      return []
+    const wt = currentWeaponType()
+    const cls = wt ? WEP_TO_CLASS[wt] : undefined
+    return cls ? getSortedClassAtree(ctx.value.atreeData, cls) : []
+  })
+
+  const atreeValidation = computed(() => {
+    const sel = new Map<number, boolean>((rawBuild.value?.activeAtree ?? []).map(id => [id, true]))
+    return validateAtree(atreeNodes.value, sel, rawBuild.value?.level ?? 1)
+  })
+
+  function isAtreeActive(id: number): boolean {
+    return atreeValidation.value.reachable.has(id)
+  }
+
+  function toggleAtreeNode(id: number) {
+    if (!rawBuild.value)
+      return
+    const sel = new Set(rawBuild.value.activeAtree)
+    if (sel.has(id))
+      sel.delete(id)
+    else
+      sel.add(id)
+    const tentative = new Map([...sel].map(x => [x, true] as [number, boolean]))
+    const reachable = validateAtree(atreeNodes.value, tentative, rawBuild.value.level).reachable
+    rawBuild.value = { ...rawBuild.value, activeAtree: [...reachable] }
+  }
+
+  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode }
 })

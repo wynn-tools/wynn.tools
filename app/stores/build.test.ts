@@ -47,6 +47,17 @@ describe('useBuildStore — error handling', () => {
 // Always-on tests for new store features (no network)
 // ---------------------------------------------------------------------------
 
+describe('useBuildStore — atreeNodes (no network)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('atreeNodes is [] before a build loads', () => {
+    const store = useBuildStore()
+    expect(store.atreeNodes).toEqual([])
+  })
+})
+
 describe('useBuildStore — currentHash and itemsForSlot (no network)', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -210,5 +221,57 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — currentHash round-trip
 
     // totalHp should differ from the original oracle HP (most helmet swaps change HP)
     expect(store.result!.defense.totalHp).not.toBe(originalHp)
+  }, 30_000)
+})
+
+describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — atree selection/validation (live CDN)', () => {
+  const oracleHash = 'CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0'
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('atreeNodes.length === 93 for Shaman oracle and atreeValidation reflects decoded selection', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+
+    expect(store.error).toBeNull()
+    expect(store.atreeNodes.length).toBe(93)
+    // Oracle has 35 active nodes at the AP cap (50); root (Totem) is always decoded as active
+    expect(store.atreeValidation.apTotal).toBe(50)
+    expect(store.atreeValidation.reachable.size).toBe(35)
+  }, 30_000)
+
+  it('toggleAtreeNode: toggling root off prunes all descendants; toggling an inactive reachable node on/off round-trips', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+    expect(store.error).toBeNull()
+
+    const root = store.atreeNodes.find(n => n.parents.length === 0)
+    expect(root).toBeDefined()
+
+    // Root is already active in the oracle (root is always decoded as active)
+    expect(store.isAtreeActive(root!.ability.id)).toBe(true)
+
+    // Save orig hash
+    const orig = store.currentHash
+
+    // Toggle root OFF — this prunes all descendants since root is a parent of everything
+    store.toggleAtreeNode(root!.ability.id)
+    expect(store.rawBuild!.activeAtree.length).toBe(0)
+    expect(store.atreeValidation.apTotal).toBe(0)
+    expect(store.currentHash).not.toBe(orig)
+
+    // Now toggle root ON — it's a root node (no parents) so always reachable
+    store.toggleAtreeNode(root!.ability.id)
+    expect(store.rawBuild!.activeAtree).toContain(root!.ability.id)
+    expect(store.atreeValidation.apTotal).toBe(root!.ability.cost)
+    expect(store.atreeValidation.reachable.has(root!.ability.id)).toBe(true)
   }, 30_000)
 })
