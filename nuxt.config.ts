@@ -4,6 +4,12 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   css: ['~/assets/css/global.css'],
+  runtimeConfig: {
+    public: {
+      // Override at runtime with NUXT_PUBLIC_CDN_BASE_URL
+      cdnBaseUrl: 'https://cdn.wynn.tools/data',
+    },
+  },
   modules: ['@nuxt/eslint', 'reka-ui/nuxt'],
   eslint: {
     config: {
