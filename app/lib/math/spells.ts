@@ -16,7 +16,15 @@ export interface SpellTotalPart {
   display?: boolean // default true
 }
 
-export type SpellPart = SpellDamagePart | SpellTotalPart
+/** A heal spell part. Damage math for heal parts is deferred; collection carries it. */
+export interface SpellHealPart {
+  name: string
+  power: number
+  display?: boolean
+  ignoredMults?: string[]
+}
+
+export type SpellPart = SpellDamagePart | SpellTotalPart | SpellHealPart
 
 export interface Spell {
   name: string
@@ -24,6 +32,7 @@ export interface Spell {
   scaling?: 'melee' | 'spell' // default 'spell'
   useAtkspd?: boolean // default true
   display?: string // name of the part to surface as the spell's headline (default 'total')
+  cost?: number
   parts: SpellPart[]
 }
 
@@ -32,6 +41,9 @@ export function isDamagePart(part: SpellPart): part is SpellDamagePart {
 }
 export function isTotalPart(part: SpellPart): part is SpellTotalPart {
   return 'hits' in part
+}
+export function isHealPart(part: SpellPart): part is SpellHealPart {
+  return 'power' in part
 }
 
 /** Per-weapon-class default melee spell. Port of damage_calc.js default_spells. */
