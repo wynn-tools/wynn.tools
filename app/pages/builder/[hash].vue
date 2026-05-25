@@ -31,8 +31,17 @@ watch(() => store.currentHash, (h) => {
       Failed to load build: {{ store.error }}
     </p>
     <template v-else-if="store.rawBuild">
-      <EquipmentGrid />
-      <StatPanel v-if="store.result" :result="store.result" />
+      <div class="builder-layout">
+        <section class="col-equipment">
+          <EquipmentGrid />
+        </section>
+        <section class="col-skillpoints">
+          <SkillpointPanel />
+        </section>
+        <section class="col-stats">
+          <StatPanel v-if="store.result" :result="store.result" />
+        </section>
+      </div>
     </template>
   </main>
 </template>
@@ -54,5 +63,18 @@ watch(() => store.currentHash, (h) => {
 
 .state-text--error {
   color: oklch(62% 0.15 20);
+}
+
+.builder-layout {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr 220px 1fr;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .builder-layout {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
