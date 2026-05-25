@@ -10,7 +10,7 @@ export default defineNuxtConfig({
       cdnBaseUrl: 'https://cdn.wynn.tools/data',
     },
   },
-  modules: ['@nuxt/eslint', 'reka-ui/nuxt'],
+  modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt'],
   eslint: {
     config: {
       standalone: false,
