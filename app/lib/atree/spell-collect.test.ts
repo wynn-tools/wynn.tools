@@ -1,7 +1,8 @@
 import type { MergedAbility } from './effect-types'
 // app/lib/atree/spell-collect.test.ts
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_SPELLS, isDamagePart, isHealPart, isTotalPart } from '../math/spells'
+import { DAMAGE_CLASSES } from '../math/constants'
+import { DEFAULT_SPELLS, isDamagePart, isDamagePart as isDmg, isHealPart, isTotalPart } from '../math/spells'
 import { atreeTranslate, collectAtreeSpells } from './spell-collect'
 
 function merged(...abils: MergedAbility[]): Map<number, MergedAbility> {
@@ -101,5 +102,73 @@ describe('collectAtreeSpells', () => {
     expect(isHealPart(part)).toBe(true)
     if (isHealPart(part))
       expect(part.power).toBe(0.2)
+  })
+})
+
+describe('collectAtreeSpells — add_spell_prop & convert_spell_conv', () => {
+  function meleeWith(...effects: any[]) {
+    const m = new Map<number, import('./effect-types').MergedAbility>()
+    m.set(1, { id: 1, properties: {}, effects })
+    return m
+  }
+
+  it('add_spell_prop merge adds to a part multiplier; overwrite replaces it', () => {
+    const mergeAdd = collectAtreeSpells(meleeWith(
+      { type: 'add_spell_prop', base_spell: 0, target_part: 'Single Beam', multipliers: [10, 0, 0, 0, 0, 0] },
+    ), 'relik')
+    const beam = mergeAdd.get(0)!.parts.find(p => p.name === 'Single Beam')!
+    if (isDmg(beam))
+      expect(beam.multipliers[0]).toBe(43) // 33 + 10
+
+    const ow = collectAtreeSpells(meleeWith(
+      { type: 'add_spell_prop', base_spell: 0, target_part: 'Single Beam', behavior: 'overwrite', multipliers: [5, 0, 0, 0, 0, 0] },
+    ), 'relik')
+    const beam2 = ow.get(0)!.parts.find(p => p.name === 'Single Beam')!
+    if (isDmg(beam2))
+      expect(beam2.multipliers[0]).toBe(5)
+  })
+
+  it('add_spell_prop adds a new part when target not found (merge behavior)', () => {
+    const spells = collectAtreeSpells(meleeWith(
+      { type: 'add_spell_prop', base_spell: 0, target_part: 'Extra', multipliers: [20, 0, 0, 0, 0, 0] },
+    ), 'relik')
+    const extra = spells.get(0)!.parts.find(p => p.name === 'Extra')!
+    expect(extra).toBeDefined()
+    if (isDmg(extra))
+      expect(extra.multipliers[0]).toBe(20)
+  })
+
+  it('add_spell_prop hide sets part.display=false and display sets spell.display', () => {
+    const spells = collectAtreeSpells(meleeWith(
+      { type: 'add_spell_prop', base_spell: 0, target_part: 'Single Beam', multipliers: [0, 0, 0, 0, 0, 0], hide: true, display: 'Single Beam' },
+    ), 'relik')
+    const beam = spells.get(0)!.parts.find(p => p.name === 'Single Beam')!
+    expect(beam.display).toBe(false)
+    expect(spells.get(0)!.display).toBe('Single Beam')
+  })
+
+  it('convert_spell_conv collapses elemental multipliers into one element', () => {
+    // Seed a custom spell with mixed elements via replace_spell, then convert all to Fire.
+    const m = new Map<number, import('./effect-types').MergedAbility>()
+    m.set(1, { id: 1, properties: {}, effects: [
+      { type: 'replace_spell', name: 'X', base_spell: 2, parts: [{ name: 'P', multipliers: [10, 4, 6, 0, 0, 0] }] },
+      { type: 'convert_spell_conv', base_spell: 2, target_part: 'all', conversion: 'Fire' },
+    ] })
+    const spells = collectAtreeSpells(m, 'relik')
+    const part = spells.get(2)!.parts[0]!
+    if (isDmg(part)) {
+      const fire = DAMAGE_CLASSES.indexOf('Fire')
+      expect(part.multipliers[0]).toBe(10) // neutral preserved
+      expect(part.multipliers[fire]).toBe(10) // 4 + 6 collapsed into Fire
+      expect(part.multipliers[1]).toBe(0)
+      expect(part.multipliers[2]).toBe(0)
+    }
+  })
+
+  it('skips effects targeting an absent base_spell', () => {
+    expect(() => collectAtreeSpells(meleeWith(
+      { type: 'add_spell_prop', base_spell: 99, target_part: 'X', multipliers: [1, 0, 0, 0, 0, 0] },
+      { type: 'convert_spell_conv', base_spell: 99, target_part: 'all', conversion: 'Fire' },
+    ), 'relik')).not.toThrow()
   })
 })
