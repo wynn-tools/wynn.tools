@@ -31,7 +31,7 @@ import { computeMeleeDps } from '../math/dps'
 import { mergeStat } from '../math/merge-stat'
 import { calculateSkillpoints } from '../math/skillpoint-calc'
 import { computeSpellParts } from '../math/spell-calc'
-import { resolveBuildItems } from './resolve'
+import { resolveBuildItems, resolveTomes } from './resolve'
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -84,10 +84,15 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   const { rawItemIndex, sets, atreeData } = ctx
 
   // Step 1: resolve items
-  const { weapon, allItems, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex)
+  const { weapon, allItems: itemsOnly, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex)
 
-  // Step 2: skillpoints
-  const skp = calculateSkillpoints(wynnOrder, weapon, sets)
+  // Resolve tomes and fold into allItems / wynnOrder
+  const { tomes, guildTome } = resolveTomes(rawBuild.tomeIds, ctx.tomeIndex)
+  const allItems = [...itemsOnly, ...tomes]
+  const wynnOrderWithGuild = [...wynnOrder, guildTome]
+
+  // Step 2: skillpoints (wynnOrder now includes guildTome as 9th entry)
+  const skp = calculateSkillpoints(wynnOrderWithGuild, weapon, sets)
   const { activeSetCounts, finalSkillpoints } = skp
 
   // Step 3: aggregate build stats (classDef is set here from weapon type)

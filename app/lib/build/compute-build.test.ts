@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { ATTACK_SPEEDS } from '../math/constants'
 import { levelToHPBase } from '../math/skillpoints'
 import { computeBuild } from './compute-build'
-import { buildRawItemIndex } from './resolve'
+import { buildRawItemIndex, buildRawTomeIndex } from './resolve'
 
 // ---------------------------------------------------------------------------
 // Synthetic raw-item fixture — a trivial relik weapon + 8 NONE-like armor pieces
@@ -62,7 +62,9 @@ function makeBuildContext() {
   const rawItemIndex = buildRawItemIndex(allRaw)
   const sets = new Map()
   const atreeData: AtreeData = { Shaman: [] }
-  return { rawItemIndex, sets, atreeData }
+  const tomeIndex = buildRawTomeIndex([])
+  const aspectData = {}
+  return { rawItemIndex, sets, atreeData, tomeIndex, aspectData }
 }
 
 describe('computeBuild (synthetic)', () => {

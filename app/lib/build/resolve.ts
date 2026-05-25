@@ -452,6 +452,56 @@ export function buildRawTomeIndex(rawTomes: Record<string, unknown>[]): RawTomeI
 }
 
 // ---------------------------------------------------------------------------
+// resolveTomes
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve a build's tome IDs into expanded statMaps.
+ *
+ * - For each non-null tomeIds[i]: expandItem(tomeIndex.resolveId(id)) — skip nulls and unresolved.
+ * - guildTome = expanded tome at index 6 (if non-null and resolvable),
+ *   else an expanded zero tome (so it contributes zero skillpoints/reqs).
+ */
+export function resolveTomes(
+  tomeIds: Array<number | null>,
+  tomeIndex: RawTomeIndex,
+): { tomes: ExpandedItem[], guildTome: ExpandedItem } {
+  const tomes: ExpandedItem[] = []
+
+  for (let i = 0; i < tomeIds.length; i++) {
+    const id = tomeIds[i]
+    if (id === null || id === undefined)
+      continue
+    const cleaned = tomeIndex.resolveId(id)
+    if (cleaned === null)
+      continue
+    tomes.push(expandItem(cleaned as Record<string, unknown>))
+  }
+
+  // Guild tome is index 6
+  const guildTomeId = tomeIds[6] ?? null
+  let guildTome: ExpandedItem
+  if (guildTomeId !== null && guildTomeId !== undefined) {
+    const cleaned = tomeIndex.resolveId(guildTomeId)
+    if (cleaned !== null) {
+      guildTome = expandItem(cleaned as Record<string, unknown>)
+    }
+    else {
+      guildTome = expandItem(
+        cleanRawItem({ id: -1, name: 'NoGuildTome', type: 'guildTome', category: 'tome' }) as Record<string, unknown>,
+      )
+    }
+  }
+  else {
+    guildTome = expandItem(
+      cleanRawItem({ id: -1, name: 'NoGuildTome', type: 'guildTome', category: 'tome' }) as Record<string, unknown>,
+    )
+  }
+
+  return { tomes, guildTome }
+}
+
+// ---------------------------------------------------------------------------
 // applyArmorPowders — port of powders.js applyArmorPowders (L81-90)
 // ---------------------------------------------------------------------------
 
