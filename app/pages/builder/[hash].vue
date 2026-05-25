@@ -36,6 +36,7 @@ watch(() => store.currentHash, (h) => {
         <section class="col-equipment">
           <EquipmentGrid />
           <PowderPanel class="powder-panel-below" />
+          <TomePanel class="tome-panel-below" />
         </section>
         <section class="col-skillpoints">
           <SkillpointPanel />
@@ -93,6 +94,10 @@ watch(() => store.currentHash, (h) => {
 }
 
 .powder-panel-below {
+  margin-top: 16px;
+}
+
+.tome-panel-below {
   margin-top: 16px;
 }
 
