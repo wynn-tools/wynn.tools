@@ -9,6 +9,7 @@ import { loadBuildContext, peekVersionId } from '~/composables/useBuildData'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
+import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
 import { decodeRawBuild, encodeRawBuild } from '~/lib/codec/build-codec'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { SKP_ORDER } from '~/lib/math/constants'
@@ -113,6 +114,34 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, sp }
   }
 
+  function maxPowderSlots(slot: number): number {
+    if (!rawBuild.value || !ctx.value)
+      return 0
+    if (!POWDER_INDEX_BY_SLOT.has(slot))
+      return 0
+    const id = rawBuild.value.equipmentIds[slot]
+    const item = id == null ? null : ctx.value.rawItemIndex.resolveId(id)
+    return Number(item?.slots) || 0
+  }
+
+  function powdersForEquipmentSlot(slot: number): number[] {
+    const idx = POWDER_INDEX_BY_SLOT.get(slot)
+    if (idx === undefined || !rawBuild.value)
+      return []
+    return rawBuild.value.powders[idx] ?? []
+  }
+
+  function setPowders(slot: number, ids: number[]) {
+    if (!rawBuild.value)
+      return
+    const idx = POWDER_INDEX_BY_SLOT.get(slot)
+    if (idx === undefined)
+      return
+    const powders = rawBuild.value.powders.map(p => p.slice())
+    powders[idx] = ids.slice(0, maxPowderSlots(slot))
+    rawBuild.value = { ...rawBuild.value, powders }
+  }
+
   const atreeNodes = computed(() => {
     if (!ctx.value || !rawBuild.value)
       return []
@@ -143,5 +172,5 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, activeAtree: [...reachable] }
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode }
+  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders }
 })

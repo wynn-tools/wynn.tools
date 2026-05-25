@@ -478,7 +478,7 @@ const WYNN_ORDER_INDICES = [3, 2, 1, 0, 4, 5, 6, 7] as const
  * powders[4], NOT powders[8]. Accessories (slots 4-7) are never powderable.
  * Must match equipment-codec.ts POWDERABLE = [0, 1, 2, 3, 8].
  */
-const POWDER_INDEX_BY_SLOT = new Map<number, number>([[0, 0], [1, 1], [2, 2], [3, 3], [8, 4]])
+export const POWDER_INDEX_BY_SLOT = new Map<number, number>([[0, 0], [1, 1], [2, 2], [3, 3], [8, 4]])
 
 function powdersForSlot(powders: number[][], slot: number): number[] {
   const idx = POWDER_INDEX_BY_SLOT.get(slot)

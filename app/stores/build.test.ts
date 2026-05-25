@@ -87,6 +87,26 @@ describe('useBuildStore — skillpoints (no network)', () => {
 })
 
 // ---------------------------------------------------------------------------
+// Always-on tests for powder helpers (no network)
+// ---------------------------------------------------------------------------
+
+describe('useBuildStore — powder helpers (no network)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('maxPowderSlots(8) === 0 before a build loads', () => {
+    const store = useBuildStore()
+    expect(store.maxPowderSlots(8)).toBe(0)
+  })
+
+  it('powdersForEquipmentSlot(8) deep-equals [] before a build loads', () => {
+    const store = useBuildStore()
+    expect(store.powdersForEquipmentSlot(8)).toEqual([])
+  })
+})
+
+// ---------------------------------------------------------------------------
 // Live CDN tests (skipped unless LIVE_CDN=1)
 // ---------------------------------------------------------------------------
 
@@ -221,6 +241,75 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — currentHash round-trip
 
     // totalHp should differ from the original oracle HP (most helmet swaps change HP)
     expect(store.result!.defense.totalHp).not.toBe(originalHp)
+  }, 30_000)
+})
+
+describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — powder editing (live CDN)', () => {
+  const oracleHash = 'CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0'
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('powdersForEquipmentSlot(8) deep-equals [34,34,13] and maxPowderSlots(8)===3 after loading oracle', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+
+    expect(store.error).toBeNull()
+    expect(store.powdersForEquipmentSlot(8)).toEqual([34, 34, 13])
+    expect(store.maxPowderSlots(8)).toBe(3)
+  }, 30_000)
+
+  it('setPowders(8, [0]) changes currentHash and averageDps; re-decoding yields weapon powders [0]', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const { decodeRawBuild } = await import('~/lib/codec/build-codec')
+    const { loadBuildContext, peekVersionId } = await import('~/composables/useBuildData')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+
+    expect(store.error).toBeNull()
+    const orig = store.currentHash!
+    const origDps = store.result!.melee.averageDps
+
+    store.setPowders(8, [0])
+
+    expect(store.currentHash).not.toBe(orig)
+    expect(store.result!.melee.averageDps).not.toBe(origDps)
+
+    // Re-decode and confirm weapon powders (powders[4]) === [0]
+    const newHash = store.currentHash!
+    const versionId = peekVersionId(newHash)
+    const loaded = await loadBuildContext(client, versionId)
+    const reDecoded = decodeRawBuild(newHash, () => ({
+      enc: loaded.enc,
+      atreeData: loaded.ctx.atreeData,
+      weaponType: loaded.weaponType,
+    }))
+    expect(reDecoded.powders[4]).toEqual([0])
+  }, 30_000)
+
+  it('setPowders(8, [34,34,13]) after mutation restores the original hash (byte-exact)', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+
+    expect(store.error).toBeNull()
+    const orig = store.currentHash!
+
+    // Mutate
+    store.setPowders(8, [0])
+    expect(store.currentHash).not.toBe(orig)
+
+    // Restore
+    store.setPowders(8, [34, 34, 13])
+    expect(store.currentHash).toBe(orig)
   }, 30_000)
 })
 
