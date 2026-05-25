@@ -1,0 +1,24 @@
+{
+  "Archer": [
+    {
+      "displayName": "Aspect of Focus",
+      "id": 1,
+      "tier": "Mythic",
+      "tiers": [{ "threshold": 1 }, { "threshold": 2 }]
+    },
+    {
+      "displayName": "Aspect of Aim",
+      "id": 2,
+      "tier": "Fabled",
+      "tiers": [{ "threshold": 1 }]
+    }
+  ],
+  "Mage": [
+    {
+      "displayName": "Aspect of Flow",
+      "id": 1,
+      "tier": "Mythic",
+      "tiers": [{ "threshold": 1 }]
+    }
+  ]
+}
