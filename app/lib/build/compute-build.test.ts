@@ -90,6 +90,10 @@ describe('computeBuild (synthetic)', () => {
 
     // str was overlaid from sp
     expect(result.stats.get('str')).toBe(10)
+
+    // skillpoints result is exposed on BuildResult
+    expect(result.skillpoints.baseSkillpoints).toHaveLength(5)
+    expect(typeof result.skillpoints.assignedTotal).toBe('number')
   })
 
   it('falls back to finalSkillpoints when sp is null', () => {

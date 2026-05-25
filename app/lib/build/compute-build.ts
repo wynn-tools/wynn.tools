@@ -14,6 +14,7 @@ import type { RawBuild } from '../codec/build-codec'
 import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
+import type { SkillpointResult } from '../math/skillpoint-calc'
 import type { AtreeData } from '../types/atree'
 import type { ItemSet } from '../types/item'
 import type { RawItemIndex } from './resolve'
@@ -53,6 +54,8 @@ export interface BuildResult {
   defense: DefenseStats
   /** Melee DPS and per-attack damage. */
   melee: MeleeDps
+  /** Full skillpoint calculation result (finalSkillpoints, baseSkillpoints, assignedTotal, activeSetCounts, etc.). */
+  skillpoints: SkillpointResult
 }
 
 // ---------------------------------------------------------------------------
@@ -79,7 +82,8 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   const { weapon, allItems, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex)
 
   // Step 2: skillpoints
-  const { activeSetCounts, finalSkillpoints } = calculateSkillpoints(wynnOrder, weapon, sets)
+  const skp = calculateSkillpoints(wynnOrder, weapon, sets)
+  const { activeSetCounts, finalSkillpoints } = skp
 
   // Step 3: aggregate build stats (classDef is set here from weapon type)
   const stats = aggregateBuildStats(allItems, weapon, rawBuild.level, activeSetCounts, sets)
@@ -131,5 +135,5 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   // Step 8: defense
   const defense = computeDefenseStats(stats)
 
-  return { stats, defense, melee }
+  return { stats, defense, melee, skillpoints: skp }
 }
