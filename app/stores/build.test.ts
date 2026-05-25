@@ -64,6 +64,17 @@ describe('useBuildStore — currentHash and itemsForSlot (no network)', () => {
   })
 })
 
+describe('useBuildStore — skillpoints (no network)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('skillpoints is [0,0,0,0,0] before any build is loaded', () => {
+    const store = useBuildStore()
+    expect(store.skillpoints).toEqual([0, 0, 0, 0, 0])
+  })
+})
+
 // ---------------------------------------------------------------------------
 // Live CDN tests (skipped unless LIVE_CDN=1)
 // ---------------------------------------------------------------------------
@@ -83,6 +94,60 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — live CDN oracle', () =
     expect(store.error).toBeNull()
     expect(store.result).not.toBeNull()
     expect(store.result!.defense.totalHp).toBe(11710)
+  }, 30_000)
+})
+
+describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — skillpoints + setSkillpoint (live CDN)', () => {
+  const oracleHash = 'CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0'
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('skillpoints reads effective totals from oracle build', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+
+    expect(store.error).toBeNull()
+    expect(store.skillpoints[0]).toBe(55) // str
+    expect(store.skillpoints[1]).toBe(80) // dex
+    expect(store.skillpoints[4]).toBe(85) // agi
+  }, 30_000)
+
+  it('setSkillpoint(0, 100) updates result.stats and currentHash, and re-decoding yields sp[0]===100', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const { decodeRawBuild } = await import('~/lib/codec/build-codec')
+    const { loadBuildContext, peekVersionId } = await import('~/composables/useBuildData')
+    const client = createCdnClient('https://wynnbuilder-beta.github.io/data')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+
+    expect(store.error).toBeNull()
+
+    store.setSkillpoint(0, 100)
+
+    // result.stats reflects the new value
+    expect(store.result!.stats.get('str')).toBe(100)
+
+    // currentHash must have changed
+    expect(store.currentHash).not.toBe(oracleHash)
+    expect(store.currentHash).not.toBeNull()
+
+    // Re-decode the new hash and verify sp[0] === 100
+    const newHash = store.currentHash!
+    const versionId = peekVersionId(newHash)
+    const loaded = await loadBuildContext(client, versionId)
+    const reDecoded = decodeRawBuild(newHash, () => ({
+      enc: loaded.enc,
+      atreeData: loaded.ctx.atreeData,
+      weaponType: loaded.weaponType,
+    }))
+    expect(Array.isArray(reDecoded.sp)).toBe(true)
+    expect(reDecoded.sp![0]).toBe(100)
   }, 30_000)
 })
 

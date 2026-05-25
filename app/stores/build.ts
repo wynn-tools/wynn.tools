@@ -10,6 +10,7 @@ import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { computeBuild } from '~/lib/build/compute-build'
 import { decodeRawBuild, encodeRawBuild } from '~/lib/codec/build-codec'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
+import { SKP_ORDER } from '~/lib/math/constants'
 
 const SLOT_TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'ring', 'bracelet', 'necklace'] as const
 
@@ -95,5 +96,21 @@ export const useBuildStore = defineStore('build', () => {
     return computeBuild(rawBuild.value, ctx.value)
   })
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result }
+  const skillpoints = computed<number[]>(() => {
+    const r = result.value
+    if (!r)
+      return [0, 0, 0, 0, 0]
+    return SKP_ORDER.map(s => (r.stats.get(s) as number) ?? 0)
+  })
+
+  function setSkillpoint(index: number, value: number) {
+    if (!rawBuild.value)
+      return
+    const base = rawBuild.value.sp ?? skillpoints.value.slice()
+    const sp = base.slice()
+    sp[index] = value
+    rawBuild.value = { ...rawBuild.value, sp }
+  }
+
+  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint }
 })
