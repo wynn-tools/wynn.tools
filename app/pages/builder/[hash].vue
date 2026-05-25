@@ -39,6 +39,7 @@ watch(() => store.currentHash, (h) => {
         </section>
         <section class="col-skillpoints">
           <SkillpointPanel />
+          <BuildSummary class="summary-below" />
         </section>
         <section class="col-stats">
           <StatPanel v-if="store.result" :result="store.result" />
@@ -92,6 +93,10 @@ watch(() => store.currentHash, (h) => {
 }
 
 .powder-panel-below {
+  margin-top: 16px;
+}
+
+.summary-below {
   margin-top: 16px;
 }
 
