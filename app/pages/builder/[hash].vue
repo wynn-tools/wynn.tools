@@ -35,6 +35,7 @@ watch(() => store.currentHash, (h) => {
       <div class="builder-layout">
         <section class="col-equipment">
           <EquipmentGrid />
+          <PowderPanel class="powder-panel-below" />
         </section>
         <section class="col-skillpoints">
           <SkillpointPanel />
@@ -88,6 +89,10 @@ watch(() => store.currentHash, (h) => {
   .builder-layout {
     grid-template-columns: 1fr;
   }
+}
+
+.powder-panel-below {
+  margin-top: 16px;
 }
 
 .atree-section {
