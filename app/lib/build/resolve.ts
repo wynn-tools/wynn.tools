@@ -472,13 +472,29 @@ export interface ResolvedBuildItems {
 const WYNN_ORDER_INDICES = [3, 2, 1, 0, 4, 5, 6, 7] as const
 
 /**
+ * Equipment slot index → index into the decoded `powders` array.
+ * The codec only encodes powders for powderable slots, so `powders` is dense in
+ * POWDERABLE order: [helmet, chest, legs, boots, weapon]. The weapon (slot 8) is at
+ * powders[4], NOT powders[8]. Accessories (slots 4-7) are never powderable.
+ * Must match equipment-codec.ts POWDERABLE = [0, 1, 2, 3, 8].
+ */
+const POWDER_INDEX_BY_SLOT = new Map<number, number>([[0, 0], [1, 1], [2, 2], [3, 3], [8, 4]])
+
+function powdersForSlot(powders: number[][], slot: number): number[] {
+  const idx = POWDER_INDEX_BY_SLOT.get(slot)
+  return idx === undefined ? [] : (powders[idx] ?? [])
+}
+
+/**
  * Resolve a RawBuild's item IDs to expanded statMaps with powders applied.
  *
  * - equipmentIds[0..7] = helmet..necklace; null → corresponding NONE_RAW_ITEM.
  * - equipmentIds[8] = weapon; null → NONE_RAW_ITEMS[8].
+ * - Powders are read via POWDER_INDEX_BY_SLOT (the decoded `powders` array is in
+ *   POWDERABLE order [helmet, chest, legs, boots, weapon], not equipment-slot order).
  * - Armor items (category === 'armor'): applyArmorPowders after setting powders.
- * - Accessories: powders sliced to slots (accessories have 0 slots, so effectively none).
- * - Weapon: applyWeaponPowders called after setting powders.
+ * - Accessories: not powderable (powdersForSlot returns []).
+ * - Weapon: powders from powders[4]; applyWeaponPowders called after setting them.
  */
 export function resolveBuildItems(rawBuild: RawBuild, index: RawItemIndex): ResolvedBuildItems {
   const { equipmentIds, powders } = rawBuild
@@ -488,7 +504,7 @@ export function resolveBuildItems(rawBuild: RawBuild, index: RawItemIndex): Reso
     const raw = index.resolveId(equipmentIds[i] ?? null) ?? NONE_RAW_ITEMS[i]!
     const m = expandItem(raw as Record<string, unknown>)
     const slots = Number(m.get('slots')) || 0
-    const itemPowders = (powders[i] ?? []).slice(0, slots)
+    const itemPowders = powdersForSlot(powders, i).slice(0, slots)
     m.set('powders', itemPowders)
     if (m.get('category') === 'armor') {
       applyArmorPowders(m)
@@ -500,7 +516,7 @@ export function resolveBuildItems(rawBuild: RawBuild, index: RawItemIndex): Reso
   const weaponRaw = index.resolveId(equipmentIds[8] ?? null) ?? NONE_RAW_ITEMS[8]!
   const weapon = expandItem(weaponRaw as Record<string, unknown>)
   const weaponSlots = Number(weapon.get('slots')) || 0
-  const weaponPowders = (powders[8] ?? []).slice(0, weaponSlots)
+  const weaponPowders = powdersForSlot(powders, 8).slice(0, weaponSlots)
   weapon.set('powders', weaponPowders)
   applyWeaponPowders(weapon)
 

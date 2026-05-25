@@ -217,16 +217,13 @@ describe('resolveBuildItems', () => {
   const rawBuild = {
     versionId: 0,
     equipmentIds: [1, null, null, null, null, null, null, null, 2] as Array<number | null>,
+    // POWDERABLE order: [helmet, chest, legs, boots, weapon] — NOT equipment-slot order.
     powders: [
-      [0], // helmet slot — earth t1
+      [0], // helmet — earth t1
       [],
       [],
       [],
-      [],
-      [],
-      [],
-      [],
-      [0], // weapon slot — earth t1
+      [0], // weapon — earth t1
     ],
     tomeIds: [],
     sp: null,
@@ -268,6 +265,15 @@ describe('resolveBuildItems', () => {
     const helmMap = result.equipment[0]!
     const eDef = helmMap.get('eDef') as number
     expect(eDef).toBe(12) // 10 + 2
+  })
+
+  it('weapon powders come from POWDERABLE index 4, not equipment slot 8', () => {
+    // Weapon powder is the 5th entry (index 4); equipment slot 8 must NOT be used.
+    const index = buildRawItemIndex([rawHelmet, rawWeapon])
+    const result = resolveBuildItems(rawBuild, index)
+    expect(result.weapon.get('powders')).toEqual([0]) // earth t1 from powders[4]
+    // A 0-slot accessory in slot 4 must not absorb the weapon's powder.
+    expect(result.equipment[4]!.get('powders')).toEqual([])
   })
 
   it('wynnOrder is [boots(3), leggings(2), chestplate(1), helmet(0), ring1(4), ring2(5), bracelet(6), necklace(7)]', () => {
