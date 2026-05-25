@@ -1,0 +1,23 @@
+{
+  "tomes": [
+    {
+      "name": "Tome of Strength I",
+      "displayName": "Tome of Strength I",
+      "id": 1,
+      "type": "weaponTome",
+      "tier": "Rare",
+      "lvl": 100,
+      "sdPct": 4
+    },
+    {
+      "name": "Tome of Defence I",
+      "displayName": "Tome of Defence I",
+      "id": 2,
+      "type": "armorTome",
+      "tier": "Rare",
+      "lvl": 100,
+      "hpBonus": 300
+    },
+    { "name": "Old Tome", "id": 3, "type": "weaponTome", "remapID": 1 }
+  ]
+}
