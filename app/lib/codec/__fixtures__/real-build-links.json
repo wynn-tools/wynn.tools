@@ -1,0 +1,30 @@
+{
+  "_comment": "Real existing build links for the codec golden-roundtrip harness (added before the codec milestone). Each entry: the hash after '#', the source site, and the upstream version family. The oracle (original wynnbuilder JS run in Node) decodes these; our TS codec must reproduce identical builds and byte-for-byte re-encode.",
+  "links": [
+    {
+      "hash": "CU0XJnDJ0F1X5n66smWy4qmmTpRSvtsVWhtKqC3",
+      "source": "wynnbuilder-beta.github.io",
+      "note": "beta (latest version family, CU0 header)"
+    },
+    {
+      "hash": "CU0lbmh94N2jbmIFMwnS2qvWFlDuEgtpJ-Xx3",
+      "source": "wynnbuilder-beta.github.io",
+      "note": "beta"
+    },
+    {
+      "hash": "CU0m-WvGy+3CnWbHiCIlHMFYFlKwwC5eG0uzyqVu+F6",
+      "source": "wynnbuilder-beta.github.io",
+      "note": "beta; contains '+' (path-safe but never query-parse)"
+    },
+    {
+      "hash": "CN0t01-CuY3O6W10C0WA8ammicHkUxq7ce+vU9T7NOa1",
+      "source": "wynnbuilder.github.io",
+      "note": "hppeng stable (CN0 header — older version family; exercises version-aware decode)"
+    },
+    {
+      "hash": "CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0",
+      "source": "wynnbuilder-beta.github.io",
+      "note": "beta Shaman relik lvl121 (Panic Zealot). Live-site oracle for math: Total HP 11710, EHP 17171.41, EHP no-agi 8583.46, Relik Melee avg DPS 90941.85 / per-attack 21149.27. SP eff str55 dex80 int-75 def3 agi85."
+    }
+  ]
+}
