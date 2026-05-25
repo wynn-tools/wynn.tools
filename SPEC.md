@@ -46,12 +46,12 @@ The tools gain from the port:
 
 - Proper routing and navigation between tools instead of separate HTML files
 - SSR-generated OG cards when a build or crafter link is shared
-- Shared auth session with Wynntils account (optional, for saving builds)
+- Shared auth session with wynn.tools account (optional, for saving builds)
 - Build saving: short URLs instead of base64 URL hashes
 
 ### Build saving
 
-Authenticated users (Wynntils account via Athena) can save a build with a name and optional description. The system issues a short ID. Unauthenticated users get a short URL backed by an anonymous session — no account required to share a link.
+Authenticated users can save a build with a name and optional description. The system issues a short ID. Unauthenticated users get a short URL backed by an anonymous session — no account required to share a link.
 
 Saved builds are immutable snapshots. Editing creates a new version. Old links never break.
 
@@ -80,7 +80,7 @@ Lootruns are routes players run repeatedly to farm loot. A good lootrun is a sig
 ```
 id          short ID (e.g. "x7k2")
 name        display name
-author      Wynntils account or anonymous attribution string
+author      wynn.tools account or anonymous attribution string
 version     Wynncraft version this was made on (e.g. "2.1.7.0")
 created_at  timestamp
 notes       markdown, optional — describe the route, key stops, tips
@@ -129,7 +129,7 @@ Example of what a shared script currently looks like in Discord:
 ```
 id            short ID
 title         display name (e.g. "XP Rate Display")
-author        Wynntils account or attribution string
+author        wynn.tools account or attribution string
 created_at    timestamp
 description   markdown — what the script does, any setup required
 components    array of named components, each with:
@@ -182,7 +182,7 @@ class       Warrior / Mage / Archer / etc.
 level       combat level
 hash        the WynnBuilder encode string (the actual build)
 version     Wynncraft version the build was made on
-author      Wynntils account or attribution
+author      wynn.tools account or attribution
 created_at
 updated_at  builds can be updated in place (unlike lootruns)
 notes       markdown — playstyle, gear substitutions, ability tree reasoning
@@ -213,7 +213,7 @@ A collection is a curator's named grouping of builds with its own page. Example:
 ```
 slug        URL-friendly identifier
 title       e.g. "Blue's Builds"
-curator     Wynntils account
+curator     wynn.tools account
 description markdown — overall context, what to expect, how to read these builds
 builds      ordered list of build IDs with per-entry curatorial notes
 updated_at
@@ -233,11 +233,19 @@ This is a separate system. The platform is designed to support it via a stable A
 
 ## 6. Authentication
 
-Backed by Athena (the Wynntils account system). Users authenticate with their Minecraft/Wynntils account via the existing Athena OAuth flow.
+wynn.tools runs its own dedicated backend and account system. Users register a wynn.tools account directly — no third-party account required to sign up.
+
+Once signed in, users can optionally link external accounts to their profile:
+
+- **Wynntils account** — associates the profile with a Wynntils mod identity
+- **Discord account** — enables Discord mirroring features and attribution
+- **Wynncraft account** — verifies in-game identity (e.g. for builds attributed to a character)
+
+All three links are optional and can be added or removed at any time. The platform never requires an external account to function.
 
 Auth is **optional for consumption** — anyone can view builds, lootruns, and scripts without an account.
 
-Auth is **required for creation** of saved content. Anonymous short URLs are supported for builds only (via the builder's "share" button), but to create a named build, lootrun, or script with a profile attached, a Wynntils account is required.
+Auth is **required for creation** of saved content. Anonymous short URLs are supported for builds only (via the builder's "share" button), but to create a named build, lootrun, or script with a profile attached, a wynn.tools account is required.
 
 Curator status is granted manually by admins. Collections can only be created by curators.
 
@@ -273,7 +281,9 @@ Game data JSON files (items, ingredients, atree constants, aspects) are served a
 
 ### Backend
 
-New persistence endpoints needed on Athena (or a lightweight companion service):
+wynn.tools has its own dedicated backend service handling auth, persistence, and account linking. It is not coupled to Athena or any Wynntils infrastructure — Wynntils, Discord, and Wynncraft account links are optional integrations layered on top.
+
+Persistence endpoints:
 
 ```
 POST   /builds              save a build, return short ID
@@ -287,9 +297,18 @@ PUT    /collections/:slug   update a collection
 GET    /collections/:slug   fetch collection with builds
 ```
 
+Account linking endpoints:
+
+```
+POST   /account/link/wynntils    link a Wynntils account
+POST   /account/link/discord     link a Discord account
+POST   /account/link/wynncraft   link a Wynncraft account
+DELETE /account/link/:provider   unlink an account
+```
+
 ### Version staleness
 
-Every piece of community content stores the Wynncraft version string it was created on (e.g. `2.1.7.0`). The platform knows the current version from Athena's version endpoint. If the stored version is older than current, a staleness warning is shown. This is a display flag only — the content is never hidden or demoted.
+Every piece of community content stores the Wynncraft version string it was created on (e.g. `2.1.7.0`). The platform knows the current version from its own version endpoint (kept up to date with game patches). If the stored version is older than current, a staleness warning is shown. This is a display flag only — the content is never hidden or demoted.
 
 ---
 

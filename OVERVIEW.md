@@ -39,13 +39,14 @@ Every piece of shared content gets a short URL (`wynn.tools/b/x7k2`) and a rich 
 
 ## Accounts
 
-- Sign in with a Wynntils account to save and publish content
+- Sign in with a wynn.tools account to save and publish content
+- Optionally link a Wynntils, Discord, or Wynncraft account to your profile
 - Viewing everything is public — no account needed to browse
 
 ---
 
 ## License
 
-**AGPL-3.0.** The existing WynnBuilder codebase is GPL-3.0; AGPL-3.0 is fully compatible and extends it with a network use clause — anyone running a modified version as a service must publish their changes. Consistent with athena-backend, which is also AGPL-3.0.
+**AGPL-3.0.** The existing WynnBuilder codebase is GPL-3.0; AGPL-3.0 is fully compatible and extends it with a network use clause — anyone running a modified version as a service must publish their changes.
 
 Contributions are governed by a **DCO (Developer Certificate of Origin)** — contributors sign off on commits certifying they have the right to contribute, enforced via CI. Lower friction than a CLA while still providing a clear IP paper trail.
