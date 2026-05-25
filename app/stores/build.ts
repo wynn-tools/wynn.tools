@@ -24,6 +24,13 @@ export const TOME_SLOT_TYPES: Record<number, string> = {
   4: 'armorTome',
   5: 'armorTome',
   6: 'guildTome',
+  7: 'lootrunTome',
+  8: 'gatherXpTome',
+  9: 'gatherXpTome',
+  10: 'dungeonXpTome',
+  11: 'dungeonXpTome',
+  12: 'mobXpTome',
+  13: 'mobXpTome',
 }
 
 export const useBuildStore = defineStore('build', () => {

@@ -3,7 +3,7 @@ import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
 
-const TOME_SLOTS = [0, 1, 2, 3, 4, 5, 6] as const
+const TOME_SLOTS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13] as const
 const SLOT_LABELS: Record<number, string> = {
   0: 'Weapon Tome 1',
   1: 'Weapon Tome 2',
@@ -12,6 +12,13 @@ const SLOT_LABELS: Record<number, string> = {
   4: 'Armor Tome 3',
   5: 'Armor Tome 4',
   6: 'Guild Tome',
+  7: 'Lootrun Tome',
+  8: 'Marathon Tome 1',
+  9: 'Marathon Tome 2',
+  10: 'Mysticism Tome 1',
+  11: 'Mysticism Tome 2',
+  12: 'Expertise Tome 1',
+  13: 'Expertise Tome 2',
 }
 
 function onTomeChange(slot: number, event: Event) {
