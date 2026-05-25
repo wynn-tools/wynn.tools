@@ -1,0 +1,43 @@
+{
+  "Archer": [
+    {
+      "id": 100,
+      "display_name": "Head",
+      "desc": "",
+      "parents": [],
+      "dependencies": [],
+      "blockers": [],
+      "cost": 1
+    },
+    {
+      "id": 101,
+      "display_name": "Branch A",
+      "desc": "",
+      "parents": [100],
+      "dependencies": [],
+      "blockers": [],
+      "cost": 2,
+      "archetype": "Boltslinger"
+    },
+    {
+      "id": 102,
+      "display_name": "Branch B",
+      "desc": "",
+      "parents": [100],
+      "dependencies": [],
+      "blockers": [101],
+      "cost": 2
+    },
+    {
+      "id": 103,
+      "display_name": "Arch Gate",
+      "desc": "",
+      "parents": [101],
+      "dependencies": [],
+      "blockers": [],
+      "cost": 3,
+      "archetype_req": 1,
+      "req_archetype": "Boltslinger"
+    }
+  ]
+}
