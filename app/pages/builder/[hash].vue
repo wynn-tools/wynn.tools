@@ -3,11 +3,23 @@ import { useCdnClient } from '~/composables/useBuildData'
 import { useBuildStore } from '~/stores/build'
 
 const route = useRoute()
+const router = useRouter()
 const store = useBuildStore()
 const hash = computed(() => String(route.params.hash))
 
-onMounted(() => store.loadFromHash(hash.value, useCdnClient()))
-watch(hash, h => store.loadFromHash(h, useCdnClient()))
+function syncFromRoute(h: string) {
+  if (h && h !== store.currentHash)
+    store.loadFromHash(h, useCdnClient())
+}
+
+onMounted(() => syncFromRoute(hash.value))
+watch(hash, syncFromRoute)
+
+// Edit → URL
+watch(() => store.currentHash, (h) => {
+  if (h && h !== hash.value)
+    router.replace(`/builder/${h}`)
+})
 </script>
 
 <template>
@@ -18,7 +30,10 @@ watch(hash, h => store.loadFromHash(h, useCdnClient()))
     <p v-else-if="store.error" class="state-text state-text--error">
       Failed to load build: {{ store.error }}
     </p>
-    <StatPanel v-else-if="store.result" :result="store.result" />
+    <template v-else-if="store.rawBuild">
+      <EquipmentGrid />
+      <StatPanel v-if="store.result" :result="store.result" />
+    </template>
   </main>
 </template>
 
