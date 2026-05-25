@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { AtreeNode } from '~/lib/atree/build-atree'
+import type { AtreeNode } from '~/lib/types/atree'
 import { computed } from 'vue'
+import { computeAtreeConnectors, connectorTileName } from '~/lib/atree/connectors'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -22,34 +23,21 @@ const cols = computed(() => {
 const gridWidth = computed(() => cols.value * CELL)
 const gridHeight = computed(() => rows.value * CELL)
 
-function cellCenter(row: number, col: number) {
-  return {
-    x: col * CELL + CELL / 2,
-    y: row * CELL + CELL / 2,
-  }
+interface ConnectorTile {
+  row: number
+  col: number
+  name: string
 }
 
-interface Connector {
-  points: string
-  active: boolean
-}
-
-const connectors = computed<Connector[]>(() => {
-  const result: Connector[] = []
-  for (const node of store.atreeNodes) {
-    const childRow = node.ability.display.row
-    const childCol = node.ability.display.col
-    const child = cellCenter(childRow, childCol)
-    for (const parent of node.parents as AtreeNode[]) {
-      const parentRow = parent.ability.display.row
-      const parentCol = parent.ability.display.col
-      const par = cellCenter(parentRow, parentCol)
-      // Elbow: child center → up/down to parent's row → across to parent center
-      const elbowY = par.y
-      const points = `${child.x},${child.y} ${child.x},${elbowY} ${par.x},${elbowY} ${par.x},${par.y}`
-      const active = store.isAtreeActive(node.ability.id) && store.isAtreeActive(parent.ability.id)
-      result.push({ points, active })
-    }
+const connectors = computed<ConnectorTile[]>(() => {
+  const result: ConnectorTile[] = []
+  for (const [key, dirs] of computeAtreeConnectors(store.atreeNodes)) {
+    const [rowStr, colStr] = key.split(',')
+    result.push({
+      row: Number(rowStr),
+      col: Number(colStr),
+      name: connectorTileName(dirs),
+    })
   }
   return result
 })
@@ -92,22 +80,25 @@ const apOverCap = computed(() =>
         class="atree-grid"
         :style="{ width: `${gridWidth}px`, height: `${gridHeight}px` }"
       >
-        <!-- SVG connector overlay (behind nodes) -->
-        <svg
-          class="atree-svg"
-          :width="gridWidth"
-          :height="gridHeight"
-          :viewBox="`0 0 ${gridWidth} ${gridHeight}`"
+        <!-- Connector tile images (behind nodes) -->
+        <img
+          v-for="(conn, i) in connectors"
+          :key="i"
+          :src="`https://cdn.wynncraft.com/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
+          :style="{
+            position: 'absolute',
+            left: `${conn.col * CELL}px`,
+            top: `${conn.row * CELL}px`,
+            width: `${CELL}px`,
+            height: `${CELL}px`,
+            imageRendering: 'pixelated',
+            zIndex: 0,
+            pointerEvents: 'none',
+          }"
+          draggable="false"
           aria-hidden="true"
+          alt=""
         >
-          <polyline
-            v-for="(conn, i) in connectors"
-            :key="i"
-            :points="conn.points"
-            fill="none"
-            :class="conn.active ? 'conn-active' : 'conn-faint'"
-          />
-        </svg>
 
         <!-- Nodes -->
         <button
@@ -183,27 +174,6 @@ const apOverCap = computed(() =>
 .atree-grid {
   position: relative;
   flex-shrink: 0;
-}
-
-/* SVG overlay */
-.atree-svg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.conn-faint {
-  stroke: var(--color-faint);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
-.conn-active {
-  stroke: var(--color-copper);
-  stroke-width: 2;
-  stroke-linejoin: round;
-  opacity: 0.8;
 }
 
 /* Node buttons */
