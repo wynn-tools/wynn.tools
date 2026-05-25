@@ -1,9 +1,10 @@
 import type { BuildContext } from '~/lib/build/compute-build'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
 import type { CdnClient } from '~/lib/data/cdn-client'
+import type { RawAspectData } from '~/lib/types/aspect'
 import type { AtreeData } from '~/lib/types/atree'
 import type { ItemSet } from '~/lib/types/item'
-import { buildRawItemIndex } from '~/lib/build/resolve'
+import { buildRawItemIndex, buildRawTomeIndex } from '~/lib/build/resolve'
 import { BitVector, BitVectorCursor } from '~/lib/codec/bit-vector'
 import { decodeHeader } from '~/lib/codec/header'
 import { WYNN_VERSION_NAMES } from '~/lib/codec/version'
@@ -31,13 +32,16 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
     const v = WYNN_VERSION_NAMES[versionId]
     if (!v)
       throw new Error(`Unknown build version id ${versionId}`)
-    const [itemsFile, atreeData, enc] = await Promise.all([
+    const [itemsFile, atreeData, enc, tomesFile, aspectData] = await Promise.all([
       client.fetchJson<RawItemsFile>(`${v}/items.json`),
       client.fetchJson<AtreeData>(`${v}/atree.json`),
       client.fetchJson<EncodingConstants>(`${v}/encoding_consts.json`),
+      client.fetchJson<{ tomes: Array<Record<string, unknown>> }>(`${v}/tomes.json`),
+      client.fetchJson<RawAspectData>(`${v}/aspects.json`),
     ])
     ;(enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT = (enc.POWDER_ELEMENTS as unknown[]).length
     const rawItemIndex = buildRawItemIndex(itemsFile.items as Parameters<typeof buildRawItemIndex>[0])
+    const tomeIndex = buildRawTomeIndex(tomesFile.tomes)
     const sets = new Map(Object.entries(itemsFile.sets ?? {}))
     const typeById = new Map<number, string>()
     for (const it of itemsFile.items) {
@@ -45,7 +49,7 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
         typeById.set(it.id, it.type)
     }
     return {
-      ctx: { rawItemIndex, sets, atreeData },
+      ctx: { rawItemIndex, sets, atreeData, tomeIndex, aspectData },
       enc,
       weaponType: (id: number) => typeById.get(id) ?? null,
     } satisfies LoadedBuildData

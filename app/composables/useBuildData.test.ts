@@ -26,6 +26,8 @@ const fixtures = {
   },
   '2.2.0.31/atree.json': { Shaman: [] },
   '2.2.0.31/encoding_consts.json': { POWDER_ELEMENTS: [] },
+  '2.2.0.31/tomes.json': { tomes: [{ name: 'T', id: 5, type: 'weaponTome', mdPct: 8 }] },
+  '2.2.0.31/aspects.json': {},
 }
 
 describe('peekVersionId', () => {
@@ -53,6 +55,12 @@ describe('loadBuildContext', () => {
 
     // enc.POWDER_ELEMENTS_COUNT patched to POWDER_ELEMENTS.length (0)
     expect((data.enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT).toBe(0)
+
+    // tomeIndex resolves the fixture tome by id
+    expect(data.ctx.tomeIndex.resolveId(5)).not.toBeNull()
+
+    // aspectData is present
+    expect(data.ctx.aspectData).toBeDefined()
   })
 
   it('caches results per versionId (same data returned without re-fetching)', async () => {

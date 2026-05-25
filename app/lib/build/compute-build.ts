@@ -15,9 +15,10 @@ import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
 import type { SkillpointResult } from '../math/skillpoint-calc'
+import type { RawAspectData } from '../types/aspect'
 import type { AtreeData } from '../types/atree'
 import type { ItemSet } from '../types/item'
-import type { RawItemIndex } from './resolve'
+import type { RawItemIndex, RawTomeIndex } from './resolve'
 import { getSortedClassAtree } from '../atree/build-atree'
 import { mergeAtree } from '../atree/merge'
 import { collectAtreeRawStats } from '../atree/raw-stats'
@@ -44,6 +45,10 @@ export interface BuildContext {
   sets: Map<string, ItemSet>
   /** Ability-tree data keyed by class name. */
   atreeData: AtreeData
+  /** Tome resolution index (from buildRawTomeIndex). */
+  tomeIndex: RawTomeIndex
+  /** Raw aspect data (class name → aspect list). Loaded here; used by M7-2. */
+  aspectData: RawAspectData
 }
 
 /** Typed result of computeBuild. */

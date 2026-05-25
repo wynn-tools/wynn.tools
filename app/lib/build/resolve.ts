@@ -418,6 +418,40 @@ export function buildRawItemIndex(rawItems: Record<string, unknown>[]): RawItemI
 }
 
 // ---------------------------------------------------------------------------
+// buildRawTomeIndex
+// ---------------------------------------------------------------------------
+
+export interface RawTomeIndex {
+  byId: Map<number, CleanedRawItem>
+  resolveId: (id: number) => CleanedRawItem | null
+}
+
+export function buildRawTomeIndex(rawTomes: Record<string, unknown>[]): RawTomeIndex {
+  const byId = new Map<number, CleanedRawItem>()
+  const redirects = new Map<number, number>()
+  for (const raw of rawTomes) {
+    if (raw.remapID !== undefined && raw.id !== undefined) {
+      redirects.set(raw.id as number, raw.remapID as number)
+      continue
+    }
+    const t = cleanRawItem(raw)
+    byId.set(t.id, t)
+  }
+  function resolveId(id: number): CleanedRawItem | null {
+    let cur = id
+    const seen = new Set<number>()
+    while (redirects.has(cur)) {
+      if (seen.has(cur))
+        return null
+      seen.add(cur)
+      cur = redirects.get(cur)!
+    }
+    return byId.get(cur) ?? null
+  }
+  return { byId, resolveId }
+}
+
+// ---------------------------------------------------------------------------
 // applyArmorPowders — port of powders.js applyArmorPowders (L81-90)
 // ---------------------------------------------------------------------------
 
