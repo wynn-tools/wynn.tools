@@ -6,6 +6,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useBuildStore()
 const hash = computed(() => String(route.params.hash))
+const showAtree = ref(true)
 
 function syncFromRoute(h: string) {
   if (h && h !== store.currentHash)
@@ -42,6 +43,17 @@ watch(() => store.currentHash, (h) => {
           <StatPanel v-if="store.result" :result="store.result" />
         </section>
       </div>
+      <section class="atree-section">
+        <div class="atree-heading">
+          <h2 class="atree-title">
+            Ability Tree
+          </h2>
+          <button class="atree-toggle" @click="showAtree = !showAtree">
+            {{ showAtree ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        <AtreeCanvas v-if="showAtree" />
+      </section>
     </template>
   </main>
 </template>
@@ -76,5 +88,48 @@ watch(() => store.currentHash, (h) => {
   .builder-layout {
     grid-template-columns: 1fr;
   }
+}
+
+.atree-section {
+  margin-top: 32px;
+  width: 100%;
+}
+
+.atree-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.atree-title {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.atree-toggle {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.atree-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
 }
 </style>
