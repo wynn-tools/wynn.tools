@@ -2,6 +2,14 @@
 import { useCdnClient } from '~/composables/useBuildData'
 import { useBuildStore } from '~/stores/build'
 
+useSeoMeta({
+  title: 'Wynncraft Build Calculator — wynn.tools',
+  ogTitle: 'Wynncraft Build Calculator — wynn.tools',
+  description: 'Create and share Wynncraft builds.',
+  ogDescription: 'Create and share Wynncraft builds.',
+  twitterCard: 'summary_large_image',
+})
+
 const router = useRouter()
 const store = useBuildStore()
 
