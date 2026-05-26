@@ -8,7 +8,6 @@ export default defineNuxtConfig({
     public: {
       // Override at runtime with NUXT_PUBLIC_CDN_BASE_URL
       cdnBaseUrl: 'https://cdn.wynn.tools/data',
-      tilesUrl: 'https://tiles.wynntils.com',
       athenaUrl: 'https://athena.wynntils.com',
     },
   },

@@ -67,7 +67,6 @@ Defined in `app/assets/css/global.css` as Tailwind `@theme` variables. Neutral p
 Three public runtime config values (overridable via env vars):
 
 - `NUXT_PUBLIC_CDN_BASE_URL` — game data CDN (default: `https://cdn.wynn.tools/data`)
-- `NUXT_PUBLIC_TILES_URL` — map tiles (default: `https://tiles.wynntils.com`)
 - `NUXT_PUBLIC_ATHENA_URL` — live game data API (default: `https://athena.wynntils.com`)
 
 ### Testing
