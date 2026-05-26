@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest a new feature or improvement
+labels: ["enhancement"]
+body:
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Tool
+      description: Which tool is this for?
+      options:
+        - Builder
+        - Map
+        - Crafter
+        - Atlas
+        - Sharing
+        - General
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem this solves
+      description: What are you trying to do that's currently difficult or impossible?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
