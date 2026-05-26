@@ -40,10 +40,10 @@ import { useMapStore } from '~/stores/map'
 definePageMeta({ layout: 'map', ssr: false })
 
 useSeoMeta({
-  title: 'Interactive Map',
-  description: 'Explore the world of Wynncraft with the Wynntils interactive map.',
-  ogTitle: 'Interactive Map',
-  ogDescription: 'Explore the world of Wynncraft with the Wynntils interactive map.',
+  title: 'Wynncraft Interactive Map — wynn.tools',
+  description: 'Explore the world of Wynncraft — territories, caves, quests, and more.',
+  ogTitle: 'Wynncraft Interactive Map — wynn.tools',
+  ogDescription: 'Explore the world of Wynncraft — territories, caves, quests, and more.',
   twitterCard: 'summary_large_image',
 })
 
