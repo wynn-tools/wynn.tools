@@ -6,7 +6,7 @@ const showAtree = ref(true)
 </script>
 
 <template>
-  <main class="builder-page">
+  <main class="builder-page mx-5">
     <p v-if="store.loading" class="state-text">
       Loading build…
     </p>

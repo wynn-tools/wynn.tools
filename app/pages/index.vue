@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main class="mx-5">
     <h1 class="domain">
       wynn<span class="dot">.</span>tools
     </h1>
