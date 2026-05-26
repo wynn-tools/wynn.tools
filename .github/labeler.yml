@@ -1,0 +1,63 @@
+builder:
+  - changed-files:
+      - any-glob-to-any-file:
+          - app/pages/builder/**
+          - app/stores/build*
+          - app/lib/math/**
+          - app/lib/data/**
+          - app/composables/useBuild*
+          - app/components/**/*[Bb]uild*
+
+map:
+  - changed-files:
+      - any-glob-to-any-file:
+          - app/pages/map.vue
+          - app/stores/map*
+          - app/types/map.ts
+          - app/config/worlds.ts
+          - app/config/categories.ts
+          - app/composables/use*Map*
+          - app/composables/use*Layer*
+          - app/composables/use*Territory*
+          - app/composables/use*Lootrun*
+          - app/composables/use*Place*
+          - app/composables/use*Pixi*
+          - app/composables/use*Tile*
+          - app/composables/use*Clustering*
+          - app/composables/use*Coord*
+          - app/composables/use*Marker*
+
+crafter:
+  - changed-files:
+      - any-glob-to-any-file:
+          - app/pages/crafter/**
+          - app/composables/useCrafter*
+          - app/stores/crafter*
+
+atlas:
+  - changed-files:
+      - any-glob-to-any-file:
+          - app/pages/atlas/**
+          - app/composables/useAtlas*
+          - app/stores/atlas*
+
+sharing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - app/pages/sharing/**
+          - server/**
+
+infra:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - nuxt.config.ts
+          - tsconfig.json
+          - eslint.config.ts
+          - vitest.config.ts
+
+deps:
+  - changed-files:
+      - any-glob-to-any-file:
+          - pnpm-lock.yaml
+          - package.json
