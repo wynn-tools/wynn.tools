@@ -2,7 +2,7 @@
 const props = defineProps<{
   level: number
   className: string
-  items: Array<{ slot: string, name: string }>
+  items: Array<{ slot: string, name: string, powders?: string }>
   dps: number
   ehp: number
 }>()
@@ -37,7 +37,10 @@ function formatNumber(n: number): string {
         style="display: flex; flex-direction: row; justify-content: space-between; align-items: center;"
       >
         <span style="color: #6b7280; font-size: 21px; width: 130px;">{{ item.slot }}</span>
-        <span style="color: #ffffff; font-size: 21px; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{ item.name }}</span>
+        <span style="display: flex; flex-direction: row; align-items: baseline; gap: 8px; flex: 1; overflow: hidden;">
+          <span style="color: #ffffff; font-size: 21px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.name }}</span>
+          <span v-if="item.powders" style="color: #6b7280; font-size: 18px; white-space: nowrap;">[{{ item.powders }}]</span>
+        </span>
       </div>
     </div>
 

@@ -1,14 +1,18 @@
 import type { RawBuild } from '../codec/build-codec'
 import type { BuildContext, BuildResult } from './compute-build'
 import { WEP_TO_CLASS } from '../codec/wep-to-class'
+import { POWDER_NAME_BY_ID } from '../data/powder-constants'
 
 export interface BuildMeta {
   level: number
   className: string
-  items: Array<{ slot: string, name: string }>
+  items: Array<{ slot: string, name: string, powders?: string }>
   dps: number
   ehp: number
 }
+
+/** Equipment slot index → index in raw.powders array (matches POWDERABLE in equipment-codec). */
+const POWDER_INDEX = new Map([[0, 0], [1, 1], [2, 2], [3, 3], [8, 4]])
 
 const SLOT_LABELS = [
   'Helmet',
@@ -39,9 +43,15 @@ export function extractBuildMeta(
     const id = raw.equipmentIds[slot]
     const item = id != null ? ctx.rawItemIndex.resolveId(id) : null
     const isNone = item == null || (item.id as number) >= 10000 // ids 10000–10008 are NONE_RAW_ITEMS (empty slots)
+
+    const powderIdx = POWDER_INDEX.get(slot)
+    const powderIds = powderIdx !== undefined ? (raw.powders[powderIdx] ?? []) : []
+    const powders = powderIds.map(pid => POWDER_NAME_BY_ID.get(pid) ?? '').join('') || undefined
+
     return {
       slot: SLOT_LABELS[slot]!,
       name: isNone ? '—' : String(item!.displayName),
+      powders,
     }
   })
 
