@@ -1,5 +1,43 @@
 import type { AtreeNode } from '../types/atree'
 
+const NODE_COLOR_BY_ICON: Record<string, string> = {
+  node_0: 'nodeWhite',
+  node_1: 'nodeYellow',
+  node_2: 'nodePurple',
+  node_3: 'nodeRed',
+  node_4: 'nodeBlue',
+  node_archer: 'nodeArcher',
+  node_warrior: 'nodeWarrior',
+  node_mage: 'nodeMage',
+  node_assassin: 'nodeAssassin',
+  node_shaman: 'nodeShaman',
+}
+export function nodeColor(icon: string | undefined): string {
+  return (icon && NODE_COLOR_BY_ICON[icon]) || 'nodeWhite'
+}
+const NODE_CDN = 'https://cdn.wynncraft.com/nextgen/abilities/2.1/nodes'
+
+// Detect rich official asset values (future enriched data):
+// - starts with "abilityTree." (strip it, use remainder as base)
+// - matches ^(node|ultimate)[A-Z] e.g. "nodeWhite", "ultimateBoltslinger"
+const RICH_ASSET_RE = /^(?:node|ultimate)[A-Z]/
+
+export function nodeImageUrl(icon: string | undefined, active: boolean): string {
+  let base: string
+  if (icon && icon.startsWith('abilityTree.')) {
+    // strip prefix, use remainder directly
+    base = icon.slice('abilityTree.'.length)
+  }
+  else if (icon && RICH_ASSET_RE.test(icon)) {
+    // already a rich name like "nodeWhite" or "ultimateBoltslinger"
+    base = icon
+  }
+  else {
+    base = nodeColor(icon)
+  }
+  return `${NODE_CDN}/abilityTree.${base}${active ? '_active' : ''}.png`
+}
+
 export interface ConnectorDirs { up: boolean, right: boolean, down: boolean, left: boolean }
 
 export function computeAtreeConnectors(nodes: AtreeNode[]): Map<string, ConnectorDirs> {

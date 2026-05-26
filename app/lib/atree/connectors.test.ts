@@ -1,6 +1,6 @@
 import type { AtreeNode } from '../types/atree'
 import { describe, expect, it } from 'vitest'
-import { computeAtreeConnectors, connectorTileName } from './connectors'
+import { computeAtreeConnectors, connectorTileName, nodeColor, nodeImageUrl } from './connectors'
 
 function makeNode(
   id: number,
@@ -130,6 +130,33 @@ describe('computeAtreeConnectors', () => {
     expect(cell_0_2?.down).toBe(true)
     expect(cell_0_2?.right).toBe(true)
     expect(cell_0_2?.left).toBe(false)
+  })
+})
+
+describe('nodeColor', () => {
+  it('maps node_0 to nodeWhite', () => {
+    expect(nodeColor('node_0')).toBe('nodeWhite')
+  })
+  it('maps node_3 to nodeRed', () => {
+    expect(nodeColor('node_3')).toBe('nodeRed')
+  })
+  it('maps node_shaman to nodeShaman', () => {
+    expect(nodeColor('node_shaman')).toBe('nodeShaman')
+  })
+  it('defaults undefined to nodeWhite', () => {
+    expect(nodeColor(undefined)).toBe('nodeWhite')
+  })
+})
+
+describe('nodeImageUrl', () => {
+  it('builds active URL ending with abilityTree.nodeYellow_active.png', () => {
+    expect(nodeImageUrl('node_1', true)).toMatch(/abilityTree\.nodeYellow_active\.png$/)
+  })
+  it('forward-compat: passes ultimateBoltslinger directly (no _active)', () => {
+    expect(nodeImageUrl('ultimateBoltslinger', false)).toMatch(/abilityTree\.ultimateBoltslinger\.png$/)
+  })
+  it('forward-compat: strips abilityTree. prefix and appends _active', () => {
+    expect(nodeImageUrl('abilityTree.nodeArcher', true)).toMatch(/abilityTree\.nodeArcher_active\.png$/)
   })
 })
 

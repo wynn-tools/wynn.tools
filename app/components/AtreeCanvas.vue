@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AtreeNode } from '~/lib/types/atree'
 import { computed } from 'vue'
-import { computeAtreeConnectors, connectorTileName } from '~/lib/atree/connectors'
+import { computeAtreeConnectors, connectorTileName, nodeImageUrl } from '~/lib/atree/connectors'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -115,7 +115,15 @@ const apOverCap = computed(() =>
           :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
           @click="store.toggleAtreeNode(node.ability.id)"
         >
-          <span class="atree-node-cost">{{ node.ability.cost }}</span>
+          <img
+            :src="nodeImageUrl(node.ability.display.icon, store.isAtreeActive(node.ability.id))"
+            :width="CELL"
+            :height="CELL"
+            draggable="false"
+            aria-hidden="true"
+            alt=""
+            class="atree-node-img"
+          >
         </button>
       </div>
     </div>
@@ -179,61 +187,51 @@ const apOverCap = computed(() =>
 /* Node buttons */
 .atree-node {
   position: absolute;
-  width: 36px;
-  height: 36px;
-  margin: 4px;
-  border-radius: 4px;
-  border: 1px solid transparent;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  font-weight: 600;
   z-index: 1;
   transition:
-    opacity 0.1s,
-    border-color 0.1s,
-    background 0.1s;
+    filter 0.1s,
+    opacity 0.1s;
 }
 
-/* Active: copper fill */
-.atree-node--active {
-  background: var(--color-copper);
-  border-color: var(--color-copper);
-  color: oklch(14% 0.008 250);
+/* Node image fills the button */
+.atree-node-img {
+  image-rendering: pixelated;
+  width: 44px;
+  height: 44px;
+  display: block;
 }
 
-/* Selectable: copper outline */
+/* Active / selectable: full opacity, hover brightens slightly */
+.atree-node--active,
 .atree-node--selectable {
-  background: transparent;
-  border-color: var(--color-copper);
-  color: var(--color-copper);
+  opacity: 1;
 }
 
+.atree-node--active:hover,
 .atree-node--selectable:hover {
-  background: oklch(62% 0.11 42 / 0.15);
+  filter: brightness(1.15);
 }
 
-/* Locked: faint/dim */
+/* Locked: greyscale + dim */
 .atree-node--locked {
-  background: transparent;
-  border-color: var(--color-faint);
-  color: var(--color-faint);
-  opacity: 0.5;
+  filter: grayscale(0.7) brightness(0.5);
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
-/* Blocked: red-ish */
+/* Blocked: greyscale + dim + red tint */
 .atree-node--blocked {
-  background: transparent;
-  border-color: oklch(55% 0.15 22);
-  color: oklch(60% 0.15 22);
+  filter: grayscale(0.7) brightness(0.5) sepia(0.5) hue-rotate(310deg);
+  opacity: 0.45;
   cursor: not-allowed;
-}
-
-.atree-node--active:hover {
-  opacity: 0.85;
 }
 </style>
