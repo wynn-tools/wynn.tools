@@ -11,6 +11,7 @@ import KeyboardShortcuts from '~/components/map/KeyboardShortcuts.vue'
 import LootrunPanel from '~/components/map/LootrunPanel.vue'
 import MapCanvas from '~/components/map/MapCanvas.vue'
 import MapSkeleton from '~/components/map/MapSkeleton.vue'
+import MapSources from '~/components/map/MapSources.vue'
 import MobileControls from '~/components/map/MobileControls.vue'
 import SearchBar from '~/components/map/SearchBar.vue'
 import ServicePopup from '~/components/map/ServicePopup.vue'
@@ -471,6 +472,9 @@ function onCursorMove(p: { x: number, z: number }) {
           </svg>
         </div>
 
+        <div class="pointer-events-auto absolute bottom-4 left-4">
+          <MapSources />
+        </div>
         <div class="pointer-events-auto absolute bottom-4 right-4 flex flex-col items-end gap-2">
           <ZoomControls
             @zoom-in="store.setZoom(Math.min(store.zoom + 1, 4))"
