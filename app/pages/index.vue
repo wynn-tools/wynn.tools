@@ -1,21 +1,19 @@
 <template>
-  <div>
-    <main>
-      <h1 class="domain">
-        wynn<span class="dot">.</span>tools
-      </h1>
-      <p class="tools">
-        Builder, Map, Crafter, Atlas.
-      </p>
-      <p class="status">
-        In development
-      </p>
-    </main>
+  <main>
+    <h1 class="domain">
+      wynn<span class="dot">.</span>tools
+    </h1>
+    <p class="tools">
+      Builder, Map, Crafter, Atlas.
+    </p>
+    <p class="status">
+      In development
+    </p>
+  </main>
 
-    <footer>
-      <span class="footer-note">AGPL-3.0 · Not affiliated with Wynncraft or Mojang</span>
-    </footer>
-  </div>
+  <footer>
+    <span class="footer-note">AGPL-3.0 · Not affiliated with Wynncraft or Mojang</span>
+  </footer>
 </template>
 
 <style scoped>

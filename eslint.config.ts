@@ -9,7 +9,6 @@ export default withNuxt(
     ignores: ['docs/**'],
   }),
   {
-    files: ['app/layouts/**/*.vue'],
     rules: {
       // Vue 3 layouts may use a bare <slot /> as the single template root
       'vue/no-multiple-template-root': 'off',
