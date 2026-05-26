@@ -10,7 +10,13 @@ export default defineNuxtConfig({
       cdnBaseUrl: 'https://cdn.wynn.tools/data',
     },
   },
-  modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt'],
+  modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image'],
+  ogImage: {
+    compatibility: {
+      dev: { satori: 'node', resvg: 'node' },
+      runtime: { satori: 'wasm', resvg: 'wasm' },
+    },
+  },
   eslint: {
     config: {
       standalone: false,
@@ -19,13 +25,10 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  app: {
-    head: {
-      link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Geist+Mono:wght@400;500&display=swap' },
-      ],
-    },
+  fonts: {
+    families: [
+      { name: 'Geist', weights: [300, 400, 500, 700], global: true },
+      { name: 'Geist Mono', weights: [400, 500], global: true },
+    ],
   },
 })

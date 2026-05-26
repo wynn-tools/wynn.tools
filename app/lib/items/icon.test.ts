@@ -4,7 +4,7 @@ import { itemIconUrl } from './icon'
 describe('itemIconUrl', () => {
   it('builds a .webp URL from an attribute icon name', () => {
     expect(itemIconUrl({ icon: { format: 'attribute', value: { name: 'wand.water3' } } }))
-      .toBe('https://beta.wynnventory.com/cdn/icons/wand.water3.webp')
+      .toBe('https://cdn.wynn.tools/nextgen/itemguide/3.3/wand.water3.webp')
   })
 
   it('returns null for skin (player-head) icons', () => {
