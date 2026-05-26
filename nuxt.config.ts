@@ -3,11 +3,13 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  css: ['~/assets/css/global.css'],
+  css: ['./app/assets/css/global.css'],
   runtimeConfig: {
     public: {
       // Override at runtime with NUXT_PUBLIC_CDN_BASE_URL
       cdnBaseUrl: 'https://cdn.wynn.tools/data',
+      tilesUrl: 'https://tiles.wynntils.com',
+      athenaUrl: 'https://athena.wynntils.com',
     },
   },
   modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image'],

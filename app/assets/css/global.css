@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../**/*.{vue,ts}";
 
 @theme {
   --color-bg: oklch(14% 0.008 250);
@@ -7,46 +8,66 @@
   --color-muted: oklch(52% 0.007 250);
   --color-faint: oklch(32% 0.007 250);
   --color-copper: oklch(62% 0.11 42);
+  --color-card: oklch(18% 0.008 250);
+  --color-card-hover: oklch(22% 0.009 250);
   --font-mono: "Geist Mono", "Courier New", monospace;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@utility pixelated {
+  image-rendering: pixelated;
 }
 
-html,
-body {
-  height: 100%;
+@utility shadow-copper-sm {
+  box-shadow: 0 0 16px oklch(62% 0.11 42 / 0.2);
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: "Geist", system-ui, sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  padding: 0 40px;
+@utility shadow-copper-md {
+  box-shadow: 0 0 32px oklch(62% 0.11 42 / 0.32);
 }
 
-#__nuxt {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+@utility shadow-copper-lg {
+  box-shadow: 0 0 56px oklch(62% 0.11 42 / 0.45);
 }
 
-@media (max-width: 480px) {
-  body {
-    padding: 0 24px;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: "Geist", system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0 40px;
+  }
+
+  #__nuxt {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 480px) {
+    body {
+      padding: 0 24px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
   }
 }
