@@ -1,7 +1,15 @@
 <script setup lang="ts">
+import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
+
+function slotIcon(slot: number): string | null {
+  const id = store.rawBuild?.equipmentIds[slot]
+  if (id == null)
+    return null
+  return itemIconUrl(store.ctx?.rawItemIndex.resolveId(id))
+}
 
 const SLOT_LABELS = [
   'Helmet',
@@ -55,9 +63,20 @@ function handleClose() {
         @click="openPicker(idx)"
       >
         <span class="slot-label">{{ label }}</span>
-        <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-          {{ itemName(idx) }}
-        </span>
+        <div class="slot-body">
+          <img
+            v-if="slotIcon(idx)"
+            :src="slotIcon(idx)!"
+            class="slot-icon"
+            loading="lazy"
+            draggable="false"
+            aria-hidden="true"
+            alt=""
+          >
+          <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
+            {{ itemName(idx) }}
+          </span>
+        </div>
       </div>
     </div>
 
@@ -114,6 +133,21 @@ function handleClose() {
 
 .slot--active .slot-label {
   color: var(--color-copper);
+}
+
+.slot-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.slot-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  object-fit: contain;
 }
 
 .slot-name {

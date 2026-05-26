@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.11.3",
+    "fuse.js": "^7.3.0",
     "nuxt": "^4.4.6",
     "pinia": "^3.0.4",
     "reka-ui": "^2.9.8",

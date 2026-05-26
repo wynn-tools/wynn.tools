@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { CleanedRawItem } from '~/lib/build/resolve'
+import Fuse from 'fuse.js'
+import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
 
 const props = defineProps<{ slotIndex: number }>()
@@ -10,12 +13,23 @@ const emit = defineEmits<{
 const store = useBuildStore()
 const query = ref('')
 
-const filteredItems = computed(() => {
-  const items = store.itemsForSlot(props.slotIndex)
-  if (!query.value)
-    return items.slice(0, 100)
-  const q = query.value.toLowerCase()
-  return items.filter(item => String(item.displayName).toLowerCase().includes(q)).slice(0, 100)
+// Cap only the ranked search results (already most-relevant first); the
+// unfiltered browse list shows everything for the slot.
+const MAX_RESULTS = 100
+
+const items = computed<CleanedRawItem[]>(() => store.itemsForSlot(props.slotIndex))
+
+const fuse = computed(() => new Fuse(items.value, {
+  keys: ['displayName'],
+  threshold: 0.4,
+  ignoreLocation: true,
+}))
+
+const filteredItems = computed<CleanedRawItem[]>(() => {
+  const q = query.value.trim()
+  if (!q)
+    return items.value
+  return fuse.value.search(q, { limit: MAX_RESULTS }).map(r => r.item)
 })
 
 function selectItem(id: number | null) {
@@ -47,7 +61,17 @@ function selectItem(id: number | null) {
         class="picker-item"
         @click="selectItem(item.id as number)"
       >
-        {{ item.displayName }}
+        <img
+          v-if="itemIconUrl(item)"
+          :src="itemIconUrl(item)!"
+          class="picker-icon"
+          loading="lazy"
+          draggable="false"
+          aria-hidden="true"
+          alt=""
+        >
+        <span v-else class="picker-icon picker-icon--empty" aria-hidden="true" />
+        <span class="picker-item-name">{{ item.displayName }}</span>
       </li>
     </ul>
   </div>
@@ -111,6 +135,9 @@ function selectItem(id: number | null) {
 }
 
 .picker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 12px;
   padding: 8px 14px;
@@ -119,6 +146,24 @@ function selectItem(id: number | null) {
   transition:
     background 0.08s,
     color 0.08s;
+}
+
+.picker-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.picker-icon--empty {
+  visibility: hidden;
+}
+
+.picker-item-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .picker-item:hover {

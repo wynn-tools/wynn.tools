@@ -12,8 +12,12 @@ import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
 import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
 import { decodeRawBuild, encodeRawBuild } from '~/lib/codec/build-codec'
+import { num } from '~/lib/codec/codec-util'
+import { WYNN_VERSION_LATEST } from '~/lib/codec/version'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { SKP_ORDER } from '~/lib/math/constants'
+
+const DEFAULT_LEVEL = 106
 
 const SLOT_TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'ring', 'bracelet', 'necklace'] as const
 
@@ -65,6 +69,39 @@ export const useBuildStore = defineStore('build', () => {
     }
   }
 
+  /** Initialize a fresh, empty build on the latest version (no hash yet). */
+  async function newBuild(client: CdnClient) {
+    loading.value = true
+    error.value = null
+    try {
+      const versionId = WYNN_VERSION_LATEST
+      const loaded = await loadBuildContext(client, versionId)
+      const e = loaded.enc
+      ctx.value = loaded.ctx
+      enc.value = e
+      weaponTypeFn.value = loaded.weaponType
+      atreeMessage.value = null
+      rawBuild.value = {
+        versionId,
+        equipmentIds: Array.from({ length: num(e, 'EQUIPMENT_NUM') }).fill(null),
+        powders: Array.from({ length: POWDER_INDEX_BY_SLOT.size }, () => []),
+        tomeIds: Array.from({ length: num(e, 'TOME_NUM') }).fill(null),
+        sp: null,
+        level: DEFAULT_LEVEL,
+        aspects: Array.from({ length: num(e, 'NUM_ASPECTS') }).fill(null),
+        activeAtree: [],
+      }
+    }
+    catch (e) {
+      error.value = e instanceof Error ? e.message : String(e)
+      rawBuild.value = null
+      ctx.value = null
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
   function setItem(slot: number, id: number | null) {
     if (!rawBuild.value)
       return
@@ -98,14 +135,16 @@ export const useBuildStore = defineStore('build', () => {
   function itemsForSlot(slot: number): CleanedRawItem[] {
     if (!ctx.value)
       return []
-    const type = slot === 8 ? currentWeaponType() : SLOT_TYPES[slot]
-    if (!type)
+    // Weapon slot: match by category so an empty slot still lists every weapon
+    // (the specific type/class is only known once a weapon is equipped).
+    const type = slot === 8 ? null : SLOT_TYPES[slot]
+    if (slot !== 8 && !type)
       return []
     const out: CleanedRawItem[] = []
     for (const item of ctx.value.rawItemIndex.byId.values()) {
       if ((item.id as number) >= 10000)
         continue // NONE placeholders
-      if (item.type === type)
+      if (slot === 8 ? item.category === 'weapon' : item.type === type)
         out.push(item)
     }
     return out.sort((a, b) => String(a.displayName).localeCompare(String(b.displayName)))
@@ -234,5 +273,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
 })
