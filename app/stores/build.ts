@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 import { loadBuildContext, peekVersionId } from '~/composables/useBuildData'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
+import { unlockPathTo } from '~/lib/atree/pathfind'
 import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
 import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
@@ -213,5 +214,14 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, activeAtree: [...reachable] }
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
+  function unlockAtreeNode(id: number) {
+    if (!rawBuild.value)
+      return
+    rawBuild.value = {
+      ...rawBuild.value,
+      activeAtree: unlockPathTo(atreeNodes.value, rawBuild.value.activeAtree, id, rawBuild.value.level),
+    }
+  }
+
+  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
 })

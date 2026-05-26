@@ -58,6 +58,13 @@ function nodeState(node: AtreeNode): NodeState {
 const apOverCap = computed(() =>
   store.atreeValidation.apTotal > store.atreeValidation.apCap,
 )
+
+function onNodeClick(id: number, e: MouseEvent) {
+  if (e.shiftKey)
+    store.unlockAtreeNode(id)
+  else
+    store.toggleAtreeNode(id)
+}
 </script>
 
 <template>
@@ -113,7 +120,7 @@ const apOverCap = computed(() =>
           :title="`${node.ability.display_name} (${node.ability.cost} AP)`"
           :aria-pressed="store.isAtreeActive(node.ability.id)"
           :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
-          @click="store.toggleAtreeNode(node.ability.id)"
+          @click="onNodeClick(node.ability.id, $event)"
         >
           <img
             :src="nodeImageUrl(node.ability.display.icon, store.isAtreeActive(node.ability.id))"
