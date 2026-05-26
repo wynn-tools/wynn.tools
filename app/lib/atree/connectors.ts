@@ -15,7 +15,7 @@ const NODE_COLOR_BY_ICON: Record<string, string> = {
 export function nodeColor(icon: string | undefined): string {
   return (icon && NODE_COLOR_BY_ICON[icon]) || 'nodeWhite'
 }
-const NODE_CDN = 'https://cdn.wynncraft.com/nextgen/abilities/2.1/nodes'
+const NODE_CDN = 'https://cdn.wynn.tools/nextgen/abilities/2.1/nodes'
 
 // Detect rich official asset values (future enriched data):
 // - starts with "abilityTree." (strip it, use remainder as base)

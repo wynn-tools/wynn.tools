@@ -125,7 +125,7 @@ function onNodeClick(id: number, e: MouseEvent) {
           <img
             v-for="(conn, i) in connectors"
             :key="i"
-            :src="`https://cdn.wynncraft.com/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
+            :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
             class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
             :style="{
               left: `${conn.col * CELL}px`,

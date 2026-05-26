@@ -1,4 +1,4 @@
-const ICON_CDN = 'https://beta.wynnventory.com/cdn/icons'
+const ICON_CDN = 'https://cdn.wynn.tools/nextgen/itemguide/3.3'
 
 interface ItemIcon {
   format?: string
