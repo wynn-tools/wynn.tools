@@ -29,7 +29,8 @@ export default defineNuxtConfig({
   },
   fonts: {
     families: [
-      { name: 'Geist', weights: [300, 400, 500, 700], global: true },
+      { name: 'Barlow Semi Condensed', weights: [400, 500, 600, 700, 800], global: true },
+      { name: 'Figtree', weights: [300, 400, 500, 600, 700], global: true },
       { name: 'Geist Mono', weights: [400, 500], global: true },
     ],
   },

@@ -174,6 +174,7 @@ export async function loadAllFeatures(
       name: stripFormatting(c.name),
       description: stripFormatting(c.description),
       specialInfo: stripFormatting(c.specialInfo),
+      rewards: c.rewards?.map(stripFormatting),
     })),
   }
 }

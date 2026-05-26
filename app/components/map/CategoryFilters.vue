@@ -117,7 +117,7 @@ function reset() {
   <div class="pointer-events-auto absolute left-4 top-4 z-[400] hidden md:flex">
     <div
       v-if="!collapsed"
-      class="max-h-[calc(100vh-9rem)] w-64 overflow-y-auto rounded-lg bg-bg/95 p-3 shadow-xl ring-1 ring-copper/20 backdrop-blur"
+      class="max-h-[calc(100vh-9rem)] w-72 overflow-y-auto rounded-lg bg-bg/95 p-3 shadow-xl ring-1 ring-copper/20 backdrop-blur"
     >
       <header class="mb-2 flex items-center justify-between">
         <h3 class="text-sm font-semibold text-copper">
@@ -194,10 +194,6 @@ function reset() {
                 class="accent-copper"
                 @change="store.toggleCategory(item.cat.id)"
               >
-              <span
-                class="inline-block h-2 w-2 flex-shrink-0 rounded-full"
-                :style="{ background: item.cat.color }"
-              />
               <img :src="item.cat.icon" alt="" class="h-4 w-4 flex-shrink-0 object-contain">
               <span class="truncate text-muted">{{ item.cat.label }}</span>
             </label>
@@ -315,10 +311,6 @@ function reset() {
                   class="accent-copper"
                   @change="store.toggleCategory(item.cat.id)"
                 >
-                <span
-                  class="inline-block h-2 w-2 flex-shrink-0 rounded-full"
-                  :style="{ background: item.cat.color }"
-                />
                 <img :src="item.cat.icon" alt="" class="h-4 w-4 flex-shrink-0 object-contain">
                 <span class="truncate text-muted">{{ item.cat.label }}</span>
               </label>
