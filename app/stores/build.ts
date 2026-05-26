@@ -36,6 +36,7 @@ export const TOME_SLOT_TYPES: Record<number, string> = {
 
 export const useBuildStore = defineStore('build', () => {
   const rawBuild = shallowRef<RawBuild | null>(null)
+  const atreeMessage = ref<string | null>(null)
   const ctx = shallowRef<BuildContext | null>(null)
   const enc = shallowRef<EncodingConstants | null>(null)
   const weaponTypeFn = shallowRef<((id: number) => string | null) | null>(null)
@@ -212,16 +213,26 @@ export const useBuildStore = defineStore('build', () => {
     const tentative = new Map([...sel].map(x => [x, true] as [number, boolean]))
     const reachable = validateAtree(atreeNodes.value, tentative, rawBuild.value.level).reachable
     rawBuild.value = { ...rawBuild.value, activeAtree: [...reachable] }
+    atreeMessage.value = null
   }
 
   function unlockAtreeNode(id: number) {
     if (!rawBuild.value)
       return
-    rawBuild.value = {
-      ...rawBuild.value,
-      activeAtree: unlockPathTo(atreeNodes.value, rawBuild.value.activeAtree, id, rawBuild.value.level),
+    const before = new Set(rawBuild.value.activeAtree)
+    const next = unlockPathTo(atreeNodes.value, before, id, rawBuild.value.level)
+    const changed = next.length !== before.size || next.some(n => !before.has(n))
+    if (changed) {
+      rawBuild.value = { ...rawBuild.value, activeAtree: next }
+      atreeMessage.value = null
+      return
     }
+    // No path could be auto-selected — explain why so the click isn't silent.
+    const name = atreeNodes.value.find(n => n.ability.id === id)?.ability.display_name ?? `Node ${id}`
+    atreeMessage.value = before.has(id)
+      ? `"${name}" is already unlocked.`
+      : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
+  return { rawBuild, ctx, loading, error, loadFromHash, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
 })

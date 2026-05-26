@@ -150,13 +150,19 @@ describe('nodeColor', () => {
 
 describe('nodeImageUrl', () => {
   it('builds active URL ending with abilityTree.nodeYellow_active.png', () => {
-    expect(nodeImageUrl('node_1', true)).toMatch(/abilityTree\.nodeYellow_active\.png$/)
+    expect(nodeImageUrl('node_1', 'active')).toMatch(/abilityTree\.nodeYellow_active\.png$/)
   })
-  it('forward-compat: passes ultimateBoltslinger directly (no _active)', () => {
-    expect(nodeImageUrl('ultimateBoltslinger', false)).toMatch(/abilityTree\.ultimateBoltslinger\.png$/)
+  it('builds pulse URL ending with abilityTree.nodeYellow_pulse.png', () => {
+    expect(nodeImageUrl('node_1', 'pulse')).toMatch(/abilityTree\.nodeYellow_pulse\.png$/)
+  })
+  it('defaults to base (no suffix)', () => {
+    expect(nodeImageUrl('node_1')).toMatch(/abilityTree\.nodeYellow\.png$/)
+  })
+  it('forward-compat: passes ultimateBoltslinger directly (no suffix)', () => {
+    expect(nodeImageUrl('ultimateBoltslinger', 'base')).toMatch(/abilityTree\.ultimateBoltslinger\.png$/)
   })
   it('forward-compat: strips abilityTree. prefix and appends _active', () => {
-    expect(nodeImageUrl('abilityTree.nodeArcher', true)).toMatch(/abilityTree\.nodeArcher_active\.png$/)
+    expect(nodeImageUrl('abilityTree.nodeArcher', 'active')).toMatch(/abilityTree\.nodeArcher_active\.png$/)
   })
 })
 

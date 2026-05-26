@@ -22,7 +22,15 @@ const NODE_CDN = 'https://cdn.wynncraft.com/nextgen/abilities/2.1/nodes'
 // - matches ^(node|ultimate)[A-Z] e.g. "nodeWhite", "ultimateBoltslinger"
 const RICH_ASSET_RE = /^(?:node|ultimate)[A-Z]/
 
-export function nodeImageUrl(icon: string | undefined, active: boolean): string {
+export type NodeVariant = 'base' | 'active' | 'pulse'
+
+const VARIANT_SUFFIX: Record<NodeVariant, string> = {
+  base: '',
+  active: '_active',
+  pulse: '_pulse',
+}
+
+export function nodeImageUrl(icon: string | undefined, variant: NodeVariant = 'base'): string {
   let base: string
   if (icon && icon.startsWith('abilityTree.')) {
     // strip prefix, use remainder directly
@@ -35,7 +43,7 @@ export function nodeImageUrl(icon: string | undefined, active: boolean): string 
   else {
     base = nodeColor(icon)
   }
-  return `${NODE_CDN}/abilityTree.${base}${active ? '_active' : ''}.png`
+  return `${NODE_CDN}/abilityTree.${base}${VARIANT_SUFFIX[variant]}.png`
 }
 
 export interface ConnectorDirs { up: boolean, right: boolean, down: boolean, left: boolean }
