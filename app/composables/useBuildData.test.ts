@@ -85,6 +85,38 @@ describe('loadBuildContext (new CDN schema via adapters)', () => {
       .toBe((encodingConsts as { POWDER_ELEMENTS: unknown[] }).POWDER_ELEMENTS.length)
   })
 
+  it('tolerates a historical snapshot with no sets.json (empty sets)', async () => {
+    // versionId 9 → game version 2.1.0.1 → hash e4872d66 (a backfilled snapshot).
+    const HIST = 'e4872d66'
+    const histFiles: Record<string, unknown> = {
+      'versions.json': versions,
+      [`data/${HIST}/items.json`]: itemsFile,
+      [`data/${HIST}/tomes.json`]: tomesFile,
+      [`data/${HIST}/encoding_consts.json`]: encodingConsts,
+      [`data/${HIST}/atree/archer.json`]: archerAtree,
+      [`data/${HIST}/atree/warrior.json`]: warriorAtree,
+      [`data/${HIST}/atree/mage.json`]: mageAtree,
+      [`data/${HIST}/atree/assassin.json`]: assassinAtree,
+      [`data/${HIST}/atree/shaman.json`]: shamanAtree,
+      [`data/${HIST}/aspects/archer.json`]: archerAspects,
+      [`data/${HIST}/aspects/warrior.json`]: warriorAspects,
+      [`data/${HIST}/aspects/mage.json`]: mageAspects,
+      [`data/${HIST}/aspects/assassin.json`]: assassinAspects,
+      [`data/${HIST}/aspects/shaman.json`]: shamanAspects,
+      // No sets.json → fetch throws (SPA HTML fallback in production).
+    }
+    const client = {
+      fetchJson: async <T>(path: string) => {
+        if (!(path in histFiles))
+          throw new SyntaxError(`Unexpected token '<' (404 HTML for ${path})`)
+        return histFiles[path] as T
+      },
+    }
+    const data = await loadBuildContext(client, 9)
+    expect(data.ctx.sets.size).toBe(0)
+    expect(data.ctx.atreeData.Archer?.length).toBeGreaterThan(0)
+  })
+
   it('caches results per versionId (no re-fetch on second call)', async () => {
     const calls: string[] = []
     const tracking = {

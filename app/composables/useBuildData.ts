@@ -63,7 +63,9 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
     const [itemsFile, tomesFile, setsFile, enc, atreeEntries, aspectEntries] = await Promise.all([
       get<{ items: OutputItem[] }>('items.json'),
       get<{ tomes: OutputTome[] }>('tomes.json'),
-      get<Parameters<typeof adaptCdnSets>[0]>('sets.json'),
+      // sets.json is a new file absent from backfilled historical snapshots
+      // (those have no set items anyway); tolerate its absence with empty sets.
+      get<Parameters<typeof adaptCdnSets>[0]>('sets.json').catch(() => ({ sets: [] })),
       get<EncodingConstants>('encoding_consts.json'),
       Promise.all(ATREE_CLASSES.map(async ([cls, file]) =>
         [cls, await get<CdnAtreeFile>(`atree/${file}.json`)] as const)),
