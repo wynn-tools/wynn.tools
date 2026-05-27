@@ -63,35 +63,35 @@ describe('computeAtreeConnectors', () => {
     // childA vertical cell (1,4): up+down, no left/right
     const cell_1_4 = result.get('1,4')
     expect(cell_1_4).toBeDefined()
-    expect(cell_1_4!.up).toBe(true)
-    expect(cell_1_4!.down).toBe(true)
-    expect(cell_1_4!.left).toBe(false)
-    expect(cell_1_4!.right).toBe(false)
+    expect(cell_1_4!.dirs.up).toBe(true)
+    expect(cell_1_4!.dirs.down).toBe(true)
+    expect(cell_1_4!.dirs.left).toBe(false)
+    expect(cell_1_4!.dirs.right).toBe(false)
 
     // childB vertical cell (1,6): up+down
     const cell_1_6 = result.get('1,6')
     expect(cell_1_6).toBeDefined()
-    expect(cell_1_6!.up).toBe(true)
-    expect(cell_1_6!.down).toBe(true)
-    expect(cell_1_6!.left).toBe(false)
-    expect(cell_1_6!.right).toBe(false)
+    expect(cell_1_6!.dirs.up).toBe(true)
+    expect(cell_1_6!.dirs.down).toBe(true)
+    expect(cell_1_6!.dirs.left).toBe(false)
+    expect(cell_1_6!.dirs.right).toBe(false)
 
     // childB horizontal cell (0,5): left+right
     const cell_0_5 = result.get('0,5')
     expect(cell_0_5).toBeDefined()
-    expect(cell_0_5!.left).toBe(true)
-    expect(cell_0_5!.right).toBe(true)
-    expect(cell_0_5!.up).toBe(false)
-    expect(cell_0_5!.down).toBe(false)
+    expect(cell_0_5!.dirs.left).toBe(true)
+    expect(cell_0_5!.dirs.right).toBe(true)
+    expect(cell_0_5!.dirs.up).toBe(false)
+    expect(cell_0_5!.dirs.down).toBe(false)
 
     // childB corner cell (0,6): down+left
     // (parent.row=0, child.col=6); p.col=4 < c.col=6 → left
     const cell_0_6 = result.get('0,6')
     expect(cell_0_6).toBeDefined()
-    expect(cell_0_6!.down).toBe(true)
-    expect(cell_0_6!.left).toBe(true)
-    expect(cell_0_6!.up).toBe(false)
-    expect(cell_0_6!.right).toBe(false)
+    expect(cell_0_6!.dirs.down).toBe(true)
+    expect(cell_0_6!.dirs.left).toBe(true)
+    expect(cell_0_6!.dirs.up).toBe(false)
+    expect(cell_0_6!.dirs.right).toBe(false)
 
     // Total: exactly 4 connector cells
     expect(result.size).toBe(4)
@@ -114,22 +114,22 @@ describe('computeAtreeConnectors', () => {
     const result = computeAtreeConnectors([A, B, C])
 
     const cell_1_4 = result.get('1,4')
-    expect(cell_1_4?.up).toBe(true)
-    expect(cell_1_4?.down).toBe(true)
+    expect(cell_1_4?.dirs.up).toBe(true)
+    expect(cell_1_4?.dirs.down).toBe(true)
 
     const cell_1_2 = result.get('1,2')
-    expect(cell_1_2?.up).toBe(true)
-    expect(cell_1_2?.down).toBe(true)
+    expect(cell_1_2?.dirs.up).toBe(true)
+    expect(cell_1_2?.dirs.down).toBe(true)
 
     const cell_0_3 = result.get('0,3')
-    expect(cell_0_3?.left).toBe(true)
-    expect(cell_0_3?.right).toBe(true)
+    expect(cell_0_3?.dirs.left).toBe(true)
+    expect(cell_0_3?.dirs.right).toBe(true)
 
     // Corner at (0,2): down + right (p.col=4 > c.col=2)
     const cell_0_2 = result.get('0,2')
-    expect(cell_0_2?.down).toBe(true)
-    expect(cell_0_2?.right).toBe(true)
-    expect(cell_0_2?.left).toBe(false)
+    expect(cell_0_2?.dirs.down).toBe(true)
+    expect(cell_0_2?.dirs.right).toBe(true)
+    expect(cell_0_2?.dirs.left).toBe(false)
   })
 })
 

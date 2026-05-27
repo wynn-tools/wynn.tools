@@ -43,16 +43,23 @@ interface ConnectorTile {
   row: number
   col: number
   name: string
+  active: boolean
 }
 
 const connectors = computed<ConnectorTile[]>(() => {
+  const activeIds = new Set(
+    store.atreeNodes
+      .filter(n => store.isAtreeActive(n.ability.id))
+      .map(n => n.ability.id),
+  )
   const result: ConnectorTile[] = []
-  for (const [key, dirs] of computeAtreeConnectors(store.atreeNodes)) {
+  for (const [key, cell] of computeAtreeConnectors(store.atreeNodes, activeIds)) {
     const [rowStr, colStr] = key.split(',')
     result.push({
       row: Number(rowStr),
       col: Number(colStr),
-      name: connectorTileName(dirs),
+      name: connectorTileName(cell),
+      active: cell.active,
     })
   }
   return result
@@ -125,7 +132,7 @@ function onNodeClick(id: number, e: MouseEvent) {
           <img
             v-for="(conn, i) in connectors"
             :key="i"
-            :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
+            :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}${conn.active ? '_active' : ''}.png`"
             class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
             :style="{
               left: `${conn.col * CELL}px`,

@@ -47,53 +47,60 @@ export function nodeImageUrl(icon: string | undefined, variant: NodeVariant = 'b
 }
 
 export interface ConnectorDirs { up: boolean, right: boolean, down: boolean, left: boolean }
+export interface ConnectorCell { dirs: ConnectorDirs, active: boolean }
 
-export function computeAtreeConnectors(nodes: AtreeNode[]): Map<string, ConnectorDirs> {
-  const map = new Map<string, ConnectorDirs>()
-  const mark = (row: number, col: number, dir: keyof ConnectorDirs) => {
+export function computeAtreeConnectors(nodes: AtreeNode[], activeIds?: Set<number>): Map<string, ConnectorCell> {
+  const map = new Map<string, ConnectorCell>()
+  const mark = (row: number, col: number, dir: keyof ConnectorDirs, pathActive: boolean) => {
     const key = `${row},${col}`
-    let d = map.get(key)
-    if (!d) {
-      d = { up: false, right: false, down: false, left: false }
-      map.set(key, d)
+    let cell = map.get(key)
+    if (!cell) {
+      cell = { dirs: { up: false, right: false, down: false, left: false }, active: false }
+      map.set(key, cell)
     }
-    d[dir] = true
+    cell.dirs[dir] = true
+    if (pathActive)
+      cell.active = true
   }
   for (const node of nodes) {
     const c = node.ability.display as { row: number, col: number }
     for (const parent of node.parents) {
       const p = parent.ability.display as { row: number, col: number }
+      const pathActive = activeIds != null
+        && activeIds.has(node.ability.id)
+        && activeIds.has((parent as AtreeNode).ability.id)
       // vertical (in child column, between parent.row and child.row, exclusive)
       for (let row = c.row - 1; row > p.row; row--) {
-        mark(row, c.col, 'up')
-        mark(row, c.col, 'down')
+        mark(row, c.col, 'up', pathActive)
+        mark(row, c.col, 'down', pathActive)
       }
       // horizontal (in parent row, between the columns, exclusive)
       const lo = Math.min(p.col, c.col)
       const hi = Math.max(p.col, c.col)
       for (let col = lo + 1; col < hi; col++) {
-        mark(p.row, col, 'left')
-        mark(p.row, col, 'right')
+        mark(p.row, col, 'left', pathActive)
+        mark(p.row, col, 'right', pathActive)
       }
       // corner
       if (p.row !== c.row && p.col !== c.col) {
-        mark(p.row, c.col, 'down')
-        mark(p.row, c.col, p.col > c.col ? 'right' : 'left')
+        mark(p.row, c.col, 'down', pathActive)
+        mark(p.row, c.col, p.col > c.col ? 'right' : 'left', pathActive)
       }
     }
   }
   return map
 }
 
-export function connectorTileName(d: ConnectorDirs): string {
+export function connectorTileName(d: ConnectorDirs | ConnectorCell): string {
+  const dirs = 'dirs' in d ? d.dirs : d
   const parts: string[] = []
-  if (d.up)
+  if (dirs.up)
     parts.push('up')
-  if (d.right)
+  if (dirs.right)
     parts.push('right')
-  if (d.down)
+  if (dirs.down)
     parts.push('down')
-  if (d.left)
+  if (dirs.left)
     parts.push('left')
   return `connector_${parts.join('_')}`
 }
