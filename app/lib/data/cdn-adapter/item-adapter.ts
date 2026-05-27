@@ -37,6 +37,7 @@ export interface OutputItem {
   attackSpeed: string | null
   powderSlots: number
   dropRestriction: string
+  icon?: unknown
   set: string | null
   lore: NormalizedText[] | null
   majorIds: MajorId[]
@@ -74,6 +75,9 @@ export function adaptCdnItem(item: OutputItem): Record<string, unknown> {
   out.displayName = item.displayName
   out.tier = item.tier
   out.set = item.set
+  // Preserve the icon ({ format, value: { name } }) for the UI icon resolver.
+  if (item.icon !== undefined)
+    out.icon = item.icon
 
   // category: "armour" → "armor"; others unchanged
   out.category = item.type === 'armour' ? 'armor' : item.type

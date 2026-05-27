@@ -166,6 +166,11 @@ describe('adaptCdnItem — fixture items', () => {
     expect(out.tDam).toBe('160-240')
     expect(out.atkSpd).toBe('VERY_SLOW')
   })
+
+  it('preserves the icon for the UI icon resolver', () => {
+    const out = adaptCdnItem(byId[1]!)
+    expect(out.icon).toEqual(byId[1]!.icon)
+  })
 })
 
 describe('adaptCdnItem — round-trip through buildRawItemIndex', () => {
