@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
+import versions from '~/lib/data/__fixtures__/cdn/versions.json'
 import { loadBuildContext, peekVersionId } from './useBuildData'
 
-// '2.2.0.31' is at index 30 in WYNN_VERSION_NAMES
+// versionId 30 → game version '2.2.0.31' → content hash '7a3e636e' (via versions.json offset)
 const VERSION_ID_2_2_0_31 = 30
+const HASH = '7a3e636e'
 
 function mockClient(files: Record<string, unknown>) {
   return {
@@ -11,7 +13,8 @@ function mockClient(files: Record<string, unknown>) {
 }
 
 const fixtures = {
-  '2.2.0.31/items.json': {
+  'versions.json': versions,
+  [`${HASH}/items.json`]: {
     items: [
       {
         name: 'R',
@@ -24,10 +27,10 @@ const fixtures = {
     ],
     sets: {},
   },
-  '2.2.0.31/atree.json': { Shaman: [] },
-  '2.2.0.31/encoding_consts.json': { POWDER_ELEMENTS: [] },
-  '2.2.0.31/tomes.json': { tomes: [{ name: 'T', id: 5, type: 'weaponTome', mdPct: 8 }] },
-  '2.2.0.31/aspects.json': {},
+  [`${HASH}/atree.json`]: { Shaman: [] },
+  [`${HASH}/encoding_consts.json`]: { POWDER_ELEMENTS: [] },
+  [`${HASH}/tomes.json`]: { tomes: [{ name: 'T', id: 5, type: 'weaponTome', mdPct: 8 }] },
+  [`${HASH}/aspects.json`]: {},
 }
 
 describe('peekVersionId', () => {

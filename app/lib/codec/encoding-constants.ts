@@ -1,5 +1,5 @@
 import type { CdnClient } from '../data/cdn-client'
-import { WYNN_VERSION_NAMES } from './version'
+import { cdnPathFor } from '../data/cdn-adapter/version-paths'
 
 /**
  * Per-version encoding constants (the `ENC`/`DEC` object from encoding_consts.json).
@@ -8,9 +8,7 @@ import { WYNN_VERSION_NAMES } from './version'
  */
 export type EncodingConstants = Record<string, number | Record<string, number>>
 
-export async function loadEncodingConstants(client: CdnClient, versionId: number): Promise<EncodingConstants> {
-  const versionName = WYNN_VERSION_NAMES[versionId]
-  if (versionName === undefined)
-    throw new Error(`Unknown encoding version id: ${versionId}`)
-  return client.fetchJson<EncodingConstants>(`${versionName}/encoding_consts.json`)
+/** Fetch encoding constants from a resolved CDN snapshot segment (content hash). */
+export async function loadEncodingConstants(client: CdnClient, segment: string): Promise<EncodingConstants> {
+  return client.fetchJson<EncodingConstants>(cdnPathFor(segment, 'encoding_consts.json'))
 }

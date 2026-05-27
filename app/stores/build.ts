@@ -5,7 +5,7 @@ import type { EncodingConstants } from '~/lib/codec/encoding-constants'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
-import { loadBuildContext, peekVersionId } from '~/composables/useBuildData'
+import { loadBuildContext, peekVersionId, resolveLatestVersionId } from '~/composables/useBuildData'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { unlockPathTo } from '~/lib/atree/pathfind'
 import { validateAtree } from '~/lib/atree/validate'
@@ -13,7 +13,6 @@ import { computeBuild } from '~/lib/build/compute-build'
 import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
 import { decodeRawBuild, encodeRawBuild } from '~/lib/codec/build-codec'
 import { num } from '~/lib/codec/codec-util'
-import { WYNN_VERSION_LATEST } from '~/lib/codec/version'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { SKP_ORDER } from '~/lib/math/constants'
 
@@ -74,7 +73,7 @@ export const useBuildStore = defineStore('build', () => {
     loading.value = true
     error.value = null
     try {
-      const versionId = WYNN_VERSION_LATEST
+      const versionId = await resolveLatestVersionId(client)
       const loaded = await loadBuildContext(client, versionId)
       const e = loaded.enc
       ctx.value = loaded.ctx

@@ -1,36 +1,10 @@
-/** Wynncraft version names, oldest→newest. Index = encoded version id. */
-export const WYNN_VERSION_NAMES: string[] = [
-  '2.0.1.1',
-  '2.0.1.2',
-  '2.0.2.1',
-  '2.0.2.3',
-  '2.0.3.1',
-  '2.0.4.1',
-  '2.0.4.3',
-  '2.0.4.4',
-  '2.1.0.0',
-  '2.1.0.1',
-  '2.1.1.0',
-  '2.1.1.1',
-  '2.1.1.2',
-  '2.1.1.3',
-  '2.1.1.4',
-  '2.1.1.5',
-  '2.1.1.6',
-  '2.1.1.7',
-  '2.1.2.0',
-  '2.1.3.0',
-  '2.1.3.4',
-  '2.1.4.0',
-  '2.1.5.0',
-  '2.1.6.0',
-  '2.2.0.0',
-  '2.2.0.7',
-  '2.2.0.12',
-  '2.2.0.14',
-  '2.2.0.19',
-  '2.2.0.21',
-  '2.2.0.31',
-]
-
-export const WYNN_VERSION_LATEST = WYNN_VERSION_NAMES.length - 1
+/**
+ * The game version encoded as `versionId` 0 in build-share URLs (fixed anchor).
+ *
+ * `versionId` is a 0-based offset from this anchor's position in the CDN's
+ * chronologically-ordered `versions.json`. The app does not hardcode the full
+ * version list — it derives every snapshot hash from `versions.json` at runtime
+ * (see `lib/data/cdn-adapter/version-paths.ts`), so new game versions are picked
+ * up without a redeploy.
+ */
+export const ENCODING_BASE_VERSION = '2.0.1.1'
