@@ -127,3 +127,17 @@ export const REQUIREMENT_MAP: Record<string, string> = {
 }
 
 export const DAMAGE_BASE_KEYS = new Set(['nDam', 'fDam', 'wDam', 'aDam', 'tDam', 'eDam'])
+
+// New v3 snake_case tome subType → existing internal camelCase tome type.
+// XP-tome correspondence is by display-name semantics: mysticism="Gathering",
+// marathon="Slaying", expertise="Dungeoneering". type is UI-only (slot filtering),
+// not used by decode/compute.
+export const TOME_TYPE_MAP: Record<string, string> = {
+  weapon_tome: 'weaponTome',
+  armour_tome: 'armorTome',
+  guild_tome: 'guildTome',
+  lootrun_tome: 'lootrunTome',
+  mysticism_tome: 'gatherXpTome',
+  marathon_tome: 'mobXpTome',
+  expertise_tome: 'dungeonXpTome',
+}
