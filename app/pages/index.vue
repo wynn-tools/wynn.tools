@@ -93,7 +93,7 @@ const wynnicDecor = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456
   </main>
 
   <footer class="site-footer">
-    <span class="footer-note">Open source (AGPL-3.0) · Not affiliated with Wynncraft or Mojang</span>
+    <span class="footer-note"><a href="https://github.com/wynn-tools/wynn.tools" target="_blank" rel="noopener noreferrer" class="footer-link">Open source (AGPL-3.0)</a> · Not affiliated with Wynncraft or Mojang</span>
   </footer>
 </template>
 
@@ -328,6 +328,16 @@ main {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-faint);
+}
+
+.footer-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: var(--color-muted);
+  }
 }
 
 @media (max-width: 600px) {
