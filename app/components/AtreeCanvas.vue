@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from 'reka-ui'
 import { computed } from 'vue'
-import { anyDir, computeAtreeConnectors, connectorTileName, nodeImageUrl } from '~/lib/atree/connectors'
+import { anyDir, computeAtreeConnectors, connectorTileName, dirsEqual, nodeImageUrl } from '~/lib/atree/connectors'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -55,11 +55,13 @@ const connectors = computed<ConnectorTile[]>(() => {
   const result: ConnectorTile[] = []
   for (const [key, cell] of computeAtreeConnectors(store.atreeNodes, activeIds)) {
     const [rowStr, colStr] = key.split(',')
+    const hasActive = anyDir(cell.activeDirs)
+    const fullyActive = hasActive && dirsEqual(cell.dirs, cell.activeDirs)
     result.push({
       row: Number(rowStr),
       col: Number(colStr),
-      name: connectorTileName(cell.dirs),
-      activeName: anyDir(cell.activeDirs) ? connectorTileName(cell.activeDirs) : null,
+      name: fullyActive ? `${connectorTileName(cell.dirs)}_active` : connectorTileName(cell.dirs),
+      activeName: hasActive && !fullyActive ? connectorTileName(cell.activeDirs) : null,
     })
   }
   return result

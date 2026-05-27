@@ -57,6 +57,10 @@ export function anyDir(d: ConnectorDirs): boolean {
   return d.up || d.right || d.down || d.left
 }
 
+export function dirsEqual(a: ConnectorDirs, b: ConnectorDirs): boolean {
+  return a.up === b.up && a.right === b.right && a.down === b.down && a.left === b.left
+}
+
 export function computeAtreeConnectors(nodes: AtreeNode[], activeIds?: Set<number>): Map<string, ConnectorCell> {
   const map = new Map<string, ConnectorCell>()
   const mark = (row: number, col: number, dir: keyof ConnectorDirs, pathActive: boolean) => {
