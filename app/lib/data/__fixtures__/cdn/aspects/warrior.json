@@ -1,0 +1,2197 @@
+{
+  "aspects": [
+    {
+      "id": 1,
+      "name": "Aspect of Rallying Fervor",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sacred Surge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.1" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " holy powerfor every spell or ability triggered."
+            },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.25" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " holy power." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sacred Surge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.15" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " holy powerfor every spell or ability triggered."
+            },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2.0" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " holy power." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sacred Surge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.2" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " holy powerfor every spell or ability triggered."
+            },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2.5" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " holy power." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Aspect of Unquenching Flames",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Boiling Blood",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s cooldown is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "-0.6s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Boiling Blood",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s cooldown is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "-1.1s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Boiling Blood",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s cooldown is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "-1.5s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Aspect of Hyper-Perception",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Counter",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s cooldown is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "-0.25s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Counter",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s cooldown is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "-0.35s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Counter",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s cooldown is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "-0.5s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Aspect of Empowering Fantasy",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Radiance",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#ff55ff", "font": "common", "text": "" },
+            { "color": "#ff55ff", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Duration." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Radiance",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3.5s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#ff55ff", "font": "common", "text": "" },
+            { "color": "#ff55ff", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Duration." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Radiance",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4.5s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#ff55ff", "font": "common", "text": "" },
+            { "color": "#ff55ff", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Duration." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Aspect of the Anvil Drop",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Heavy Impact",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Flying Kick", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Collide",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Heavy Impact",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Flying Kick", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Collide",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.15" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Heavy Impact",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Flying Kick", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Collide",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Heavy Impact",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Flying Kick", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Collide",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Aspect of Earthshaking",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.15" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Aspect of Overflowing Hope",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sparkling Hope",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " requires " },
+            { "color": "#ffffff", "font": "ascii", "text": "-0.75% " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "healing to activate."
+            }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sparkling Hope",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " requires " },
+            { "color": "#ffffff", "font": "ascii", "text": "-1.5% " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "healing to activate."
+            }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sparkling Hope",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " requires " },
+            { "color": "#ffffff", "font": "ascii", "text": "-2% " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "healing to activate."
+            }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sparkling Hope",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " requires " },
+            { "color": "#ffffff", "font": "ascii", "text": "-2.5% " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "healing to activate."
+            }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Aspect of Steel Chords",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "War Scream",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Tempest", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "text": "and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodlust",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.25" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "War Scream",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Tempest", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "text": "and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodlust",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2.25" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "War Scream",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Tempest", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "text": "and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodlust",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3.25" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "War Scream",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "font": "ascii", "text": "Tempest", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": ", " },
+            { "text": "and" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodlust",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gain " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Aspect of the Returning Javelin",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            { "font": "ascii", "text": "Main Attack", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and " },
+            { "font": "ascii", "text": "Bloodied Armory", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            { "font": "ascii", "text": "Main Attack", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and " },
+            { "font": "ascii", "text": "Bloodied Armory", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.15" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            { "font": "ascii", "text": "Main Attack", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and " },
+            { "font": "ascii", "text": "Bloodied Armory", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            { "font": "ascii", "text": "Main Attack", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and " },
+            { "font": "ascii", "text": "Bloodied Armory", "underline": true },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Aspect of Deafening Echoes",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Tempest",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " hits delay is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "0.1s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Tempest",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " hits delay is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "0.2s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Tempest",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " hits delay is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "0.25s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Tempest",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " hits delay is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "0.3s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Aspect of Turbulence",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Cyclone",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Cyclone",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.75" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Cyclone",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2.5" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Cyclone",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Aspect of the Megaphone",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Air Shout",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.65 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Air Shout",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.15 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Air Shout",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.65 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Air Shout",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#00aaaa", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Area of Effect." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Aspect of Skyward Strikes",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.15" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.65" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Range." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Paladin's Embodiment of Undying Determination",
+      "tier": "Mythic",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Mantle of the Bovemists",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " charges." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Mantle of the Bovemists",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " charges." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sacred Surge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " spends " },
+            { "color": "#ffffff", "font": "ascii", "text": "-5 " },
+            { "color": "#55ffff", "font": "ascii", "text": "Holy Power " },
+            { "bold": true, "color": "#ffaa00", "font": "ascii", "text": "✧" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " to activate." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Mantle of the Bovemists",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " charges." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Sacred Surge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " spends " },
+            { "color": "#ffffff", "font": "ascii", "text": "-5 " },
+            { "color": "#55ffff", "font": "ascii", "text": "Holy Power " },
+            { "bold": true, "color": "#ffaa00", "font": "ascii", "text": "✧" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " to activate." }
+          ],
+          "threshold": 15
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Fallen's Embodiment of Blind Fury",
+      "tier": "Mythic",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Blood Pact",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s health cost is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "15%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Blood Pact",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s health cost is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "15%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Blood Pact",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " adds " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " to " },
+            { "color": "#ffffff", "font": "ascii", "text": "+6.65%" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " more damage when using health."
+            }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Blood Pact",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "'s health cost is reduced by "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "15%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Blood Pact",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " adds " },
+            { "color": "#ffffff", "font": "ascii", "text": "+6%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " to " },
+            { "color": "#ffffff", "font": "ascii", "text": "+10%" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " more damage when using health."
+            }
+          ],
+          "threshold": 15
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Battle Monk's Embodiment of Complete Synchrony",
+      "tier": "Mythic",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Pressure",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " is stronger." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.5x" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " as many hits." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " deals " },
+            { "color": "#ffffff", "font": "ascii", "text": "+50%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " neutral and " },
+            { "color": "#ffffff", "font": "ascii", "text": "+8%" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Damage in all Elements."
+            },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Total Damage: " },
+            { "color": "#ffffff", "font": "ascii", "text": "+90%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#ffaa00", "font": "common", "text": "" },
+            { "color": "#ffaa00", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Damage: +50%)" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#ffff55", "font": "common", "text": "" },
+            { "color": "#55ffff", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ffffff", "font": "common", "text": "" },
+            { "color": "#ffffff", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Damage: +8%)" }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Pressure",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " is stronger." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.5x" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " as many hits." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " deals " },
+            { "color": "#ffffff", "font": "ascii", "text": "+50%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " neutral and " },
+            { "color": "#ffffff", "font": "ascii", "text": "+8%" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Damage in all Elements."
+            },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Total Damage: " },
+            { "color": "#ffffff", "font": "ascii", "text": "+90%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#ffaa00", "font": "common", "text": "" },
+            { "color": "#ffaa00", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Damage: +50%)" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#ffff55", "font": "common", "text": "" },
+            { "color": "#55ffff", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ffffff", "font": "common", "text": "" },
+            { "color": "#ffffff", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Damage: +8%)" },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "War Scream",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " grants a higher damage boost."
+            },
+            { "color": "#ffff55", "font": "common", "text": "" },
+            { "color": "#ffff55", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Effect: " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Damage Bonus (" },
+            { "color": "#55ff55", "font": "ascii", "text": "⚔" },
+            { "color": "#aaaaaa", "font": "ascii", "text": ") to Players" }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Pressure",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " is stronger." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.5x" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " as many hits and more damage."
+            },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Total Damage: " },
+            { "color": "#ffffff", "font": "ascii", "text": "+5%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#ffff55", "font": "common", "text": "" },
+            { "color": "#ffff55", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Thunder: +5%)" },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Uppercut",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " deals " },
+            { "color": "#ffffff", "font": "ascii", "text": "+70%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " neutral and " },
+            { "color": "#ffffff", "font": "ascii", "text": "+10%" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Damage in all Elements."
+            },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Total Damage: " },
+            { "color": "#ffffff", "font": "ascii", "text": "+120%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#ffaa00", "font": "common", "text": "" },
+            { "color": "#ffaa00", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Damage: +70%)" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "  " },
+            { "color": "#555555", "font": "ascii", "text": "(" },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            { "color": "#ffff55", "font": "common", "text": "" },
+            { "color": "#55ffff", "font": "common", "text": "" },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            { "color": "#ffffff", "font": "common", "text": "" },
+            { "color": "#ffffff", "font": "ascii", "text": " " },
+            { "color": "#555555", "font": "ascii", "text": "Damage: +10%)" },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "War Scream",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " grants a higher damage boost."
+            },
+            { "color": "#ffff55", "font": "common", "text": "" },
+            { "color": "#ffff55", "font": "ascii", "text": " " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Effect: " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Damage Bonus (" },
+            { "color": "#55ff55", "font": "ascii", "text": "⚔" },
+            { "color": "#aaaaaa", "font": "ascii", "text": ") to Players" }
+          ],
+          "threshold": 15
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "Aspect of Seeing Stars",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Increase your maximum "
+            },
+            { "color": "#55ffff", "font": "ascii", "text": "Discombobulated " },
+            { "color": "#ffff55", "font": "ascii", "text": "⚙ " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+25" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Increase your maximum "
+            },
+            { "color": "#55ffff", "font": "ascii", "text": "Discombobulated " },
+            { "color": "#ffff55", "font": "ascii", "text": "⚙ " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+40" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Increase your maximum "
+            },
+            { "color": "#55ffff", "font": "ascii", "text": "Discombobulated " },
+            { "color": "#ffff55", "font": "ascii", "text": "⚙ " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+50" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "name": "Aspect of Rekindling",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Rejuvenating Skin",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " restores Health "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "2.5s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " faster." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Rejuvenating Skin",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " restores Health "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "4s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " faster." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Rejuvenating Skin",
+              "underline": true
+            },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " restores Health "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "5s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " faster." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "name": "Aspect of the Berserker",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Armour Breaker",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Damage Bonus (" },
+            { "color": "#ff5555", "font": "ascii", "text": "⚔" },
+            { "color": "#aaaaaa", "font": "ascii", "text": ") to Self." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Armour Breaker",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+5% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Damage Bonus (" },
+            { "color": "#ff5555", "font": "ascii", "text": "⚔" },
+            { "color": "#aaaaaa", "font": "ascii", "text": ") to Self." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Armour Breaker",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+6% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "Damage Bonus (" },
+            { "color": "#ff5555", "font": "ascii", "text": "⚔" },
+            { "color": "#aaaaaa", "font": "ascii", "text": ") to Self." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "name": "Aspect of the Tightrope Walk",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Brink of Madness",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " activates at " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " higher Health." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Brink of Madness",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " activates at " },
+            { "color": "#ffffff", "font": "ascii", "text": "+6%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " higher Health." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Brink of Madness",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " activates at " },
+            { "color": "#ffffff", "font": "ascii", "text": "+8%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " higher Health." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Aspect of Maniacal Frisson",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Exhilarate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " restores " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "of your " },
+            { "color": "#55ffff", "font": "ascii", "text": "Corrupted " },
+            { "color": "#aa0000", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " bar as max health."
+            }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Exhilarate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " restores " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "of your " },
+            { "color": "#55ffff", "font": "ascii", "text": "Corrupted " },
+            { "color": "#aa0000", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " bar as max health."
+            }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Exhilarate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " restores " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "of your " },
+            { "color": "#55ffff", "font": "ascii", "text": "Corrupted " },
+            { "color": "#aa0000", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " bar as max health."
+            }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Exhilarate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " restores " },
+            { "color": "#ffffff", "font": "ascii", "text": "+5% " },
+            { "color": "#aaaaaa", "font": "ascii", "text": "of your " },
+            { "color": "#55ffff", "font": "ascii", "text": "Corrupted " },
+            { "color": "#aa0000", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " bar as max health."
+            }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "name": "Aspect of Bovine Inspiration",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Emboldening Cry",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2% " },
+            { "color": "#55ff55", "font": "ascii", "text": "❁ " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Resistance to Allies."
+            }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Emboldening Cry",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3% " },
+            { "color": "#55ff55", "font": "ascii", "text": "❁ " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Resistance to Allies."
+            }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Emboldening Cry",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4% " },
+            { "color": "#55ff55", "font": "ascii", "text": "❁ " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Resistance to Allies."
+            }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Emboldening Cry",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+5% " },
+            { "color": "#55ff55", "font": "ascii", "text": "❁ " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Resistance to Allies."
+            }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "name": "Aspect of the Crimson Scrivener",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Increase " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodied Armory",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": "'s angle by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+13°" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Increase " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodied Armory",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": "'s angle by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+23°" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Increase " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodied Armory",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": "'s angle by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+33°" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Increase " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bloodied Armory",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": "'s angle by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+40°" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "name": "Aspect of the Enforcer",
+      "tier": "Fabled",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Increase your damage per "
+            },
+            { "color": "#55ffff", "font": "ascii", "text": "Harmony" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+0.8%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Increase your damage per "
+            },
+            { "color": "#55ffff", "font": "ascii", "text": "Harmony" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 15
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Increase your damage per "
+            },
+            { "color": "#55ffff", "font": "ascii", "text": "Harmony" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " by " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.2%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": "." }
+          ],
+          "threshold": 75
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "Aspect of the Golden Dawn",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4% " },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Damageand "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "+4% " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Range."
+            }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+6% " },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Damageand "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "+6% " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Range."
+            }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+8% " },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Damageand "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "+8% " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Range."
+            }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Luster Purge",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " grants " },
+            { "color": "#ffffff", "font": "ascii", "text": "+10% " },
+            { "color": "#ff5555", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Damageand "
+            },
+            { "color": "#ffffff", "font": "ascii", "text": "+10% " },
+            { "color": "#00aa00", "font": "common", "text": "" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack Range."
+            }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "name": "Aspect of the Humming Choir",
+      "tier": "Legendary",
+      "tiers": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Devout Union",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+1.35 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Area of Effect." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Devout Union",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2.35 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Area of Effect." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Devout Union",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+3.35 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Area of Effect." }
+          ],
+          "threshold": 30
+        },
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Devout Union",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " gains " },
+            { "color": "#ffffff", "font": "ascii", "text": "+4 " },
+            { "color": "#00aaaa", "font": "common", "text": "" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " Area of Effect." }
+          ],
+          "threshold": 150
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "name": "Warrior's Embodiment of Everlasting Perseverance",
+      "tier": "Mythic",
+      "tiers": [
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Ultimate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " charges " },
+            { "color": "#ffffff", "font": "ascii", "text": "20%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " faster." }
+          ],
+          "threshold": 1
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Ultimate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " charges " },
+            { "color": "#ffffff", "font": "ascii", "text": "20%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " faster." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Beyond Salvation",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " spawns " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " spikes." },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Zenith Stance",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " lasts " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " longer." },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Judgement",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " lasts " },
+            { "color": "#ffffff", "font": "ascii", "text": "+20%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " longer." }
+          ],
+          "threshold": 5
+        },
+        {
+          "description": [
+            { "color": "#aaaaaa", "font": "ascii", "text": "Your " },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Ultimate",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " charges " },
+            { "color": "#ffffff", "font": "ascii", "text": "25%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " faster." },
+            { "text": "\n" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Beyond Salvation",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " spawns " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " spikes." },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Zenith Stance",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " lasts " },
+            { "color": "#ffffff", "font": "ascii", "text": "+2s" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " longer." },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Judgement",
+              "underline": true
+            },
+            { "color": "#aaaaaa", "font": "ascii", "text": " lasts " },
+            { "color": "#ffffff", "font": "ascii", "text": "+20%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " longer." }
+          ],
+          "threshold": 15
+        }
+      ]
+    }
+  ]
+}

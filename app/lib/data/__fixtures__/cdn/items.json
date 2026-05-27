@@ -1,0 +1,3187 @@
+{
+  "items": [
+    {
+      "attackSpeed": null,
+      "base": { "airDefence": 150, "earthDefence": 150, "health": 3375 },
+      "displayName": "Dondasch",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.diamond"
+        }
+      },
+      "id": 0,
+      "identifications": {
+        "airDamage": { "max": 33, "min": 8, "raw": 25 },
+        "earthDamage": { "max": 33, "min": 8, "raw": 25 },
+        "fireDamage": { "max": -28, "min": -52, "raw": -40 },
+        "rawMainAttackDamage": { "max": 640, "min": 148, "raw": 492 },
+        "rawStrength": { "max": 20, "min": 20, "raw": 20 },
+        "walkSpeed": { "max": 35, "min": 8, "raw": 27 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "The sheer bond between Adamastor and Urdar has manifested itself into a physical form due to their duress. Such power is not to be abused..."
+        }
+      ],
+      "majorIds": [],
+      "name": "Dondasch",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 50,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 100,
+        "strength": 50
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Legendary",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "superSlow",
+      "base": { "airDamage": { "max": 575, "min": 525, "raw": 525 } },
+      "displayName": "Eidolon",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4232] },
+          "id": "minecraft:potion",
+          "name": "wand.basicGold"
+        }
+      },
+      "id": 1,
+      "identifications": {
+        "airDamage": { "max": 39, "min": 9, "raw": 30 },
+        "airDefence": { "max": 65, "min": 15, "raw": 50 },
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "fireDamage": { "max": -42, "min": -78, "raw": -60 },
+        "manaSteal": { "max": 13, "min": 3, "raw": 10 },
+        "rawAgility": { "max": 20, "min": 20, "raw": 20 },
+        "thunderDefence": { "max": 52, "min": 12, "raw": 40 },
+        "walkSpeed": { "max": 52, "min": 12, "raw": 40 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Eidolon",
+      "powderSlots": 5,
+      "requirements": {
+        "agility": 60,
+        "classRequirement": "mage",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 95,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "wand",
+      "tier": "Rare",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": {
+        "airDamage": { "max": 85, "min": 62, "raw": 62 },
+        "earthDamage": { "max": 85, "min": 62, "raw": 62 }
+      },
+      "displayName": "Nona",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [816] },
+          "id": "minecraft:potion",
+          "name": "dagger.earth3"
+        }
+      },
+      "id": 2,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "fireDefence": { "max": -70, "min": -130, "raw": -100 },
+        "healthRegenRaw": { "max": -216, "min": -400, "raw": -308 },
+        "rawAgility": { "max": 13, "min": 13, "raw": 13 },
+        "rawAttackSpeed": { "max": 1, "min": 1, "raw": 1 },
+        "rawMainAttackDamage": { "max": 377, "min": 87, "raw": 290 },
+        "rawSpellDamage": { "max": 117, "min": 27, "raw": 90 },
+        "walkSpeed": { "max": 33, "min": 8, "raw": 25 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Nona",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 40,
+        "classRequirement": "assassin",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 95,
+        "strength": 50
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": {
+        "airDefence": -200,
+        "earthDefence": 100,
+        "health": 3225,
+        "thunderDefence": 100
+      },
+      "displayName": "Tera",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_leggings",
+          "name": "leggings.diamond"
+        }
+      },
+      "id": 3,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "earthDamage": { "max": 47, "min": 11, "raw": 36 },
+        "lootBonus": { "max": 26, "min": 6, "raw": 20 },
+        "rawDexterity": { "max": 10, "min": 10, "raw": 10 },
+        "rawStrength": { "max": 10, "min": 10, "raw": 10 },
+        "thunderDamage": { "max": 47, "min": 11, "raw": 36 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Tera",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 50,
+        "intelligence": 0,
+        "level": 90,
+        "strength": 50
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "leggings",
+      "tier": "Legendary",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "verySlow",
+      "base": {
+        "damage": { "max": 200, "min": 120, "raw": 120 },
+        "earthDamage": { "max": 240, "min": 160, "raw": 160 },
+        "thunderDamage": { "max": 240, "min": 160, "raw": 160 }
+      },
+      "displayName": "Breakbore",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3784] },
+          "id": "minecraft:potion",
+          "name": "spear.earth3"
+        }
+      },
+      "id": 4,
+      "identifications": {
+        "airDefence": { "max": -14, "min": -26, "raw": -20 },
+        "earthMainAttackDamage": { "max": 52, "min": 12, "raw": 40 },
+        "exploding": { "max": 78, "min": 18, "raw": 60 },
+        "lootBonus": { "max": 13, "min": 3, "raw": 10 },
+        "mainAttackDamage": { "max": 52, "min": 12, "raw": 40 },
+        "mainAttackRange": { "max": 30, "min": 7, "raw": 23 },
+        "rawStrength": { "max": 13, "min": 13, "raw": 13 },
+        "waterDefence": { "max": -14, "min": -26, "raw": -20 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Breakbore",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 0,
+        "dexterity": 40,
+        "intelligence": 0,
+        "level": 90,
+        "strength": 40
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "spear",
+      "tier": "Rare",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "fireDefence": -25, "thunderDefence": -25 },
+      "displayName": "Summa",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3710] },
+          "id": "minecraft:potion",
+          "name": "ring.thunder2"
+        }
+      },
+      "id": 5,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "healthRegenRaw": { "max": -39, "min": -73, "raw": -56 },
+        "manaRegen": { "max": 8, "min": 2, "raw": 6 },
+        "rawAgility": { "max": 1, "min": 1, "raw": 1 },
+        "rawDefence": { "max": 3, "min": 3, "raw": 3 },
+        "rawDexterity": { "max": 3, "min": 3, "raw": 3 },
+        "rawStrength": { "max": 1, "min": 1, "raw": 1 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "An auxiliary power core of the powerful TERA-4M Mining robot line. It controls the robots by giving the bearer a compulsion to break new grounds and progress further without heed."
+        }
+      ],
+      "majorIds": [],
+      "name": "Summa",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 95,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "ring",
+      "tier": "Legendary",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 625 },
+      "displayName": "Back-Up Plan",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [401] },
+          "id": "minecraft:potion",
+          "name": "bracelet.fire2"
+        }
+      },
+      "id": 7,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "rawAgility": { "max": 6, "min": 6, "raw": 6 },
+        "rawDefence": { "max": 6, "min": 6, "raw": 6 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Back-up Plan",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 50,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 70,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "bracelet",
+      "tier": "Rare",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": "superSlow",
+      "base": { "damage": { "max": 1114, "min": 714, "raw": 714 } },
+      "displayName": "Helm Splitter",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3783] },
+          "id": "minecraft:potion",
+          "name": "spear.earth2"
+        }
+      },
+      "id": 8,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "lootBonus": { "max": 13, "min": 3, "raw": 10 },
+        "mainAttackDamage": { "max": 195, "min": 45, "raw": 150 },
+        "rawAttackSpeed": { "max": -1, "min": -1, "raw": -1 },
+        "rawSpellDamage": { "max": -1400, "min": -2600, "raw": -2000 },
+        "rawStrength": { "max": 20, "min": 20, "raw": 20 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "One of Skien's many deadly weapons. This warhammer, despite the massive weight of the hammerhead, was able to be swung by Skien fast enough to be a blur."
+        }
+      ],
+      "majorIds": [],
+      "name": "Helm Splitter",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 70,
+        "strength": 60
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "spear",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "slow",
+      "base": { "earthDamage": { "max": 260, "min": 150, "raw": 150 } },
+      "displayName": "Kahontsi Ohstyen",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3817] },
+          "id": "minecraft:potion",
+          "name": "spear.multi2"
+        }
+      },
+      "id": 9,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "healthRegenRaw": { "max": 155, "min": 36, "raw": 119 },
+        "lootBonus": { "max": 13, "min": 3, "raw": 10 },
+        "rawDexterity": { "max": -15, "min": -15, "raw": -15 },
+        "spellDamage": { "max": 26, "min": 6, "raw": 20 },
+        "thunderDamage": { "max": -70, "min": -130, "raw": -100 },
+        "walkSpeed": { "max": 26, "min": 6, "raw": 20 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Wielded by the chief of the Tromsian jungle's zombie tribes, the augmentable crystals within it focus natural elemental energies to intense levels."
+        }
+      ],
+      "majorIds": [],
+      "name": "Kahontsi Ohstyen",
+      "powderSlots": 4,
+      "requirements": {
+        "agility": 10,
+        "classRequirement": "warrior",
+        "defence": 10,
+        "dexterity": 0,
+        "intelligence": 10,
+        "level": 60,
+        "strength": 60
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "spear",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "earthDefence": 7, "health": 75, "waterDefence": 7 },
+      "displayName": "Durum's Serenity",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [2764] },
+          "id": "minecraft:potion",
+          "name": "necklace.earth1"
+        }
+      },
+      "id": 10,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "rawIntelligence": { "max": 5, "min": 5, "raw": 5 },
+        "rawStrength": { "max": 3, "min": 3, "raw": 3 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Carried by the Durum Protector, this small necklace holds but an ounce of the vibrance and life of the Durum Isles."
+        }
+      ],
+      "majorIds": [],
+      "name": "Durum's Serenity",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 10,
+        "level": 25,
+        "strength": 5
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "necklace",
+      "tier": "Legendary",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 105 },
+      "displayName": "Greenhoof",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [11] },
+          "id": "minecraft:leather_boots",
+          "name": "boots.pale_leather"
+        }
+      },
+      "id": 11,
+      "identifications": {
+        "earthDamage": { "max": 13, "min": 3, "raw": 10 },
+        "mainAttackDamage": { "max": 20, "min": 5, "raw": 15 },
+        "rawStrength": { "max": 7, "min": 7, "raw": 7 },
+        "walkSpeed": { "max": 16, "min": 4, "raw": 12 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Greenhoof",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 5,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 20,
+        "strength": 10
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "boots",
+      "tier": "Rare",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "airDefence": 100, "health": -275, "thunderDefence": 120 },
+      "displayName": "Shadestep",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [6] },
+          "id": "minecraft:leather_boots",
+          "name": "boots.iron"
+        }
+      },
+      "id": 14,
+      "identifications": {
+        "2ndSpellCost": { "max": -52, "min": -12, "raw": -40 },
+        "healthRegenRaw": { "max": -54, "min": -100, "raw": -77 },
+        "lifeSteal": { "max": 300, "min": 69, "raw": 231 },
+        "rawAgility": { "max": 13, "min": 13, "raw": 13 },
+        "rawMainAttackDamage": { "max": 300, "min": 69, "raw": 231 },
+        "reflection": { "max": 65, "min": 15, "raw": 50 },
+        "thorns": { "max": 39, "min": 9, "raw": 30 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Shadestep",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 60,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 30,
+        "intelligence": 0,
+        "level": 70,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "boots",
+      "tier": "Legendary",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "slow",
+      "base": {
+        "airDamage": { "max": 160, "min": 60, "raw": 60 },
+        "damage": { "max": 50, "min": 20, "raw": 20 },
+        "fireDamage": { "max": 120, "min": 100, "raw": 100 },
+        "thunderDamage": { "max": 200, "min": 10, "raw": 10 }
+      },
+      "displayName": "Blade of Shade",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [822] },
+          "id": "minecraft:potion",
+          "name": "dagger.fire1"
+        }
+      },
+      "id": 17,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "lifeSteal": { "max": 358, "min": 83, "raw": 275 },
+        "mainAttackRange": { "max": 100, "min": 23, "raw": 77 },
+        "manaSteal": { "max": 13, "min": 3, "raw": 10 },
+        "rawHealth": { "max": -315, "min": -585, "raw": -450 },
+        "spellDamage": { "max": 26, "min": 6, "raw": 20 },
+        "walkSpeed": { "max": 26, "min": 6, "raw": 20 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "The fabled weapon of the titular dark Assassin, the blade's small stature hides its true powers. Shadows undulate about the hilt."
+        }
+      ],
+      "majorIds": [],
+      "name": "Blade of Shade",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 25,
+        "classRequirement": "assassin",
+        "defence": 25,
+        "dexterity": 25,
+        "intelligence": 0,
+        "level": 70,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": null,
+      "displayName": "Purification Bead",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [2762] },
+          "id": "minecraft:potion",
+          "name": "necklace.basicIron"
+        }
+      },
+      "id": 18,
+      "identifications": {
+        "healthRegen": { "max": 5, "min": 1, "raw": 4 },
+        "healthRegenRaw": { "max": 64, "min": 15, "raw": 49 },
+        "rawDefence": { "max": 5, "min": 5, "raw": 5 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Purification Bead",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 20,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 55,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "necklace",
+      "tier": "Rare",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": "superSlow",
+      "base": { "damage": { "max": 578, "min": 577, "raw": 577 } },
+      "displayName": "Deadeye",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [334] },
+          "id": "minecraft:potion",
+          "name": "bow.fire1"
+        }
+      },
+      "id": 19,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "damage": { "max": 23, "min": 5, "raw": 18 },
+        "knockback": { "max": -24, "min": -45, "raw": -35 },
+        "mainAttackRange": { "max": 52, "min": 12, "raw": 40 },
+        "raw1stSpellCost": { "max": -1, "min": -1, "raw": -1 },
+        "rawDexterity": { "max": 10, "min": 10, "raw": 10 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "The weapon of the fearsome lone bandit, Rymek Luke, it is unique in that it is designed to fire small metal rounds instead of more traditional projectiles."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Arrow Storm becomes a single stream of 6 high-powered arrows that deal "
+            },
+            { "color": "#ffaa00", "font": "common", "text": "\ue005" },
+            { "color": "#ffaa00", "font": "ascii", "text": "90%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": " and " },
+            { "color": "#ffff55", "font": "common", "text": "\ue003" },
+            { "color": "#ffff55", "font": "ascii", "text": "35%" },
+            { "color": "#aaaaaa", "font": "ascii", "text": ". " }
+          ],
+          "name": "Fan the Hammer"
+        }
+      ],
+      "name": "Deadeye",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "archer",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 45,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "bow",
+      "tier": "Fabled",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": {
+        "airDefence": 70,
+        "earthDefence": 70,
+        "fireDefence": 10,
+        "health": 925,
+        "thunderDefence": 10,
+        "waterDefence": 10
+      },
+      "displayName": "Plague Mask",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4] },
+          "id": "minecraft:leather_helmet",
+          "name": "helmet.chainmail"
+        }
+      },
+      "id": 20,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "damage": { "max": -10, "min": -19, "raw": -15 },
+        "healthRegenRaw": { "max": 118, "min": 27, "raw": 91 },
+        "lifeSteal": { "max": 120, "min": 28, "raw": 92 },
+        "poison": { "max": 2340, "min": 540, "raw": 1800 },
+        "rawDefence": { "max": 7, "min": 7, "raw": 7 },
+        "walkSpeed": { "max": -10, "min": -19, "raw": -15 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Plague Mask",
+      "powderSlots": 4,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 55,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "helmet",
+      "tier": "Legendary",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": { "damage": { "max": 1, "min": 0, "raw": 0 } },
+      "displayName": "Plague Staff",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4232] },
+          "id": "minecraft:potion",
+          "name": "wand.basicGold"
+        }
+      },
+      "id": 21,
+      "identifications": {
+        "healthRegenRaw": { "max": 218, "min": 50, "raw": 168 },
+        "manaRegen": { "max": 12, "min": 3, "raw": 9 },
+        "poison": { "max": 5850, "min": 1350, "raw": 4500 },
+        "rawIntelligence": { "max": 20, "min": 20, "raw": 20 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Carried by the Olux Plague Doctor, this simple-looking stick subtly oozes with an unidentifiable substance that is invigorating to the holder, and lethally venomous to anything else."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Poisoned mobs spread their poison to nearby mobs."
+            }
+          ],
+          "name": "Plague"
+        }
+      ],
+      "name": "Plague Staff",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "mage",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 50,
+        "level": 60,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "wand",
+      "tier": "Fabled",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "slow",
+      "base": { "damage": { "max": 100, "min": 60, "raw": 60 } },
+      "displayName": "Crossbolt",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [326] },
+          "id": "minecraft:potion",
+          "name": "bow.earth1"
+        }
+      },
+      "id": 22,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 78, "min": 18, "raw": 60 },
+        "rawSpellDamage": { "max": -17, "min": -32, "raw": -25 },
+        "walkSpeed": { "max": -7, "min": -13, "raw": -10 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Crossbolt",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "archer",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 25,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "bow",
+      "tier": "Rare",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "fireDefence": 25, "health": 425 },
+      "displayName": "Redrock Bandanna",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [7] },
+          "id": "minecraft:leather_helmet",
+          "name": "helmet.gold"
+        }
+      },
+      "id": 23,
+      "identifications": {
+        "combatExperience": { "max": 14, "min": 3, "raw": 11 },
+        "fireDamage": { "max": 20, "min": 5, "raw": 15 },
+        "fireDefence": { "max": 25, "min": 6, "raw": 19 },
+        "healthRegenRaw": { "max": 42, "min": 10, "raw": 32 },
+        "knockback": { "max": 25, "min": 6, "raw": 19 },
+        "rawStrength": { "max": 9, "min": 9, "raw": 9 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Redrock Bandanna",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 30,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 40,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "helmet",
+      "tier": "Rare",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "normal",
+      "base": {
+        "damage": { "max": 50, "min": 30, "raw": 30 },
+        "earthDamage": { "max": 35, "min": 15, "raw": 15 },
+        "fireDamage": { "max": 40, "min": 10, "raw": 10 },
+        "thunderDamage": { "max": 45, "min": 5, "raw": 5 },
+        "waterDamage": { "max": 30, "min": 20, "raw": 20 }
+      },
+      "displayName": "Stave of the Legends",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4291] },
+          "id": "minecraft:potion",
+          "name": "wand.multi3"
+        }
+      },
+      "id": 26,
+      "identifications": {
+        "earthDefence": { "max": 33, "min": 8, "raw": 25 },
+        "fireDefence": { "max": 33, "min": 8, "raw": 25 },
+        "manaRegen": { "max": 16, "min": 4, "raw": 12 },
+        "rawDefence": { "max": 8, "min": 8, "raw": 8 },
+        "rawDexterity": { "max": 8, "min": 8, "raw": 8 },
+        "rawIntelligence": { "max": 8, "min": 8, "raw": 8 },
+        "rawStrength": { "max": 8, "min": 8, "raw": 8 },
+        "spellDamage": { "max": 26, "min": 6, "raw": 20 },
+        "thunderDefence": { "max": 33, "min": 8, "raw": 25 },
+        "waterDefence": { "max": 33, "min": 8, "raw": 25 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Crafted exclusively by the Temple of the Legends' mages, this stave is honorary to Mages who best the Temple's Grand Magus."
+        }
+      ],
+      "majorIds": [],
+      "name": "Stave of the Legends",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "mage",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 70,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "wand",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": {
+        "airDefence": 50,
+        "health": 525,
+        "thunderDefence": 50,
+        "waterDefence": -60
+      },
+      "displayName": "Shackles of the Beast",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4] },
+          "id": "minecraft:leather_leggings",
+          "name": "leggings.chainmail"
+        }
+      },
+      "id": 30,
+      "identifications": {
+        "exploding": { "max": 26, "min": 6, "raw": 20 },
+        "mainAttackDamage": { "max": 33, "min": 8, "raw": 25 },
+        "manaRegen": { "max": -4, "min": -8, "raw": -6 },
+        "rawDefence": { "max": 7, "min": 7, "raw": 7 },
+        "rawHealth": { "max": 683, "min": 158, "raw": 525 },
+        "rawStrength": { "max": 7, "min": 7, "raw": 7 },
+        "spellDamage": { "max": -7, "min": -13, "raw": -10 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Shackles of the Beast",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 20,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 45,
+        "strength": 10
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "leggings",
+      "tier": "Rare",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "thunderDefence": 25 },
+      "displayName": "Binding Brace",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [397] },
+          "id": "minecraft:potion",
+          "name": "bracelet.basicIron"
+        }
+      },
+      "id": 32,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "manaSteal": { "max": -3, "min": -5, "raw": -4 },
+        "rawDexterity": { "max": 6, "min": 6, "raw": 6 },
+        "spellDamage": { "max": -3, "min": -5, "raw": -4 },
+        "thunderDamage": { "max": 13, "min": 3, "raw": 10 },
+        "walkSpeed": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "An oppressively dark aura emanates from this shackle, dampening both the will and magic potency of those that wear it."
+        }
+      ],
+      "majorIds": [],
+      "name": "Binding Brace",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 25,
+        "intelligence": 0,
+        "level": 50,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "bracelet",
+      "tier": "Legendary",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": "slow",
+      "base": { "damage": { "max": 540, "min": 380, "raw": 380 } },
+      "displayName": "Lower",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3609] },
+          "id": "minecraft:potion",
+          "name": "relik.basicWood"
+        }
+      },
+      "id": 35,
+      "identifications": {
+        "raw1stSpellCost": { "max": 14, "min": 26, "raw": 20 },
+        "raw2ndSpellCost": { "max": -19, "min": -4, "raw": -15 },
+        "raw3rdSpellCost": { "max": -19, "min": -4, "raw": -15 },
+        "raw4thSpellCost": { "max": -19, "min": -4, "raw": -15 },
+        "rawStrength": { "max": 10, "min": 10, "raw": 10 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "The name has got to be misspelled... It doesn't even make any sense! "
+        }
+      ],
+      "majorIds": [],
+      "name": "Lower",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "shaman",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 99,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "relik",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "superSlow",
+      "base": { "damage": { "max": 1555, "min": 1200, "raw": 1200 } },
+      "displayName": "Stinger",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [382] },
+          "id": "minecraft:potion",
+          "name": "bow.thunder3"
+        }
+      },
+      "id": 38,
+      "identifications": {
+        "exploding": { "max": 39, "min": 9, "raw": 30 },
+        "healthRegenRaw": { "max": -294, "min": -546, "raw": -420 },
+        "lifeSteal": { "max": 956, "min": 221, "raw": 735 },
+        "manaSteal": { "max": -3, "min": -5, "raw": -4 },
+        "poison": { "max": 13000, "min": 3000, "raw": 10000 },
+        "rawAttackSpeed": { "max": -99, "min": -99, "raw": -99 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "If it weren't for that stray mark, this would be spelled correctly..."
+        }
+      ],
+      "majorIds": [],
+      "name": "Stinger",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "archer",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 99,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "bow",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 22 },
+      "displayName": "Abandoned Tunic",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [11] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.pale_leather"
+        }
+      },
+      "id": 39,
+      "identifications": {
+        "lootBonus": { "max": 7, "min": 2, "raw": 5 },
+        "rawMaxMana": { "max": 20, "min": 5, "raw": 15 },
+        "spellDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Abandoned Tunic",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 6,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Unique",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "normal",
+      "base": {
+        "thunderDamage": { "max": 85, "min": 25, "raw": 25 },
+        "waterDamage": { "max": 60, "min": 30, "raw": 30 }
+      },
+      "displayName": "Absorption",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3847] },
+          "id": "minecraft:potion",
+          "name": "spear.water2"
+        }
+      },
+      "id": 41,
+      "identifications": {
+        "combatExperience": { "max": 20, "min": 5, "raw": 15 },
+        "healthRegen": { "max": -17, "min": -32, "raw": -25 },
+        "manaRegen": { "max": 8, "min": 2, "raw": 6 },
+        "manaSteal": { "max": 12, "min": 3, "raw": 9 },
+        "rawThunderSpellDamage": { "max": 92, "min": 21, "raw": 71 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Absorption",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 0,
+        "dexterity": 25,
+        "intelligence": 15,
+        "level": 57,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "spear",
+      "tier": "Unique",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": -250, "waterDefence": -30 },
+      "displayName": "Acid",
+      "dropRestriction": "lootchest",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3704] },
+          "id": "minecraft:potion",
+          "name": "ring.earth2"
+        }
+      },
+      "id": 43,
+      "identifications": {
+        "poison": { "max": 4225, "min": 975, "raw": 3250 },
+        "rawDefence": { "max": -2, "min": -2, "raw": -2 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Acid",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 99,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "ring",
+      "tier": "Unique",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": {
+        "airDefence": -80,
+        "fireDefence": 80,
+        "health": 1625,
+        "thunderDefence": 80,
+        "waterDefence": -100
+      },
+      "displayName": "Abyssal Walkers",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [6] },
+          "id": "minecraft:leather_boots",
+          "name": "boots.iron"
+        }
+      },
+      "id": 46,
+      "identifications": {
+        "earthDamage": { "max": -6, "min": -10, "raw": -8 },
+        "fireDamage": { "max": 21, "min": 5, "raw": 16 },
+        "lifeSteal": { "max": 169, "min": 39, "raw": 130 },
+        "poison": { "max": 1820, "min": 420, "raw": 1400 },
+        "rawDexterity": { "max": 7, "min": 7, "raw": 7 },
+        "thunderDamage": { "max": 23, "min": 5, "raw": 18 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Abyssal Walkers",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 25,
+        "dexterity": 25,
+        "intelligence": 0,
+        "level": 71,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "boots",
+      "tier": "Unique",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 170, "thunderDefence": -10, "waterDefence": -10 },
+      "displayName": "Admiral's Aegis",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [7] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.gold"
+        }
+      },
+      "id": 52,
+      "identifications": {
+        "combatExperience": { "max": 9, "min": 2, "raw": 7 },
+        "healthRegenRaw": { "max": 14, "min": 3, "raw": 11 },
+        "rawDefence": { "max": 8, "min": 8, "raw": 8 },
+        "walkSpeed": { "max": -4, "min": -8, "raw": -6 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Admiral's Aegis",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 15,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 21,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Rare",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "veryFast",
+      "base": {
+        "damage": { "max": 33, "min": 22, "raw": 22 },
+        "waterDamage": { "max": 92, "min": 70, "raw": 70 }
+      },
+      "displayName": "Adrift",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3693] },
+          "id": "minecraft:potion",
+          "name": "relik.water2"
+        }
+      },
+      "id": 53,
+      "identifications": {
+        "airDefence": { "max": 20, "min": 5, "raw": 15 },
+        "mainAttackDamage": { "max": -10, "min": -19, "raw": -15 },
+        "manaRegen": { "max": 18, "min": 4, "raw": 14 },
+        "reflection": { "max": 39, "min": 9, "raw": 30 },
+        "thunderDefence": { "max": 20, "min": 5, "raw": 15 },
+        "waterDefence": { "max": 52, "min": 12, "raw": 40 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Adrift",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "shaman",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 25,
+        "level": 63,
+        "strength": 0
+      },
+      "restriction": null,
+      "set": null,
+      "subType": "relik",
+      "tier": "Unique",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "normal",
+      "base": {
+        "fireDamage": { "max": 121, "min": 80, "raw": 80 },
+        "waterDamage": { "max": 162, "min": 110, "raw": 110 }
+      },
+      "displayName": "Aeolipile",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [391] },
+          "id": "minecraft:potion",
+          "name": "bow.water3"
+        }
+      },
+      "id": 54,
+      "identifications": {
+        "airDefence": { "max": 39, "min": 9, "raw": 30 },
+        "fireDefence": { "max": 52, "min": 12, "raw": 40 },
+        "mainAttackDamage": { "max": -7, "min": -13, "raw": -10 },
+        "manaRegen": { "max": 12, "min": 3, "raw": 9 },
+        "rawIntelligence": { "max": 9, "min": 9, "raw": 9 },
+        "spellDamage": { "max": 13, "min": 3, "raw": 10 },
+        "waterDefence": { "max": 52, "min": 12, "raw": 40 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Aeolipile",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "archer",
+        "defence": 35,
+        "dexterity": 0,
+        "intelligence": 35,
+        "level": 89,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "bow",
+      "tier": "Unique",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "fireDefence": -30, "health": 230 },
+      "displayName": "Aeolus",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4] },
+          "id": "minecraft:leather_helmet",
+          "name": "helmet.chainmail"
+        }
+      },
+      "id": 55,
+      "identifications": {
+        "airDamage": { "max": 18, "min": 4, "raw": 14 },
+        "combatExperience": { "max": 20, "min": 5, "raw": 15 },
+        "fireDefence": { "max": -10, "min": -19, "raw": -15 },
+        "jumpHeight": { "max": 1, "min": 1, "raw": 1 },
+        "rawDefence": { "max": -7, "min": -7, "raw": -7 },
+        "walkSpeed": { "max": 22, "min": 5, "raw": 17 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Aeolus",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 25,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 41,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "helmet",
+      "tier": "Unique",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "veryFast",
+      "base": {
+        "airDamage": { "max": 125, "min": 50, "raw": 50 },
+        "damage": { "max": 92, "min": 10, "raw": 10 }
+      },
+      "displayName": "Aerosol",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [783] },
+          "id": "minecraft:potion",
+          "name": "dagger.air3"
+        }
+      },
+      "id": 58,
+      "identifications": {
+        "4thSpellCost": { "max": -18, "min": -4, "raw": -14 },
+        "airDamage": { "max": 18, "min": 4, "raw": 14 },
+        "fireDefence": { "max": -21, "min": -39, "raw": -30 },
+        "rawAgility": { "max": 8, "min": 8, "raw": 8 },
+        "rawAttackSpeed": { "max": 3, "min": 3, "raw": 3 },
+        "rawDefence": { "max": -6, "min": -6, "raw": -6 },
+        "rawMainAttackDamage": { "max": 135, "min": 31, "raw": 104 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Aerosol",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 40,
+        "classRequirement": "assassin",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 86,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Unique",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "fast",
+      "base": {
+        "airDamage": { "max": 85, "min": 0, "raw": 0 },
+        "damage": { "max": 20, "min": 10, "raw": 10 },
+        "thunderDamage": { "max": 85, "min": 0, "raw": 0 }
+      },
+      "displayName": "Aether",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4223] },
+          "id": "minecraft:potion",
+          "name": "wand.air2"
+        }
+      },
+      "id": 61,
+      "identifications": {
+        "airDamage": { "max": 22, "min": 5, "raw": 17 },
+        "fireDefence": { "max": -10, "min": -19, "raw": -15 },
+        "rawAgility": { "max": 5, "min": 5, "raw": 5 },
+        "rawDamage": { "max": 104, "min": 24, "raw": 80 },
+        "rawDexterity": { "max": 5, "min": 5, "raw": 5 },
+        "thunderDamage": { "max": 22, "min": 5, "raw": 17 },
+        "walkSpeed": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Aether",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 25,
+        "classRequirement": "mage",
+        "defence": 0,
+        "dexterity": 25,
+        "intelligence": 0,
+        "level": 72,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "wand",
+      "tier": "Unique",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": {
+        "damage": { "max": 105, "min": 24, "raw": 24 },
+        "thunderDamage": { "max": 70, "min": 12, "raw": 12 }
+      },
+      "displayName": "Agitation",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [824] },
+          "id": "minecraft:potion",
+          "name": "dagger.fire3"
+        }
+      },
+      "id": 66,
+      "identifications": {
+        "exploding": { "max": 25, "min": 6, "raw": 19 },
+        "healthRegenRaw": { "max": -69, "min": -127, "raw": -98 },
+        "rawThunderMainAttackDamage": { "max": 200, "min": 46, "raw": 154 },
+        "thunderDamage": { "max": 40, "min": 9, "raw": 31 },
+        "thunderDefence": { "max": -38, "min": -71, "raw": -55 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Agitation",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "assassin",
+        "defence": 0,
+        "dexterity": 50,
+        "intelligence": 0,
+        "level": 80,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Rare",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "fireDefence": 4, "waterDefence": 4 },
+      "displayName": "Amethyst Ring",
+      "dropRestriction": "lootchest",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3701] },
+          "id": "minecraft:potion",
+          "name": "ring.basicPearl"
+        }
+      },
+      "id": 98,
+      "identifications": {
+        "healthRegenRaw": { "max": 22, "min": 5, "raw": 17 },
+        "rawIntelligence": { "max": 3, "min": 3, "raw": 3 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Amethyst Ring",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 10,
+        "dexterity": 0,
+        "intelligence": 5,
+        "level": 36,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "ring",
+      "tier": "Rare",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": -350 },
+      "displayName": "Anarchy",
+      "dropRestriction": "lootchest",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [403] },
+          "id": "minecraft:potion",
+          "name": "bracelet.multi2"
+        }
+      },
+      "id": 108,
+      "identifications": {
+        "elementalDefence": { "max": -14, "min": -26, "raw": -20 },
+        "exploding": { "max": 10, "min": 2, "raw": 8 },
+        "lifeSteal": { "max": 65, "min": 15, "raw": 50 },
+        "manaSteal": { "max": 5, "min": 1, "raw": 4 },
+        "rawMainAttackDamage": { "max": 59, "min": 14, "raw": 45 },
+        "rawSpellDamage": { "max": 46, "min": 11, "raw": 35 }
+      },
+      "lore": [
+        { "text": "\n\n This item was named by someone from the community!" }
+      ],
+      "majorIds": [],
+      "name": "Anarchy",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 15,
+        "classRequirement": null,
+        "defence": 15,
+        "dexterity": 15,
+        "intelligence": 15,
+        "level": 70,
+        "strength": 15
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "bracelet",
+      "tier": "Unique",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 1100, "waterDefence": -30 },
+      "displayName": "Aneurysm",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4] },
+          "id": "minecraft:leather_leggings",
+          "name": "leggings.chainmail"
+        }
+      },
+      "id": 112,
+      "identifications": {
+        "earthDamage": { "max": 26, "min": 6, "raw": 20 },
+        "healingEfficiency": { "max": -6, "min": -12, "raw": -9 },
+        "healthRegen": { "max": -10, "min": -19, "raw": -15 },
+        "lifeSteal": { "max": -122, "min": -227, "raw": -175 },
+        "rawMainAttackDamage": { "max": 182, "min": 42, "raw": 140 },
+        "rawSpellDamage": { "max": 104, "min": 24, "raw": 80 },
+        "thunderDamage": { "max": 26, "min": 6, "raw": 20 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Aneurysm",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 30,
+        "intelligence": 0,
+        "level": 64,
+        "strength": 30
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "leggings",
+      "tier": "Unique",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "superSlow",
+      "base": {
+        "damage": { "max": 166, "min": 133, "raw": 133 },
+        "earthDamage": { "max": 666, "min": 666, "raw": 666 },
+        "thunderDamage": { "max": 960, "min": 360, "raw": 360 }
+      },
+      "displayName": "Animosity",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [793] },
+          "id": "minecraft:potion",
+          "name": "dagger.basicWood"
+        }
+      },
+      "id": 118,
+      "identifications": {
+        "elementalMainAttackDamage": { "max": 36, "min": 8, "raw": 28 },
+        "knockback": { "max": 36, "min": 8, "raw": 28 },
+        "lifeSteal": { "max": 696, "min": 161, "raw": 535 },
+        "manaRegen": { "max": -14, "min": -26, "raw": -20 },
+        "rawAttackSpeed": { "max": -96, "min": -96, "raw": -96 },
+        "walkSpeed": { "max": -16, "min": -30, "raw": -23 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Let its whispers guide your hand, and let nothing but a scar of resentment remain."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Violent Vortex applies 2 marks to every enemy it hits."
+            }
+          ],
+          "name": "Hurricane's Eye"
+        }
+      ],
+      "name": "Animosity",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "assassin",
+        "defence": 0,
+        "dexterity": 63,
+        "intelligence": 0,
+        "level": 103,
+        "strength": 63
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Fabled",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": null,
+      "displayName": "Antim",
+      "dropRestriction": "lootchest",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [2762] },
+          "id": "minecraft:potion",
+          "name": "necklace.basicIron"
+        }
+      },
+      "id": 121,
+      "identifications": {
+        "healthRegenRaw": { "max": 164, "min": 38, "raw": 126 },
+        "rawMainAttackDamage": { "max": 78, "min": 18, "raw": 60 },
+        "rawSpellDamage": { "max": 60, "min": 14, "raw": 46 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Antim",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 99,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "necklace",
+      "tier": "Unique",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": { "thunderDamage": { "max": 182, "min": 122, "raw": 122 } },
+      "displayName": "Arkhalis",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3685] },
+          "id": "minecraft:potion",
+          "name": "relik.thunder3"
+        }
+      },
+      "id": 145,
+      "identifications": {
+        "earthDefence": { "max": -21, "min": -39, "raw": -30 },
+        "manaSteal": { "max": 10, "min": 2, "raw": 8 },
+        "rawDexterity": { "max": 15, "min": 15, "raw": 15 },
+        "rawHealth": { "max": -945, "min": -1755, "raw": -1350 },
+        "rawMainAttackDamage": { "max": 585, "min": 135, "raw": 450 },
+        "rawStrength": { "max": -15, "min": -15, "raw": -15 },
+        "thunderDamage": { "max": 20, "min": 5, "raw": 15 },
+        "walkSpeed": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Arkhalis",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "shaman",
+        "defence": 0,
+        "dexterity": 60,
+        "intelligence": 0,
+        "level": 98,
+        "strength": 0
+      },
+      "restriction": null,
+      "set": null,
+      "subType": "relik",
+      "tier": "Rare",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 73 },
+      "displayName": "Average Golden Boots",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [7] },
+          "id": "minecraft:leather_boots",
+          "name": "boots.gold"
+        }
+      },
+      "id": 172,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Average Golden Boots",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 23,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "boots",
+      "tier": "Normal",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 112 },
+      "displayName": "Average Golden Chestplate",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [7] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.gold"
+        }
+      },
+      "id": 174,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Average Golden Chestplate",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 27,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Normal",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 86 },
+      "displayName": "Average Golden Leggings",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [7] },
+          "id": "minecraft:leather_leggings",
+          "name": "leggings.gold"
+        }
+      },
+      "id": 176,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Average Golden Leggings",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 25,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "leggings",
+      "tier": "Normal",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 71 },
+      "displayName": "Average Golden Helmet",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [7] },
+          "id": "minecraft:leather_helmet",
+          "name": "helmet.gold"
+        }
+      },
+      "id": 177,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Average Golden Helmet",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 21,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "helmet",
+      "tier": "Normal",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "verySlow",
+      "base": { "damage": { "max": 32, "min": 25, "raw": 25 } },
+      "displayName": "Andesite-Hewn Bow",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [304] },
+          "id": "minecraft:potion",
+          "name": "bow.basicWood"
+        }
+      },
+      "id": 202,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Andesite-hewn Bow",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "archer",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 8,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "bow",
+      "tier": "Normal",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "slow",
+      "base": { "damage": { "max": 22, "min": 18, "raw": 18 } },
+      "displayName": "Andesite-Hewn Relik",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3609] },
+          "id": "minecraft:potion",
+          "name": "relik.basicWood"
+        }
+      },
+      "id": 204,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Andesite-hewn Relik",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "shaman",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 8,
+        "strength": 0
+      },
+      "restriction": null,
+      "set": null,
+      "subType": "relik",
+      "tier": "Normal",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "normal",
+      "base": { "damage": { "max": 14, "min": 8, "raw": 8 } },
+      "displayName": "Andesite-Hewn Dagger",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [793] },
+          "id": "minecraft:potion",
+          "name": "dagger.basicWood"
+        }
+      },
+      "id": 205,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Andesite-hewn Shears",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "assassin",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 8,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Normal",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "slow",
+      "base": { "damage": { "max": 11, "min": 7, "raw": 7 } },
+      "displayName": "Andesite-Hewn Wand",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4233] },
+          "id": "minecraft:potion",
+          "name": "wand.basicWood"
+        }
+      },
+      "id": 206,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Andesite-hewn Stick",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "mage",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 8,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "wand",
+      "tier": "Normal",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "verySlow",
+      "base": { "damage": { "max": 25, "min": 19, "raw": 19 } },
+      "displayName": "Andesite-Hewn Spear",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3760] },
+          "id": "minecraft:potion",
+          "name": "spear.basicWood"
+        }
+      },
+      "id": 209,
+      "identifications": {},
+      "lore": null,
+      "majorIds": [],
+      "name": "Andesite-hewn Spear",
+      "powderSlots": 1,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 8,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "spear",
+      "tier": "Normal",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 3725, "thunderDefence": -300 },
+      "displayName": "Blind Thrust",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_boots",
+          "name": "boots.diamond"
+        }
+      },
+      "id": 388,
+      "identifications": {
+        "earthDamage": { "max": 40, "min": 9, "raw": 31 },
+        "earthMainAttackDamage": { "max": 40, "min": 9, "raw": 31 },
+        "manaSteal": { "max": 10, "min": 2, "raw": 8 },
+        "rawAttackSpeed": { "max": -10, "min": -10, "raw": -10 },
+        "rawMainAttackDamage": { "max": 2080, "min": 480, "raw": 1600 },
+        "rawStrength": { "max": 10, "min": 10, "raw": 10 }
+      },
+      "lore": null,
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Exploding gives an additional chance to deal "
+            },
+            { "color": "#ffaa00", "font": "common", "text": "\ue005" },
+            { "color": "#ffaa00", "font": "ascii", "text": "300%" },
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": " Main Attack damage in a radius of 5 blocks upon killing an enemy."
+            }
+          ],
+          "name": "Explosive Impact"
+        }
+      ],
+      "name": "Blind Thrust",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 90,
+        "strength": 95
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "boots",
+      "tier": "Fabled",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": {
+        "airDamage": { "max": 85, "min": 25, "raw": 25 },
+        "damage": { "max": 25, "min": 15, "raw": 15 },
+        "fireDamage": { "max": 65, "min": 45, "raw": 45 }
+      },
+      "displayName": "The Exploited",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [783] },
+          "id": "minecraft:potion",
+          "name": "dagger.air3"
+        }
+      },
+      "id": 779,
+      "identifications": {
+        "raw4thSpellCost": { "max": -15, "min": -15, "raw": -15 },
+        "rawFireMainAttackDamage": { "max": 550, "min": 550, "raw": 550 },
+        "spellDamage": { "max": -25, "min": -25, "raw": -25 },
+        "stealing": { "max": 10, "min": 10, "raw": 10 },
+        "walkSpeed": { "max": 15, "min": 15, "raw": 15 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "\"They tear the earth open day after day after day, ripping out her most precious and vital stones, and dumping them into the abyss of their hungry, bottomless coffers. They would sell out the world for a bit of cash; after all, these stones bleed green.\""
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Picking up emeralds heals you and nearby players for 8% max health."
+            }
+          ],
+          "name": "Greed"
+        }
+      ],
+      "name": "The Exploited",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 45,
+        "classRequirement": "assassin",
+        "defence": 60,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 100,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "verySlow",
+      "base": {
+        "damage": { "max": 140, "min": 80, "raw": 80 },
+        "earthDamage": { "max": 130, "min": 110, "raw": 110 }
+      },
+      "displayName": "Fissure",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3783] },
+          "id": "minecraft:potion",
+          "name": "spear.earth2"
+        }
+      },
+      "id": 1061,
+      "identifications": {
+        "airDefence": { "max": -10, "min": -19, "raw": -15 },
+        "earthDamage": { "max": 26, "min": 6, "raw": 20 },
+        "earthMainAttackDamage": { "max": 34, "min": 8, "raw": 26 },
+        "exploding": { "max": 40, "min": 9, "raw": 31 },
+        "rawStrength": { "max": 10, "min": 10, "raw": 10 },
+        "slowEnemy": { "max": 13, "min": 3, "raw": 10 },
+        "walkSpeed": { "max": -10, "min": -19, "raw": -15 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Dwarven folklore tells of this mighty maul, used by gods to break mountains, shape continents, and crack the earth to form caverns."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Bash gains +1 Area of Effect and is 0.05s faster."
+            }
+          ],
+          "name": "Temblor"
+        }
+      ],
+      "name": "Fissure",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 48,
+        "strength": 40
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "spear",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": {
+        "airDefence": 350,
+        "earthDefence": 350,
+        "fireDefence": 350,
+        "health": 5850,
+        "thunderDefence": 350,
+        "waterDefence": 350
+      },
+      "displayName": "Gravity",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.diamond"
+        }
+      },
+      "id": 1231,
+      "identifications": {
+        "healthRegenRaw": { "max": 592, "min": 137, "raw": 455 },
+        "lifeSteal": { "max": 585, "min": 135, "raw": 450 },
+        "manaSteal": { "max": 13, "min": 3, "raw": 10 },
+        "rawAttackSpeed": { "max": -1, "min": -1, "raw": -1 },
+        "rawSpellDamage": { "max": -115, "min": -214, "raw": -165 },
+        "reflection": { "max": 39, "min": 9, "raw": 30 },
+        "thorns": { "max": 39, "min": 9, "raw": 30 },
+        "walkSpeed": { "max": -14, "min": -26, "raw": -20 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "No one knows how this extremely dense chestplate can even logically exist. It is almost paradoxical in nature, and affects its wearers in unfathomable ways."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Pulls items dropped by mobs towards you."
+            }
+          ],
+          "name": "Magnet"
+        }
+      ],
+      "name": "Gravity",
+      "powderSlots": 5,
+      "requirements": {
+        "agility": 40,
+        "classRequirement": null,
+        "defence": 40,
+        "dexterity": 40,
+        "intelligence": 40,
+        "level": 100,
+        "strength": 40
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Legendary",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": {
+        "airDamage": { "max": 16, "min": 10, "raw": 10 },
+        "damage": { "max": 16, "min": 10, "raw": 10 },
+        "earthDamage": { "max": 16, "min": 10, "raw": 10 },
+        "fireDamage": { "max": 16, "min": 10, "raw": 10 },
+        "thunderDamage": { "max": 16, "min": 10, "raw": 10 },
+        "waterDamage": { "max": 16, "min": 10, "raw": 10 }
+      },
+      "displayName": "Infinity",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [361] },
+          "id": "minecraft:potion",
+          "name": "bow.multi2"
+        }
+      },
+      "id": 1459,
+      "identifications": {
+        "elementalDefence": { "max": 25, "min": 6, "raw": 19 },
+        "raw1stSpellCost": { "max": -8, "min": -2, "raw": -6 },
+        "raw2ndSpellCost": { "max": -3, "min": -1, "raw": -2 },
+        "raw3rdSpellCost": { "max": -3, "min": -1, "raw": -2 },
+        "raw4thSpellCost": { "max": -3, "min": -1, "raw": -2 },
+        "rawAgility": { "max": 5, "min": 5, "raw": 5 },
+        "rawDefence": { "max": 5, "min": 5, "raw": 5 },
+        "rawDexterity": { "max": 5, "min": 5, "raw": 5 },
+        "rawIntelligence": { "max": 5, "min": 5, "raw": 5 },
+        "rawStrength": { "max": 5, "min": 5, "raw": 5 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "If you reach for ammunition from your quiver, as long as you have a single arrow, you will find you never run out."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Arrow Hurricane becomes a consistent, straight stream of arrows with a slower fire rate, dealing greater knockback and triple damage per arrow. Additionally, Arsenal Synergy requires 10 less arrows for each flint arrow."
+            }
+          ],
+          "name": "Evershot"
+        }
+      ],
+      "name": "Infinity",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 15,
+        "classRequirement": "archer",
+        "defence": 15,
+        "dexterity": 15,
+        "intelligence": 15,
+        "level": 55,
+        "strength": 15
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "bow",
+      "tier": "Legendary",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "superFast",
+      "base": { "fireDamage": { "max": 185, "min": 175, "raw": 175 } },
+      "displayName": "Absolution",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3638] },
+          "id": "minecraft:potion",
+          "name": "relik.fire3"
+        }
+      },
+      "id": 1682,
+      "identifications": {
+        "earthDefence": { "max": 59, "min": 14, "raw": 45 },
+        "fireDamage": { "max": 26, "min": 6, "raw": 20 },
+        "healingEfficiency": { "max": 75, "min": 17, "raw": 58 },
+        "manaRegen": { "max": 21, "min": 5, "raw": 16 },
+        "raw1stSpellCost": { "max": -26, "min": -6, "raw": -20 },
+        "rawHealth": { "max": 3900, "min": 900, "raw": 3000 },
+        "thunderDefence": { "max": 59, "min": 14, "raw": 45 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "A deep regret stains this weapon-once a healing implement of the scholar-priest, its gentle power was turned and twisted as his ideals and resolve were tested, and faltered. With its wielder long passed, perhaps it can finally be absolved of the atrocities committed by his hand... and remember the peace it has long forgotten."
+        }
+      ],
+      "majorIds": [],
+      "name": "Absolution",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "shaman",
+        "defence": 115,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 97,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "relik",
+      "tier": "Mythic",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "superSlow",
+      "base": { "earthDamage": { "max": 1500, "min": 1170, "raw": 1170 } },
+      "displayName": "Alkatraz",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3782] },
+          "id": "minecraft:potion",
+          "name": "spear.earth1"
+        }
+      },
+      "id": 1683,
+      "identifications": {
+        "earthDamage": { "max": 52, "min": 12, "raw": 40 },
+        "exploding": { "max": 52, "min": 12, "raw": 40 },
+        "mainAttackDamage": { "max": 52, "min": 12, "raw": 40 },
+        "rawAgility": { "max": -10, "min": -10, "raw": -10 },
+        "rawDefence": { "max": -10, "min": -10, "raw": -10 },
+        "rawDexterity": { "max": -10, "min": -10, "raw": -10 },
+        "rawIntelligence": { "max": -10, "min": -10, "raw": -10 },
+        "rawStrength": { "max": 40, "min": 40, "raw": 40 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Soul-locking magic is one outlawed by Gavellian governments, only used by the most insidious and cruel of mages. One such enchantment looms dormant in this mundane-looking maul. Continued usage of the weapon threatens to release it upon the wielder, permanently binding them to the weapon."
+        }
+      ],
+      "majorIds": [],
+      "name": "Alkatraz",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 94,
+        "strength": 110
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "spear",
+      "tier": "Mythic",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "airDefence": 375, "fireDefence": 250, "health": 5000 },
+      "displayName": "Boreal",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_boots",
+          "name": "boots.diamond"
+        }
+      },
+      "id": 1687,
+      "identifications": {
+        "airDefence": { "max": 65, "min": 15, "raw": 50 },
+        "earthDamage": { "max": -21, "min": -39, "raw": -30 },
+        "fireDefence": { "max": 65, "min": 15, "raw": 50 },
+        "healthRegen": { "max": 52, "min": 12, "raw": 40 },
+        "healthRegenRaw": { "max": 640, "min": 148, "raw": 492 },
+        "manaRegen": { "max": 13, "min": 3, "raw": 10 },
+        "reflection": { "max": 33, "min": 8, "raw": 25 },
+        "thunderDamage": { "max": -21, "min": -39, "raw": -30 },
+        "walkSpeed": { "max": 33, "min": 8, "raw": 25 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "The last known crafts of Theorick before his fall in battle were pieces of armour crafted out of pure ice, all of which have melted save for these shimmering boots. The coldest gales and most suffocating heat nurture and repair the wearer instead of being stifling or deadly."
+        }
+      ],
+      "majorIds": [],
+      "name": "Boreal",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 65,
+        "classRequirement": null,
+        "defence": 75,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 93,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "boots",
+      "tier": "Mythic",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "fast",
+      "base": {
+        "airDamage": { "max": 175, "min": 145, "raw": 145 },
+        "damage": { "max": 60, "min": 20, "raw": 20 }
+      },
+      "displayName": "Archangel",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3753] },
+          "id": "minecraft:potion",
+          "name": "spear.air3"
+        }
+      },
+      "id": 1688,
+      "identifications": {
+        "healthRegen": { "max": 17, "min": 4, "raw": 13 },
+        "healthRegenRaw": { "max": 273, "min": 63, "raw": 210 },
+        "mainAttackRange": { "max": 163, "min": 38, "raw": 125 },
+        "rawAgility": { "max": 15, "min": 15, "raw": 15 },
+        "rawDefence": { "max": 10, "min": 10, "raw": 10 },
+        "rawHealth": { "max": 2470, "min": 570, "raw": 1900 },
+        "walkSpeed": { "max": 53, "min": 12, "raw": 41 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "The unwieldy, yet imposing stature of this massive sickle strikes awe into those who view it. Those who have the will to wield it, however, seem to garner respect from all those around them, as though they had become a god."
+        }
+      ],
+      "majorIds": [],
+      "name": "Archangel",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 70,
+        "classRequirement": "assassin",
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 69,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "dagger",
+      "tier": "Mythic",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "fast",
+      "base": {
+        "damage": { "max": 170, "min": 110, "raw": 110 },
+        "thunderDamage": { "max": 250, "min": 1, "raw": 1 }
+      },
+      "displayName": "Az",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [382] },
+          "id": "minecraft:potion",
+          "name": "bow.thunder3"
+        }
+      },
+      "id": 1689,
+      "identifications": {
+        "1stSpellCost": { "max": -30, "min": -7, "raw": -23 },
+        "combatExperience": { "max": 20, "min": 5, "raw": 15 },
+        "fireDamage": { "max": 52, "min": 12, "raw": 40 },
+        "rawDefence": { "max": 15, "min": 15, "raw": 15 },
+        "rawIntelligence": { "max": 15, "min": 15, "raw": 15 },
+        "waterDamage": { "max": 52, "min": 12, "raw": 40 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Mysterious runes, held by inexplicable ancient guardians, were once moulded together for study purposes. The experiment went awry, as the runic words Nii, Az, and Ek were combined in a reaction that resulted in the collapse of a civilization."
+        }
+      ],
+      "majorIds": [],
+      "name": "Az",
+      "powderSlots": 5,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "archer",
+        "defence": 0,
+        "dexterity": 80,
+        "intelligence": 0,
+        "level": 74,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "bow",
+      "tier": "Mythic",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": null,
+      "displayName": "Discoverer",
+      "dropRestriction": "lootchest",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.diamond"
+        }
+      },
+      "id": 1694,
+      "identifications": {
+        "combatExperience": { "max": 20, "min": 5, "raw": 15 },
+        "lootBonus": { "max": 200, "min": 46, "raw": 154 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "Wealth and riches...but at what cost?"
+        }
+      ],
+      "majorIds": [],
+      "name": "Discoverer",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 89,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Mythic",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": "veryFast",
+      "base": { "thunderDamage": { "max": 310, "min": 1, "raw": 1 } },
+      "displayName": "Fatal",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4313] },
+          "id": "minecraft:potion",
+          "name": "wand.thunder3"
+        }
+      },
+      "id": 1698,
+      "identifications": {
+        "1stSpellCost": { "max": 20, "min": 36, "raw": 28 },
+        "2ndSpellCost": { "max": -64, "min": -15, "raw": -49 },
+        "manaSteal": { "max": 8, "min": 2, "raw": 6 },
+        "rawDexterity": { "max": 25, "min": 25, "raw": 25 },
+        "spellDamage": { "max": 33, "min": 8, "raw": 25 },
+        "walkSpeed": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "A mage by the name of Lero claims to have harnessed the sheer power of lightning using a magical staff, however, the weapon is very unreliable in a pinch."
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Judrajim no longer ramps in damage after each hit. When it expires, it releases 115% of its potential in an explosion of 20 blocks."
+            }
+          ],
+          "name": "Unstable Reaction"
+        }
+      ],
+      "name": "Fatal",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "mage",
+        "defence": 0,
+        "dexterity": 110,
+        "intelligence": 0,
+        "level": 99,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "wand",
+      "tier": "Mythic",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "health": 625 },
+      "displayName": "Mirror's Edge",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [6] },
+          "id": "minecraft:leather_leggings",
+          "name": "leggings.iron"
+        }
+      },
+      "id": 1795,
+      "identifications": {
+        "2ndSpellCost": { "max": -55, "min": -13, "raw": -42 },
+        "jumpHeight": { "max": 1, "min": 1, "raw": 1 },
+        "rawAgility": { "max": 20, "min": 20, "raw": 20 },
+        "reflection": { "max": 39, "min": 9, "raw": 30 },
+        "sprint": { "max": 65, "min": 15, "raw": 50 },
+        "sprintRegen": { "max": 130, "min": 30, "raw": 100 },
+        "walkSpeed": { "max": 33, "min": 8, "raw": 25 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Mirror's Edge",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 60,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 63,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "leggings",
+      "tier": "Fabled",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "thunderDefence": 30, "waterDefence": 30 },
+      "displayName": "Anya's Penumbra",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [407] },
+          "id": "minecraft:potion",
+          "name": "bracelet.water2"
+        }
+      },
+      "id": 1860,
+      "identifications": {
+        "raw2ndSpellCost": { "max": 4, "min": 4, "raw": 4 },
+        "rawIntelligence": { "max": 12, "min": 12, "raw": 12 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "\"The lightest light will never defeat the darkest dark. Only those who understand both can survive.\""
+        }
+      ],
+      "majorIds": [],
+      "name": "Anya's Penumbra",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 100,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "bracelet",
+      "tier": "Fabled",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "earthDefence": 20, "waterDefence": 20 },
+      "displayName": "Draoi Fair",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3708] },
+          "id": "minecraft:potion",
+          "name": "ring.multi2"
+        }
+      },
+      "id": 1882,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "healthRegenRaw": { "max": 64, "min": 15, "raw": 49 },
+        "raw1stSpellCost": { "max": -3, "min": -1, "raw": -2 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Draoi Fair",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 25,
+        "level": 60,
+        "strength": 25
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "ring",
+      "tier": "Fabled",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "earthDefence": 100, "health": 4500, "thunderDefence": 100 },
+      "displayName": "Ornate Shadow Cowl",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_helmet",
+          "name": "helmet.diamond"
+        }
+      },
+      "id": 1917,
+      "identifications": {
+        "healthRegen": { "max": -15, "min": -15, "raw": -15 },
+        "mainAttackDamage": { "max": 20, "min": 20, "raw": 20 },
+        "rawMainAttackDamage": { "max": 680, "min": 680, "raw": 680 },
+        "rawSpellDamage": { "max": 190, "min": 190, "raw": 190 },
+        "spellDamage": { "max": 20, "min": 20, "raw": 20 },
+        "walkSpeed": { "max": 15, "min": 15, "raw": 15 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Ornate Shadow Cowl",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 103,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "helmet",
+      "tier": "Fabled",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "earthDefence": 100, "health": 4500, "thunderDefence": 100 },
+      "displayName": "Ornate Shadow Cloak",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [8] },
+          "id": "minecraft:leather_chestplate",
+          "name": "chestplate.diamond"
+        }
+      },
+      "id": 1922,
+      "identifications": {
+        "healthRegen": { "max": -15, "min": -15, "raw": -15 },
+        "mainAttackDamage": { "max": 20, "min": 20, "raw": 20 },
+        "rawMainAttackDamage": { "max": 680, "min": 680, "raw": 680 },
+        "rawSpellDamage": { "max": 190, "min": 190, "raw": 190 },
+        "spellDamage": { "max": 20, "min": 20, "raw": 20 },
+        "walkSpeed": { "max": 15, "min": 15, "raw": 15 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Ornate Shadow Garb",
+      "powderSlots": 3,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 103,
+        "strength": 0
+      },
+      "restriction": "untradable",
+      "set": null,
+      "subType": "chestplate",
+      "tier": "Fabled",
+      "type": "armour"
+    },
+    {
+      "attackSpeed": null,
+      "base": { "airDefence": 30 },
+      "displayName": "Renda Langit",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [2758] },
+          "id": "minecraft:potion",
+          "name": "necklace.air2"
+        }
+      },
+      "id": 1931,
+      "identifications": {
+        "combatExperience": { "max": 13, "min": 3, "raw": 10 },
+        "earthDefence": { "max": -6, "min": -10, "raw": -8 },
+        "raw2ndSpellCost": { "max": -3, "min": -1, "raw": -2 },
+        "raw4thSpellCost": { "max": -3, "min": -1, "raw": -2 },
+        "walkSpeed": { "max": 16, "min": 4, "raw": 12 }
+      },
+      "lore": null,
+      "majorIds": [],
+      "name": "Renda Langit",
+      "powderSlots": 0,
+      "requirements": {
+        "agility": 40,
+        "classRequirement": null,
+        "defence": 0,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 60,
+        "strength": 0
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "necklace",
+      "tier": "Fabled",
+      "type": "accessory"
+    },
+    {
+      "attackSpeed": "veryFast",
+      "base": {
+        "earthDamage": { "max": 125, "min": 85, "raw": 85 },
+        "thunderDamage": { "max": 125, "min": 85, "raw": 85 }
+      },
+      "displayName": "Tachypsychia",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3685] },
+          "id": "minecraft:potion",
+          "name": "relik.thunder3"
+        }
+      },
+      "id": 3550,
+      "identifications": {
+        "healthRegenRaw": { "max": -294, "min": -546, "raw": -420 },
+        "raw1stSpellCost": { "max": 4, "min": 7, "raw": 5 },
+        "raw4thSpellCost": { "max": 4, "min": 7, "raw": 5 },
+        "spellDamage": { "max": 52, "min": 12, "raw": 40 },
+        "walkSpeed": { "max": 26, "min": 6, "raw": 20 }
+      },
+      "lore": [
+        {
+          "color": "#aaaaaa",
+          "font": "ascii",
+          "text": "You will probably irreversibly harm yourself with this, but when has that ever stopped you?"
+        }
+      ],
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Totem effects are twice as fast, but duration is halved."
+            }
+          ],
+          "name": "Furious Effigy"
+        }
+      ],
+      "name": "Tachypsychia",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "shaman",
+        "defence": 0,
+        "dexterity": 50,
+        "intelligence": 0,
+        "level": 77,
+        "strength": 50
+      },
+      "restriction": null,
+      "set": null,
+      "subType": "relik",
+      "tier": "Fabled",
+      "type": "weapon"
+    },
+    {
+      "attackSpeed": "veryFast",
+      "base": {
+        "damage": { "max": 50, "min": 40, "raw": 40 },
+        "earthDamage": { "max": 140, "min": 100, "raw": 100 }
+      },
+      "displayName": "Rhythm of the Seasons",
+      "dropRestriction": "normal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [3784] },
+          "id": "minecraft:potion",
+          "name": "spear.earth3"
+        }
+      },
+      "id": 3598,
+      "identifications": {
+        "healingEfficiency": { "max": 20, "min": 5, "raw": 15 },
+        "healthRegenRaw": { "max": -784, "min": -1456, "raw": -1120 },
+        "manaRegen": { "max": 23, "min": 5, "raw": 18 },
+        "rawDefence": { "max": 12, "min": 12, "raw": 12 },
+        "rawHealth": { "max": 2340, "min": 540, "raw": 1800 }
+      },
+      "lore": null,
+      "majorIds": [
+        {
+          "description": [
+            {
+              "color": "#aaaaaa",
+              "font": "ascii",
+              "text": "Cleansing Breeze heals you for 15% and allies for 20%, but Charge becomes harmless."
+            }
+          ],
+          "name": "Rally"
+        }
+      ],
+      "name": "Rhythm of the Seasons",
+      "powderSlots": 2,
+      "requirements": {
+        "agility": 0,
+        "classRequirement": "warrior",
+        "defence": 60,
+        "dexterity": 0,
+        "intelligence": 0,
+        "level": 100,
+        "strength": 80
+      },
+      "restriction": "none",
+      "set": null,
+      "subType": "spear",
+      "tier": "Fabled",
+      "type": "weapon"
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "sets": [
+    {
+      "bonuses": [
+        {
+          "identifications": {
+            "combatExperience": 10,
+            "damage": 4,
+            "lootBonus": 5,
+            "rawHealth": 15,
+            "walkSpeed": 2
+          },
+          "majorIds": [],
+          "pieces": 2
+        },
+        {
+          "identifications": {
+            "combatExperience": 20,
+            "damage": 12,
+            "lootBonus": 10,
+            "rawHealth": 40,
+            "walkSpeed": 5
+          },
+          "majorIds": [],
+          "pieces": 3
+        },
+        {
+          "identifications": {
+            "combatExperience": 50,
+            "damage": 25,
+            "lootBonus": 30,
+            "manaRegen": 12,
+            "rawHealth": 175,
+            "walkSpeed": 15
+          },
+          "majorIds": [],
+          "pieces": 4
+        }
+      ],
+      "items": [
+        "Adventurer's Boots",
+        "Adventurer's Tunic",
+        "Adventurer's Cap",
+        "Adventurer's Pants"
+      ],
+      "name": "Adventurer"
+    },
+    {
+      "bonuses": [
+        {
+          "identifications": {
+            "combatExperience": 5,
+            "lootBonus": 10,
+            "rawHealth": 60,
+            "walkSpeed": 10
+          },
+          "majorIds": [],
+          "pieces": 2
+        },
+        {
+          "identifications": {
+            "combatExperience": 10,
+            "lootBonus": 25,
+            "rawHealth": 190,
+            "walkSpeed": 10
+          },
+          "majorIds": [],
+          "pieces": 3
+        },
+        {
+          "identifications": {
+            "combatExperience": 25,
+            "lootBonus": 50,
+            "rawAgility": 20,
+            "rawHealth": 400,
+            "walkSpeed": 60
+          },
+          "majorIds": [],
+          "pieces": 4
+        }
+      ],
+      "items": [
+        "Air Relic Boots",
+        "Air Relic Chestplate",
+        "Air Relic Helmet",
+        "Air Relic Leggings"
+      ],
+      "name": "Air Relic"
+    },
+    {
+      "bonuses": [
+        {
+          "identifications": {
+            "damage": 75,
+            "healthRegenRaw": 600,
+            "lifeSteal": 500,
+            "manaRegen": 30,
+            "manaSteal": 20
+          },
+          "majorIds": [],
+          "pieces": 4
+        }
+      ],
+      "items": [
+        "Champion Boots",
+        "Champion Chestplate",
+        "Champion Helmet",
+        "Champion Leggings"
+      ],
+      "name": "Ascension"
+    },
+    {
+      "bonuses": [
+        {
+          "identifications": {
+            "combatExperience": 3,
+            "lootBonus": 4,
+            "stealing": 1
+          },
+          "majorIds": [],
+          "pieces": 2
+        },
+        {
+          "identifications": {
+            "combatExperience": 7,
+            "lootBonus": 9,
+            "stealing": 3
+          },
+          "majorIds": [],
+          "pieces": 3
+        },
+        {
+          "identifications": {
+            "combatExperience": 12,
+            "lootBonus": 15,
+            "stealing": 6
+          },
+          "majorIds": [],
+          "pieces": 4
+        }
+      ],
+      "items": [
+        "Bandit's Knuckle",
+        "Bandit's Bangle",
+        "Bandit's Locket",
+        "Bandit's Ring"
+      ],
+      "name": "Bandit's"
+    },
+    {
+      "bonuses": [
+        {
+          "identifications": {
+            "healingEfficiency": 20,
+            "lootBonus": 20,
+            "rawMaxMana": 30,
+            "waterDefence": 25
+          },
+          "majorIds": [],
+          "pieces": 2
+        }
+      ],
+      "items": ["Beachside Conch", "Beachside Headwrap"],
+      "name": "Beachside"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "nodes": [
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1751,
+      "y": 59,
+      "z": -4420
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1750,
+      "y": 58,
+      "z": -4420
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1746,
+      "y": 57,
+      "z": -4415
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1741,
+      "y": 57,
+      "z": -4415
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1605,
+      "y": 61,
+      "z": -4530
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1499,
+      "y": 48,
+      "z": -5204
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1496,
+      "y": 48,
+      "z": -5206
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1495,
+      "y": 50,
+      "z": -5205
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1445,
+      "y": 45,
+      "z": -1480
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -1439,
+      "y": 44,
+      "z": -1481
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -786,
+      "y": 82,
+      "z": -1171
+    },
+    {
+      "level": 1,
+      "resource": "COPPER",
+      "type": "CORNER",
+      "x": -777,
+      "y": 88,
+      "z": -1164
+    }
+  ]
+}

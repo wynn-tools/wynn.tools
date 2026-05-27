@@ -1,0 +1,199 @@
+{
+  "recipes": [
+    {
+      "durability": { "max": 575000, "min": 571000 },
+      "healthOrDamage": { "max": 3004, "min": 2955 },
+      "id": 1890,
+      "level": { "max": 119, "min": 117 },
+      "materials": [
+        { "amount": 7, "item": "Refined Cinnabar Ingot" },
+        { "amount": 14, "item": "Refined Heather String" }
+      ],
+      "name": "Boots117-119",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 568000, "min": 561000 },
+      "healthOrDamage": { "max": 2955, "min": 2870 },
+      "id": 1891,
+      "level": { "max": 117, "min": 115 },
+      "materials": [
+        { "amount": 7, "item": "Refined Cinnabar Ingot" },
+        { "amount": 14, "item": "Refined Heather String" }
+      ],
+      "name": "Boots115-117",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 561000, "min": 554000 },
+      "healthOrDamage": { "max": 2870, "min": 2785 },
+      "id": 1892,
+      "level": { "max": 115, "min": 113 },
+      "materials": [
+        { "amount": 7, "item": "Refined Titanium Ingot" },
+        { "amount": 14, "item": "Refined Jute String" }
+      ],
+      "name": "Boots113-115",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 554000, "min": 547000 },
+      "healthOrDamage": { "max": 2785, "min": 2700 },
+      "id": 1893,
+      "level": { "max": 113, "min": 110 },
+      "materials": [
+        { "amount": 7, "item": "Refined Titanium Ingot" },
+        { "amount": 14, "item": "Refined Jute String" }
+      ],
+      "name": "Boots110-113",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 543000, "min": 536000 },
+      "healthOrDamage": { "max": 2700, "min": 2595 },
+      "id": 1894,
+      "level": { "max": 109, "min": 107 },
+      "materials": [
+        { "amount": 6, "item": "Refined Dernic Ingot" },
+        { "amount": 12, "item": "Refined Dernic String" }
+      ],
+      "name": "Boots107-109",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 536000, "min": 529000 },
+      "healthOrDamage": { "max": 2595, "min": 2513 },
+      "id": 1895,
+      "level": { "max": 107, "min": 105 },
+      "materials": [
+        { "amount": 6, "item": "Refined Dernic Ingot" },
+        { "amount": 12, "item": "Refined Dernic String" }
+      ],
+      "name": "Boots105-107",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 529000, "min": 525000 },
+      "healthOrDamage": { "max": 2513, "min": 2475 },
+      "id": 1896,
+      "level": { "max": 105, "min": 103 },
+      "materials": [
+        { "amount": 6, "item": "Refined Voidstone Ingot" },
+        { "amount": 12, "item": "Refined Hemp String" }
+      ],
+      "name": "Boots103-105",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 525000, "min": 522000 },
+      "healthOrDamage": { "max": 2475, "min": 2400 },
+      "id": 1897,
+      "level": { "max": 103, "min": 100 },
+      "materials": [
+        { "amount": 6, "item": "Refined Voidstone Ingot" },
+        { "amount": 12, "item": "Refined Hemp String" }
+      ],
+      "name": "Boots100-103",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 518000, "min": 511000 },
+      "healthOrDamage": { "max": 2400, "min": 2265 },
+      "id": 1898,
+      "level": { "max": 99, "min": 97 },
+      "materials": [
+        { "amount": 6, "item": "Refined Molten Ingot" },
+        { "amount": 12, "item": "Refined Sorghum String" }
+      ],
+      "name": "Boots97-99",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 511000, "min": 504000 },
+      "healthOrDamage": { "max": 2265, "min": 2130 },
+      "id": 1899,
+      "level": { "max": 97, "min": 95 },
+      "materials": [
+        { "amount": 6, "item": "Refined Molten Ingot" },
+        { "amount": 12, "item": "Refined Sorghum String" }
+      ],
+      "name": "Boots95-97",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 504000, "min": 497000 },
+      "healthOrDamage": { "max": 2130, "min": 1980 },
+      "id": 1900,
+      "level": { "max": 95, "min": 93 },
+      "materials": [
+        { "amount": 6, "item": "Refined Molten Ingot" },
+        { "amount": 12, "item": "Refined Sorghum String" }
+      ],
+      "name": "Boots93-95",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 497000, "min": 487000 },
+      "healthOrDamage": { "max": 1980, "min": 1860 },
+      "id": 1901,
+      "level": { "max": 93, "min": 90 },
+      "materials": [
+        { "amount": 6, "item": "Refined Molten Ingot" },
+        { "amount": 12, "item": "Refined Sorghum String" }
+      ],
+      "name": "Boots90-93",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 483000, "min": 476000 },
+      "healthOrDamage": { "max": 1860, "min": 1740 },
+      "id": 1902,
+      "level": { "max": 89, "min": 87 },
+      "materials": [
+        { "amount": 5, "item": "Refined Diamond Ingot" },
+        { "amount": 10, "item": "Refined Rice String" }
+      ],
+      "name": "Boots87-89",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 476000, "min": 469000 },
+      "healthOrDamage": { "max": 1740, "min": 1620 },
+      "id": 1903,
+      "level": { "max": 87, "min": 85 },
+      "materials": [
+        { "amount": 5, "item": "Refined Diamond Ingot" },
+        { "amount": 10, "item": "Refined Rice String" }
+      ],
+      "name": "Boots85-87",
+      "skill": "tailoring",
+      "type": "boots"
+    },
+    {
+      "durability": { "max": 469000, "min": 462000 },
+      "healthOrDamage": { "max": 1620, "min": 1508 },
+      "id": 1904,
+      "level": { "max": 85, "min": 83 },
+      "materials": [
+        { "amount": 5, "item": "Refined Diamond Ingot" },
+        { "amount": 10, "item": "Refined Rice String" }
+      ],
+      "name": "Boots83-85",
+      "skill": "tailoring",
+      "type": "boots"
+    }
+  ]
+}

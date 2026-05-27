@@ -1,0 +1,711 @@
+{
+  "ingredients": [
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -90 },
+      "displayName": "Acid Magma",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1689] },
+          "id": "minecraft:potion",
+          "name": "ingredient.acidMagma"
+        }
+      },
+      "id": 0,
+      "identifications": {
+        "poison": { "max": 1990, "min": 1940, "raw": 1940 },
+        "waterDefence": { "max": -8, "min": -10, "raw": -10 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 8,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -49000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Acid Magma",
+      "requirements": { "level": 91, "skills": ["tailoring", "alchemism"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -290 },
+      "displayName": "Alnamar Meat",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1701] },
+          "id": "minecraft:potion",
+          "name": "ingredient.alnamarMeat"
+        }
+      },
+      "id": 1,
+      "identifications": {
+        "earthDefence": { "max": -7, "min": -9, "raw": -9 },
+        "fireDefence": { "max": 8, "min": 7, "raw": 7 },
+        "thunderDefence": { "max": 10, "min": 7, "raw": 7 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Alnamar Meat",
+      "requirements": { "level": 103, "skills": ["cooking"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -45 },
+      "displayName": "Altered Ash",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1702] },
+          "id": "minecraft:potion",
+          "name": "ingredient.alteredAsh"
+        }
+      },
+      "id": 2,
+      "identifications": { "spellDamage": { "max": 5, "min": 1, "raw": 1 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Altered Ash",
+      "requirements": { "level": 15, "skills": ["alchemism", "scribing"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Ancient Metal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1709] },
+          "id": "minecraft:potion",
+          "name": "ingredient.ancientMetal"
+        }
+      },
+      "id": 3,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 21, "min": 20, "raw": 20 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -40000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Ancient Metal",
+      "requirements": {
+        "level": 64,
+        "skills": ["weaponsmithing", "armouring", "tailoring"]
+      },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -120 },
+      "displayName": "Apple",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1719] },
+          "id": "minecraft:potion",
+          "name": "ingredient.apple"
+        }
+      },
+      "id": 4,
+      "identifications": { "rawHealth": { "max": 6, "min": 4, "raw": 4 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Apple",
+      "requirements": { "level": 10, "skills": ["cooking"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Arcane Anomaly",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1722] },
+          "id": "minecraft:potion",
+          "name": "ingredient.arcaneAnomaly"
+        }
+      },
+      "id": 5,
+      "identifications": {
+        "manaRegen": { "max": 3, "min": 3, "raw": 3 },
+        "spellDamage": { "max": -8, "min": -11, "raw": -11 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -44000,
+        "intelligenceRequirement": 10,
+        "strengthRequirement": 0
+      },
+      "name": "Arcane Anomaly",
+      "requirements": {
+        "level": 75,
+        "skills": ["weaponsmithing", "woodworking"]
+      },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Bamboo",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1731] },
+          "id": "minecraft:potion",
+          "name": "ingredient.bamboo"
+        }
+      },
+      "id": 6,
+      "identifications": {
+        "mainAttackDamage": { "max": -1, "min": -4, "raw": -4 },
+        "spellDamage": { "max": -1, "min": -4, "raw": -4 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 37000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bamboo",
+      "requirements": {
+        "level": 80,
+        "skills": ["tailoring", "armouring", "weaponsmithing", "woodworking"]
+      },
+      "tier": 1
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Ball of Slime",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1730] },
+          "id": "minecraft:potion",
+          "name": "ingredient.ballOfSlime"
+        }
+      },
+      "id": 7,
+      "identifications": {
+        "earthDamage": { "max": 6, "min": 3, "raw": 3 },
+        "walkSpeed": { "max": -3, "min": -5, "raw": -5 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -44000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Ball of Slime",
+      "requirements": {
+        "level": 80,
+        "skills": ["tailoring", "weaponsmithing"]
+      },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -190 },
+      "displayName": "Bandit Rations",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1732] },
+          "id": "minecraft:potion",
+          "name": "ingredient.banditRations"
+        }
+      },
+      "id": 8,
+      "identifications": {
+        "combatExperience": { "max": 5, "min": 2, "raw": 2 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bandit Rations",
+      "requirements": { "level": 46, "skills": ["cooking"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Bat Ear",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1734] },
+          "id": "minecraft:potion",
+          "name": "ingredient.batEar"
+        }
+      },
+      "id": 9,
+      "identifications": { "walkSpeed": { "max": 2, "min": 1, "raw": 1 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -23000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bat Ear",
+      "requirements": { "level": 15, "skills": ["tailoring"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -210 },
+      "displayName": "Big Jawbreaker",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1740] },
+          "id": "minecraft:potion",
+          "name": "ingredient.bigJawbreaker"
+        }
+      },
+      "id": 10,
+      "identifications": {
+        "mainAttackDamage": { "max": 6, "min": 2, "raw": 2 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -38000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Big Jawbreaker",
+      "requirements": { "level": 60, "skills": ["weaponsmithing", "cooking"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Black Steel",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1745] },
+          "id": "minecraft:potion",
+          "name": "ingredient.blackSteel"
+        }
+      },
+      "id": 11,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 20, "min": 16, "raw": 16 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 10,
+        "durabilityModifier": -38000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Black Steel",
+      "requirements": {
+        "level": 62,
+        "skills": ["armouring", "weaponsmithing"]
+      },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -51 },
+      "displayName": "Blaze Powder",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1747] },
+          "id": "minecraft:potion",
+          "name": "ingredient.blazePowder"
+        }
+      },
+      "id": 12,
+      "identifications": {
+        "fireDamage": { "max": 5, "min": 1, "raw": 1 },
+        "fireDefence": { "max": 5, "min": 1, "raw": 1 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Blaze Powder",
+      "requirements": { "level": 26, "skills": ["alchemism", "scribing"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Blighted Skull",
+      "icon": {
+        "format": "skin",
+        "value": "7953b6c68448e7e6b6bf8fb273d7203acd8e1be19e81481ead51f45de59a8"
+      },
+      "id": 13,
+      "identifications": { "walkSpeed": { "max": 4, "min": 3, "raw": 3 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 22000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Blighted Skull",
+      "requirements": { "level": 96, "skills": ["armouring"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Bloodweb",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1756] },
+          "id": "minecraft:potion",
+          "name": "ingredient.bloodweb"
+        }
+      },
+      "id": 14,
+      "identifications": {
+        "lifeSteal": { "max": 10, "min": 6, "raw": 6 },
+        "walkSpeed": { "max": -2, "min": -4, "raw": -4 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -31000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bloodweb",
+      "requirements": { "level": 45, "skills": ["tailoring"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Bone Meal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1760] },
+          "id": "minecraft:potion",
+          "name": "ingredient.boneMeal"
+        }
+      },
+      "id": 15,
+      "identifications": { "spellDamage": { "max": 3, "min": 2, "raw": 2 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -24000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bone Meal",
+      "requirements": { "level": 21, "skills": ["tailoring", "armouring"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -45 },
+      "displayName": "Bone Ash",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1759] },
+          "id": "minecraft:potion",
+          "name": "ingredient.boneAsh"
+        }
+      },
+      "id": 16,
+      "identifications": { "exploding": { "max": 10, "min": 1, "raw": 1 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bone Ash",
+      "requirements": { "level": 14, "skills": ["scribing", "alchemism"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -120 },
+      "displayName": "Boar Meat",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1757] },
+          "id": "minecraft:potion",
+          "name": "ingredient.boarMeat"
+        }
+      },
+      "id": 17,
+      "identifications": { "thorns": { "max": 2, "min": 1, "raw": 1 } },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Boar Meat",
+      "requirements": { "level": 9, "skills": ["cooking"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": -240 },
+      "displayName": "Bright Petal",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1765] },
+          "id": "minecraft:potion",
+          "name": "ingredient.brightPetal"
+        }
+      },
+      "id": 18,
+      "identifications": {
+        "combatExperience": { "max": 6, "min": 3, "raw": 3 },
+        "reflection": { "max": 4, "min": 2, "raw": 2 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": 0,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Bright Petal",
+      "requirements": { "level": 73, "skills": ["cooking"] },
+      "tier": 0
+    },
+    {
+      "consumableOnlyIDs": { "charges": 0, "duration": 0 },
+      "displayName": "Broken Antic Bead",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [1767] },
+          "id": "minecraft:potion",
+          "name": "ingredient.brokenAnticBead"
+        }
+      },
+      "id": 19,
+      "identifications": {
+        "combatExperience": { "max": -2, "min": -3, "raw": -3 },
+        "lootBonus": { "max": 3, "min": 2, "raw": 2 }
+      },
+      "ingredientPositionModifiers": {
+        "above": 0,
+        "left": 0,
+        "notTouching": 0,
+        "right": 0,
+        "touching": 0,
+        "under": 0
+      },
+      "itemOnlyIDs": {
+        "agilityRequirement": 0,
+        "defenceRequirement": 0,
+        "dexterityRequirement": 0,
+        "durabilityModifier": -35000,
+        "intelligenceRequirement": 0,
+        "strengthRequirement": 0
+      },
+      "name": "Broken Antic Bead",
+      "requirements": { "level": 55, "skills": ["jeweling"] },
+      "tier": 0
+    }
+  ]
+}

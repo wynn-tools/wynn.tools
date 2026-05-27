@@ -1,0 +1,88 @@
+{
+  "markers": [
+    {
+      "icon": "Profession_Cooking.png",
+      "name": "Cooking Station",
+      "x": 1338,
+      "y": 29,
+      "z": -1284
+    },
+    {
+      "icon": "Profession_Woodworking.png",
+      "name": "Woodworking Station",
+      "x": 1326,
+      "y": 29,
+      "z": -1305
+    },
+    {
+      "icon": "Profession_Scribing.png",
+      "name": "Scribing Station",
+      "x": 1320,
+      "y": 29,
+      "z": -1339
+    },
+    {
+      "icon": "Profession_Tailoring.png",
+      "name": "Tailoring Station",
+      "x": 1298,
+      "y": 30,
+      "z": -1241
+    },
+    {
+      "icon": "Profession_Alchemism.png",
+      "name": "Alchemism Station",
+      "x": 1294,
+      "y": 30,
+      "z": -1241
+    },
+    {
+      "icon": "Profession_Weaponsmithing.png",
+      "name": "Weaponsmithing Station",
+      "x": 1267,
+      "y": 29,
+      "z": -1353
+    },
+    {
+      "icon": "Profession_Jeweling.png",
+      "name": "Jeweling Station",
+      "x": 1259,
+      "y": 29,
+      "z": -1283
+    },
+    {
+      "icon": "Profession_Armouring.png",
+      "name": "Armouring Station",
+      "x": 1254,
+      "y": 29,
+      "z": -1346
+    },
+    {
+      "icon": "Profession_Woodworking.png",
+      "name": "Woodworking Station",
+      "x": 1260,
+      "y": 29,
+      "z": -1350
+    },
+    {
+      "icon": "Profession_Weaponsmithing.png",
+      "name": "Weaponsmithing Station",
+      "x": 1319,
+      "y": 33,
+      "z": -4100
+    },
+    {
+      "icon": "Profession_Tailoring.png",
+      "name": "Tailoring Station",
+      "x": 1108,
+      "y": 100,
+      "z": -4558
+    },
+    {
+      "icon": "Profession_Woodworking.png",
+      "name": "Woodworking Station",
+      "x": 1112,
+      "y": 99,
+      "z": -4562
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "contentHash": "b90fff0d",
+  "fetchedAt": "2026-05-27T13:37:02.255Z",
+  "gameVersion": null,
+  "files": {
+    "items.json": "sha256:fb006c73f731847a78c51c550aab786f40b821f43b246017e57870458449c00a",
+    "tomes.json": "sha256:982e54cae5f457f81fc318ffd59bbcc29b627faaec66d7cb62f5d4081e7dab69",
+    "ingredients.json": "sha256:163d2687e32fc5107fe4949a515bfee62f74d381299abb147c075fb1aca3e138",
+    "recipes.json": "sha256:436ec719569b691b7ae547c278861535351cbb9624dd8268810a6811ca0770bb",
+    "sets.json": "sha256:a2ad6e712398243615c61318da87edeccd4ee74b7ffd71488ce4c5cf793c7b14",
+    "encoding_consts.json": "sha256:70ffe493dd7dc21ed9d9a8b63ca19b05ee352736196d1bea2add6aed5ef8e3bf",
+    "map/markers.json": "sha256:ffc8bedfc5508490322af3d773098e538a83828aa6c3a12c30410ccf0d8dfe39",
+    "map/gathering.json": "sha256:43aa36dd9fdcba63383782df2a166f05541d5de76621beddf5a29a756b69cb50",
+    "map/quests.json": "sha256:910178b657c03124992683871cadfda8131133ed9b362136ca756e89f6fc8b5f",
+    "atree/archer.json": "sha256:3af969e5bc13c0bf8b993babc501a849148fd323c1ce51534b86a111f1bc3e33",
+    "aspects/archer.json": "sha256:2014790eefba3f7e5b11e2fbee15331821eb67c3a6257e6f1398e1712e35ab76",
+    "atree/warrior.json": "sha256:1d02fd816f50bd500e30b6fdfe796e3f5cf2eac33a4405229e3e40d35ba398f0",
+    "aspects/warrior.json": "sha256:c8b34068f833e4d17ace84174157338b98fc602c7f441daa1228e333c93beddb",
+    "atree/mage.json": "sha256:8d27963f980faa2d5768c84e4d47df129cfaf9dd6650983864104dc6d63e1c0b",
+    "aspects/mage.json": "sha256:cd463538b9416ef25a5642a34b56ab68df3665268288fdd33efc793a30a8ee7b",
+    "atree/assassin.json": "sha256:34717ad76bf6e7de4374df8343d2441981fc689dc3ea111c3879b3a577281622",
+    "aspects/assassin.json": "sha256:fdff9f1c0914ec32e4983892448802e1951044a7cb11377c8057620d9abce3bf",
+    "atree/shaman.json": "sha256:2ef7c0efaa1951a63c391a91f66a75a920d0a5f9cd199151c598be3774656953",
+    "aspects/shaman.json": "sha256:f3d0cfa3d9e6e9cbf91f47fb13963b373a16b3c33cc30d2603c429baba437971"
+  }
+}

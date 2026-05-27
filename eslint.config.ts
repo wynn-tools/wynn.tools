@@ -6,7 +6,7 @@ export default withNuxt(
     vue: true,
     typescript: true,
     formatters: true,
-    ignores: ['docs/**'],
+    ignores: ['docs/**', 'app/lib/data/__fixtures__/**'],
   }),
   {
     rules: {

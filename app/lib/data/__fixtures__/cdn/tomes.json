@@ -1,0 +1,3592 @@
+{
+  "tomes": [
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 0,
+      "identifications": {
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 },
+        "thunderDefence": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Retaliating Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 1,
+      "identifications": {
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 },
+        "thunderDefence": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Retaliating Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Blooming Tome of Defensive Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 2,
+      "identifications": {
+        "earthDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Destructive Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Blooming Tome of Defensive Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 3,
+      "identifications": {
+        "earthDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Destructive Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Oceanic Tome of Defensive Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 4,
+      "identifications": {
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 },
+        "waterDefence": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Sorcerer's Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Oceanic Tome of Defensive Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 5,
+      "identifications": {
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 },
+        "waterDefence": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Sorcerer's Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 6,
+      "identifications": {
+        "fireDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Everlasting Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 7,
+      "identifications": {
+        "fireDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Everlasting Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 8,
+      "identifications": {
+        "fireDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Vampiric Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 9,
+      "identifications": {
+        "fireDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Vampiric Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 10,
+      "identifications": {
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 },
+        "thunderDefence": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Greedy Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 11,
+      "identifications": {
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 },
+        "thunderDefence": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Greedy Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Clouded Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 12,
+      "identifications": {
+        "airDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Weightless Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Clouded Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 13,
+      "identifications": {
+        "airDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Weightless Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Everlasting Tome of Defensive Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 14,
+      "identifications": {
+        "healthRegenRaw": { "max": 65, "min": 15, "raw": 50 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Blooming Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Vampiric Tome of Defensive Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 15,
+      "identifications": {
+        "lifeSteal": { "max": 91, "min": 21, "raw": 70 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Pulsing Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Everlasting Tome of Defensive Mastery II֎֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 16,
+      "identifications": {
+        "healthRegenRaw": { "max": 65, "min": 15, "raw": 50 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Oceanic Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Vampiric Tome of Defensive Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 17,
+      "identifications": {
+        "lifeSteal": { "max": 91, "min": 21, "raw": 70 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Courageous Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Vampiric Tome of Defensive Mastery II֎֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 18,
+      "identifications": {
+        "lifeSteal": { "max": 91, "min": 21, "raw": 70 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Clouded Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Everlasting Tome of Defensive Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 19,
+      "identifications": {
+        "healthRegenRaw": { "max": 65, "min": 15, "raw": 50 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Radiant Tome of Armour Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Tome of Combat Mastery֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 20,
+      "identifications": { "damage": { "max": 5, "min": 1, "raw": 4 } },
+      "name": "Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 21,
+      "identifications": {
+        "mainAttackDamage": { "max": 7, "min": 2, "raw": 5 }
+      },
+      "name": "Earthbound Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 22,
+      "identifications": {
+        "mainAttackDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Earthbound Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 23,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 59, "min": 14, "raw": 45 }
+      },
+      "name": "Nimble Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 24,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 85, "min": 20, "raw": 65 }
+      },
+      "name": "Nimble Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 25,
+      "identifications": { "spellDamage": { "max": 7, "min": 2, "raw": 5 } },
+      "name": "Mystical Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 26,
+      "identifications": { "spellDamage": { "max": 8, "min": 2, "raw": 6 } },
+      "name": "Mystical Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 27,
+      "identifications": {
+        "mainAttackDamage": { "max": 7, "min": 2, "raw": 5 }
+      },
+      "name": "Warding Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 28,
+      "identifications": {
+        "mainAttackDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Warding Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 29,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 59, "min": 14, "raw": 45 }
+      },
+      "name": "Athletic Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 30,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 85, "min": 20, "raw": 65 }
+      },
+      "name": "Athletic Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 31,
+      "identifications": {
+        "rawSpellDamage": { "max": 44, "min": 10, "raw": 34 }
+      },
+      "name": "Cosmic Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 32,
+      "identifications": {
+        "rawSpellDamage": { "max": 65, "min": 15, "raw": 50 }
+      },
+      "name": "Cosmic Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Seismic Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 33,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "earthDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Seismic Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Voltaic Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 34,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "thunderDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Voltaic Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Abyssal Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 35,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "waterDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Abyssal Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Infernal Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 36,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "fireDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Infernal Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Cyclonic Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 37,
+      "identifications": {
+        "airDamage": { "max": 8, "min": 2, "raw": 6 },
+        "damage": { "max": 4, "min": 1, "raw": 3 }
+      },
+      "name": "Cyclonic Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Infernal Tome of Combat Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 38,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "fireDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Astral Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Brute's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 39,
+      "identifications": { "rawStrength": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Brute's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Sadist's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 40,
+      "identifications": { "rawDexterity": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Sadist's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Mastermind's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 41,
+      "identifications": {
+        "rawIntelligence": { "max": 4, "min": 4, "raw": 4 }
+      },
+      "name": "Mastermind's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Arsonist's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 42,
+      "identifications": { "rawDefence": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Arsonist's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Ghost's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 43,
+      "identifications": { "rawAgility": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Ghost's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Brute's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 44,
+      "identifications": { "rawStrength": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Psychopath's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Mastermind's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 45,
+      "identifications": {
+        "rawIntelligence": { "max": 4, "min": 4, "raw": 4 }
+      },
+      "name": "Loner's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Mastermind's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 46,
+      "identifications": {
+        "rawIntelligence": { "max": 4, "min": 4, "raw": 4 }
+      },
+      "name": "Warlock's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Arsonist's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 47,
+      "identifications": { "rawDefence": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Destroyer's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Sadist's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 48,
+      "identifications": { "rawDexterity": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Devil's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Arsonist's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 49,
+      "identifications": { "rawDefence": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Alchemist's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Brute's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 50,
+      "identifications": { "rawStrength": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Barbarian's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Sadist's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 51,
+      "identifications": { "rawDexterity": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Freelancer's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Ghost's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 52,
+      "identifications": { "rawAgility": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Sycophant's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Ghost's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 53,
+      "identifications": { "rawAgility": { "max": 4, "min": 4, "raw": 4 } },
+      "name": "Fanatic's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Assimilator's Tome of Allegiance",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4118] },
+          "id": "minecraft:potion",
+          "name": "tome.guild"
+        }
+      },
+      "id": 54,
+      "identifications": {
+        "rawAgility": { "max": 1, "min": 1, "raw": 1 },
+        "rawDefence": { "max": 1, "min": 1, "raw": 1 },
+        "rawDexterity": { "max": 1, "min": 1, "raw": 1 },
+        "rawIntelligence": { "max": 1, "min": 1, "raw": 1 },
+        "rawStrength": { "max": 1, "min": 1, "raw": 1 }
+      },
+      "name": "Assimilator's Tome of Allegiance",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "guild_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 55,
+      "identifications": {
+        "rawSpellDamage": { "max": 44, "min": 10, "raw": 34 }
+      },
+      "name": "Ephemeral Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 56,
+      "identifications": {
+        "rawSpellDamage": { "max": 65, "min": 15, "raw": 50 }
+      },
+      "name": "Ephemeral Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 57,
+      "identifications": {
+        "rawSpellDamage": { "max": 73, "min": 17, "raw": 56 }
+      },
+      "name": "Ephemeral Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 58,
+      "identifications": { "spellDamage": { "max": 7, "min": 2, "raw": 5 } },
+      "name": "Harvester's Tome of Weapon Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 59,
+      "identifications": { "spellDamage": { "max": 8, "min": 2, "raw": 6 } },
+      "name": "Harvester's Tome of Weapon Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery III֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 60,
+      "identifications": { "spellDamage": { "max": 10, "min": 2, "raw": 8 } },
+      "name": "Harvester's Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 64,
+      "identifications": {
+        "mainAttackDamage": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Earthbound Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 65,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 95, "min": 22, "raw": 73 }
+      },
+      "name": "Nimble Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 66,
+      "identifications": { "spellDamage": { "max": 10, "min": 2, "raw": 8 } },
+      "name": "Mystical Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery III֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 67,
+      "identifications": {
+        "mainAttackDamage": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Warding Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Athletic Tome of Weapon Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 68,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 95, "min": 22, "raw": 73 }
+      },
+      "name": "Athletic Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery III֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 69,
+      "identifications": {
+        "rawSpellDamage": { "max": 73, "min": 17, "raw": 56 }
+      },
+      "name": "Cosmic Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Seismic Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 70,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "earthDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Seismic Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Voltaic Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 71,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "thunderDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Voltaic Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Abyssal Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 72,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "waterDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Abyssal Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Infernal Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 73,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "fireDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Infernal Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Cyclonic Tome of Combat Mastery III֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 74,
+      "identifications": {
+        "airDamage": { "max": 9, "min": 2, "raw": 7 },
+        "damage": { "max": 5, "min": 1, "raw": 4 }
+      },
+      "name": "Cyclonic Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Infernal Tome of Combat Mastery III֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 75,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "fireDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Astral Tome of Weapon Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Ephemeral Tome of Mysticism II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 76,
+      "identifications": { "manaRegen": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Tome of Gathering Mastery III",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Hospitality I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 77,
+      "identifications": {
+        "healingEfficiency": { "max": 4, "min": 1, "raw": 3 },
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "name": "Mastermind's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Tome of Defensive Mastery",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 78,
+      "identifications": { "rawHealth": { "max": 189, "min": 44, "raw": 145 } },
+      "name": "Tome of Armour Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Dividends I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 79,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "stealing": { "max": 3, "min": 1, "raw": 2 }
+      },
+      "name": "Pickpocket's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Surefooted Tome of the Marathon II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 80,
+      "identifications": {
+        "sprint": { "max": 18, "min": 4, "raw": 14 },
+        "sprintRegen": { "max": 18, "min": 4, "raw": 14 }
+      },
+      "name": "Tome of Slaying Mastery III",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Surefooted Tome of the Marathon I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 81,
+      "identifications": {
+        "sprint": { "max": 13, "min": 3, "raw": 10 },
+        "sprintRegen": { "max": 13, "min": 3, "raw": 10 }
+      },
+      "name": "Tome of Slaying Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Ephemeral Tome of Mysticism I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 82,
+      "identifications": { "manaRegen": { "max": 3, "min": 1, "raw": 2 } },
+      "name": "Tome of Gathering Mastery I",
+      "requirements": { "level": 70 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Caution I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 83,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "reflection": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Scoundrel's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Safety I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 84,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "thorns": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Spelunker's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Fleetfooted Tome of the Marathon I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 85,
+      "identifications": { "walkSpeed": { "max": 7, "min": 2, "raw": 5 } },
+      "name": "Tome of Slaying Mastery II",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Tome of Triage Expertise I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 86,
+      "identifications": { "healthRegen": { "max": 8, "min": 2, "raw": 6 } },
+      "name": "Tome of Dungeoneering Mastery II",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Ephemeral Tome of Mysticism II֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 87,
+      "identifications": { "manaRegen": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Tome of Gathering Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Tome of Scavenging Expertise I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 88,
+      "identifications": { "stealing": { "max": 3, "min": 1, "raw": 2 } },
+      "name": "Tome of Dungeoneering Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Hospitality I֎֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 89,
+      "identifications": {
+        "healingEfficiency": { "max": 4, "min": 1, "raw": 3 },
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "name": "Manipulator's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Care I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 90,
+      "identifications": {
+        "healthRegen": { "max": 8, "min": 2, "raw": 6 },
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "name": "Plunderer's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Dividends I֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 91,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "stealing": { "max": 3, "min": 1, "raw": 2 }
+      },
+      "name": "Thief's Tome of Lootrun Mastery",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Tome of Scavenging Expertise II֎",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 92,
+      "identifications": { "stealing": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Tome of Dungeoneering Mastery III",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 94,
+      "identifications": {
+        "rawSpellDamage": { "max": 73, "min": 17, "raw": 56 }
+      },
+      "name": "Esoteric Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Abyssal Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 95,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "waterDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Abyssal Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Infernal Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 96,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "fireDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Infernal Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 97,
+      "identifications": { "spellDamage": { "max": 10, "min": 2, "raw": 8 } },
+      "name": "Sorcerer's Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Seismic Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 98,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "earthDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Seismic Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Countering Expertise III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 99,
+      "identifications": { "thorns": { "max": 16, "min": 4, "raw": 12 } },
+      "name": "Tome of Countering Expertise III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Pegasus' Tome of Mysticism III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 100,
+      "identifications": {
+        "2ndSpellCost": { "max": -10, "min": -2, "raw": -8 }
+      },
+      "name": "Pegasus' Tome of Mysticism III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Cyclonic Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 101,
+      "identifications": {
+        "airDamage": { "max": 9, "min": 2, "raw": 7 },
+        "damage": { "max": 5, "min": 1, "raw": 4 }
+      },
+      "name": "Cyclonic Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Remedial Expertise III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 102,
+      "identifications": {
+        "healingEfficiency": { "max": 5, "min": 1, "raw": 4 }
+      },
+      "name": "Tome of Remedial Expertise III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Tome of Parrying Expertise III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 103,
+      "identifications": { "reflection": { "max": 16, "min": 4, "raw": 12 } },
+      "name": "Tome of Parrying Expertise III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 104,
+      "identifications": {
+        "mainAttackDamage": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Fighter's Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Voltaic Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 105,
+      "identifications": {
+        "damage": { "max": 5, "min": 1, "raw": 4 },
+        "thunderDamage": { "max": 9, "min": 2, "raw": 7 }
+      },
+      "name": "Voltaic Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Triage Expertise III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 106,
+      "identifications": { "healthRegen": { "max": 8, "min": 2, "raw": 6 } },
+      "name": "Tome of Triage Expertise III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 107,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 95, "min": 22, "raw": 73 }
+      },
+      "name": "Nimble Tome of Combat Mastery III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Scavenging Expertise III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 108,
+      "identifications": { "stealing": { "max": 5, "min": 1, "raw": 4 } },
+      "name": "Tome of Scavenging Expertise III",
+      "requirements": { "level": 105 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Fleetfooted Tome of the Marathon II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 109,
+      "identifications": { "walkSpeed": { "max": 8, "min": 2, "raw": 6 } },
+      "name": "Fleetfooted Tome of the Marathon II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Surefooted Tome of the Marathon II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 110,
+      "identifications": {
+        "sprint": { "max": 18, "min": 4, "raw": 14 },
+        "sprintRegen": { "max": 18, "min": 4, "raw": 14 }
+      },
+      "name": "Surefooted Tome of the Marathon II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Golem's Tome of Mysticism II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 111,
+      "identifications": {
+        "4thSpellCost": { "max": -5, "min": -1, "raw": -4 }
+      },
+      "name": "Golem's Tome of Mysticism II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 112,
+      "identifications": {
+        "fireDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Courageous Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Clouded Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 113,
+      "identifications": {
+        "airDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Clouded Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Oceanic Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 114,
+      "identifications": {
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 },
+        "waterDefence": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Oceanic Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 115,
+      "identifications": {
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 },
+        "thunderDefence": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Pulsing Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Blooming Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 116,
+      "identifications": {
+        "earthDefence": { "max": 10, "min": 2, "raw": 8 },
+        "rawHealth": { "max": 345, "min": 80, "raw": 265 }
+      },
+      "name": "Blooming Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Vampiric Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 117,
+      "identifications": {
+        "lifeSteal": { "max": 91, "min": 21, "raw": 70 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Vampiric Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Everlasting Tome of Defensive Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 118,
+      "identifications": {
+        "healthRegenRaw": { "max": 65, "min": 15, "raw": 50 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Everlasting Tome of Defensive Mastery II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Ephemeral Tome of Mysticism II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 119,
+      "identifications": { "manaRegen": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Ephemeral Tome of Mysticism II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Pegasus' Tome of Mysticism II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 120,
+      "identifications": {
+        "2ndSpellCost": { "max": -8, "min": -2, "raw": -6 }
+      },
+      "name": "Pegasus' Tome of Mysticism II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Harvester's Tome of Mysticism II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 121,
+      "identifications": { "manaSteal": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Harvester's Tome of Mysticism II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Dragon's Tome of Mysticism II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 122,
+      "identifications": {
+        "3rdSpellCost": { "max": -5, "min": -1, "raw": -4 }
+      },
+      "name": "Dragon's Tome of Mysticism II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Faerie's Tome of Mysticism II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 123,
+      "identifications": {
+        "1stSpellCost": { "max": -5, "min": -1, "raw": -4 }
+      },
+      "name": "Faerie's Tome of Mysticism II",
+      "requirements": { "level": 100 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 124,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 85, "min": 20, "raw": 65 }
+      },
+      "name": "Nimble Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Parrying Expertise II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 125,
+      "identifications": { "reflection": { "max": 13, "min": 3, "raw": 10 } },
+      "name": "Tome of Parrying Expertise II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 126,
+      "identifications": {
+        "rawSpellDamage": { "max": 65, "min": 15, "raw": 50 }
+      },
+      "name": "Esoteric Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 127,
+      "identifications": {
+        "mainAttackDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Fighter's Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Countering Expertise II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 128,
+      "identifications": { "thorns": { "max": 13, "min": 3, "raw": 10 } },
+      "name": "Tome of Countering Expertise II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Cyclonic Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 129,
+      "identifications": {
+        "airDamage": { "max": 8, "min": 2, "raw": 6 },
+        "damage": { "max": 4, "min": 1, "raw": 3 }
+      },
+      "name": "Cyclonic Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Infernal Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 130,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "fireDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Infernal Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Abyssal Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 131,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "waterDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Abyssal Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Remedial Expertise II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 132,
+      "identifications": {
+        "healingEfficiency": { "max": 4, "min": 1, "raw": 3 }
+      },
+      "name": "Tome of Remedial Expertise II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Seismic Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 133,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "earthDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Seismic Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Scavenging Expertise II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 134,
+      "identifications": { "stealing": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Tome of Scavenging Expertise II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 135,
+      "identifications": { "spellDamage": { "max": 8, "min": 2, "raw": 6 } },
+      "name": "Sorcerer's Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Triage Expertise II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 136,
+      "identifications": { "healthRegen": { "max": 5, "min": 1, "raw": 4 } },
+      "name": "Tome of Triage Expertise II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Voltaic Tome of Combat Mastery II",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 137,
+      "identifications": {
+        "damage": { "max": 4, "min": 1, "raw": 3 },
+        "thunderDamage": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Voltaic Tome of Combat Mastery II",
+      "requirements": { "level": 80 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Hospitality I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 138,
+      "identifications": {
+        "healingEfficiency": { "max": 4, "min": 1, "raw": 3 },
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "name": "Syndicate's Tome of Hospitality I",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Safety I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 139,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "thorns": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Syndicate's Tome of Safety I",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Care I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 140,
+      "identifications": {
+        "healthRegen": { "max": 4, "min": 1, "raw": 3 },
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 }
+      },
+      "name": "Syndicate's Tome of Care I",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Dividends I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 141,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "stealing": { "max": 3, "min": 1, "raw": 2 }
+      },
+      "name": "Syndicate's Tome of Dividends I",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Syndicate's Tome of Caution I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4119] },
+          "id": "minecraft:potion",
+          "name": "tome.lootrun"
+        }
+      },
+      "id": 142,
+      "identifications": {
+        "lootBonus": { "max": 20, "min": 5, "raw": 15 },
+        "reflection": { "max": 10, "min": 2, "raw": 8 }
+      },
+      "name": "Syndicate's Tome of Caution I",
+      "requirements": { "level": 75 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "lootrun_tome"
+    },
+    {
+      "displayName": "Harvester's Tome of Mysticism I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 143,
+      "identifications": { "manaSteal": { "max": 3, "min": 1, "raw": 2 } },
+      "name": "Harvester's Tome of Mysticism I",
+      "requirements": { "level": 70 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Ephemeral Tome of Mysticism I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 144,
+      "identifications": { "manaRegen": { "max": 3, "min": 1, "raw": 2 } },
+      "name": "Ephemeral Tome of Mysticism I",
+      "requirements": { "level": 70 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Tome of Triage Expertise I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 145,
+      "identifications": { "healthRegen": { "max": 4, "min": 1, "raw": 3 } },
+      "name": "Tome of Triage Expertise I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Tome of Parrying Expertise I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 146,
+      "identifications": { "reflection": { "max": 10, "min": 2, "raw": 8 } },
+      "name": "Tome of Parrying Expertise I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Fleetfooted Tome of the Marathon I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 147,
+      "identifications": { "walkSpeed": { "max": 7, "min": 2, "raw": 5 } },
+      "name": "Fleetfooted Tome of the Marathon I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Tome of Scavenging Expertise I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 148,
+      "identifications": { "stealing": { "max": 3, "min": 1, "raw": 2 } },
+      "name": "Tome of Scavenging Expertise I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Tome of Countering Expertise I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4122] },
+          "id": "minecraft:potion",
+          "name": "tome.utility"
+        }
+      },
+      "id": 149,
+      "identifications": { "thorns": { "max": 10, "min": 2, "raw": 8 } },
+      "name": "Tome of Countering Expertise I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "expertise_tome"
+    },
+    {
+      "displayName": "Tome of Defensive Mastery",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 150,
+      "identifications": { "rawHealth": { "max": 189, "min": 44, "raw": 145 } },
+      "name": "Tome of Defensive Mastery",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Clouded Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 151,
+      "identifications": {
+        "airDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Clouded Tome of Defensive Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Blooming Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 152,
+      "identifications": {
+        "earthDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Blooming Tome of Defensive Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Oceanic Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 153,
+      "identifications": {
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 },
+        "waterDefence": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Oceanic Tome of Defensive Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Surefooted Tome of the Marathon I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 154,
+      "identifications": {
+        "sprint": { "max": 13, "min": 3, "raw": 10 },
+        "sprintRegen": { "max": 13, "min": 3, "raw": 10 }
+      },
+      "name": "Surefooted Tome of the Marathon I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Sorcerer's Tome of Combat Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 155,
+      "identifications": { "spellDamage": { "max": 7, "min": 2, "raw": 5 } },
+      "name": "Sorcerer's Tome of Combat Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Tome of Combat Mastery",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 156,
+      "identifications": { "damage": { "max": 5, "min": 1, "raw": 4 } },
+      "name": "Tome of Combat Mastery",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Legendary",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 157,
+      "identifications": {
+        "fireDefence": { "max": 8, "min": 2, "raw": 6 },
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 }
+      },
+      "name": "Courageous Tome of Defensive Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Esoteric Tome of Combat Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 158,
+      "identifications": {
+        "rawSpellDamage": { "max": 44, "min": 10, "raw": 34 }
+      },
+      "name": "Esoteric Tome of Combat Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Nimble Tome of Combat Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 159,
+      "identifications": {
+        "rawMainAttackDamage": { "max": 59, "min": 14, "raw": 45 }
+      },
+      "name": "Nimble Tome of Combat Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Fighter's Tome of Combat Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4123] },
+          "id": "minecraft:potion",
+          "name": "tome.weapon"
+        }
+      },
+      "id": 160,
+      "identifications": {
+        "mainAttackDamage": { "max": 7, "min": 2, "raw": 5 }
+      },
+      "name": "Fighter's Tome of Combat Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "weapon_tome"
+    },
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery I",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 161,
+      "identifications": {
+        "rawHealth": { "max": 215, "min": 50, "raw": 165 },
+        "thunderDefence": { "max": 8, "min": 2, "raw": 6 }
+      },
+      "name": "Pulsing Tome of Defensive Mastery I",
+      "requirements": { "level": 60 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Blooming Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 165,
+      "identifications": {
+        "earthDefence": { "max": 12, "min": 3, "raw": 9 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Blooming Tome of Defensive Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Clouded Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 166,
+      "identifications": {
+        "airDefence": { "max": 12, "min": 3, "raw": 9 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Clouded Tome of Defensive Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Courageous Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 167,
+      "identifications": {
+        "fireDefence": { "max": 12, "min": 3, "raw": 9 },
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 }
+      },
+      "name": "Courageous Tome of Defensive Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Dragon's Tome of Mysticism III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 168,
+      "identifications": {
+        "3rdSpellCost": { "max": -6, "min": -1, "raw": -5 }
+      },
+      "name": "Dragon's Tome of Mysticism III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Ephemeral Tome of Mysticism III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 169,
+      "identifications": { "manaRegen": { "max": 5, "min": 1, "raw": 4 } },
+      "name": "Ephemeral Tome of Mysticism III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Everlasting Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 170,
+      "identifications": {
+        "healthRegenRaw": { "max": 73, "min": 17, "raw": 56 },
+        "rawHealth": { "max": 455, "min": 105, "raw": 350 }
+      },
+      "name": "Everlasting Tome of Defensive Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Faerie's Tome of Mysticism III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 171,
+      "identifications": {
+        "1stSpellCost": { "max": -6, "min": -1, "raw": -5 }
+      },
+      "name": "Faerie's Tome of Mysticism III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Fleetfooted Tome of the Marathon III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 172,
+      "identifications": { "walkSpeed": { "max": 9, "min": 2, "raw": 7 } },
+      "name": "Fleetfooted Tome of the Marathon III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Golem's Tome of Mysticism III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 173,
+      "identifications": {
+        "4thSpellCost": { "max": -6, "min": -1, "raw": -5 }
+      },
+      "name": "Golem's Tome of Mysticism III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Harvester's Tome of Mysticism III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4120] },
+          "id": "minecraft:potion",
+          "name": "tome.mana"
+        }
+      },
+      "id": 174,
+      "identifications": { "manaSteal": { "max": 5, "min": 1, "raw": 4 } },
+      "name": "Harvester's Tome of Mysticism III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "mysticism_tome"
+    },
+    {
+      "displayName": "Oceanic Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 175,
+      "identifications": {
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 },
+        "waterDefence": { "max": 12, "min": 3, "raw": 9 }
+      },
+      "name": "Oceanic Tome of Defensive Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Pulsing Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 176,
+      "identifications": {
+        "rawHealth": { "max": 390, "min": 90, "raw": 300 },
+        "thunderDefence": { "max": 12, "min": 3, "raw": 9 }
+      },
+      "name": "Greedy Tome of Armour Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "armour_tome"
+    },
+    {
+      "displayName": "Surefooted Tome of the Marathon III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4121] },
+          "id": "minecraft:potion",
+          "name": "tome.movement"
+        }
+      },
+      "id": 177,
+      "identifications": {
+        "sprint": { "max": 21, "min": 5, "raw": 16 },
+        "sprintRegen": { "max": 21, "min": 5, "raw": 16 }
+      },
+      "name": "Surefooted Tome of the Marathon III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Fabled",
+      "type": "marathon_tome"
+    },
+    {
+      "displayName": "Vampiric Tome of Defensive Mastery III",
+      "dropRestriction": "never",
+      "icon": {
+        "format": "attribute",
+        "value": {
+          "customModelData": { "rangeDispatch": [4117] },
+          "id": "minecraft:potion",
+          "name": "tome.armour"
+        }
+      },
+      "id": 178,
+      "identifications": {
+        "lifeSteal": { "max": 104, "min": 24, "raw": 80 },
+        "rawHealth": { "max": 455, "min": 105, "raw": 350 }
+      },
+      "name": "Vampiric Tome of Defensive Mastery III",
+      "requirements": { "level": 120 },
+      "restriction": "untradable",
+      "tier": "Mythic",
+      "type": "armour_tome"
+    }
+  ]
+}
