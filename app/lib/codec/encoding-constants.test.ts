@@ -16,7 +16,7 @@ describe('loadEncodingConstants', () => {
     let used = ''
     const consts = { TOME_NUM: 7 }
     const out = await loadEncodingConstants(fakeClient(consts, p => (used = p)), 'a3f82c91')
-    expect(used).toBe('a3f82c91/encoding_consts.json')
+    expect(used).toBe('data/a3f82c91/encoding_consts.json')
     expect(out.TOME_NUM).toBe(7)
   })
 })

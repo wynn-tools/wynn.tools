@@ -8,11 +8,11 @@ const versionEntries = versions as VersionEntry[]
 const anchorIdx = versionEntries.findIndex(v => v.gameVersion === ENCODING_BASE_VERSION)
 
 describe('cdnPathFor', () => {
-  it('joins segment and file', () => {
-    expect(cdnPathFor('a3f82c91', 'items.json')).toBe('a3f82c91/items.json')
+  it('joins segment and file under data/', () => {
+    expect(cdnPathFor('a3f82c91', 'items.json')).toBe('data/a3f82c91/items.json')
   })
   it('builds per-class atree paths', () => {
-    expect(cdnPathFor('a3f82c91', 'atree/archer.json')).toBe('a3f82c91/atree/archer.json')
+    expect(cdnPathFor('a3f82c91', 'atree/archer.json')).toBe('data/a3f82c91/atree/archer.json')
   })
 })
 

@@ -11,8 +11,8 @@ const HASH = 'cb2b4788'
 
 const files: Record<string, unknown> = {
   'versions.json': versions,
-  [`${HASH}/items.json`]: itemsFile,
-  [`${HASH}/sets.json`]: setsFile,
+  [`data/${HASH}/items.json`]: itemsFile,
+  [`data/${HASH}/sets.json`]: setsFile,
 }
 
 function fakeClient(byPath: Record<string, unknown> = files, capture?: (p: string) => void): CdnClient {
@@ -32,8 +32,8 @@ describe('loadItemData', () => {
     const db = await loadItemData(fakeClient(files, p => paths.push(p)))
     // Resolves the latest snapshot segment from versions.json.
     expect(paths).toContain('versions.json')
-    expect(paths).toContain(`${HASH}/items.json`)
-    expect(paths).toContain(`${HASH}/sets.json`)
+    expect(paths).toContain(`data/${HASH}/items.json`)
+    expect(paths).toContain(`data/${HASH}/sets.json`)
     // Adapted item is indexed by display name + id.
     expect(db.byName.get('Dondasch')?.id).toBe(0)
     expect(db.byId.get(0)?.category).toBe('armor') // armour → armor

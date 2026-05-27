@@ -36,11 +36,13 @@ function anchorIndex(versions: VersionEntry[]): number {
 }
 
 /**
- * Returns the CDN-relative path for a file within a version segment.
- * Example: cdnPathFor("a3f82c91", "items.json") → "a3f82c91/items.json"
+ * Returns the CDN-relative path for a snapshot file within a version segment.
+ * Snapshots live under `data/` (the root holds `versions.json`); the CDN base
+ * URL is `https://cdn.wynn.tools/`.
+ * Example: cdnPathFor("a3f82c91", "items.json") → "data/a3f82c91/items.json"
  */
 export function cdnPathFor(versionSegment: string, file: string): string {
-  return `${versionSegment}/${file}`
+  return `data/${versionSegment}/${file}`
 }
 
 /**

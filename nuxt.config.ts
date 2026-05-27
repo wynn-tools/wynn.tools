@@ -6,8 +6,9 @@ export default defineNuxtConfig({
   css: ['./app/assets/css/global.css'],
   runtimeConfig: {
     public: {
-      // Override at runtime with NUXT_PUBLIC_CDN_BASE_URL
-      cdnBaseUrl: 'https://cdn.wynn.tools/data',
+      // Override at runtime with NUXT_PUBLIC_CDN_BASE_URL.
+      // Root base: versions.json lives at the root; snapshots under data/{hash}/.
+      cdnBaseUrl: 'https://cdn.wynn.tools/',
       athenaUrl: 'https://athena.wynntils.com',
     },
   },
