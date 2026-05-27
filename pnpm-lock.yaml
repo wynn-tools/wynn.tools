@@ -78,6 +78,9 @@ importers:
       '@types/leaflet':
         specifier: ^1.9.21
         version: 1.9.21
+      eslint:
+        specifier: ^10.4.0
+        version: 10.4.0(jiti@2.7.0)
       eslint-plugin-format:
         specifier: ^2.0.1
         version: 2.0.1(eslint@10.4.0(jiti@2.7.0))
