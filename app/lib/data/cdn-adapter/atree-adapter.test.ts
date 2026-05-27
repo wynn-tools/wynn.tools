@@ -8,12 +8,13 @@ const archerAbilities = adaptCdnAtree(archerFile)
 
 describe('adaptCdnAtree', () => {
   it('maps field renames correctly for a known node', () => {
-    // Node id=1: Bow Proficiency, connections=[0], dependencies=[], blockers=[]
+    // Node id=1: Bow Proficiency. parents = connections verbatim ([0, 2]:
+    // Arrow Bomb above + Cheaper Arrow Bomb same-row sibling).
     const node = archerAbilities.find(a => a.id === 1)!
     expect(node).toBeDefined()
     expect(node.display_name).toBe('Bow Proficiency')
     expect(node.desc).toBe(archerFile.nodes[1].description)
-    expect(node.parents).toEqual([0])
+    expect(node.parents).toEqual(archerFile.nodes[1].connections)
     expect(node.dependencies).toEqual([])
     expect(node.blockers).toEqual([])
     expect(node.cost).toBe(1)
