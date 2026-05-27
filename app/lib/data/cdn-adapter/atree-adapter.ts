@@ -1,9 +1,9 @@
-import type { AtreeAbility, AtreeData } from '~/lib/types/atree'
+import type { AtreeAbility, AtreeData, NormalizedText } from '~/lib/types/atree'
 
 export interface CdnAtreeNode {
   id: number
   name: string
-  description: string
+  description: string | NormalizedText[]
   cost: number
   location: { page: number, row: number, col: number }
   connections: number[]

@@ -1,5 +1,12 @@
 export type WynnClass = 'Archer' | 'Warrior' | 'Mage' | 'Assassin' | 'Shaman' | 'Any'
 
+/** A styled text segment (HTML-parsed): plain text plus optional color/font. */
+export interface NormalizedText {
+  color?: string
+  font?: string
+  text: string
+}
+
 /**
  * Raw ability node as delivered in the atree data (one entry per node).
  * `effects` / `properties` / `display` are preserved verbatim for the math and
@@ -8,7 +15,11 @@ export type WynnClass = 'Archer' | 'Warrior' | 'Mage' | 'Assassin' | 'Shaman' | 
 export interface AtreeAbility {
   id: number
   display_name: string
-  desc: string
+  /**
+   * Rich, styled segments (NormalizedText[]) on live data; a plain string on
+   * historical snapshots. The UI renders rich when it's an array.
+   */
+  desc: string | NormalizedText[]
   parents: number[]
   dependencies: number[]
   blockers: number[]
