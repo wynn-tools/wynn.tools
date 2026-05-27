@@ -34,7 +34,7 @@ import versions from '~/lib/data/__fixtures__/cdn/versions.json'
  * (proven by their own suites); this test guards the adapter wiring.
  */
 
-const HASH = 'cb2b4788' // latest snapshot in the fixture versions.json
+const HASH = '2.2.0.31' // newest version-tagged snapshot in the fixture versions.json
 
 const fixtures: Record<string, unknown> = {
   'versions.json': versions,

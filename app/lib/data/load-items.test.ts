@@ -6,8 +6,9 @@ import versions from './__fixtures__/cdn/versions.json'
 import { CdnError } from './cdn-client'
 import { loadItemData } from './load-items'
 
-// Latest snapshot in the fixture versions.json.
-const HASH = 'cb2b4788'
+// Newest version-tagged snapshot in the fixture versions.json (the trailing
+// untagged entry is skipped, so the latest servable segment is 2.2.0.31).
+const HASH = '2.2.0.31'
 
 const files: Record<string, unknown> = {
   'versions.json': versions,

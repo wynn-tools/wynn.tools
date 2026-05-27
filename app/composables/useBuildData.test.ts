@@ -16,9 +16,9 @@ import tomesFile from '~/lib/data/__fixtures__/cdn/tomes.json'
 import versions from '~/lib/data/__fixtures__/cdn/versions.json'
 import { loadBuildContext, peekVersionId } from './useBuildData'
 
-// versionId 30 → game version '2.2.0.31' → content hash '7a3e636e' (via versions.json offset)
+// versionId 30 → game version '2.2.0.31' (the CDN path segment, via versions.json offset)
 const VERSION_ID_2_2_0_31 = 30
-const HASH = '7a3e636e'
+const HASH = '2.2.0.31'
 
 const fixtures: Record<string, unknown> = {
   'versions.json': versions,
@@ -86,8 +86,8 @@ describe('loadBuildContext (new CDN schema via adapters)', () => {
   })
 
   it('tolerates a historical snapshot with no sets.json (empty sets)', async () => {
-    // versionId 9 → game version 2.1.0.1 → hash e4872d66 (a backfilled snapshot).
-    const HIST = 'e4872d66'
+    // versionId 9 → game version 2.1.0.1 (a backfilled snapshot).
+    const HIST = '2.1.0.1'
     const histFiles: Record<string, unknown> = {
       'versions.json': versions,
       [`data/${HIST}/items.json`]: itemsFile,

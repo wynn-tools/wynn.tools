@@ -8,7 +8,7 @@ import { cdnPathFor } from '../data/cdn-adapter/version-paths'
  */
 export type EncodingConstants = Record<string, number | Record<string, number>>
 
-/** Fetch encoding constants from a resolved CDN snapshot segment (content hash). */
+/** Fetch encoding constants from a resolved CDN snapshot segment (gameVersion). */
 export async function loadEncodingConstants(client: CdnClient, segment: string): Promise<EncodingConstants> {
   return client.fetchJson<EncodingConstants>(cdnPathFor(segment, 'encoding_consts.json'))
 }

@@ -1,14 +1,14 @@
 /**
  * CDN path resolution for versioned game data snapshots.
  *
- * The new CDN serves content-hash snapshots at `data/{contentHash}/<file>` and a
- * root `versions.json` — a chronologically-ordered, append-only index mapping
- * each snapshot to its `gameVersion`.
+ * The CDN serves snapshots at `data/{gameVersion}/<file>` (e.g. `data/2.2.0.31/`)
+ * and a root `versions.json` — a chronologically-ordered, append-only index
+ * mapping each snapshot's `gameVersion` to its content `hash`.
  *
  * A build-share URL encodes a numeric `versionId` which is a 0-based offset from
  * the fixed anchor `ENCODING_BASE_VERSION` ('2.0.1.1' = versionId 0) into
  * `versions.json`. So:
- * - resolveVersionSegment(versionId, versions) → the concrete content hash at
+ * - resolveVersionSegment(versionId, versions) → the gameVersion path segment at
  *   `anchorIndex + versionId`. Builds pin to their exact snapshot, making decode
  *   fully reproducible (a shared build always shows the data its creator saw).
  * - latestVersionId(versions) → the versionId a freshly created build should
@@ -16,7 +16,8 @@
  *
  * The app holds no hardcoded version list, so appending a new CDN snapshot needs
  * no redeploy. Each snapshot carries its own encoding_consts.json, so
- * versionId → hash → that snapshot's encoding_consts is correct by construction.
+ * versionId → gameVersion → that snapshot's encoding_consts is correct by
+ * construction.
  */
 
 import { ENCODING_BASE_VERSION } from '~/lib/codec/version'
@@ -39,15 +40,15 @@ function anchorIndex(versions: VersionEntry[]): number {
  * Returns the CDN-relative path for a snapshot file within a version segment.
  * Snapshots live under `data/` (the root holds `versions.json`); the CDN base
  * URL is `https://cdn.wynn.tools/`.
- * Example: cdnPathFor("a3f82c91", "items.json") → "data/a3f82c91/items.json"
+ * Example: cdnPathFor("2.2.0.31", "items.json") → "data/2.2.0.31/items.json"
  */
 export function cdnPathFor(versionSegment: string, file: string): string {
   return `data/${versionSegment}/${file}`
 }
 
 /**
- * Resolves a numeric versionId (from a build share URL) to its concrete content
- * hash, using the parsed root `versions.json`.
+ * Resolves a numeric versionId (from a build share URL) to its gameVersion path
+ * segment, using the parsed root `versions.json`.
  */
 export function resolveVersionSegment(versionId: number, versions: VersionEntry[]): string {
   if (versionId < 0)
@@ -55,10 +56,24 @@ export function resolveVersionSegment(versionId: number, versions: VersionEntry[
   const entry = versions[anchorIndex(versions) + versionId]
   if (!entry)
     throw new Error(`Unknown build version id ${versionId}`)
-  return entry.hash
+  if (entry.gameVersion == null)
+    throw new Error(`versions.json entry at id ${versionId} has no gameVersion`)
+  return entry.gameVersion
 }
 
-/** The versionId a newly created build should encode (the newest snapshot). */
+/**
+ * The versionId a newly created build should encode: the newest snapshot that
+ * has a gameVersion. A freshly-fetched snapshot may be appended before it is
+ * version-tagged; such an entry has no `data/{gameVersion}/` directory to serve,
+ * so it is skipped here.
+ */
 export function latestVersionId(versions: VersionEntry[]): number {
-  return versions.length - 1 - anchorIndex(versions)
+  let last = -1
+  for (let i = 0; i < versions.length; i++) {
+    if (versions[i]!.gameVersion != null)
+      last = i
+  }
+  if (last < 0)
+    throw new Error('versions.json has no version-tagged snapshot')
+  return last - anchorIndex(versions)
 }
