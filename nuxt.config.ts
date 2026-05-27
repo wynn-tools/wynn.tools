@@ -11,6 +11,14 @@ export default defineNuxtConfig({
       athenaUrl: 'https://athena.wynntils.com',
     },
   },
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      ],
+    },
+  },
   modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image'],
   ogImage: {
     compatibility: {
