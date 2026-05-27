@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from 'reka-ui'
 import { computed } from 'vue'
-import { computeAtreeConnectors, connectorTileName, nodeImageUrl } from '~/lib/atree/connectors'
+import { anyDir, computeAtreeConnectors, connectorTileName, nodeImageUrl } from '~/lib/atree/connectors'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -43,7 +43,7 @@ interface ConnectorTile {
   row: number
   col: number
   name: string
-  active: boolean
+  activeName: string | null
 }
 
 const connectors = computed<ConnectorTile[]>(() => {
@@ -58,8 +58,8 @@ const connectors = computed<ConnectorTile[]>(() => {
     result.push({
       row: Number(rowStr),
       col: Number(colStr),
-      name: connectorTileName(cell),
-      active: cell.active,
+      name: connectorTileName(cell.dirs),
+      activeName: anyDir(cell.activeDirs) ? connectorTileName(cell.activeDirs) : null,
     })
   }
   return result
@@ -129,21 +129,37 @@ function onNodeClick(id: number, e: MouseEvent) {
           :style="{ width: `${gridWidth}px`, height: `${gridHeight}px` }"
         >
           <!-- Connector tile images (behind nodes) -->
-          <img
-            v-for="(conn, i) in connectors"
-            :key="i"
-            :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}${conn.active ? '_active' : ''}.png`"
-            class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
-            :style="{
-              left: `${conn.col * CELL}px`,
-              top: `${conn.row * CELL}px`,
-              width: `${CELL}px`,
-              height: `${CELL}px`,
-            }"
-            draggable="false"
-            aria-hidden="true"
-            alt=""
-          >
+          <template v-for="(conn, i) in connectors" :key="i">
+            <!-- Base: all directions, no active glow -->
+            <img
+              :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
+              class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+              :style="{
+                left: `${conn.col * CELL}px`,
+                top: `${conn.row * CELL}px`,
+                width: `${CELL}px`,
+                height: `${CELL}px`,
+              }"
+              draggable="false"
+              aria-hidden="true"
+              alt=""
+            >
+            <!-- Active overlay: only the active-path directions lit up -->
+            <img
+              v-if="conn.activeName"
+              :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.activeName}_active.png`"
+              class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+              :style="{
+                left: `${conn.col * CELL}px`,
+                top: `${conn.row * CELL}px`,
+                width: `${CELL}px`,
+                height: `${CELL}px`,
+              }"
+              draggable="false"
+              aria-hidden="true"
+              alt=""
+            >
+          </template>
 
           <!-- Nodes -->
           <TooltipRoot

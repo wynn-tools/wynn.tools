@@ -47,7 +47,15 @@ export function nodeImageUrl(icon: string | undefined, variant: NodeVariant = 'b
 }
 
 export interface ConnectorDirs { up: boolean, right: boolean, down: boolean, left: boolean }
-export interface ConnectorCell { dirs: ConnectorDirs, active: boolean }
+export interface ConnectorCell { dirs: ConnectorDirs, activeDirs: ConnectorDirs }
+
+function emptyDirs(): ConnectorDirs {
+  return { up: false, right: false, down: false, left: false }
+}
+
+export function anyDir(d: ConnectorDirs): boolean {
+  return d.up || d.right || d.down || d.left
+}
 
 export function computeAtreeConnectors(nodes: AtreeNode[], activeIds?: Set<number>): Map<string, ConnectorCell> {
   const map = new Map<string, ConnectorCell>()
@@ -55,12 +63,12 @@ export function computeAtreeConnectors(nodes: AtreeNode[], activeIds?: Set<numbe
     const key = `${row},${col}`
     let cell = map.get(key)
     if (!cell) {
-      cell = { dirs: { up: false, right: false, down: false, left: false }, active: false }
+      cell = { dirs: emptyDirs(), activeDirs: emptyDirs() }
       map.set(key, cell)
     }
     cell.dirs[dir] = true
     if (pathActive)
-      cell.active = true
+      cell.activeDirs[dir] = true
   }
   for (const node of nodes) {
     const c = node.ability.display as { row: number, col: number }
@@ -91,16 +99,15 @@ export function computeAtreeConnectors(nodes: AtreeNode[], activeIds?: Set<numbe
   return map
 }
 
-export function connectorTileName(d: ConnectorDirs | ConnectorCell): string {
-  const dirs = 'dirs' in d ? d.dirs : d
+export function connectorTileName(d: ConnectorDirs): string {
   const parts: string[] = []
-  if (dirs.up)
+  if (d.up)
     parts.push('up')
-  if (dirs.right)
+  if (d.right)
     parts.push('right')
-  if (dirs.down)
+  if (d.down)
     parts.push('down')
-  if (dirs.left)
+  if (d.left)
     parts.push('left')
   return `connector_${parts.join('_')}`
 }
