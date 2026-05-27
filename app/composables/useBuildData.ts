@@ -1,15 +1,30 @@
 import type { BuildContext } from '~/lib/build/compute-build'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
+import type { CdnAspect } from '~/lib/data/cdn-adapter/aspect-adapter'
+import type { CdnAtreeFile } from '~/lib/data/cdn-adapter/atree-adapter'
+import type { OutputItem } from '~/lib/data/cdn-adapter/item-adapter'
+import type { OutputTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import type { VersionEntry } from '~/lib/data/cdn-adapter/version-paths'
 import type { CdnClient } from '~/lib/data/cdn-client'
-import type { RawAspectData } from '~/lib/types/aspect'
-import type { AtreeData } from '~/lib/types/atree'
-import type { ItemSet } from '~/lib/types/item'
 import { buildRawItemIndex, buildRawTomeIndex } from '~/lib/build/resolve'
 import { BitVector, BitVectorCursor } from '~/lib/codec/bit-vector'
 import { decodeHeader } from '~/lib/codec/header'
+import { mergeClassAspects } from '~/lib/data/cdn-adapter/aspect-adapter'
+import { mergeClassAtrees } from '~/lib/data/cdn-adapter/atree-adapter'
+import { adaptCdnItem } from '~/lib/data/cdn-adapter/item-adapter'
+import { adaptCdnSets } from '~/lib/data/cdn-adapter/sets-adapter'
+import { adaptCdnTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import { cdnPathFor, latestVersionId, resolveVersionSegment } from '~/lib/data/cdn-adapter/version-paths'
 import { createCdnClient } from '~/lib/data/cdn-client'
+
+/** Class name (WynnClass casing) → lowercase per-class file segment. */
+const ATREE_CLASSES = [
+  ['Archer', 'archer'],
+  ['Warrior', 'warrior'],
+  ['Mage', 'mage'],
+  ['Assassin', 'assassin'],
+  ['Shaman', 'shaman'],
+] as const
 
 export function peekVersionId(hash: string): number {
   return decodeHeader(new BitVectorCursor(new BitVector(hash, hash.length * 6)))
@@ -28,8 +43,6 @@ export async function resolveLatestVersionId(client: CdnClient): Promise<number>
   return latestVersionId(await fetchVersions(client))
 }
 
-interface RawItemsFile { items: Array<Record<string, unknown> & { id?: number, type?: string }>, sets: Record<string, ItemSet> }
-
 export interface LoadedBuildData {
   ctx: BuildContext
   enc: EncodingConstants
@@ -45,19 +58,29 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
   const promise = (async () => {
     const versions = await fetchVersions(client)
     const segment = resolveVersionSegment(versionId, versions)
-    const [itemsFile, atreeData, enc, tomesFile, aspectData] = await Promise.all([
-      client.fetchJson<RawItemsFile>(cdnPathFor(segment, 'items.json')),
-      client.fetchJson<AtreeData>(cdnPathFor(segment, 'atree.json')),
-      client.fetchJson<EncodingConstants>(cdnPathFor(segment, 'encoding_consts.json')),
-      client.fetchJson<{ tomes: Array<Record<string, unknown>> }>(cdnPathFor(segment, 'tomes.json')),
-      client.fetchJson<RawAspectData>(cdnPathFor(segment, 'aspects.json')),
+    const get = <T>(file: string): Promise<T> => client.fetchJson<T>(cdnPathFor(segment, file))
+
+    const [itemsFile, tomesFile, setsFile, enc, atreeEntries, aspectEntries] = await Promise.all([
+      get<{ items: OutputItem[] }>('items.json'),
+      get<{ tomes: OutputTome[] }>('tomes.json'),
+      get<Parameters<typeof adaptCdnSets>[0]>('sets.json'),
+      get<EncodingConstants>('encoding_consts.json'),
+      Promise.all(ATREE_CLASSES.map(async ([cls, file]) =>
+        [cls, await get<CdnAtreeFile>(`atree/${file}.json`)] as const)),
+      Promise.all(ATREE_CLASSES.map(async ([cls, file]) =>
+        [cls, await get<{ aspects: CdnAspect[] }>(`aspects/${file}.json`)] as const)),
     ])
     ;(enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT = (enc.POWDER_ELEMENTS as unknown[]).length
-    const rawItemIndex = buildRawItemIndex(itemsFile.items as Parameters<typeof buildRawItemIndex>[0])
-    const tomeIndex = buildRawTomeIndex(tomesFile.tomes)
-    const sets = new Map(Object.entries(itemsFile.sets ?? {}))
+
+    const adaptedItems = itemsFile.items.map(adaptCdnItem)
+    const rawItemIndex = buildRawItemIndex(adaptedItems as Parameters<typeof buildRawItemIndex>[0])
+    const tomeIndex = buildRawTomeIndex(tomesFile.tomes.map(adaptCdnTome))
+    const sets = adaptCdnSets(setsFile)
+    const atreeData = mergeClassAtrees(Object.fromEntries(atreeEntries))
+    const aspectData = mergeClassAspects(Object.fromEntries(aspectEntries))
+
     const typeById = new Map<number, string>()
-    for (const it of itemsFile.items) {
+    for (const it of adaptedItems) {
       if (typeof it.id === 'number' && typeof it.type === 'string')
         typeById.set(it.id, it.type)
     }

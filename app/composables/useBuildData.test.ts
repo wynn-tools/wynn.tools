@@ -1,4 +1,18 @@
 import { describe, expect, it } from 'vitest'
+import archerAspects from '~/lib/data/__fixtures__/cdn/aspects/archer.json'
+import assassinAspects from '~/lib/data/__fixtures__/cdn/aspects/assassin.json'
+import mageAspects from '~/lib/data/__fixtures__/cdn/aspects/mage.json'
+import shamanAspects from '~/lib/data/__fixtures__/cdn/aspects/shaman.json'
+import warriorAspects from '~/lib/data/__fixtures__/cdn/aspects/warrior.json'
+import archerAtree from '~/lib/data/__fixtures__/cdn/atree/archer.json'
+import assassinAtree from '~/lib/data/__fixtures__/cdn/atree/assassin.json'
+import mageAtree from '~/lib/data/__fixtures__/cdn/atree/mage.json'
+import shamanAtree from '~/lib/data/__fixtures__/cdn/atree/shaman.json'
+import warriorAtree from '~/lib/data/__fixtures__/cdn/atree/warrior.json'
+import encodingConsts from '~/lib/data/__fixtures__/cdn/encoding_consts.json'
+import itemsFile from '~/lib/data/__fixtures__/cdn/items.json'
+import setsFile from '~/lib/data/__fixtures__/cdn/sets.json'
+import tomesFile from '~/lib/data/__fixtures__/cdn/tomes.json'
 import versions from '~/lib/data/__fixtures__/cdn/versions.json'
 import { loadBuildContext, peekVersionId } from './useBuildData'
 
@@ -6,80 +20,81 @@ import { loadBuildContext, peekVersionId } from './useBuildData'
 const VERSION_ID_2_2_0_31 = 30
 const HASH = '7a3e636e'
 
-function mockClient(files: Record<string, unknown>) {
-  return {
-    fetchJson: async <T>(path: string) => files[path] as T,
-  }
+const fixtures: Record<string, unknown> = {
+  'versions.json': versions,
+  [`${HASH}/items.json`]: itemsFile,
+  [`${HASH}/tomes.json`]: tomesFile,
+  [`${HASH}/sets.json`]: setsFile,
+  [`${HASH}/encoding_consts.json`]: encodingConsts,
+  [`${HASH}/atree/archer.json`]: archerAtree,
+  [`${HASH}/atree/warrior.json`]: warriorAtree,
+  [`${HASH}/atree/mage.json`]: mageAtree,
+  [`${HASH}/atree/assassin.json`]: assassinAtree,
+  [`${HASH}/atree/shaman.json`]: shamanAtree,
+  [`${HASH}/aspects/archer.json`]: archerAspects,
+  [`${HASH}/aspects/warrior.json`]: warriorAspects,
+  [`${HASH}/aspects/mage.json`]: mageAspects,
+  [`${HASH}/aspects/assassin.json`]: assassinAspects,
+  [`${HASH}/aspects/shaman.json`]: shamanAspects,
 }
 
-const fixtures = {
-  'versions.json': versions,
-  [`${HASH}/items.json`]: {
-    items: [
-      {
-        name: 'R',
-        id: 5,
-        type: 'relik',
-        nDam: '10-20',
-        category: 'weapon',
-        slots: 0,
-      },
-    ],
-    sets: {},
-  },
-  [`${HASH}/atree.json`]: { Shaman: [] },
-  [`${HASH}/encoding_consts.json`]: { POWDER_ELEMENTS: [] },
-  [`${HASH}/tomes.json`]: { tomes: [{ name: 'T', id: 5, type: 'weaponTome', mdPct: 8 }] },
-  [`${HASH}/aspects.json`]: {},
+function mockClient(files: Record<string, unknown> = fixtures) {
+  return {
+    fetchJson: async <T>(path: string) => {
+      if (!(path in files))
+        throw new Error(`unexpected fetch: ${path}`)
+      return files[path] as T
+    },
+  }
 }
 
 describe('peekVersionId', () => {
   it('returns the version id encoded in the oracle hash', () => {
     const versionId = peekVersionId('CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0')
-    expect(typeof versionId).toBe('number')
     expect(versionId).toBe(VERSION_ID_2_2_0_31)
   })
 })
 
-describe('loadBuildContext', () => {
-  it('wires items into rawItemIndex, sets, atreeData, and weaponType', async () => {
-    const client = mockClient(fixtures)
-    const data = await loadBuildContext(client, VERSION_ID_2_2_0_31)
+describe('loadBuildContext (new CDN schema via adapters)', () => {
+  it('adapts items, tomes, sets, per-class atree and aspects', async () => {
+    const data = await loadBuildContext(mockClient(), VERSION_ID_2_2_0_31)
 
-    // rawItemIndex resolves item id 5
-    expect(data.ctx.rawItemIndex.resolveId(5)).toBeDefined()
-    expect(data.ctx.rawItemIndex.resolveId(5)?.id).toBe(5)
+    // items adapted + indexed: id 0 (Dondasch) resolves and carries shorthand stats
+    const dondasch = data.ctx.rawItemIndex.resolveId(0)
+    expect(dondasch).toBeDefined()
+    expect(dondasch?.category).toBe('armor') // armour → armor
 
-    // weaponType returns 'relik' for id 5
-    expect(data.weaponType(5)).toBe('relik')
+    // weaponType resolves a weapon's subType (Eidolon id 1 is a wand)
+    expect(data.weaponType(1)).toBe('wand')
 
-    // atreeData.Shaman is defined
-    expect(data.ctx.atreeData.Shaman).toBeDefined()
+    // sets from the standalone sets.json, keyed by name
+    expect(data.ctx.sets.has('Adventurer')).toBe(true)
 
-    // enc.POWDER_ELEMENTS_COUNT patched to POWDER_ELEMENTS.length (0)
-    expect((data.enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT).toBe(0)
+    // per-class atree merged with WynnClass casing, single root reachable
+    expect(data.ctx.atreeData.Archer?.length).toBeGreaterThan(0)
+    expect(data.ctx.atreeData.Warrior?.length).toBeGreaterThan(0)
 
-    // tomeIndex resolves the fixture tome by id
-    expect(data.ctx.tomeIndex.resolveId(5)).not.toBeNull()
+    // per-class aspects merged
+    expect(data.ctx.aspectData.Archer?.length).toBeGreaterThan(0)
 
-    // aspectData is present
-    expect(data.ctx.aspectData).toBeDefined()
+    // tomes adapted + indexed
+    expect(data.ctx.tomeIndex.byId.size).toBeGreaterThan(0)
+
+    // encoding constants patched
+    expect((data.enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT)
+      .toBe((encodingConsts as { POWDER_ELEMENTS: unknown[] }).POWDER_ELEMENTS.length)
   })
 
-  it('caches results per versionId (same data returned without re-fetching)', async () => {
-    // The cache is module-level; after the first test, version 30 is already cached.
-    // A second call must return the same resolved data without making new fetchJson calls.
+  it('caches results per versionId (no re-fetch on second call)', async () => {
     const calls: string[] = []
-    const trackingClient = {
+    const tracking = {
       fetchJson: async <T>(path: string) => {
         calls.push(path)
-        return (fixtures as Record<string, unknown>)[path] as T
+        return fixtures[path] as T
       },
     }
-
-    // First call — hits cache (populated by previous test), no fetchJson calls made.
-    const callsBefore = calls.length
-    await loadBuildContext(trackingClient, VERSION_ID_2_2_0_31)
-    expect(calls.length).toBe(callsBefore) // no new network calls — cache hit
+    const before = calls.length
+    await loadBuildContext(tracking, VERSION_ID_2_2_0_31)
+    expect(calls.length).toBe(before) // cache hit from previous test
   })
 })
