@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { AtreeNode } from '~/lib/types/atree'
+import type { CSSProperties } from 'vue'
+import type { AtreeNode, NormalizedText } from '~/lib/types/atree'
 import {
   TooltipContent,
   TooltipPortal,
@@ -14,6 +15,28 @@ import { useBuildStore } from '~/stores/build'
 const store = useBuildStore()
 
 const CELL = 44 // px
+
+// Wynncraft font name (from the parsed HTML) → self-hosted font-family.
+// Custom-glyph fonts must use the matching face to render their PUA glyphs
+// (mana/element symbols embedded in ability descriptions).
+const FONT_FAMILY: Record<string, string> = {
+  ascii: '\'wynn-ascii\'',
+  common: '\'wynn-ascii\'',
+  default: '\'wynn-ascii\'',
+  wynnic: '\'wynn-wynnic\'',
+  high_gavelian: '\'wynn-high-gavelian\'',
+}
+
+/** Inline style for one parsed-HTML description segment. */
+function segmentStyle(seg: NormalizedText): CSSProperties {
+  return {
+    color: seg.color,
+    fontFamily: seg.font ? FONT_FAMILY[seg.font] : undefined,
+    fontWeight: seg.bold ? 700 : undefined,
+    fontStyle: seg.italic ? 'italic' : undefined,
+    textDecoration: seg.underline ? 'underline' : undefined,
+  }
+}
 
 function archetypeLine(node: AtreeNode): string | null {
   const { archetype, archetype_req: req, req_archetype: reqArch } = node.ability
@@ -217,9 +240,24 @@ function onNodeClick(id: number, e: MouseEvent) {
                 <p v-if="archetypeLine(node)" class="mb-1.5 text-[10px] uppercase tracking-[0.04em] text-muted">
                   {{ archetypeLine(node) }}
                 </p>
-                <!-- desc is trusted game data from the CDN and contains markup -->
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <p v-if="node.ability.desc" class="whitespace-pre-line text-[11px] leading-[1.5] text-text" v-html="node.ability.desc" />
+                <!-- Rich description: NormalizedText[] segments (live data) render
+                     with their parsed color/font/weight; a plain string (historical
+                     backfilled data) renders as-is. -->
+                <p
+                  v-if="node.ability.desc && node.ability.desc.length"
+                  class="whitespace-pre-line text-[11px] leading-[1.5] text-text"
+                >
+                  <template v-if="typeof node.ability.desc === 'string'">
+                    {{ node.ability.desc }}
+                  </template>
+                  <template v-else>
+                    <span
+                      v-for="(seg, i) in node.ability.desc"
+                      :key="i"
+                      :style="segmentStyle(seg)"
+                    >{{ seg.text }}</span>
+                  </template>
+                </p>
               </TooltipContent>
             </TooltipPortal>
           </TooltipRoot>

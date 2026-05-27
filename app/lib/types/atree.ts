@@ -1,10 +1,13 @@
 export type WynnClass = 'Archer' | 'Warrior' | 'Mage' | 'Assassin' | 'Shaman' | 'Any'
 
-/** A styled text segment (HTML-parsed): plain text plus optional color/font. */
+/** A styled text segment (HTML-parsed): plain text plus optional styling. */
 export interface NormalizedText {
+  text: string
   color?: string
   font?: string
-  text: string
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
 }
 
 /**
