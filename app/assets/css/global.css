@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source "../../**/*.{vue,ts}";
 
 /* ── Wynncraft fonts (self-hosted) ── */
@@ -26,34 +26,34 @@
 
 @theme {
   /* ── Neutrals (hue 30 — near-neutral, very slight warm cast) ── */
-  --color-bg:           oklch(14% 0.006 30);
-  --color-surface:      oklch(19% 0.008 30);
-  --color-surface-hi:   oklch(24% 0.009 30);
-  --color-border:       oklch(26% 0.008 30);
-  --color-faint:        oklch(36% 0.007 30);
-  --color-muted:        oklch(58% 0.008 30);
-  --color-text:         oklch(92% 0.004 30);
+  --color-bg: oklch(14% 0.006 30);
+  --color-surface: oklch(19% 0.008 30);
+  --color-surface-hi: oklch(24% 0.009 30);
+  --color-border: oklch(26% 0.008 30);
+  --color-faint: oklch(36% 0.007 30);
+  --color-muted: oklch(58% 0.008 30);
+  --color-text: oklch(92% 0.004 30);
 
   /* ── Accent: copper-bronze ── */
-  --color-accent:       oklch(65% 0.15 48);
-  --color-accent-dim:   oklch(52% 0.12 48);
-  --color-accent-glow:  oklch(65% 0.15 48 / 0.15);
+  --color-accent: oklch(65% 0.15 48);
+  --color-accent-dim: oklch(52% 0.12 48);
+  --color-accent-glow: oklch(65% 0.15 48 / 0.15);
 
   /* ── Gold: item rarities, stat highlights ── */
-  --color-gold:         oklch(78% 0.14 75);
-  --color-gold-dim:     oklch(62% 0.11 75);
+  --color-gold: oklch(78% 0.14 75);
+  --color-gold-dim: oklch(62% 0.11 75);
 
   /* ── Card aliases ── */
-  --color-card:         var(--color-surface);
-  --color-card-hover:   var(--color-surface-hi);
+  --color-card: var(--color-surface);
+  --color-card-hover: var(--color-surface-hi);
 
   /* ── Legacy alias — existing builder components use this ── */
-  --color-copper:       oklch(78% 0.14 75);
+  --color-copper: oklch(78% 0.14 75);
 
   /* ── Typography ── */
   --font-display: 'Barlow Semi Condensed', system-ui, sans-serif;
-  --font-body:    'Figtree', system-ui, sans-serif;
-  --font-mono:    'Geist Mono', 'Courier New', monospace;
+  --font-body: 'Figtree', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Courier New', monospace;
 }
 
 @utility pixelated {
@@ -69,7 +69,7 @@
 }
 
 @utility shadow-accent-lg {
-  box-shadow: 0 0 56px oklch(65% 0.15 48 / 0.40);
+  box-shadow: 0 0 56px oklch(65% 0.15 48 / 0.4);
 }
 
 /* Legacy alias — existing components using --color-copper still work */
@@ -114,7 +114,10 @@
     flex-direction: column;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     line-height: 1.1;
   }

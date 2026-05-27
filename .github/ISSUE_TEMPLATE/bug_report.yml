@@ -1,6 +1,6 @@
 name: Bug report
 description: Report a bug in wynn.tools
-labels: ["bug"]
+labels: [bug]
 body:
   - type: dropdown
     id: tool
