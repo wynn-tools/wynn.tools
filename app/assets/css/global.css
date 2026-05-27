@@ -23,6 +23,36 @@
   font-style: normal;
   font-display: block;
 }
+@font-face {
+  /* Elemental and combat icon font (custom-glyph PUA range). */
+  font-family: 'wynn-common';
+  src: url('/fonts/common.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  /* Merged common/ascii font. */
+  font-family: 'wynn-default';
+  src: url('/fonts/default.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'wynn-five';
+  src: url('/fonts/five.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'wynn-old-fruman';
+  src: url('/fonts/old_fruman.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
 
 @theme {
   /* ── Neutrals (hue 30 — near-neutral, very slight warm cast) ── */

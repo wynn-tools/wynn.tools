@@ -17,14 +17,16 @@ const store = useBuildStore()
 const CELL = 44 // px
 
 // Wynncraft font name (from the parsed HTML) → self-hosted font-family.
-// Custom-glyph fonts must use the matching face to render their PUA glyphs
-// (mana/element symbols embedded in ability descriptions).
+// `common` is the elemental/combat icon font — required to render the PUA
+// glyphs (mana/element/heart symbols) embedded in ability descriptions.
 const FONT_FAMILY: Record<string, string> = {
   ascii: '\'wynn-ascii\'',
-  common: '\'wynn-ascii\'',
-  default: '\'wynn-ascii\'',
+  common: '\'wynn-common\'',
+  default: '\'wynn-default\'',
+  five: '\'wynn-five\'',
   wynnic: '\'wynn-wynnic\'',
   high_gavelian: '\'wynn-high-gavelian\'',
+  old_fruman: '\'wynn-old-fruman\'',
 }
 
 /** Inline style for one parsed-HTML description segment. */
