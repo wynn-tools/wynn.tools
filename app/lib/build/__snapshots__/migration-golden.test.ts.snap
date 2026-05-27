@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`migration golden regression > round-trips and computes an archer bow build against the adapted schema 1`] = `
+{
+  "attackSpeed": "SUPER_SLOW",
+  "ehp": {
+    "withAgi": 8535.242438281844,
+    "withoutAgi": 5632.2780673124125,
+  },
+  "elementalDefenses": [
+    250,
+    75,
+    0,
+    -25,
+    -50,
+  ],
+  "finalSkillpoints": [
+    80,
+    70,
+    0,
+    3,
+    50,
+  ],
+  "meleeAverageDps": 1429.5711852557956,
+  "meleePerAttack": 2803.080755403521,
+  "totalHp": 7135,
+  "totalHpr": -39,
+}
+`;
