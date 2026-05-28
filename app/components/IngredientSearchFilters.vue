@@ -5,6 +5,11 @@ const criteria = defineModel<IngredientCriteria>({ required: true })
 const TIERS = [0, 1, 2, 3]
 const SKILLS = ['woodworking', 'weaponsmithing', 'armouring', 'tailoring', 'jeweling', 'cooking', 'alchemism', 'scribing']
 
+const levelRange = computed({
+  get: (): [number, number] => criteria.value.levelRange,
+  set: (v: number[]) => { criteria.value = { ...criteria.value, levelRange: v as [number, number] } },
+})
+
 function toggleNum(list: number[], value: number): number[] {
   return list.includes(value) ? list.filter(v => v !== value) : [...list, value]
 }
@@ -28,17 +33,23 @@ function toggleStr(list: string[], value: string): string[] {
         {{ t }}
       </button>
     </fieldset>
-    <fieldset class="f-group">
-      <legend>Level</legend>
-      <input
-        class="f-num" type="number" min="1" max="110" :value="criteria.levelRange[0]"
-        @input="criteria = { ...criteria, levelRange: [Number(($event.target as HTMLInputElement).value) || 1, criteria.levelRange[1]] }"
+    <fieldset class="f-group f-group--col">
+      <legend>
+        Level
+        <span class="f-range-val">{{ criteria.levelRange[0] }}–{{ criteria.levelRange[1] }}</span>
+      </legend>
+      <SliderRoot
+        v-model="levelRange"
+        :min="1"
+        :max="110"
+        :step="1"
+        class="f-slider"
       >
-      <span>–</span>
-      <input
-        class="f-num" type="number" min="1" max="110" :value="criteria.levelRange[1]"
-        @input="criteria = { ...criteria, levelRange: [criteria.levelRange[0], Number(($event.target as HTMLInputElement).value) || 110] }"
-      >
+        <SliderTrack class="f-slider-track">
+          <SliderRange class="f-slider-range" />
+        </SliderTrack>
+        <SliderThumb v-for="_ in 2" :key="_" class="f-slider-thumb" />
+      </SliderRoot>
     </fieldset>
     <fieldset class="f-group">
       <legend>Skills</legend>
@@ -72,9 +83,19 @@ function toggleStr(list: string[], value: string): string[] {
   padding: 8px 10px;
   color: var(--color-text);
   font-size: 13px;
+  transition: border-color 0.12s ease-out;
+}
+.f-input::placeholder {
+  color: var(--color-muted);
+}
+.f-input:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
 }
 .f-group {
   border: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -86,14 +107,25 @@ function toggleStr(list: string[], value: string): string[] {
 }
 .f-group legend {
   width: 100%;
-  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 500 11px/1 var(--font-mono);
   color: var(--color-muted);
   text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  padding: 0;
+}
+.f-range-val {
+  font: 500 11px/1 var(--font-mono);
+  color: var(--color-accent);
+  text-transform: none;
   letter-spacing: 0.04em;
-  margin-bottom: 4px;
+  margin-left: auto;
 }
 .f-group button {
-  background: var(--color-surface);
+  background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 4px;
   color: var(--color-muted);
@@ -101,17 +133,66 @@ function toggleStr(list: string[], value: string): string[] {
   padding: 4px 8px;
   cursor: pointer;
   text-transform: capitalize;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+.f-group button:hover {
+  color: var(--color-text);
+  border-color: var(--color-faint);
 }
 .f-group button.on {
   color: var(--color-accent);
   border-color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
 }
-.f-num {
-  width: 64px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 4px 6px;
-  color: var(--color-text);
+.f-group button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Slider */
+.f-slider {
+  position: relative;
+  display: flex;
+  width: 100%;
+  touch-action: none;
+  user-select: none;
+  align-items: center;
+  padding-block: 6px;
+}
+.f-slider-track {
+  position: relative;
+  height: 4px;
+  width: 100%;
+  flex-grow: 1;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--color-border);
+}
+.f-slider-range {
+  position: absolute;
+  height: 100%;
+  background: oklch(65% 0.15 48 / 0.7);
+}
+.f-slider-thumb {
+  display: block;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  border: 1px solid oklch(65% 0.15 48 / 0.6);
+  background: var(--color-bg);
+  box-shadow: 0 1px 4px oklch(0% 0 0 / 0.3);
+  transition: border-color 0.12s ease-out;
+  cursor: grab;
+}
+.f-slider-thumb:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px oklch(65% 0.15 48 / 0.5);
+  border-color: var(--color-accent);
+}
+.f-slider-thumb:active {
+  cursor: grabbing;
 }
 </style>

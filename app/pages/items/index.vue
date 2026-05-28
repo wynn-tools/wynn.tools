@@ -140,8 +140,6 @@ const setOptions = computed(() =>
   position: sticky;
   top: 76px;
   align-self: start;
-  max-height: calc(100vh - 92px);
-  overflow-y: auto;
   padding-right: 4px;
   scrollbar-width: thin;
 }
@@ -182,8 +180,6 @@ const setOptions = computed(() =>
   }
   .sidebar {
     position: static;
-    max-height: none;
-    overflow: visible;
   }
 }
 </style>
