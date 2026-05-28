@@ -140,6 +140,14 @@ function onNodeClick(id: number, e: MouseEvent) {
     store.toggleAtreeNode(id)
 }
 
+// Ultimates use the `ultimate*` icon prefix on the CDN and are visually
+// larger in-game. Grid math is unchanged — the bigger size is purely a
+// CSS transform on the artwork, centered on the original cell.
+function isUltimate(node: AtreeNode): boolean {
+  const icon = node.ability.display.icon ?? ''
+  return icon.startsWith('ultimate') || icon.startsWith('abilityTree.ultimate')
+}
+
 // Per-state art selection. The CDN ships three variants per node:
 // `base` (disabled / dim), `_pulse` (frontier / ready), `_active` (lit).
 // Using the right variant per state replaces the old grayscale/brightness
@@ -335,7 +343,7 @@ function onMiniPointerUp(e: PointerEvent) {
               <TooltipTrigger as-child>
                 <button
                   class="group absolute z-[1] flex size-11 items-center justify-center border-0 bg-transparent p-0 transition-[filter,opacity] duration-100"
-                  :class="NODE_STATE_CLASSES[nodeState(node)]"
+                  :class="[NODE_STATE_CLASSES[nodeState(node)], { 'node--ultimate': isUltimate(node) }]"
                   :style="{
                     left: `${node.ability.display.col * CELL}px`,
                     top: `${node.ability.display.row * CELL}px`,
@@ -423,6 +431,7 @@ function onMiniPointerUp(e: PointerEvent) {
             v-for="node in store.atreeNodes"
             :key="node.ability.id"
             class="atree-minimap-dot"
+            :class="{ 'atree-minimap-dot--ultimate': isUltimate(node) }"
             :style="{
               left: `${node.ability.display.col * CELL * miniScale}px`,
               top: `${node.ability.display.row * CELL * miniScale}px`,
@@ -470,6 +479,13 @@ function onMiniPointerUp(e: PointerEvent) {
   filter: sepia(0.45) hue-rotate(310deg) saturate(1.1);
 }
 
+/* Ultimate nodes render visually larger than normal nodes (matches the
+   in-game treatment). Grid math stays at CELL — only the art scales. */
+:deep(.node--ultimate) img {
+  transform: scale(1.5);
+  transform-origin: center;
+}
+
 /* Minimap — sits in the top-right corner of the canvas shell, floats over
    the scrollable area. Click or drag to scrub. */
 .atree-minimap {
@@ -494,6 +510,12 @@ function onMiniPointerUp(e: PointerEvent) {
   border-radius: 1px;
   pointer-events: none;
   transform: translate(-1px, -1px);
+}
+.atree-minimap-dot--ultimate {
+  width: 5px;
+  height: 5px;
+  border-radius: 2px;
+  transform: translate(-2px, -2px);
 }
 
 .atree-minimap-viewport {
