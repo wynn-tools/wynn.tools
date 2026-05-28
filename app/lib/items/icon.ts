@@ -17,3 +17,13 @@ export function itemIconUrl(item: { icon?: unknown } | null | undefined): string
     return `${ICON_CDN}/${icon.value.name}.webp`
   return null
 }
+
+const EMBLEM_CDN = 'https://cdn.wynn.tools/nextgen/items/v2/emblem'
+
+/**
+ * URL for an item's emblem (the decorative shape rendered behind the icon),
+ * mirrored on our CDN, or null when the item has no emblem.
+ */
+export function emblemUrl(emblem: string | null | undefined): string | null {
+  return emblem ? `${EMBLEM_CDN}/${emblem}.png` : null
+}

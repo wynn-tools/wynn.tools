@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SearchItem } from '~/lib/items-search/types'
 import { humanizeField, isInverted } from '~/lib/data/identifications'
-import { itemIconUrl } from '~/lib/items/icon'
+import { emblemUrl, itemIconUrl } from '~/lib/items/icon'
 
 const props = defineProps<{ item: SearchItem }>()
 
@@ -18,6 +18,7 @@ const TIER_COLORS: Record<string, string> = {
 
 const nameColor = computed(() => TIER_COLORS[props.item.tier] ?? '#ffffff')
 const icon = computed(() => itemIconUrl(props.item))
+const emblem = computed(() => emblemUrl(props.item.emblem))
 
 interface Row { label: string, unit: string, raw: number, min: number, max: number, good: boolean }
 const idRows = computed<Row[]>(() =>
@@ -33,7 +34,10 @@ const loreText = computed(() => props.item.lore?.map(n => n.text).join('') ?? ''
 <template>
   <div class="tooltip">
     <header class="tt-head">
-      <img v-if="icon" :src="icon" class="tt-icon" alt="" aria-hidden="true">
+      <span class="tt-emblem-wrap">
+        <img v-if="emblem" :src="emblem" class="tt-emblem" alt="" aria-hidden="true">
+        <img v-if="icon" :src="icon" class="tt-icon" alt="" aria-hidden="true">
+      </span>
       <span class="tt-name" :style="{ color: nameColor }">{{ item.displayName }}</span>
     </header>
     <p class="tt-sub">
@@ -88,9 +92,26 @@ const loreText = computed(() => props.item.lore?.map(n => n.text).join('') ?? ''
   align-items: center;
   gap: 8px;
 }
+.tt-emblem-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+.tt-emblem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
 .tt-icon {
-  width: 28px;
-  height: 28px;
+  position: relative;
+  width: 22px;
+  height: 22px;
   image-rendering: pixelated;
 }
 .tt-name {
