@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@lucide/vue": "^1.16.0",
+    "@nuxt/icon": "^2.2.2",
     "@pinia/nuxt": "^0.11.3",
     "@resvg/resvg-js": "^2.6.2",
     "@resvg/resvg-wasm": "^2.6.2",
@@ -34,6 +35,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.0.0",
+    "@iconify-json/mdi": "^1.2.3",
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/fonts": "^0.14.0",
     "@tailwindcss/vite": "^4.3.0",

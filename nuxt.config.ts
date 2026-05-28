@@ -20,7 +20,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image'],
+  modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image', '@nuxt/icon'],
   ogImage: {
     compatibility: {
       dev: { satori: 'node', resvg: 'node' },

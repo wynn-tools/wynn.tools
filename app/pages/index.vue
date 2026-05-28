@@ -99,7 +99,7 @@ const wynnicDecor = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456
   </main>
 
   <footer class="site-footer">
-    <span class="footer-note"><a href="https://github.com/wynn-tools/wynn.tools" target="_blank" rel="noopener noreferrer" class="footer-link">Open source (AGPL-3.0)</a> · Not affiliated with Wynncraft or Mojang</span>
+    <span class="footer-note"><a href="https://github.com/wynn-tools/wynn.tools" target="_blank" rel="noopener noreferrer" class="footer-link">Open source (AGPL-3.0)</a> · Not affiliated with Wynncraft or Mojang · <NuxtLink to="/credits" class="footer-link">Credits</NuxtLink></span>
   </footer>
 </template>
 
