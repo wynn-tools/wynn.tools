@@ -83,6 +83,10 @@ describe('loadBuildContext (new CDN schema via adapters)', () => {
     // encoding constants patched
     expect((data.enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT)
       .toBe((encodingConsts as { POWDER_ELEMENTS: unknown[] }).POWDER_ELEMENTS.length)
+
+    // searchItemById maps item id → SearchItem (id 0 = Dondasch)
+    expect(data.searchItemById.get(0)?.name).toBe('Dondasch')
+    expect(data.searchItemById.size).toBeGreaterThan(0)
   })
 
   it('tolerates a historical snapshot with no sets.json (empty sets)', async () => {
