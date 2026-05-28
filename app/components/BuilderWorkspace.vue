@@ -7,6 +7,7 @@ const showAtree = ref(true)
 
 <template>
   <main class="builder">
+    <BuilderImportBar />
     <p v-if="store.loading" class="state-text">
       Loading build…
     </p>
