@@ -1,7 +1,10 @@
 import { Hono } from 'hono'
+import { onError } from './lib/errors'
+import { health } from './routes/health'
 
 export function createApp(): Hono {
   const app = new Hono()
-  // Routes mounted in later tasks under /v1
+  app.onError(onError)
+  app.route('/v1/health', health)
   return app
 }
