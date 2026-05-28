@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { CleanedRawItem } from '~/lib/build/resolve'
 import Fuse from 'fuse.js'
+import { computed, onMounted, ref } from 'vue'
 import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
+import { useCraftStore } from '~/stores/craft'
 
 const props = defineProps<{ slotIndex: number }>()
 const emit = defineEmits<{
@@ -11,8 +13,10 @@ const emit = defineEmits<{
 }>()
 
 const store = useBuildStore()
+const craftStore = useCraftStore()
 const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
+const tab = ref<'items' | 'crafted'>('items')
 
 onMounted(() => searchInput.value?.focus())
 
@@ -38,45 +42,128 @@ const filteredItems = computed<CleanedRawItem[]>(() => {
 function selectItem(id: number | null) {
   emit('select', id)
 }
+
+// ----- Crafted tab -----
+
+// Map a build slot to the recipe types that can validly fill it. Mirrors the
+// SLOT_TYPES list in build.ts but lowercased to match Recipe.type.
+const ALLOWED_RECIPE_TYPES: Readonly<Record<number, ReadonlyArray<string>>> = {
+  0: ['helmet'],
+  1: ['chestplate'],
+  2: ['leggings'],
+  3: ['boots'],
+  4: ['ring'],
+  5: ['ring'],
+  6: ['bracelet'],
+  7: ['necklace'],
+  8: ['spear', 'wand', 'dagger', 'bow', 'relik'],
+}
+
+const SLOT_LABEL: Readonly<Record<number, string>> = {
+  0: 'helmet',
+  1: 'chestplate',
+  2: 'leggings',
+  3: 'boots',
+  4: 'ring',
+  5: 'ring',
+  6: 'bracelet',
+  7: 'necklace',
+  8: 'weapon',
+}
+
+const equipDisabledReason = computed<string | null>(() => {
+  const rec = craftStore.recipe
+  if (!rec)
+    return 'Pick a recipe to enable equip.'
+  const allowed = ALLOWED_RECIPE_TYPES[props.slotIndex] ?? []
+  if (!allowed.includes(rec.type))
+    return `This slot accepts ${SLOT_LABEL[props.slotIndex]}; selected recipe is ${rec.type}.`
+  return null
+})
+
+function handleEquipCraft() {
+  if (equipDisabledReason.value)
+    return
+  if (!craftStore.recipe || !craftStore.ctx)
+    return
+  // Snapshot the raw object so later edits inside the crafter store don't
+  // mutate the build (RawCraft contains arrays we'd otherwise share).
+  const snapshot = JSON.parse(JSON.stringify(craftStore.raw))
+  store.setCraftedSlot(props.slotIndex, snapshot, craftStore.isWeapon)
+  emit('close')
+}
 </script>
 
 <template>
-  <div class="picker">
-    <div class="picker-header">
-      <input
-        ref="searchInput"
-        v-model="query"
-        class="picker-search"
-        type="text"
-        placeholder="Search items…"
+  <div class="picker" :class="{ 'picker--wide': tab === 'crafted' }">
+    <div class="picker-tabs" role="tablist">
+      <button
+        type="button"
+        role="tab"
+        :aria-selected="tab === 'items'"
+        class="picker-tab"
+        :class="{ 'picker-tab--active': tab === 'items' }"
+        @click="tab = 'items'"
       >
-      <button class="picker-close" @click="emit('close')">
+        Items
+      </button>
+      <button
+        type="button"
+        role="tab"
+        :aria-selected="tab === 'crafted'"
+        class="picker-tab"
+        :class="{ 'picker-tab--active': tab === 'crafted' }"
+        @click="tab = 'crafted'"
+      >
+        Crafted
+      </button>
+      <button class="picker-close" aria-label="Close" @click="emit('close')">
         ✕
       </button>
     </div>
-    <ul class="picker-list">
-      <li class="picker-item picker-item--none" @click="selectItem(null)">
-        None
-      </li>
-      <li
-        v-for="item in filteredItems"
-        :key="item.id as number"
-        class="picker-item"
-        @click="selectItem(item.id as number)"
-      >
-        <img
-          v-if="itemIconUrl(item)"
-          :src="itemIconUrl(item)!"
-          class="picker-icon"
-          loading="lazy"
-          draggable="false"
-          aria-hidden="true"
-          alt=""
+
+    <template v-if="tab === 'items'">
+      <div class="picker-header">
+        <input
+          ref="searchInput"
+          v-model="query"
+          class="picker-search"
+          type="text"
+          placeholder="Search items…"
         >
-        <span v-else class="picker-icon picker-icon--empty" aria-hidden="true" />
-        <span class="picker-item-name">{{ item.displayName }}</span>
-      </li>
-    </ul>
+      </div>
+      <ul class="picker-list">
+        <li class="picker-item picker-item--none" @click="selectItem(null)">
+          None
+        </li>
+        <li
+          v-for="item in filteredItems"
+          :key="item.id as number"
+          class="picker-item"
+          @click="selectItem(item.id as number)"
+        >
+          <img
+            v-if="itemIconUrl(item)"
+            :src="itemIconUrl(item)!"
+            class="picker-icon"
+            loading="lazy"
+            draggable="false"
+            aria-hidden="true"
+            alt=""
+          >
+          <span v-else class="picker-icon picker-icon--empty" aria-hidden="true" />
+          <span class="picker-item-name">{{ item.displayName }}</span>
+        </li>
+      </ul>
+    </template>
+
+    <div v-else class="picker-crafted-host" @click.stop>
+      <CrafterWorkspace
+        :embedded="true"
+        :on-equip="handleEquipCraft"
+        :equip-disabled-reason="equipDisabledReason"
+      />
+    </div>
   </div>
 </template>
 
@@ -90,6 +177,49 @@ function selectItem(id: number | null) {
   width: 320px;
   max-height: 440px;
   overflow: hidden;
+}
+
+/* Crafted tab needs much more room — let the picker expand to fit the
+   embedded crafter workspace. Constrained against the viewport so the modal
+   stays scrollable on small screens. */
+.picker--wide {
+  width: min(1200px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+}
+
+.picker-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.picker-tab {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    color 0.1s,
+    border-color 0.1s,
+    background 0.1s;
+}
+
+.picker-tab:hover {
+  color: var(--color-text);
+}
+
+.picker-tab--active {
+  color: var(--color-text);
+  border-color: var(--color-border);
+  background: var(--color-surface, transparent);
 }
 
 .picker-header {
@@ -116,13 +246,14 @@ function selectItem(id: number | null) {
 }
 
 .picker-close {
+  margin-left: auto;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 13px;
   color: var(--color-muted);
   line-height: 1;
-  padding: 2px 4px;
+  padding: 2px 6px;
   border-radius: 3px;
   transition: color 0.1s;
 }
@@ -182,5 +313,10 @@ function selectItem(id: number | null) {
 
 .picker-item--none:hover {
   color: var(--color-muted);
+}
+
+.picker-crafted-host {
+  flex: 1;
+  overflow: auto;
 }
 </style>

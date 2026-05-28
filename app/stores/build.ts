@@ -2,6 +2,7 @@ import type { BuildContext, BuildResult } from '~/lib/build/compute-build'
 import type { CleanedRawItem } from '~/lib/build/resolve'
 import type { RawBuild } from '~/lib/codec/build-codec'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
+import type { RawCraft } from '~/lib/crafter/types'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
 import { defineStore } from 'pinia'
@@ -209,6 +210,20 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, equipment }
   }
 
+  /**
+   * Equip a crafted item into a build slot. `recipeIsWeapon` is derived from the
+   * RawCraft's recipe (see `makeRecipeIsWeapon`); we expose it as a separate arg
+   * so callers (typically the embedded crafter) can pass the value they already
+   * have without re-resolving the recipe.
+   */
+  function setCraftedSlot(slot: number, raw: RawCraft, recipeIsWeapon: boolean) {
+    if (!rawBuild.value)
+      return
+    const equipment = rawBuild.value.equipment.slice()
+    equipment[slot] = { kind: 'crafted', raw, recipeIsWeapon }
+    rawBuild.value = { ...rawBuild.value, equipment }
+  }
+
   function setLevel(level: number) {
     if (!rawBuild.value)
       return
@@ -387,5 +402,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
 })

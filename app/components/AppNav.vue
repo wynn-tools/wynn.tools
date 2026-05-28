@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { FileClock, Map, Search, Sword } from '@lucide/vue'
+import { FileClock, Hammer, Map, Search, Sword } from '@lucide/vue'
 
 const tools = [
   { name: 'Builder', href: '/builder', icon: Sword },
+  { name: 'Crafter', href: '/crafter', icon: Hammer },
   { name: 'Items', href: '/items', icon: Search },
   { name: 'Map', href: '/map', icon: Map },
   { name: 'Changelog', href: '/changelog', icon: FileClock },
