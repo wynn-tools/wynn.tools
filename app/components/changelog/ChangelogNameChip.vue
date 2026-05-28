@@ -1,10 +1,16 @@
 <script setup lang="ts">
-defineProps<{ name: string, variant: 'added' | 'removed', href?: string }>()
+const props = defineProps<{ name: string, variant: 'added' | 'removed', href?: string }>()
+
+const component = computed(() => {
+  if (props.href)
+    return defineNuxtLink({})
+  return 'span'
+})
 </script>
 
 <template>
   <component
-    :is="href ? resolveComponent('NuxtLink') : 'span'"
+    :is="component"
     :to="href"
     class="inline-flex items-center rounded px-2 py-0.5 text-[12px] font-medium transition"
     :class="[
