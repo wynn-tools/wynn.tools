@@ -63,6 +63,7 @@ watch(
       Failed to load crafter: {{ store.error }}
     </p>
     <template v-else-if="store.ctx">
+      <CrafterHashBar />
       <header class="crafter-bar">
         <CrafterRecipePanel />
         <span class="crafter-bar__divider" aria-hidden="true" />
