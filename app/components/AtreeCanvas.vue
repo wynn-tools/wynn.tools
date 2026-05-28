@@ -94,15 +94,30 @@ const connectors = computed<ConnectorTile[]>(() => {
 
 type NodeState = 'active' | 'selectable' | 'locked' | 'blocked'
 
-function nodeState(node: AtreeNode): NodeState {
+// Single pass over all nodes per validation/active-set change instead of
+// O(N²) per render (every node previously called isAtreeActive + Set scans
+// on its blockers + parents on each Vue render).
+const stateMap = computed(() => {
   const v = store.atreeValidation
-  if (store.isAtreeActive(node.ability.id))
-    return 'active'
-  if (node.ability.blockers.some((b: number) => v.reachable.has(b)))
-    return 'blocked'
-  if (node.parents.length === 0 || (node.parents as AtreeNode[]).some(p => v.reachable.has(p.ability.id)))
-    return 'selectable'
-  return 'locked'
+  const map = new Map<number, NodeState>()
+  for (const node of store.atreeNodes) {
+    const id = node.ability.id
+    let s: NodeState
+    if (store.isAtreeActive(id))
+      s = 'active'
+    else if (node.ability.blockers.some((b: number) => v.reachable.has(b)))
+      s = 'blocked'
+    else if (node.parents.length === 0 || (node.parents as AtreeNode[]).some(p => v.reachable.has(p.ability.id)))
+      s = 'selectable'
+    else
+      s = 'locked'
+    map.set(id, s)
+  }
+  return map
+})
+
+function nodeState(node: AtreeNode): NodeState {
+  return stateMap.value.get(node.ability.id) ?? 'locked'
 }
 
 const apOverCap = computed(() =>
@@ -309,10 +324,13 @@ function onMiniPointerUp(e: PointerEvent) {
               >
             </template>
 
-            <!-- Nodes -->
+            <!-- Nodes. v-memo skips the entire per-node subtree on re-renders
+                 when this node's state hasn't changed — clicking one node
+                 only re-renders nodes whose state actually flipped. -->
             <TooltipRoot
               v-for="node in store.atreeNodes"
               :key="node.ability.id"
+              v-memo="[stateMap.get(node.ability.id)]"
             >
               <TooltipTrigger as-child>
                 <button
