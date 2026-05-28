@@ -12,12 +12,14 @@ function abilityProperties(ability: AtreeAbility): Record<string, number> {
 
 /**
  * Merge active ability-tree selections + per-class default abilities into one map.
- * Port of atree.js atree_merge (selected nodes + default_abils only; major-IDs/aspects deferred).
+ * `extraAbilities` (major ID abilities, aspects) are merged after the atree pass.
+ * Port of atree.js atree_merge.
  */
 export function mergeAtree(
   sortedNodes: AtreeNode[],
   selection: AtreeSelection,
   className: string,
+  extraAbilities: AtreeAbility[] = [],
 ): Map<number, MergedAbility> {
   const merged = new Map<number, MergedAbility>()
   for (const def of DEFAULT_ABILITIES[className] ?? [])
@@ -50,6 +52,9 @@ export function mergeAtree(
       continue
     mergeAbil(node.ability)
   }
+
+  for (const ability of extraAbilities)
+    mergeAbil(ability)
 
   return merged
 }

@@ -12,6 +12,7 @@ import type { EncodingConstants } from '../../codec/encoding-constants'
 import type { AtreeData } from '../../types/atree'
 import type { CdnAtreeFile } from './atree-adapter'
 import type { OutputItem } from './item-adapter'
+import type { CdnMajorIdEntry } from './majid-adapter'
 import type { OutputTome } from './tome-adapter'
 import { existsSync, readFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
@@ -21,6 +22,7 @@ import { buildRawItemIndex, buildRawTomeIndex } from '../../build/resolve'
 import { decodeRawBuild } from '../../codec/build-codec'
 import { mergeClassAtrees } from './atree-adapter'
 import { adaptCdnItem } from './item-adapter'
+import { adaptCdnMajorIds } from './majid-adapter'
 import { adaptCdnSets } from './sets-adapter'
 import { adaptCdnTome } from './tome-adapter'
 
@@ -29,9 +31,11 @@ import { adaptCdnTome } from './tome-adapter'
 const CDN_DATA = process.env.WYNN_CDN_DATA
   ?? resolve(process.cwd(), '..', 'cdn.wynn.tools', 'data', '2.2.0.31')
 const ORACLE_HASH = 'CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0'
-// Wynnbuilder oracle target: 90941.85 avg DPS / 21149.27 per-attack.
+// Wynnbuilder oracle targets (melee unchanged by major IDs).
 const EXPECTED_AVG_DPS = 90941.85
 const EXPECTED_PER_ATTACK = 21149.27
+// Totem Tick DPS with Furious Effigy (totem_mul 2.5→5, num_totems=2): 5×avg×2 = 3845.07
+const EXPECTED_TOTEM_TICK_DPS = 3845.07
 
 const CLASS_FILES: Array<[string, string]> = [
   ['Archer', 'archer'],
@@ -64,6 +68,8 @@ describe.skipIf(!existsSync(CDN_DATA))(
       const rawItemIndex = buildRawItemIndex(adaptedItems as Parameters<typeof buildRawItemIndex>[0])
       const tomeIndex = buildRawTomeIndex(tomesFile.tomes.map(adaptCdnTome))
       const sets = adaptCdnSets(setsFile)
+      const majidFile = readJson<Record<string, CdnMajorIdEntry>>(join(CDN_DATA, 'majid.json'))
+      const majorIdData = adaptCdnMajorIds(majidFile)
 
       const typeById = new Map<number, string>()
       for (const it of adaptedItems) {
@@ -77,10 +83,21 @@ describe.skipIf(!existsSync(CDN_DATA))(
         weaponType: (id: number) => typeById.get(id) ?? null,
       }))
 
-      const result = computeBuild(rawBuild, { rawItemIndex, sets, atreeData, tomeIndex })
+      const result = computeBuild(rawBuild, { rawItemIndex, sets, atreeData, tomeIndex, aspectData: {}, majorIdData })
 
       expect(result.melee.averageDps).toBeCloseTo(EXPECTED_AVG_DPS, 1)
       expect(result.melee.perAttack).toBeCloseTo(EXPECTED_PER_ATTACK, 1)
+
+      // Totem Tick DPS — display part of spell 1, should match WynnBuilder with Furious Effigy
+      const totemSpell = result.spells.find(s => s.spell.baseSpell === 1)
+      const tickDps = totemSpell?.parts.find(p => p.name === 'Tick DPS' && p.type === 'damage')
+      if (tickDps && tickDps.type === 'damage') {
+        const crit = 0.563
+        const nonCrit = (tickDps.normalTotal[0] + tickDps.normalTotal[1]) / 2
+        const critAvg = (tickDps.critTotal[0] + tickDps.critTotal[1]) / 2
+        const avg = (1 - crit) * nonCrit + crit * critAvg
+        expect(avg).toBeCloseTo(EXPECTED_TOTEM_TICK_DPS, 0)
+      }
     })
   },
 )

@@ -11,6 +11,7 @@
  */
 
 import type { RawBuild } from '../codec/build-codec'
+import type { RawMajorIdData } from '../data/cdn-adapter/majid-adapter'
 import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
@@ -18,7 +19,7 @@ import type { SkillpointResult } from '../math/skillpoint-calc'
 import type { SpellPartResult } from '../math/spell-calc'
 import type { Spell } from '../math/spells'
 import type { RawAspectData } from '../types/aspect'
-import type { AtreeData } from '../types/atree'
+import type { AtreeAbility, AtreeData } from '../types/atree'
 import type { ItemSet } from '../types/item'
 import type { RawItemIndex, RawTomeIndex } from './resolve'
 import { getSortedClassAtree } from '../atree/build-atree'
@@ -51,6 +52,8 @@ export interface BuildContext {
   tomeIndex: RawTomeIndex
   /** Raw aspect data (class name → aspect list). Loaded here; used by M7-2. */
   aspectData: RawAspectData
+  /** Major ID ability data (display name → entry). Optional; omit in tests without item major IDs. */
+  majorIdData?: RawMajorIdData
 }
 
 /** One evaluated spell ready for display. */
@@ -121,15 +124,42 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   const weaponType = weapon.get('type') as string
   const cls = WEP_TO_CLASS[weaponType]
 
+  // Collect major ID abilities active for this build and class
+  const activeMajorIds = (stats.get('activeMajorIDs') as Set<string> | undefined) ?? new Set<string>()
+  const majorIdAbilities: AtreeAbility[] = []
+  if (ctx.majorIdData) {
+    for (const midName of activeMajorIds) {
+      const entry = ctx.majorIdData.get(midName)
+      if (!entry)
+        continue
+      for (const abil of entry.abilities) {
+        if (abil.class !== cls && abil.class !== 'Any')
+          continue
+        majorIdAbilities.push({
+          id: -1,
+          display_name: entry.displayName,
+          desc: '',
+          parents: [],
+          dependencies: [],
+          blockers: [],
+          cost: 0,
+          base_abil: abil.base_abil,
+          properties: abil.properties ?? {},
+          effects: abil.effects ?? [],
+        })
+      }
+    }
+  }
+
   let merged: Map<number, import('../atree/effect-types').MergedAbility>
   if (cls === undefined) {
     // Unknown weapon type — seed default melee only (no class tree)
-    merged = mergeAtree([], new Map(), '')
+    merged = mergeAtree([], new Map(), '', majorIdAbilities)
   }
   else {
     const sorted = getSortedClassAtree(atreeData, cls)
     const selection = new Map(rawBuild.activeAtree.map(id => [id, true] as [number, boolean]))
-    merged = mergeAtree(sorted, selection, cls)
+    merged = mergeAtree(sorted, selection, cls, majorIdAbilities)
   }
 
   // Merge atree raw stats into the build stats (additive, faithfully after editAgg)
