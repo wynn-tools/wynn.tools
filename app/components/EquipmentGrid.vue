@@ -160,7 +160,7 @@ const powderSlotMax = computed(() =>
             </div>
           </HoverCardTrigger>
           <HoverCardPortal>
-            <HoverCardContent side="right" align="start" :side-offset="8" class="quickview">
+            <HoverCardContent side="right" align="start" :side-offset="8" :avoid-collisions="false" class="quickview">
               <div class="quickview-scale">
                 <ItemTooltip :item="slotSearchItem(idx)!" />
               </div>
@@ -366,13 +366,10 @@ const powderSlotMax = computed(() =>
 }
 
 .quickview {
-  z-index: 100;
+  z-index: 9999;
 }
 
 .quickview-scale {
-  transform: scale(0.7);
-  transform-origin: top left;
-  width: calc(482px * 0.7);
-  overflow: hidden;
+  zoom: 0.7;
 }
 </style>

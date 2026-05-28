@@ -166,3 +166,8 @@
     }
   }
 }
+
+/* Reka UI popper wrapper — ensure hover/tooltip cards float above all page content */
+[data-reka-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
