@@ -1,6 +1,8 @@
 import type { Ingredient } from '../data/cdn-adapter/ingredient-adapter'
 import type { Recipe } from '../data/cdn-adapter/recipe-adapter'
 import type { AtkSpeed, CraftContext, CraftedItem, IdRange, RawCraft } from './types'
+import { POWDER_TIERS, SKP_ELEMENTS } from '../data/powder-constants'
+import { POWDER_STATS } from '../math/powder-stats'
 import { resolveCraft } from './resolve'
 
 // ---------------------------------------------------------------------------
@@ -299,5 +301,51 @@ export function computeCraftWithEffectiveness(
   if (category === 'weapon' && raw.atkSpdOverride)
     item.atkSpd = raw.atkSpdOverride as AtkSpeed
 
+  // ---------- 7. Powders (Task 7) ----------
+  applyPowders(item)
+
   return item
+}
+
+/**
+ * Port of craft.js `Craft.applyPowders` (L202-214).
+ *
+ * Behavior (armor only):
+ *   for each powder id in item.powders:
+ *     elementIdx = floor(id / POWDER_TIERS)
+ *     name       = SKP_ELEMENTS[elementIdx]
+ *     prevName   = SKP_ELEMENTS[(elementIdx + 4) % 5]
+ *     item[name+'Def']     += 2 * powder.defPlus    // double-apply
+ *     item[prevName+'Def'] -= 2 * powder.defMinus   // double-apply
+ *
+ * Weapon powders: NOT applied here — damage from weapon powders is computed
+ * downstream in `lib/math/dps`. We still leave `item.powders` populated.
+ *
+ * Consumables: powders are not applicable (no defenses, no damage).
+ *
+ * NOTE — craft.js paren bug (reproduced for parity): L203 reads
+ *   `if (this.statMap.get("category") === "armor" || this.statMap.get("category" === "accessory"))`
+ * The second operand is the JS expression `"category" === "accessory"` which
+ * evaluates to `false`, so `statMap.get(false)` returns `undefined` and the
+ * branch never matches for accessories. Result: in WB, only ARMOR gets the
+ * double-apply. We mirror that exact behavior — accessories pass through.
+ */
+function applyPowders(item: CraftedItem): void {
+  if (item.category !== 'armor')
+    return
+  if (item.powders.length === 0)
+    return
+
+  const defenses: Record<string, number> = { ...(item.defenses ?? {}) }
+  for (const id of item.powders) {
+    const powder = POWDER_STATS[id]
+    if (!powder)
+      continue // out-of-range powder id — ignore (matches WB undefined access)
+    const elementIdx = Math.floor(id / POWDER_TIERS)
+    const name = SKP_ELEMENTS[elementIdx]!
+    const prevName = SKP_ELEMENTS[(elementIdx + 4) % 5]!
+    defenses[`${name}Def`] = (defenses[`${name}Def`] ?? 0) + 2 * powder.defPlus
+    defenses[`${prevName}Def`] = (defenses[`${prevName}Def`] ?? 0) - 2 * powder.defMinus
+  }
+  item.defenses = defenses
 }

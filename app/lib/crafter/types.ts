@@ -35,6 +35,12 @@ export interface CraftedItem {
   charges?: number
   hp?: [number, number]
   damage?: Record<string, [number, number]> // per element + neutral as min-max
+  /**
+   * Elemental defenses (static, non-rolled) keyed by element shorthand: eDef,
+   * tDef, wDef, fDef, aDef. Populated by `applyPowders` on armor crafts;
+   * weapons store powders in `powders` and defer damage application to dps.
+   */
+  defenses?: Record<string, number>
   atkSpd?: AtkSpeed
   slots: number
   powders: number[]

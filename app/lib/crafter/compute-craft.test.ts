@@ -628,6 +628,134 @@ describe('computeCraft — base math (Task 5)', () => {
     })
   })
 
+  // -------------------------------------------------------------------------
+  // Task 7: powder application
+  // -------------------------------------------------------------------------
+
+  /**
+   * Armor double-apply (port of craft.js `Craft.applyPowders`, L202-214).
+   *
+   * Powder ids (element-major × tiers 1..7):
+   *   id 2 = earth t3:    defPlus=9,  defMinus=3   → eDef += 18, aDef -= 6
+   *   id 9 = thunder t3:  defPlus=8,  defMinus=2   → tDef += 16, eDef -= 4
+   *
+   * Both applied (double: 2 * defPlus / 2 * defMinus):
+   *   eDef:  0 + 18 - 4 = 14
+   *   tDef:  0 + 16     = 16
+   *   aDef:  0 -  6     = -6
+   *
+   * No hp delta here — craft.js's `applyPowders` does NOT touch hp (unlike
+   * powders.js `applyArmorPowders` used on regular items). Hp only flows
+   * from recipe.hp mat-scaling.
+   */
+  it('armor: double-applies powder defenses (earth t3 + thunder t3)', () => {
+    const recipe: Recipe = {
+      id: 30,
+      name: 'Boots1-5',
+      type: 'boots',
+      skill: 'tailoring',
+      lvl: [1, 5],
+      durability: [100, 100],
+      hp: [10, 10],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ctx: CraftContext = {
+      recipes: new Map([[30, recipe]]),
+      ingredients: new Map(),
+    }
+    const raw: RawCraft = {
+      recipeId: 30,
+      ingredientIds: [null, null, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [2, 9], // earth t3, thunder t3
+    }
+    const out = computeCraft(raw, ctx)
+    expect(out.category).toBe('armor')
+    expect(out.powders).toEqual([2, 9])
+    expect(out.defenses).toEqual({
+      eDef: 14,
+      tDef: 16,
+      aDef: -6,
+    })
+  })
+
+  /**
+   * Weapon powders: stored on the output but DO NOT apply to defenses.
+   * craft.js explicitly returns from applyPowders on the weapon branch
+   * because weapon-powder damage application lives downstream in dps.
+   */
+  it('weapon: stores powders but does not apply to defenses', () => {
+    const recipe: Recipe = {
+      id: 31,
+      name: 'Wand1-5',
+      type: 'wand',
+      skill: 'woodworking',
+      lvl: [1, 5],
+      durability: [100, 100],
+      damage: [10, 20],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ctx: CraftContext = {
+      recipes: new Map([[31, recipe]]),
+      ingredients: new Map(),
+    }
+    const raw: RawCraft = {
+      recipeId: 31,
+      ingredientIds: [null, null, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: 'NORMAL',
+      powders: [0, 7], // earth t1, thunder t1
+    }
+    const out = computeCraft(raw, ctx)
+    expect(out.category).toBe('weapon')
+    expect(out.powders).toEqual([0, 7])
+    expect(out.defenses).toBeUndefined()
+  })
+
+  /**
+   * Accessory: reproduces the craft.js paren bug. In WB,
+   *   if (category === "armor" || category === ("category" === "accessory"))
+   * the second operand is the JS expression `"category" === "accessory"`
+   * which is `false`, so accessories never enter the double-apply branch.
+   * We reproduce that exact behavior for parity.
+   */
+  it('accessory: reproduces craft.js paren bug — powders pass through unchanged', () => {
+    const recipe: Recipe = {
+      id: 32,
+      name: 'Ring1-5',
+      type: 'ring',
+      skill: 'jeweling',
+      lvl: [1, 5],
+      durability: [0, 0],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ctx: CraftContext = {
+      recipes: new Map([[32, recipe]]),
+      ingredients: new Map(),
+    }
+    const raw: RawCraft = {
+      recipeId: 32,
+      ingredientIds: [null, null, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [0], // earth t1 — would touch eDef/aDef if applied
+    }
+    const out = computeCraft(raw, ctx)
+    expect(out.category).toBe('accessory')
+    expect(out.powders).toEqual([0])
+    expect(out.defenses).toBeUndefined()
+  })
+
   it('throws when recipe materials contract is violated (length != 2)', () => {
     const recipe = {
       id: 99,
