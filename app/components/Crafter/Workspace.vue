@@ -73,7 +73,7 @@ watch(
           <CrafterIngredientGrid />
         </section>
         <aside class="crafter-output" aria-label="Crafted item preview">
-          <CraftedItemPreview
+          <CrafterItemPreview
             :hide-equip-button="embedded && !onEquip"
             :on-equip="onEquip"
             :equip-disabled-reason="equipDisabledReason"
