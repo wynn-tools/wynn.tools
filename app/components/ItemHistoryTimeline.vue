@@ -28,21 +28,25 @@ function fmt(v: number | null, unit: string): string {
       No recorded changes since the start of v2.
     </p>
 
-    <ol v-else class="rail">
+    <ol v-else class="log">
       <li v-for="(e, i) in shown" :key="i" class="entry" :class="[`entry--${e.kind}`]">
-        <span class="marker" aria-hidden="true" />
-        <div class="head-row">
+        <div class="anchor">
           <span class="version">v{{ e.version }}</span>
           <span class="kind">{{ KIND_LABEL[e.kind] }}</span>
         </div>
         <ul v-if="e.fields?.length" class="deltas">
-          <li v-for="f in e.fields" :key="f.label" :class="{ good: f.good === true, bad: f.good === false }">
+          <li v-for="f in e.fields" :key="f.label" class="delta" :class="{ good: f.good === true, bad: f.good === false }">
             <span class="d-label">{{ f.label }}</span>
-            <span class="d-from">{{ fmt(f.from, f.unit) }}</span>
-            <span class="d-arrow" aria-hidden="true">→</span>
-            <span class="d-to">{{ fmt(f.to, f.unit) }}</span>
+            <span class="d-values">
+              <span class="d-from">{{ fmt(f.from, f.unit) }}</span>
+              <span class="d-arrow" aria-hidden="true">→</span>
+              <span class="d-to">{{ fmt(f.to, f.unit) }}</span>
+            </span>
           </li>
         </ul>
+        <p v-else class="bare">
+          {{ e.kind === 'added' ? 'Introduced to the game.' : 'Removed from the game.' }}
+        </p>
       </li>
     </ol>
 
@@ -63,7 +67,7 @@ function fmt(v: number | null, unit: string): string {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 .kicker {
   font: 500 11px/1 var(--font-mono);
@@ -88,62 +92,41 @@ function fmt(v: number | null, unit: string): string {
   color: var(--color-muted);
   font-size: 13px;
   padding: 12px 0;
+  margin: 0;
 }
-.rail {
+.log {
   list-style: none;
   margin: 0;
-  padding: 0 0 0 18px;
-  position: relative;
-}
-.rail::before {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 4px;
-  bottom: 4px;
-  width: 1px;
-  background: var(--color-border);
+  padding: 0;
 }
 .entry {
-  position: relative;
-  padding-bottom: 18px;
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 20px;
+  padding: 14px 0;
+  border-top: 1px solid var(--color-border);
+}
+.entry:first-child {
+  padding-top: 4px;
+  border-top: 0;
 }
 .entry:last-child {
-  padding-bottom: 0;
+  padding-bottom: 2px;
 }
-.marker {
-  position: absolute;
-  left: -18px;
-  top: 5px;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-}
-.entry--modified .marker {
-  border-color: var(--color-accent);
-}
-.entry--added .marker {
-  border-color: oklch(74% 0.16 145);
-}
-.entry--removed .marker {
-  border-color: oklch(66% 0.18 25);
-}
-.head-row {
+.anchor {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 6px;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
 }
 .version {
-  font: 700 14px/1 var(--font-mono);
+  font: 700 17px/1 var(--font-mono);
   color: var(--color-text);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 .kind {
   font: 500 10px/1 var(--font-mono);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .entry--modified .kind {
@@ -159,31 +142,37 @@ function fmt(v: number | null, unit: string): string {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto auto;
-  gap: 2px 10px;
-  align-items: baseline;
-  font-size: 12px;
-  color: var(--color-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
-.deltas li {
-  display: contents;
+.delta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
 }
 .d-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
 }
-.d-from,
-.d-to {
+.d-values {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-shrink: 0;
   font: 500 12px/1.2 var(--font-mono);
-  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 .d-from {
   color: var(--color-faint);
-  text-align: right;
 }
 .d-arrow {
   color: var(--color-faint);
@@ -191,16 +180,21 @@ function fmt(v: number | null, unit: string): string {
 }
 .d-to {
   color: var(--color-text);
-  text-align: right;
 }
-.deltas .good .d-to {
+.delta.good .d-to {
   color: oklch(74% 0.16 145);
 }
-.deltas .bad .d-to {
+.delta.bad .d-to {
   color: oklch(66% 0.18 25);
 }
+.bare {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  align-self: center;
+}
 .more {
-  margin-top: 14px;
+  margin-top: 16px;
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -221,5 +215,16 @@ function fmt(v: number | null, unit: string): string {
 .more:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+@media (max-width: 520px) {
+  .entry {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .anchor {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+  }
 }
 </style>
