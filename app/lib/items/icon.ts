@@ -37,3 +37,21 @@ export function attributeUrl(name: string): string {
 export function spriteUrl(subType: string): string {
   return `${ITEMS_V2_CDN}/sprites/${subType}.png`
 }
+
+const TIERS_WITH_FRAME = new Set(['normal', 'unique', 'rare', 'legendary', 'fabled', 'mythic'])
+
+/** URL for a rarity frame border image, or null when that tier has no frame asset. */
+export function frameUrl(tier: string): string | null {
+  const t = tier.toLowerCase()
+  return TIERS_WITH_FRAME.has(t) ? `${ITEMS_V2_CDN}/frames/${t}.png` : null
+}
+
+/** URL for a skill-point icon (e.g. `mythic`, `disabled`, `intelligence`, `strength_off`). */
+export function spUrl(name: string): string {
+  return `${ITEMS_V2_CDN}/sp/${name}.png`
+}
+
+/** URL for a misc tooltip icon (`check`, `blank`, `line`, `major`). */
+export function miscUrl(name: string): string {
+  return `${ITEMS_V2_CDN}/${name}.png`
+}

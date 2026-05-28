@@ -1,19 +1,67 @@
 /** Pure formatting helpers for the item tooltip. No Vue/DOM. */
 
-/** Rarity → name colour (official Wynncraft tooltip palette). */
-export const TIER_COLORS: Record<string, string> = {
-  Normal: '#ffffff',
-  Set: '#55ff55',
-  Unique: '#ffff55',
-  Rare: '#ff55ff',
-  Legendary: '#55ffff',
-  Fabled: '#ff5555',
-  Mythic: '#c80db1',
-  Crafted: '#00bcd4',
+export interface TierTheme {
+  /** Item-name colour. */
+  color: string
+  /** Lighter accent used for DPS, separators and tags. */
+  light: string
+  /** Background gradient end colour (start is always near-black). */
+  bg: string
+  /** Outer margin (official tooltips inset wider for higher rarities). */
+  margin: string
 }
+
+/** Official Wynncraft tooltip palette per rarity. */
+export const TIER_THEME: Record<string, TierTheme> = {
+  Normal: { color: '#ffffff', light: '#cccccc', bg: '#303030', margin: '10px 0 0' },
+  Unique: { color: '#ffff55', light: '#fdf2b6', bg: '#3e2d1a', margin: '10px 0 0' },
+  Rare: { color: '#ff55ff', light: '#f5b8f5', bg: '#311a5e', margin: '10px 6px 0' },
+  Legendary: { color: '#55ffff', light: '#b8f5f5', bg: '#081d5a', margin: '10px 8px 5px' },
+  Fabled: { color: '#ff5555', light: '#f5b8b8', bg: '#4d0f20', margin: '10px 15px 6px' },
+  Mythic: { color: '#c80db1', light: '#edb7e7', bg: '#53075c', margin: '10px 15px 6px' },
+  Set: { color: '#55ff55', light: '#b8f5b8', bg: '#143714', margin: '10px 6px 0' },
+  Crafted: { color: '#00bcd4', light: '#a8e6ef', bg: '#142637', margin: '10px 10px 0' },
+}
+
+export function tierTheme(tier: string): TierTheme {
+  return TIER_THEME[tier] ?? TIER_THEME.Normal!
+}
+
+/** Item-name / tag colours. */
+export const TIER_COLORS: Record<string, string> = Object.fromEntries(
+  Object.entries(TIER_THEME).map(([k, v]) => [k, v.color]),
+)
 
 export const ID_GOOD_COLOR = '#83f7c6'
 export const ID_BAD_COLOR = '#f78383'
+
+/** Attacks-per-second per attack-speed tier (shown as "(x hits/s)"). */
+const ATTACK_SPEED_HITS: Record<string, number> = {
+  superSlow: 0.51,
+  verySlow: 0.83,
+  slow: 1.5,
+  normal: 2.05,
+  fast: 2.5,
+  veryFast: 3.1,
+  superFast: 4.3,
+}
+
+export function hitsPerSecond(speed: string): number | null {
+  return ATTACK_SPEED_HITS[speed] ?? null
+}
+
+/** Weapon subType → the class/archetype that can use it. */
+const WEAPON_CLASS: Record<string, string> = {
+  spear: 'Warrior/Knight',
+  wand: 'Mage/Dark Wizard',
+  bow: 'Archer/Hunter',
+  dagger: 'Assassin/Ninja',
+  relik: 'Shaman/Skyseer',
+}
+
+export function weaponClass(subType: string): string | null {
+  return WEAPON_CLASS[subType] ?? null
+}
 
 const ATTACK_SPEED_LABELS: Record<string, string> = {
   superSlow: 'Super Slow',
