@@ -29,4 +29,31 @@ describe('adaptItems', () => {
     })
     expect(items).toHaveLength(1)
   })
+
+  it('passes through the new schema fields', () => {
+    const [item] = adaptItems({
+      items: [{
+        ...file.items[0]!,
+        emblem: 'shield_6',
+        averageDps: 1234,
+        elements: ['earth', 'thunder'],
+        sets: ['Some Set'],
+        set: 'Some Set',
+      } as never],
+    })
+    expect(item).toMatchObject({
+      emblem: 'shield_6',
+      averageDps: 1234,
+      elements: ['earth', 'thunder'],
+      sets: ['Some Set'],
+      set: 'Some Set',
+    })
+  })
+
+  it('defaults new fields and derives sets from legacy set', () => {
+    const [withSet] = adaptItems({ items: [{ ...file.items[0]!, set: 'Legacy', sets: undefined } as never] })
+    expect(withSet!.sets).toEqual(['Legacy'])
+    const [bare] = adaptItems({ items: [{ ...file.items[0]!, set: null, sets: undefined, emblem: undefined, averageDps: undefined, elements: undefined } as never] })
+    expect(bare).toMatchObject({ set: null, sets: [], emblem: null, averageDps: null, elements: [] })
+  })
 })

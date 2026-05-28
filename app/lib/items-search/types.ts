@@ -19,6 +19,11 @@ export interface SearchItem {
   base: Record<string, DamageRange | number>
   identifications: Record<string, IdRange>
   lore: NormalizedText[] | null
+  set: string | null
+  sets: string[]
+  emblem: string | null
+  averageDps: number | null
+  elements: string[]
   icon?: unknown
 }
 

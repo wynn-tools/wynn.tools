@@ -25,6 +25,11 @@ export function adaptItems(file: RawItemFile): SearchItem[] {
       base: item.base ?? {},
       identifications: item.identifications ?? {},
       lore: item.lore ?? null,
+      set: item.set ?? null,
+      sets: item.sets ?? (item.set ? [item.set] : []),
+      emblem: item.emblem ?? null,
+      averageDps: item.averageDps ?? null,
+      elements: item.elements ?? [],
       icon: item.icon,
     })
   }

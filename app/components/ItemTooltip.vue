@@ -38,6 +38,10 @@ const loreText = computed(() => props.item.lore?.map(n => n.text).join('') ?? ''
     </header>
     <p class="tt-sub">
       {{ item.tier }} {{ item.subType }}
+      <span v-if="item.elements.length" class="tt-elements">· {{ item.elements.join(', ') }}</span>
+    </p>
+    <p v-if="item.averageDps != null" class="tt-dps">
+      Average DPS: {{ item.averageDps }}
     </p>
 
     <ul class="tt-ids">
@@ -59,6 +63,9 @@ const loreText = computed(() => props.item.lore?.map(n => n.text).join('') ?? ''
         {{ m.name }}
       </li>
     </ul>
+    <p v-if="item.sets.length" class="tt-set">
+      Set: {{ item.sets.join(', ') }}
+    </p>
     <p v-if="loreText" class="tt-lore">
       {{ loreText }}
     </p>
@@ -119,9 +126,20 @@ const loreText = computed(() => props.item.lore?.map(n => n.text).join('') ?? ''
   color: var(--color-faint);
   font-size: 11px;
 }
+.tt-elements {
+  color: var(--color-faint);
+}
+.tt-dps {
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
 .tt-req,
 .tt-powder {
   color: var(--color-muted);
+  margin-top: 8px;
+}
+.tt-set {
+  color: #6fe26f;
   margin-top: 8px;
 }
 .tt-major {

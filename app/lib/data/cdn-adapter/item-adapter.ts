@@ -40,6 +40,10 @@ export interface OutputItem {
   restriction?: string | null
   icon?: unknown
   set: string | null
+  sets?: string[]
+  emblem?: string | null
+  averageDps?: number | null
+  elements?: string[]
   lore: NormalizedText[] | null
   majorIds: MajorId[]
   base: Record<string, DamageRange | number>
