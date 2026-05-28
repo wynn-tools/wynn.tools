@@ -34,7 +34,10 @@ const crafted = computed<CraftedItem | null>(() =>
 )
 
 const theme = computed(() => tierTheme('Crafted'))
-const frame = computed(() => frameUrl('normal')) // crafted has no dedicated frame asset; use normal as a neutral surround
+// Crafted has no dedicated frame asset on the CDN. The legendary frame is
+// cyan (matches the Crafted tier's #00bcd4) and is the closest visual fit;
+// the in-game item uses a similar turquoise border.
+const frame = computed(() => frameUrl('legendary'))
 
 const innerStyle = computed(() => ({
   background: `linear-gradient(#0d0d0df7, ${theme.value.bg}f7)`,
