@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import { Layers, Map, Plug, Search, Share2, Sword, UserCircle } from '@lucide/vue'
 
+useSeoMeta({
+  title: 'wynn.tools — Wynncraft Toolkit',
+  ogTitle: 'wynn.tools — Wynncraft Toolkit',
+  description: 'Build calculator, interactive map, item search, and more for Wynncraft.',
+  ogDescription: 'Build calculator, interactive map, item search, and more for Wynncraft.',
+  twitterCard: 'summary_large_image',
+})
+
 const tools = [
   {
     name: 'Builder',

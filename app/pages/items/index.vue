@@ -4,6 +4,14 @@ import { defaultIngredientCriteria } from '~/lib/items-search/criteria-url'
 import { filterIngredients } from '~/lib/items-search/filter-ingredients'
 import { filterItems } from '~/lib/items-search/filter-items'
 
+useSeoMeta({
+  title: 'Item Search — wynn.tools',
+  ogTitle: 'Item Search — wynn.tools',
+  description: 'Search and filter Wynncraft items and ingredients by stats, tier, type, and more.',
+  ogDescription: 'Search and filter Wynncraft items and ingredients by stats, tier, type, and more.',
+  twitterCard: 'summary_large_image',
+})
+
 const RESULT_CAP = 200
 
 const { data, pending, error, refresh } = useItemSearchData()

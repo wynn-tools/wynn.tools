@@ -26,6 +26,22 @@ interface ResolvedSet { name: string, set: NonNullable<ReturnType<typeof getSet>
 function getSet(name: string) {
   return searchData.value?.sets.get(name)
 }
+const pageTitle = computed(() =>
+  item.value ? `${item.value.displayName} — wynn.tools` : 'Item — wynn.tools',
+)
+const pageDesc = computed(() =>
+  item.value
+    ? `${item.value.tier} ${item.value.subType} (level ${item.value.level}) — stats, identifications, and history on wynn.tools.`
+    : 'Wynncraft item stats and history.',
+)
+useSeoMeta({
+  title: pageTitle,
+  ogTitle: pageTitle,
+  description: pageDesc,
+  ogDescription: pageDesc,
+  twitterCard: 'summary_large_image',
+})
+
 const itemSets = computed<ResolvedSet[]>(() => {
   if (!item.value)
     return []

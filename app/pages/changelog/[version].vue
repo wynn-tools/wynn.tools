@@ -75,7 +75,10 @@ const rail = computed<RailSection[]>(() => {
 
 useSeoMeta({
   title: () => `Changelog ${version.value} — wynn.tools`,
+  ogTitle: () => `Changelog ${version.value} — wynn.tools`,
   description: () => `Data changes in Wynncraft snapshot ${version.value}.`,
+  ogDescription: () => `Data changes in Wynncraft snapshot ${version.value}.`,
+  twitterCard: 'summary_large_image',
 })
 
 function go(gameVersion: string) {

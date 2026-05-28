@@ -3,7 +3,10 @@ import { ExternalLink } from '@lucide/vue'
 
 useSeoMeta({
   title: 'Credits — wynn.tools',
+  ogTitle: 'Credits — wynn.tools',
   description: 'Acknowledgements for the projects, tools, and assets that make wynn.tools possible.',
+  ogDescription: 'Acknowledgements for the projects, tools, and assets that make wynn.tools possible.',
+  twitterCard: 'summary_large_image',
 })
 
 const maintainer = {
