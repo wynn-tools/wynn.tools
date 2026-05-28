@@ -83,6 +83,10 @@ export const useBuildStore = defineStore('build', () => {
       rawBuild.value = null
       ctx.value = null
       searchItemById.value = null
+      loadedVersionId.value = null
+      loadedGameVersion.value = null
+      latestVersionId.value = null
+      latestGameVersion.value = null
     }
     finally {
       loading.value = false
@@ -122,6 +126,10 @@ export const useBuildStore = defineStore('build', () => {
       rawBuild.value = null
       ctx.value = null
       searchItemById.value = null
+      loadedVersionId.value = null
+      loadedGameVersion.value = null
+      latestVersionId.value = null
+      latestGameVersion.value = null
     }
     finally {
       loading.value = false
