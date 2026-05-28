@@ -49,9 +49,21 @@ describe('craft codec', () => {
       atkSpdOverride: null,
       powders: [],
     }
-    const weaponVec = encodeCraft({ ...raw, atkSpdOverride: 'SLOW' }, SYNTHETIC_ENC, true)
+    // Without atk-spd, the cursor should land at the end of the non-weapon payload.
+    // Payload = 1 + 7 + 6*12 + 12 + 2*3 = 98 bits for non-weapon; +4 = 102 for weapon.
     const nonWeaponVec = encodeCraft(raw, SYNTHETIC_ENC, false)
-    expect(weaponVec.length - nonWeaponVec.length).toBe(CRAFT_ENC.ATK_SPD_BITLEN)
+    const weaponVec = encodeCraft({ ...raw, atkSpdOverride: 'SLOW' }, SYNTHETIC_ENC, true)
+    const expectedNonWeaponBits
+      = CRAFT_ENC.LEGACY_BITLEN
+        + CRAFT_ENC.VERSION_BITLEN
+        + CRAFT_ENC.NUM_INGS * CRAFT_ENC.ING_ID_BITLEN
+        + CRAFT_ENC.RECIPE_ID_BITLEN
+        + CRAFT_ENC.NUM_MATS * CRAFT_ENC.MAT_TIER_BITLEN
+    const expectedNonWeaponPadded = expectedNonWeaponBits + ((6 - (expectedNonWeaponBits % 6)) % 6)
+    const expectedWeaponBits = expectedNonWeaponBits + CRAFT_ENC.ATK_SPD_BITLEN
+    const expectedWeaponPadded = expectedWeaponBits + ((6 - (expectedWeaponBits % 6)) % 6)
+    expect(nonWeaponVec.length).toBe(expectedNonWeaponPadded)
+    expect(weaponVec.length).toBe(expectedWeaponPadded)
   })
 
   it('round-trips 5 randomized RawCraft values', () => {
@@ -88,10 +100,10 @@ describe('craft codec', () => {
       powders: [],
     }
     const vec = encodeCraft(raw, SYNTHETIC_ENC, false)
-    // Skip version (7) + recipeId (12), then read first ingredient id (12 bits).
+    // Skip legacy (1) + version (7), then read first ingredient id (12 bits).
     const cursor = new BitVectorCursor(vec)
+    cursor.advanceBy(CRAFT_ENC.LEGACY_BITLEN)
     cursor.advanceBy(CRAFT_ENC.VERSION_BITLEN)
-    cursor.advanceBy(CRAFT_ENC.RECIPE_ID_BITLEN)
     const firstIng = cursor.advanceBy(CRAFT_ENC.ING_ID_BITLEN)
     expect(firstIng).toBe(4095)
 
@@ -100,13 +112,41 @@ describe('craft codec', () => {
   })
 
   it('throws CraftCodecError on version mismatch', () => {
-    // Hand-craft a bit vector starting with version=0 (not CURRENT_VERSION=1).
+    // Hand-craft a bit vector with legacy=0 and an unsupported version.
     const vec = new BitVector(0, 0)
-    vec.append(0, CRAFT_ENC.VERSION_BITLEN) // wrong version
-    vec.append(0, CRAFT_ENC.RECIPE_ID_BITLEN)
+    vec.append(0, CRAFT_ENC.LEGACY_BITLEN)
+    vec.append(0, CRAFT_ENC.VERSION_BITLEN) // wrong version (CURRENT_VERSION = 2)
     for (let i = 0; i < 6; i++) vec.append(0, CRAFT_ENC.ING_ID_BITLEN)
+    vec.append(0, CRAFT_ENC.RECIPE_ID_BITLEN)
     for (let i = 0; i < 2; i++) vec.append(0, CRAFT_ENC.MAT_TIER_BITLEN)
     expect(() => decodeCraft(new BitVectorCursor(vec), () => false)).toThrow(CraftCodecError)
+  })
+
+  it('throws a clear error when the legacy bit is set', () => {
+    const vec = new BitVector(0, 0)
+    vec.append(1, CRAFT_ENC.LEGACY_BITLEN) // legacy = 1
+    // Pad with zeros so the cursor has room to read version bits before throwing
+    // (the implementation throws as soon as it reads the legacy bit).
+    vec.append(0, CRAFT_ENC.VERSION_BITLEN)
+    expect(() => decodeCraft(new BitVectorCursor(vec), () => false)).toThrow(/legacy/i)
+  })
+
+  it('decodes the real WynnBuilder share hash 4OaaZWnqUSnqUSea0', () => {
+    const hash = '4OaaZWnqUSnqUSea0'
+    const vec = new BitVector(hash, hash.length * 6)
+    const decoded = decodeCraft(new BitVectorCursor(vec), () => false)
+    // 6 non-null ingredient ids
+    expect(decoded.ingredientIds).toHaveLength(6)
+    for (const id of decoded.ingredientIds) {
+      expect(id).not.toBeNull()
+      expect(typeof id).toBe('number')
+    }
+    // Both materials are 2★ per the source screenshot (Cinnabar Ingot + Heather String).
+    expect(decoded.matTiers).toEqual([2, 2])
+    // Leggings → non-weapon, no atk-spd bits.
+    expect(decoded.atkSpdOverride).toBeNull()
+    expect(typeof decoded.recipeId).toBe('number')
+    expect(decoded.powders).toEqual([])
   })
 
   it('calls recipeIsWeaponLookup exactly once with the decoded recipeId', () => {

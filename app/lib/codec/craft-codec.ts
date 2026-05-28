@@ -4,8 +4,9 @@ import type { EncodingConstants } from './encoding-constants'
 import { EncodingBitVector } from './encoding-bit-vector'
 
 export const CRAFT_ENC = {
+  LEGACY_BITLEN: 1,
   VERSION_BITLEN: 7,
-  CURRENT_VERSION: 1, // our own v1
+  CURRENT_VERSION: 2, // matches WynnBuilder CRAFTED_ENCODING_VERSION
   ING_ID_BITLEN: 12,
   RECIPE_ID_BITLEN: 12,
   NUM_INGS: 6,
@@ -29,12 +30,14 @@ export class CraftCodecError extends Error {
  * Encode a RawCraft to a bit vector. The `powders` field of `raw` is NOT
  * serialized here — powders ride the build's per-slot powder encoding.
  *
- * Wire layout:
- * 1. version (7 bits)
- * 2. recipeId (12 bits)
+ * Wire layout (matches WynnBuilder `encodeCraft`, craft.js):
+ * 1. legacy flag (1 bit) — always 0 for current format
+ * 2. version (7 bits) — CURRENT_VERSION (2)
  * 3. 6 × ingredientId (12 bits each; null = ING_NULL = 4095)
- * 4. 2 × matTier-1 (3 bits each)
- * 5. atkSpd (4 bits) — only if `recipeIsWeapon`
+ * 4. recipeId (12 bits)
+ * 5. 2 × matTier-1 (3 bits each)
+ * 6. atkSpd (4 bits) — only if `recipeIsWeapon`
+ * 7. zero padding to align to a 6-bit boundary
  */
 export function encodeCraft(
   raw: RawCraft,
@@ -42,13 +45,15 @@ export function encodeCraft(
   recipeIsWeapon: boolean,
 ): EncodingBitVector {
   const vec = new EncodingBitVector(0, 0, enc)
+  vec.append(0, CRAFT_ENC.LEGACY_BITLEN)
   vec.append(CRAFT_ENC.CURRENT_VERSION, CRAFT_ENC.VERSION_BITLEN)
-  vec.append(raw.recipeId, CRAFT_ENC.RECIPE_ID_BITLEN)
 
   for (let i = 0; i < CRAFT_ENC.NUM_INGS; i++) {
     const id = raw.ingredientIds[i] ?? null
     vec.append(id === null ? ING_NULL : id, CRAFT_ENC.ING_ID_BITLEN)
   }
+
+  vec.append(raw.recipeId, CRAFT_ENC.RECIPE_ID_BITLEN)
 
   for (let i = 0; i < CRAFT_ENC.NUM_MATS; i++) {
     const tier = raw.matTiers[i as 0 | 1]
@@ -56,9 +61,15 @@ export function encodeCraft(
   }
 
   if (recipeIsWeapon) {
+    // WB always writes an atk-spd value on weapon recipes; default null → NORMAL on the wire.
     const atkSpd = raw.atkSpdOverride ?? 'NORMAL'
     vec.append(ATK_SPD_TO_NUM[atkSpd], CRAFT_ENC.ATK_SPD_BITLEN)
   }
+
+  // Pad to a multiple of 6 bits so the result encodes cleanly as Base64.
+  const pad = (6 - (vec.length % 6)) % 6
+  if (pad > 0)
+    vec.append(0, pad)
 
   return vec
 }
@@ -73,6 +84,14 @@ export function decodeCraft(
   cursor: BitVectorCursor,
   recipeIsWeaponLookup: (recipeId: number) => boolean,
 ): RawCraft {
+  const startIdx = cursor.currIdx
+  const legacy = cursor.advanceBy(CRAFT_ENC.LEGACY_BITLEN)
+  if (legacy !== 0) {
+    throw new CraftCodecError(
+      'legacy WB pre-v2 hash format not yet supported',
+    )
+  }
+
   const version = cursor.advanceBy(CRAFT_ENC.VERSION_BITLEN)
   if (version !== CRAFT_ENC.CURRENT_VERSION) {
     throw new CraftCodecError(
@@ -80,14 +99,14 @@ export function decodeCraft(
     )
   }
 
-  const recipeId = cursor.advanceBy(CRAFT_ENC.RECIPE_ID_BITLEN)
-  const isWeapon = recipeIsWeaponLookup(recipeId)
-
   const ingredientIds: (number | null)[] = []
   for (let i = 0; i < CRAFT_ENC.NUM_INGS; i++) {
     const v = cursor.advanceBy(CRAFT_ENC.ING_ID_BITLEN)
     ingredientIds.push(v === ING_NULL ? null : v)
   }
+
+  const recipeId = cursor.advanceBy(CRAFT_ENC.RECIPE_ID_BITLEN)
+  const isWeapon = recipeIsWeaponLookup(recipeId)
 
   const matTiersArr: (1 | 2 | 3)[] = []
   for (let i = 0; i < CRAFT_ENC.NUM_MATS; i++) {
@@ -108,6 +127,13 @@ export function decodeCraft(
     }
     atkSpdOverride = spd
   }
+
+  // Skip the same zero padding emitted by encodeCraft to land on the next 6-bit
+  // boundary, mirroring WB's `cursor.skip(6 - ((cursor.currIdx - hashStartIdx) % 6))`.
+  const consumed = cursor.currIdx - startIdx
+  const pad = (6 - (consumed % 6)) % 6
+  if (pad > 0)
+    cursor.skip(pad)
 
   return {
     recipeId,
