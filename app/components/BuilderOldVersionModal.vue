@@ -6,6 +6,7 @@ const store = useBuildStore()
 const client = useCdnClient()
 
 const dismissed = ref(false)
+const upgradeBtn = ref<HTMLButtonElement | null>(null)
 const keepBtn = ref<HTMLButtonElement | null>(null)
 
 const visible = computed(() => store.isOldVersion && !dismissed.value)
@@ -20,8 +21,29 @@ async function upgrade() {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape')
+  if (e.key === 'Escape') {
     keep()
+    return
+  }
+  if (e.key === 'Tab') {
+    const focusable = [upgradeBtn.value, keepBtn.value].filter((b): b is HTMLButtonElement => b !== null)
+    if (focusable.length < 2)
+      return
+    const first = focusable[0]!
+    const last = focusable[focusable.length - 1]!
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      }
+    }
+    else {
+      if (document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+  }
 }
 
 watch(visible, (v) => {
@@ -43,6 +65,7 @@ watch(visible, (v) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="version-modal-title"
+      tabindex="-1"
       @keydown="onKeydown"
     >
       <div class="modal">
@@ -62,6 +85,7 @@ watch(visible, (v) => {
         </p>
         <div class="modal-actions">
           <button
+            ref="upgradeBtn"
             class="action-btn action-btn--primary"
             type="button"
             :disabled="store.loading"
