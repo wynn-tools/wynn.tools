@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import type { SearchItem } from '~/lib/items-search/types'
+import {
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardRoot,
+  HoverCardTrigger,
+} from 'reka-ui'
 import { humanizeField } from '~/lib/data/identifications'
 import { itemSlug } from '~/lib/items-search/slug'
 import { itemIconUrl } from '~/lib/items/icon'
@@ -23,19 +29,28 @@ const cols = computed(() => (props.idKeys ?? []).map(k => ({
 </script>
 
 <template>
-  <NuxtLink :to="{ path: `/items/${itemSlug(item)}`, query: { name: item.displayName } }" class="card">
-    <img v-if="icon" :src="icon" class="card-icon" alt="" aria-hidden="true">
-    <span v-else class="card-icon card-icon--empty" aria-hidden="true" />
-    <div class="card-body">
-      <span class="card-name" :style="{ color: TIER_COLORS[item.tier] ?? '#fff' }">{{ item.displayName }}</span>
-      <span class="card-meta">Lv. {{ item.level }} · {{ item.subType }}</span>
-      <ul v-if="cols.length" class="card-ids">
-        <li v-for="c in cols" :key="c.label">
-          <span class="card-id-val">{{ c.raw ?? '—' }}</span> {{ c.label }}
-        </li>
-      </ul>
-    </div>
-  </NuxtLink>
+  <HoverCardRoot :open-delay="200" :close-delay="100">
+    <HoverCardTrigger as-child>
+      <NuxtLink :to="{ path: `/items/${itemSlug(item)}`, query: { name: item.displayName } }" class="card">
+        <img v-if="icon" :src="icon" class="card-icon" alt="" aria-hidden="true">
+        <span v-else class="card-icon card-icon--empty" aria-hidden="true" />
+        <div class="card-body">
+          <span class="card-name" :style="{ color: TIER_COLORS[item.tier] ?? '#fff' }">{{ item.displayName }}</span>
+          <span class="card-meta">Lv. {{ item.level }} · {{ item.subType }}</span>
+          <ul v-if="cols.length" class="card-ids">
+            <li v-for="c in cols" :key="c.label">
+              <span class="card-id-val">{{ c.raw ?? '—' }}</span> {{ c.label }}
+            </li>
+          </ul>
+        </div>
+      </NuxtLink>
+    </HoverCardTrigger>
+    <HoverCardPortal>
+      <HoverCardContent :side-offset="8" side="right" align="start" class="quickview">
+        <ItemTooltip :item="item" />
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
 </template>
 
 <style scoped>
@@ -85,5 +100,8 @@ const cols = computed(() => (props.idKeys ?? []).map(k => ({
 }
 .card-id-val {
   color: var(--color-accent);
+}
+.quickview {
+  z-index: 60;
 }
 </style>
