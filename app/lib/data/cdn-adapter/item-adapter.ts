@@ -37,6 +37,7 @@ export interface OutputItem {
   attackSpeed: string | null
   powderSlots: number
   dropRestriction: string
+  restriction?: string | null
   icon?: unknown
   set: string | null
   lore: NormalizedText[] | null
