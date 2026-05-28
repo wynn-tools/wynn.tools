@@ -63,11 +63,15 @@ const text = ref(idsToShorthand(props.value))
 const parseError = ref<string | null>(null)
 const inputRef = ref<HTMLInputElement | null>(null)
 const justCopied = ref(false)
+const isEditingShorthand = ref(false)
 
-// Reflect external changes (e.g. clicking grid swaps) back into the text field
+// Reflect external changes (e.g. clicking grid swaps) back into the text field,
+// but only when the user isn't actively typing in the shorthand input.
 const localIds = ref<number[]>([...props.value])
 
 watch(() => props.value, (v) => {
+  if (isEditingShorthand.value)
+    return
   localIds.value = [...v]
   text.value = idsToShorthand(v)
   parseError.value = null
@@ -166,6 +170,8 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
             :placeholder="`e.g. f6f6t5 — up to ${maxSlots}`"
             spellcheck="false"
             autocomplete="off"
+            @focus="isEditingShorthand = true"
+            @blur="isEditingShorthand = false; text = idsToShorthand(localIds)"
             @input="onShorthandInput"
           >
           <button
