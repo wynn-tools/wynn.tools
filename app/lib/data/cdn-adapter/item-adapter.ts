@@ -51,6 +51,7 @@ export interface OutputItem {
     intelligence: number
     defence: number
     agility: number
+    quest?: string | null
   }
   identifications: Record<string, IdentificationEntry>
 }
