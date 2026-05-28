@@ -11,5 +11,16 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    globalSetup: ['./test/setup.ts'],
+    env: {
+      DATABASE_URL: 'postgres://wynn:wynn@localhost:5433/wynn_test',
+      DISCORD_CLIENT_ID: 'id',
+      DISCORD_CLIENT_SECRET: 'secret',
+      DISCORD_REDIRECT_URI: 'https://api.wynn.tools/v1/auth/discord/callback',
+      FRONTEND_URL: 'https://wynn.tools',
+      COOKIE_DOMAIN: '.wynn.tools',
+      SESSION_SECRET: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+      CDN_BASE_URL: 'https://cdn.wynn.tools/',
+    },
   },
 })
