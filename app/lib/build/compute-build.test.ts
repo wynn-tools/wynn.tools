@@ -46,7 +46,17 @@ function makeRawBuild(): RawBuild {
   return {
     versionId: 1,
     // [helmet, chestplate, leggings, boots, ring1, ring2, bracelet, necklace, weapon]
-    equipmentIds: [100, 101, 102, 103, 104, 105, 106, 107, 1],
+    equipment: [
+      { kind: 'normal', id: 100 },
+      { kind: 'normal', id: 101 },
+      { kind: 'normal', id: 102 },
+      { kind: 'normal', id: 103 },
+      { kind: 'normal', id: 104 },
+      { kind: 'normal', id: 105 },
+      { kind: 'normal', id: 106 },
+      { kind: 'normal', id: 107 },
+      { kind: 'normal', id: 1 },
+    ],
     powders: [[], [], [], [], [], [], [], [], []],
     tomeIds: [],
     // Assign 10 str for testing

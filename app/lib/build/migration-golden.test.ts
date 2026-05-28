@@ -74,7 +74,17 @@ describe('migration golden regression', () => {
     // Deadeye (id 19) is a bow → Archer; allocate the two root-most archer nodes.
     const raw: RawBuild = {
       versionId,
-      equipmentIds: [null, 0, 3, null, 5, null, null, null, 19], // chestplate, leggings, ring, bow
+      equipment: [
+        { kind: 'normal', id: null },
+        { kind: 'normal', id: 0 },
+        { kind: 'normal', id: 3 },
+        { kind: 'normal', id: null },
+        { kind: 'normal', id: 5 },
+        { kind: 'normal', id: null },
+        { kind: 'normal', id: null },
+        { kind: 'normal', id: null },
+        { kind: 'normal', id: 19 },
+      ], // chestplate, leggings, ring, bow
       powders: emptyPowders(),
       tomeIds: Array.from({ length: 14 }).fill(null),
       sp: null,
@@ -85,7 +95,7 @@ describe('migration golden regression', () => {
 
     const sortedTree = getSortedClassAtree(ctx.atreeData, 'Archer')
     const hash = encodeRawBuild(raw, enc, sortedTree)
-    const decoded = decodeRawBuild(hash, () => ({ enc, atreeData: ctx.atreeData, weaponType }))
+    const decoded = decodeRawBuild(hash, () => ({ enc, atreeData: ctx.atreeData, weaponType, recipeIsWeapon: () => false }))
 
     // Round-trip: decode reproduces the encoded build exactly.
     expect(decoded).toEqual(raw)

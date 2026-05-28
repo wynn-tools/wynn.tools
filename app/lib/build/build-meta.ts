@@ -1,5 +1,6 @@
 import type { RawBuild } from '../codec/build-codec'
 import type { BuildContext, BuildResult } from './compute-build'
+import { slotItemId } from '../codec/build-codec'
 import { WEP_TO_CLASS } from '../codec/wep-to-class'
 import { POWDER_NAME_BY_ID } from '../data/powder-constants'
 
@@ -35,14 +36,17 @@ export function extractBuildMeta(
   weaponTypeFn: (id: number) => string | null,
   result: BuildResult,
 ): BuildMeta {
-  const wid = raw.equipmentIds[8]
+  const weaponSlot = raw.equipment[8]
+  const wid = slotItemId(weaponSlot)
   const wtype = wid != null ? weaponTypeFn(wid) : null
   const className = wtype ? (WEP_TO_CLASS[wtype] ?? 'Build') : 'Build'
 
   const items = DISPLAY_ORDER.map((slot) => {
-    const id = raw.equipmentIds[slot]
+    const slotEntry = raw.equipment[slot]
+    const isCrafted = slotEntry?.kind === 'crafted'
+    const id = slotItemId(slotEntry)
     const item = id != null ? ctx.rawItemIndex.resolveId(id) : null
-    const isNone = item == null || (item.id as number) >= 10000 // ids 10000–10008 are NONE_RAW_ITEMS (empty slots)
+    const isNone = !isCrafted && (item == null || (item.id as number) >= 10000) // ids 10000–10008 are NONE_RAW_ITEMS (empty slots)
 
     const powderIdx = POWDER_INDEX.get(slot)
     const powderIds = powderIdx !== undefined ? (raw.powders[powderIdx] ?? []) : []
@@ -50,7 +54,7 @@ export function extractBuildMeta(
 
     return {
       slot: SLOT_LABELS[slot]!,
-      name: isNone ? '—' : String(item!.displayName),
+      name: isCrafted ? 'Crafted' : (isNone ? '—' : String(item!.displayName)),
       powders,
     }
   })

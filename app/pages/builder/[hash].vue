@@ -2,7 +2,7 @@
 import { loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
 import { extractBuildMeta } from '~/lib/build/build-meta'
 import { computeBuild } from '~/lib/build/compute-build'
-import { decodeRawBuild } from '~/lib/codec/build-codec'
+import { decodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { useBuildStore } from '~/stores/build'
 
@@ -33,6 +33,7 @@ const { data: buildMeta } = await useAsyncData(
         enc: loaded.enc,
         atreeData: loaded.ctx.atreeData,
         weaponType: loaded.weaponType,
+        recipeIsWeapon: () => false,
       }))
       const result = computeBuild(raw, loaded.ctx)
       return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result)
@@ -50,7 +51,7 @@ const pageTitle = computed(() => {
   const raw = store.rawBuild
   const ctx = store.ctx
   if (raw && ctx) {
-    const wid = raw.equipmentIds[8]
+    const wid = slotItemId(raw.equipment[8])
     const item = wid != null ? ctx.rawItemIndex.resolveId(wid) : null
     const wtype = item?.type as string | undefined
     const className = wtype ? (WEP_TO_CLASS[wtype] ?? 'Build') : 'Build'

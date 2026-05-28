@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { slotItemId } from '~/lib/codec/build-codec'
 import { levelToSkillPoints } from '~/lib/math/skillpoints'
 import { useBuildStore } from '~/stores/build'
 
@@ -26,7 +27,10 @@ const itemLevelWarnings = computed<string[]>(() => {
     return []
   const warnings: string[] = []
   for (let slot = 0; slot <= 8; slot++) {
-    const id = rb.equipmentIds[slot]
+    const entry = rb.equipment[slot]
+    if (entry?.kind === 'crafted')
+      continue // crafted items carry their own lvl req via reqs.level; surfaced elsewhere
+    const id = slotItemId(entry)
     if (id == null || id >= 10000)
       continue
     const item = ctx.rawItemIndex.resolveId(id)

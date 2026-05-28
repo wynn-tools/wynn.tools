@@ -112,6 +112,7 @@ describe.skipIf(!haveData)('compute-build oracle (Shaman relik lvl-121)', () => 
       enc,
       atreeData,
       weaponType: (id: number) => itemTypeById.get(id) ?? null,
+      recipeIsWeapon: () => false,
     })
 
     const rawBuild = decodeRawBuild(ORACLE_HASH, provider)

@@ -35,7 +35,17 @@ function makeRawBuild(overrides: Partial<RawBuild> = {}): RawBuild {
   return {
     versionId: 1,
     // slots: [helmet, chestplate, leggings, boots, ring1, ring2, bracelet, necklace, weapon]
-    equipmentIds: [100, null, null, null, null, null, null, null, 1],
+    equipment: [
+      { kind: 'normal' as const, id: 100 },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: 1 },
+    ],
     powders: [[], [], [], [], [], [], [], [], []],
     tomeIds: [],
     sp: null,
@@ -72,7 +82,17 @@ describe('extractBuildMeta', () => {
 
   it('falls back to "Build" when weapon slot is empty', () => {
     const { ctx } = makeBuildContext()
-    const raw = makeRawBuild({ equipmentIds: [100, null, null, null, null, null, null, null, null] })
+    const raw = makeRawBuild({ equipment: [
+      { kind: 'normal', id: 100 },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+      { kind: 'normal', id: null },
+    ] })
     const result = computeBuild(raw, ctx as any)
     const meta = extractBuildMeta(raw, ctx as any, () => null, result)
     expect(meta.className).toBe('Build')

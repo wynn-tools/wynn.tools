@@ -54,6 +54,12 @@ export interface BuildContext {
   aspectData: RawAspectData
   /** Major ID ability data (display name → entry). Optional; omit in tests without item major IDs. */
   majorIdData?: RawMajorIdData
+  /**
+   * Craft context (recipes + ingredients) required to resolve crafted slots.
+   * Optional — builds with no crafted slots don't need it. Throws inside
+   * `resolveBuildItems` if a crafted slot is encountered without one.
+   */
+  craftContext?: import('../crafter/types').CraftContext
 }
 
 /** One evaluated spell ready for display. */
@@ -99,7 +105,7 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   const { rawItemIndex, sets, atreeData } = ctx
 
   // Step 1: resolve items
-  const { weapon, allItems: itemsOnly, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex)
+  const { weapon, allItems: itemsOnly, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex, ctx.craftContext)
 
   // Resolve tomes and fold into allItems / wynnOrder
   const { tomes, guildTome } = resolveTomes(rawBuild.tomeIds, ctx.tomeIndex)

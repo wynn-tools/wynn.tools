@@ -176,6 +176,7 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — skillpoints + setSkill
       enc: loaded.enc,
       atreeData: loaded.ctx.atreeData,
       weaponType: loaded.weaponType,
+      recipeIsWeapon: () => false,
     }))
     expect(Array.isArray(reDecoded.sp)).toBe(true)
     expect(reDecoded.sp![0]).toBe(100)
@@ -217,7 +218,8 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — currentHash round-trip
     // Pick a helmet that differs from the current one
     const helmets = store.itemsForSlot(0)
     expect(helmets.length).toBeGreaterThan(0)
-    const currentHelmetId = store.rawBuild!.equipmentIds[0]
+    const helmetSlot = store.rawBuild!.equipment[0]
+    const currentHelmetId = helmetSlot?.kind === 'normal' ? helmetSlot.id : null
     const altHelmet = helmets.find(h => h.id !== currentHelmetId)
     expect(altHelmet).toBeDefined()
 
@@ -236,8 +238,10 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — currentHash round-trip
       enc: loaded.enc,
       atreeData: loaded.ctx.atreeData,
       weaponType: loaded.weaponType,
+      recipeIsWeapon: () => false,
     }))
-    expect(reDecoded.equipmentIds[0]).toBe(altHelmet!.id)
+    const decodedHelmet = reDecoded.equipment[0]
+    expect(decodedHelmet?.kind === 'normal' ? decodedHelmet.id : null).toBe(altHelmet!.id)
 
     // totalHp should differ from the original oracle HP (most helmet swaps change HP)
     expect(store.result!.defense.totalHp).not.toBe(originalHp)
@@ -289,6 +293,7 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — powder editing (live C
       enc: loaded.enc,
       atreeData: loaded.ctx.atreeData,
       weaponType: loaded.weaponType,
+      recipeIsWeapon: () => false,
     }))
     expect(reDecoded.powders[4]).toEqual([0])
   }, 30_000)

@@ -6,6 +6,7 @@ import {
   HoverCardTrigger,
 } from 'reka-ui'
 import { computed } from 'vue'
+import { slotItemId } from '~/lib/codec/build-codec'
 import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
 import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
@@ -13,7 +14,7 @@ import { useBuildStore } from '~/stores/build'
 const store = useBuildStore()
 
 function slotIcon(slot: number): string | null {
-  const id = store.rawBuild?.equipmentIds[slot]
+  const id = slotItemId(store.rawBuild?.equipment[slot])
   if (id == null)
     return null
   return itemIconUrl(store.ctx?.rawItemIndex.resolveId(id))
@@ -50,7 +51,10 @@ const openSlot = ref<number | null>(null)
 const powderSlot = ref<number | null>(null)
 
 function itemName(slot: number): string {
-  const id = store.rawBuild?.equipmentIds[slot]
+  const entry = store.rawBuild?.equipment[slot]
+  if (entry?.kind === 'crafted')
+    return 'Crafted'
+  const id = slotItemId(entry)
   if (id == null)
     return 'Empty'
   const item = store.ctx?.rawItemIndex.resolveId(id)

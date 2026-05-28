@@ -81,6 +81,7 @@ describe.skipIf(!existsSync(CDN_DATA))(
         enc,
         atreeData,
         weaponType: (id: number) => typeById.get(id) ?? null,
+        recipeIsWeapon: () => false,
       }))
 
       const result = computeBuild(rawBuild, { rawItemIndex, sets, atreeData, tomeIndex, aspectData: {}, majorIdData })

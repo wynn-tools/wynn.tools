@@ -1,3 +1,6 @@
+import type { CraftContext, RawCraft } from '../crafter/types'
+import type { Ingredient } from '../data/cdn-adapter/ingredient-adapter'
+import type { Recipe } from '../data/cdn-adapter/recipe-adapter'
 import { describe, expect, it } from 'vitest'
 import { expandItem } from '../math/expand-item'
 import {
@@ -216,7 +219,17 @@ describe('resolveBuildItems', () => {
 
   const rawBuild = {
     versionId: 0,
-    equipmentIds: [1, null, null, null, null, null, null, null, 2] as Array<number | null>,
+    equipment: [
+      { kind: 'normal' as const, id: 1 },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: null },
+      { kind: 'normal' as const, id: 2 },
+    ],
     // POWDERABLE order: [helmet, chest, legs, boots, weapon] — NOT equipment-slot order.
     powders: [
       [0], // helmet — earth t1
@@ -274,6 +287,112 @@ describe('resolveBuildItems', () => {
     expect(result.weapon.get('powders')).toEqual([0]) // earth t1 from powders[4]
     // A 0-slot accessory in slot 4 must not absorb the weapon's powder.
     expect(result.equipment[4]!.get('powders')).toEqual([])
+  })
+
+  it('resolves a crafted helmet slot into an ExpandedItem alongside a normal weapon', () => {
+    const recipe: Recipe = {
+      id: 1,
+      name: 'Helmet-1-10',
+      type: 'helmet',
+      skill: 'armouring',
+      lvl: [1, 10],
+      durability: [100, 200],
+      hp: [50, 80],
+      materials: [
+        { item: 'oak_wood', amount: 1 },
+        { item: 'oak_wood', amount: 1 },
+      ],
+    }
+    const ingredient: Ingredient = {
+      id: 1,
+      name: 'Test Leaf',
+      displayName: 'Test Leaf',
+      tier: 0,
+      lvl: 1,
+      skills: ['armouring'],
+      identifications: { sdPct: { min: 5, max: 10, raw: 10 } },
+      itemOnlyIDs: { durabilityModifier: 0, strReq: 0, dexReq: 0, intReq: 0, defReq: 0, agiReq: 0 },
+      consumableOnlyIDs: { charges: 0, duration: 0 },
+      posMods: { above: 0, under: 0, left: 0, right: 0, touching: 0, notTouching: 0 },
+      icon: null,
+    }
+    const craftContext: CraftContext = {
+      recipes: new Map([[recipe.id, recipe]]),
+      ingredients: new Map([[ingredient.id, ingredient]]),
+    }
+    const craftedRaw: RawCraft = {
+      recipeId: recipe.id,
+      ingredientIds: [ingredient.id, null, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [],
+    }
+
+    const mixedBuild = {
+      versionId: 0,
+      equipment: [
+        { kind: 'crafted' as const, raw: craftedRaw, recipeIsWeapon: false },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: 2 },
+      ],
+      powders: [[], [], [], [], []],
+      tomeIds: [],
+      sp: null,
+      level: 10,
+      aspects: [],
+      activeAtree: [],
+    }
+
+    const index = buildRawItemIndex([rawHelmet, rawWeapon])
+    const result = resolveBuildItems(mixedBuild, index, craftContext)
+
+    // Helmet slot was crafted: should be a populated ExpandedItem with the
+    // crafted hp upper bound, identifications, and category 'armor'.
+    const helm = result.equipment[0]!
+    expect(helm.get('category')).toBe('armor')
+    expect(helm.get('type')).toBe('helmet')
+    expect(helm.get('tier')).toBe('Crafted')
+    expect(helm.get('hp')).toBe(80)
+    // Identification range present in both minRolls / maxRolls.
+    const minR = helm.get('minRolls') as Map<string, number>
+    const maxR = helm.get('maxRolls') as Map<string, number>
+    expect(minR.get('sdPct')).toBe(5)
+    expect(maxR.get('sdPct')).toBe(10)
+
+    // Normal weapon resolves the same as before.
+    expect(result.weapon.get('name')).toBe('TestSword')
+    expect(result.allItems).toHaveLength(9)
+  })
+
+  it('throws when a crafted slot is present but no craftContext is provided', () => {
+    const craftedBuild = {
+      versionId: 0,
+      equipment: [
+        { kind: 'crafted' as const, raw: { recipeId: 1, ingredientIds: [null, null, null, null, null, null], matTiers: [1, 1] as [1 | 2 | 3, 1 | 2 | 3], atkSpdOverride: null, powders: [] }, recipeIsWeapon: false },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+      ],
+      powders: [[], [], [], [], []],
+      tomeIds: [],
+      sp: null,
+      level: 10,
+      aspects: [],
+      activeAtree: [],
+    }
+    const index = buildRawItemIndex([rawHelmet, rawWeapon])
+    expect(() => resolveBuildItems(craftedBuild, index)).toThrow(/craftContext/)
   })
 
   it('wynnOrder is [boots(3), leggings(2), chestplate(1), helmet(0), ring1(4), ring2(5), bracelet(6), necklace(7)]', () => {

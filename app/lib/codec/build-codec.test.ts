@@ -13,14 +13,16 @@ function provider(_versionId: number) {
     enc: SYNTHETIC_ENC,
     atreeData: atreeFixture as AtreeData,
     weaponType: (_id: number) => 'bow',
+    recipeIsWeapon: (_id: number) => false,
   }
 }
 
 describe('build-codec round-trip', () => {
   it('round-trips a synthetic build to identical base64', () => {
+    const ids = [100, 200, 300, 400, 500, 600, 700, 800, 900]
     const raw: RawBuild = {
       versionId: 30,
-      equipmentIds: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+      equipment: ids.map(id => ({ kind: 'normal', id })),
       powders: [[26, 26], [], [12], [], [5]],
       tomeIds: [10, null, null, null, null, null, null],
       sp: [5, null, -3, 100, -50],
@@ -32,7 +34,7 @@ describe('build-codec round-trip', () => {
     const decoded = decodeRawBuild(hash, provider)
     const rehash = encodeRawBuild(decoded, SYNTHETIC_ENC, sortedArcher)
     expect(rehash).toBe(hash)
-    expect(decoded.equipmentIds).toEqual(raw.equipmentIds)
+    expect(decoded.equipment).toEqual(raw.equipment)
     expect(decoded.level).toBe(105)
     expect([...decoded.activeAtree].sort((a, b) => a - b)).toEqual([100, 101, 103])
   })

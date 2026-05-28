@@ -9,7 +9,10 @@
  */
 
 import type { RawBuild } from '../codec/build-codec'
+import type { EquipmentSlot } from '../codec/equipment-codec'
+import type { CraftContext, CraftedItem } from '../crafter/types'
 import type { ExpandedItem } from '../math/expand-item'
+import { computeCraft } from '../crafter/compute-craft'
 import { POWDER_TIERS, SKP_ELEMENTS } from '../data/powder-constants'
 import { expandItem } from '../math/expand-item'
 import { POWDER_ARMOR_HEALTH, POWDER_STATS } from '../math/powder-stats'
@@ -569,26 +572,138 @@ function powdersForSlot(powders: number[][], slot: number): number[] {
   return idx === undefined ? [] : (powders[idx] ?? [])
 }
 
+// ---------------------------------------------------------------------------
+// craftedToExpandedItem — adapt a CraftedItem into the ExpandedItem shape
+// ---------------------------------------------------------------------------
+
 /**
- * Resolve a RawBuild's item IDs to expanded statMaps with powders applied.
+ * Map a CraftedItem (output of crafter/compute-craft) into the legacy
+ * ExpandedItem (Map) shape consumed by the rest of the math pipeline.
  *
- * - equipmentIds[0..7] = helmet..necklace; null → corresponding NONE_RAW_ITEM.
- * - equipmentIds[8] = weapon; null → NONE_RAW_ITEMS[8].
+ * Reference: WB `craft.js`. Crafted identifications are ranges → both
+ * `minRolls` and `maxRolls` are populated from `{min,max}` directly (so the
+ * roll layer never re-rolls). The raw legacy field (e.g. `sdPct`) is set to
+ * the maximum value, matching `expandItem`'s convention for non-rolled items
+ * with a present "raw" magnitude.
+ *
+ * Stat-fields that are absent on this craft default to 0 (number) or '' /
+ * '0-0' (string) so downstream math doesn't need to special-case "crafted".
+ */
+export function craftedToExpandedItem(crafted: CraftedItem): ExpandedItem {
+  const raw: Record<string, unknown> = {
+    // Identity
+    name: crafted.hash,
+    displayName: crafted.hash,
+    tier: 'Crafted',
+    category: crafted.category,
+    type: crafted.type,
+    slots: crafted.slots,
+    // Use upper bound for `lvl`; reqs.level holds the same value.
+    lvl: crafted.lvl,
+    // Powders pass through; applyArmorPowders / applyWeaponPowders below will
+    // operate on these.
+    powders: crafted.powders.slice(),
+    // Mark as fixID so expandItem doesn't attempt to roll *anything*. We then
+    // explicitly populate minRolls/maxRolls from the craft's id ranges below
+    // (overwriting the all-zero maps that expandItem produced for fixID).
+    fixID: true,
+  }
+
+  // ---- Skillpoint requirements -------------------------------------------
+  for (const skp of ['strReq', 'dexReq', 'intReq', 'defReq', 'agiReq'] as const) {
+    raw[skp] = crafted.reqs[skp] ?? 0
+  }
+
+  // ---- HP / damage / defenses --------------------------------------------
+  if (crafted.category === 'armor') {
+    const hp = crafted.hp ?? [0, 0]
+    // Crafted armor stores a [low, high] range; resolve.ts uses the upper
+    // bound as the canonical "hp" (mirrors WB which displays the max roll).
+    raw.hp = hp[1]
+    if (crafted.defenses) {
+      for (const [k, v] of Object.entries(crafted.defenses))
+        raw[k] = v
+    }
+  }
+
+  if (crafted.category === 'weapon') {
+    // damage map keys are 'nDam', 'eDam', etc. (per crafter/types). Convert
+    // each [min,max] tuple to the "min-max" string the math expects.
+    const dmg = crafted.damage ?? {}
+    for (const elem of ['nDam', 'eDam', 'tDam', 'wDam', 'fDam', 'aDam']) {
+      const tuple = dmg[elem]
+      raw[elem] = tuple ? `${tuple[0]}-${tuple[1]}` : '0-0'
+    }
+    if (crafted.atkSpd)
+      raw.atkSpd = crafted.atkSpd
+  }
+
+  // cleanRawItem fills the rest of the default fields (numeric → 0, string
+  // → '') so the ExpandedItem looks structurally identical to a normal item.
+  const cleaned = cleanRawItem(raw)
+  const expanded = expandItem(cleaned as Record<string, unknown>)
+
+  // Overwrite minRolls/maxRolls with the craft's id ranges. expandItem with
+  // fixID gave us all-zero maps; we replace entries that the craft actually
+  // produced. Non-rolled identifications stay at 0, matching the "no roll"
+  // convention.
+  const minRolls = expanded.get('minRolls') as Map<string, number>
+  const maxRolls = expanded.get('maxRolls') as Map<string, number>
+  for (const [key, range] of Object.entries(crafted.identifications)) {
+    minRolls.set(key, range.min)
+    maxRolls.set(key, range.max)
+    // Also surface the upper-bound on the flat field so any code path that
+    // reads `item.get('sdPct')` (non-rolled accessor) sees something sane.
+    expanded.set(key, range.max)
+  }
+
+  return expanded
+}
+
+/**
+ * Resolve a RawBuild's equipment slots to expanded statMaps with powders applied.
+ *
+ * - equipment[0..7] = helmet..necklace; NORMAL slot with null id → NONE_RAW_ITEM.
+ * - equipment[8] = weapon; NORMAL slot with null id → NONE_RAW_ITEMS[8].
+ * - CRAFTED slots resolve via `computeCraft(slot.raw, craftContext)` and are
+ *   adapted into the ExpandedItem shape by `craftedToExpandedItem`.
  * - Powders are read via POWDER_INDEX_BY_SLOT (the decoded `powders` array is in
  *   POWDERABLE order [helmet, chest, legs, boots, weapon], not equipment-slot order).
  * - Armor items (category === 'armor'): applyArmorPowders after setting powders.
  * - Accessories: not powderable (powdersForSlot returns []).
  * - Weapon: powders from powders[4]; applyWeaponPowders called after setting them.
+ *
+ * If a slot is crafted and `craftContext` is undefined, throws — callers must
+ * pass the context resolved from the CDN at build-data load time (Task 11).
  */
-export function resolveBuildItems(rawBuild: RawBuild, index: RawItemIndex): ResolvedBuildItems {
-  const { equipmentIds, powders } = rawBuild
+export function resolveBuildItems(
+  rawBuild: RawBuild,
+  index: RawItemIndex,
+  craftContext?: CraftContext,
+): ResolvedBuildItems {
+  const { equipment: slots, powders } = rawBuild
+
+  function resolveSlot(slot: EquipmentSlot | undefined, slotIdx: number): ExpandedItem {
+    if (slot?.kind === 'crafted') {
+      if (!craftContext) {
+        throw new Error(
+          `resolveBuildItems: slot ${slotIdx} is crafted but no craftContext was provided`,
+        )
+      }
+      const crafted = computeCraft(slot.raw, craftContext)
+      return craftedToExpandedItem(crafted)
+    }
+    // NORMAL slot or undefined (defensive fallback).
+    const id = slot?.kind === 'normal' ? slot.id : null
+    const raw = index.resolveId(id) ?? NONE_RAW_ITEMS[slotIdx]!
+    return expandItem(raw as Record<string, unknown>)
+  }
 
   const equipment: ExpandedItem[] = []
   for (let i = 0; i < 8; i++) {
-    const raw = index.resolveId(equipmentIds[i] ?? null) ?? NONE_RAW_ITEMS[i]!
-    const m = expandItem(raw as Record<string, unknown>)
-    const slots = Number(m.get('slots')) || 0
-    const itemPowders = powdersForSlot(powders, i).slice(0, slots)
+    const m = resolveSlot(slots[i], i)
+    const slotCount = Number(m.get('slots')) || 0
+    const itemPowders = powdersForSlot(powders, i).slice(0, slotCount)
     m.set('powders', itemPowders)
     if (m.get('category') === 'armor') {
       applyArmorPowders(m)
@@ -597,8 +712,7 @@ export function resolveBuildItems(rawBuild: RawBuild, index: RawItemIndex): Reso
   }
 
   // Weapon (slot index 8)
-  const weaponRaw = index.resolveId(equipmentIds[8] ?? null) ?? NONE_RAW_ITEMS[8]!
-  const weapon = expandItem(weaponRaw as Record<string, unknown>)
+  const weapon = resolveSlot(slots[8], 8)
   const weaponSlots = Number(weapon.get('slots')) || 0
   const weaponPowders = powdersForSlot(powders, 8).slice(0, weaponSlots)
   weapon.set('powders', weaponPowders)

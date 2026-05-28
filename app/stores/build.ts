@@ -12,7 +12,7 @@ import { unlockPathTo } from '~/lib/atree/pathfind'
 import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
 import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
-import { decodeRawBuild, encodeRawBuild } from '~/lib/codec/build-codec'
+import { decodeRawBuild, encodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { num } from '~/lib/codec/codec-util'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { SKP_ORDER } from '~/lib/math/constants'
@@ -67,7 +67,15 @@ export const useBuildStore = defineStore('build', () => {
         loadBuildContext(client, versionId),
         resolveLatestVersion(client),
       ])
-      const raw = decodeRawBuild(hash, () => ({ enc: loaded.enc, atreeData: loaded.ctx.atreeData, weaponType: loaded.weaponType }))
+      const raw = decodeRawBuild(hash, () => ({
+        enc: loaded.enc,
+        atreeData: loaded.ctx.atreeData,
+        weaponType: loaded.weaponType,
+        // No crafted-slot support at decode time yet (Task 11 will wire the
+        // real lookup from the recipes CDN). All-false is safe as long as
+        // the encoded build contains no CRAFTED slots.
+        recipeIsWeapon: () => false,
+      }))
       ctx.value = loaded.ctx
       enc.value = loaded.enc
       weaponTypeFn.value = loaded.weaponType
@@ -112,7 +120,7 @@ export const useBuildStore = defineStore('build', () => {
       latestGameVersion.value = latest.gameVersion
       rawBuild.value = {
         versionId: latest.versionId,
-        equipmentIds: Array.from({ length: num(e, 'EQUIPMENT_NUM') }).fill(null),
+        equipment: Array.from({ length: num(e, 'EQUIPMENT_NUM') }, () => ({ kind: 'normal' as const, id: null })),
         powders: Array.from({ length: POWDER_INDEX_BY_SLOT.size }, () => []),
         tomeIds: Array.from({ length: num(e, 'TOME_NUM') }).fill(null),
         sp: null,
@@ -147,10 +155,16 @@ export const useBuildStore = defineStore('build', () => {
       const old = rawBuild.value
 
       const newEquipNum = num(loaded.enc, 'EQUIPMENT_NUM')
-      const equipmentIds = Array.from({ length: newEquipNum }, (_, i) => {
-        const id = old.equipmentIds[i] ?? null
-        return id != null && loaded.ctx.rawItemIndex.resolveId(id) !== null ? id : null
-      }) as Array<number | null>
+      const equipment = Array.from({ length: newEquipNum }, (_, i) => {
+        const slot = old.equipment[i]
+        // Crafted slots survive upgrades as-is (their recipe id is independent
+        // of the item DB and remains valid across snapshots).
+        if (slot?.kind === 'crafted')
+          return slot
+        const id = slot?.kind === 'normal' ? slot.id : null
+        const kept = id != null && loaded.ctx.rawItemIndex.resolveId(id) !== null ? id : null
+        return { kind: 'normal' as const, id: kept }
+      })
 
       const newTomeNum = num(loaded.enc, 'TOME_NUM')
       const tomeIds = Array.from({ length: newTomeNum }, (_, i) => {
@@ -168,7 +182,7 @@ export const useBuildStore = defineStore('build', () => {
       loadedVersionId.value = newVersionId
       loadedGameVersion.value = loaded.gameVersion
       atreeMessage.value = null
-      rawBuild.value = { ...old, versionId: newVersionId, equipmentIds, tomeIds, aspects, activeAtree: [] }
+      rawBuild.value = { ...old, versionId: newVersionId, equipment, tomeIds, aspects, activeAtree: [] }
     }
     catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
@@ -181,9 +195,9 @@ export const useBuildStore = defineStore('build', () => {
   function setItem(slot: number, id: number | null) {
     if (!rawBuild.value)
       return
-    const equipmentIds = rawBuild.value.equipmentIds.slice()
-    equipmentIds[slot] = id
-    rawBuild.value = { ...rawBuild.value, equipmentIds }
+    const equipment = rawBuild.value.equipment.slice()
+    equipment[slot] = { kind: 'normal', id }
+    rawBuild.value = { ...rawBuild.value, equipment }
   }
 
   function setLevel(level: number) {
@@ -195,7 +209,7 @@ export const useBuildStore = defineStore('build', () => {
   function currentWeaponType(): string | null {
     if (!rawBuild.value || !weaponTypeFn.value)
       return null
-    const wid = rawBuild.value.equipmentIds[8]
+    const wid = slotItemId(rawBuild.value.equipment[8])
     return wid == null ? null : weaponTypeFn.value(wid)
   }
 
@@ -227,7 +241,7 @@ export const useBuildStore = defineStore('build', () => {
   }
 
   function equipmentSearchItem(slot: number): SearchItem | null {
-    const id = rawBuild.value?.equipmentIds[slot]
+    const id = slotItemId(rawBuild.value?.equipment[slot])
     if (id == null || !searchItemById.value)
       return null
     return searchItemById.value.get(id) ?? null
@@ -260,7 +274,15 @@ export const useBuildStore = defineStore('build', () => {
       return 0
     if (!POWDER_INDEX_BY_SLOT.has(slot))
       return 0
-    const id = rawBuild.value.equipmentIds[slot]
+    const slotEntry = rawBuild.value.equipment[slot]
+    if (slotEntry?.kind === 'crafted') {
+      // Crafted item slot count is computed by computeCraft; for now derive
+      // from the level range (slotsByLvlLow) is non-trivial here. The store
+      // doesn't have a CraftContext yet (wired in Task 11) — return 0 so
+      // powders stay clamped to what the build already has.
+      return 0
+    }
+    const id = slotItemId(slotEntry)
     const item = id == null ? null : ctx.value.rawItemIndex.resolveId(id)
     return Number(item?.slots) || 0
   }
