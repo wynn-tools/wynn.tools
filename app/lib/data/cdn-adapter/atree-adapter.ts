@@ -12,6 +12,14 @@ export interface CdnAtreeNode {
   archetype: string | null
   archetypeRequirement: number
   icon: string | null
+  /**
+   * Game-mechanics fields. Present only on wynnbuilder-backfilled snapshots —
+   * the live v3 API does not ship mechanics. When absent, spell math falls back
+   * to base-only damage (no upgrades applied).
+   */
+  effects?: unknown[]
+  properties?: Record<string, unknown>
+  baseAbil?: number
 }
 
 export interface CdnAtreeFile {
@@ -39,6 +47,16 @@ export function adaptCdnAtree(file: CdnAtreeFile): AtreeAbility[] {
 
     if (node.archetype !== null && node.archetype !== '')
       ability.archetype = node.archetype
+
+    // Game-mechanics passthrough. The math layer reads `effects` / `properties`
+    // / `base_abil` verbatim; when absent (live snapshots), it falls back to
+    // base spell damage with no atree upgrades.
+    if (node.effects !== undefined)
+      ability.effects = node.effects
+    if (node.properties !== undefined)
+      ability.properties = node.properties
+    if (node.baseAbil !== undefined)
+      ability.base_abil = node.baseAbil
 
     return ability
   })

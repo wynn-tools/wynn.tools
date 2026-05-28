@@ -1,149 +1,173 @@
 <script setup lang="ts">
 import type { BuildResult } from '~/lib/build/compute-build'
+import { computed } from 'vue'
 
 const props = defineProps<{ result: BuildResult }>()
 
-const ELEMENTS = ['Earth', 'Thunder', 'Water', 'Fire', 'Air'] as const
+interface ElementInfo {
+  name: string
+  glyph: string
+  color: string
+}
+
+const ELEMENTS: ElementInfo[] = [
+  { name: 'Earth', glyph: '✤', color: 'oklch(72% 0.18 145)' },
+  { name: 'Thunder', glyph: '✦', color: 'oklch(82% 0.15 95)' },
+  { name: 'Water', glyph: '❉', color: 'oklch(75% 0.13 215)' },
+  { name: 'Fire', glyph: '✹', color: 'oklch(68% 0.18 35)' },
+  { name: 'Air', glyph: '❋', color: 'oklch(85% 0.04 250)' },
+]
+
+const def = computed(() => props.result.defense)
 </script>
 
 <template>
-  <div class="stat-panel">
-    <section class="panel-section">
-      <h2 class="section-title">
-        Defense
-      </h2>
-      <dl class="stat-list">
-        <div class="stat-row">
-          <dt class="stat-label">
-            Total HP
-          </dt>
-          <dd class="stat-value">
-            {{ Math.round(props.result.defense.totalHp) }}
-          </dd>
-        </div>
-        <div class="stat-row">
-          <dt class="stat-label">
-            Effective HP
-          </dt>
-          <dd class="stat-value">
-            {{ props.result.defense.ehp.withAgi.toFixed(2) }}
-          </dd>
-        </div>
-        <div class="stat-row">
-          <dt class="stat-label">
-            Effective HP (no agi)
-          </dt>
-          <dd class="stat-value">
-            {{ props.result.defense.ehp.withoutAgi.toFixed(2) }}
-          </dd>
-        </div>
-        <div
-          v-for="(d, i) in props.result.defense.elementalDefenses"
-          :key="i"
-          class="stat-row"
-        >
-          <dt class="stat-label">
-            {{ ELEMENTS[i] }} Def
-          </dt>
-          <dd class="stat-value">
-            {{ d.toFixed(0) }}
-          </dd>
-        </div>
-      </dl>
-    </section>
+  <section class="stats">
+    <div class="ledger">
+      <div class="row row--headline">
+        <span class="label">Total HP</span>
+        <span class="value value--lg">{{ Math.round(def.totalHp).toLocaleString() }}</span>
+      </div>
+      <div class="row">
+        <span class="label">Effective HP</span>
+        <span class="value mono">{{ Math.round(def.ehp.withAgi).toLocaleString() }}</span>
+      </div>
+      <div class="row">
+        <span class="label">EHP no agi</span>
+        <span class="value mono">{{ Math.round(def.ehp.withoutAgi).toLocaleString() }}</span>
+      </div>
+      <div class="row">
+        <span class="label">HP Regen</span>
+        <span class="value mono">{{ Math.round(def.totalHpr).toLocaleString() }}<span class="value-unit">/s</span></span>
+      </div>
+    </div>
 
-    <section class="panel-section">
-      <h2 class="section-title">
-        Melee
-      </h2>
-      <dl class="stat-list">
-        <div class="stat-row headline-row">
-          <dt class="stat-label">
-            Average DPS
-          </dt>
-          <dd class="stat-value stat-value--copper">
-            {{ props.result.melee.averageDps.toFixed(2) }}
-          </dd>
-        </div>
-        <div class="stat-row">
-          <dt class="stat-label">
-            Attack Speed
-          </dt>
-          <dd class="stat-value">
-            {{ props.result.melee.attackSpeed }}
-          </dd>
-        </div>
-        <div class="stat-row">
-          <dt class="stat-label">
-            Per Attack
-          </dt>
-          <dd class="stat-value">
-            {{ props.result.melee.perAttack.toFixed(2) }}
-          </dd>
-        </div>
-      </dl>
-    </section>
-  </div>
+    <div class="ledger ledger--elements">
+      <div
+        v-for="(e, i) in ELEMENTS"
+        :key="e.name"
+        class="row row--el"
+        :style="{ '--el-color': e.color }"
+      >
+        <span class="label">
+          <span class="el-glyph">{{ e.glyph }}</span>{{ e.name }}
+        </span>
+        <span class="value mono">{{ def.elementalDefenses[i]?.toFixed(0) ?? 0 }}</span>
+      </div>
+    </div>
+
+    <div class="ledger ledger--util">
+      <div class="row row--inline">
+        <span class="label">Def</span>
+        <span class="value mono">{{ def.defPct.toFixed(1) }}%</span>
+      </div>
+      <div class="row row--inline">
+        <span class="label">Agi</span>
+        <span class="value mono">{{ def.agiPct.toFixed(1) }}%</span>
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.stat-panel {
+.stats {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  max-width: 480px;
-}
-
-.panel-section {
+  gap: 14px;
+  padding: 16px 18px;
   border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 20px 24px;
+  border-radius: 8px;
 }
 
-.section-title {
+.stats-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.kicker {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-muted);
-  margin-bottom: 16px;
+  color: var(--color-faint);
 }
 
-.stat-list {
+.ledger {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
-.stat-row {
+.ledger--elements {
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.ledger--util {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.row {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
 }
 
-.stat-label {
-  font-size: 13px;
+.row--inline {
+  padding: 0;
+}
+
+.label {
+  font-size: 12px;
   color: var(--color-muted);
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.stat-value {
+.value {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 13px;
   color: var(--color-text);
   text-align: right;
+  letter-spacing: 0.01em;
 }
 
-.headline-row .stat-label {
+.value-unit {
+  font-size: 10px;
+  color: var(--color-faint);
+  margin-left: 2px;
+  letter-spacing: 0.06em;
+}
+
+.value--lg {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 600;
   color: var(--color-text);
-  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
-.stat-value--copper {
-  color: var(--color-copper);
-  font-size: 15px;
-  font-weight: 500;
+.row--headline .label {
+  font-size: 11px;
+  color: var(--color-faint);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.el-glyph {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  color: var(--el-color);
+}
+
+.mono {
+  font-family: 'Geist Mono', 'Courier New', monospace;
 }
 </style>

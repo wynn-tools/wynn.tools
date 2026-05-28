@@ -6,7 +6,7 @@ const showAtree = ref(true)
 </script>
 
 <template>
-  <main class="builder-page mx-5">
+  <main class="builder">
     <p v-if="store.loading" class="state-text">
       Loading build…
     </p>
@@ -14,41 +14,56 @@ const showAtree = ref(true)
       Failed to load build: {{ store.error }}
     </p>
     <template v-else-if="store.rawBuild">
-      <div class="builder-layout">
-        <section class="col-equipment">
+      <!-- Header strip: skillpoints + level live at the top because they
+           gate every other input below. -->
+      <SkillpointPanel />
+
+      <!-- 3-zone shell: Inputs / Stats / Combat Output -->
+      <div class="zones">
+        <section class="zone zone-inputs" aria-label="Equipment and tomes">
           <EquipmentGrid />
-          <PowderPanel class="powder-panel-below" />
-          <TomePanel class="tome-panel-below" />
+          <TomePanel />
+          <BuildSummary />
         </section>
-        <section class="col-skillpoints">
-          <SkillpointPanel />
-          <BuildSummary class="summary-below" />
-        </section>
-        <section class="col-stats">
+
+        <section class="zone zone-stats" aria-label="Stats">
           <StatPanel v-if="store.result" :result="store.result" />
         </section>
+
+        <section class="zone zone-output" aria-label="Combat output">
+          <DpsOutput v-if="store.result" :result="store.result" />
+        </section>
       </div>
-      <section class="atree-section">
-        <div class="atree-heading">
-          <h2 class="atree-title">
-            Ability Tree
-          </h2>
-          <button class="atree-toggle" @click="showAtree = !showAtree">
+
+      <!-- Tree + active abilities pair -->
+      <section class="atree" aria-label="Ability tree">
+        <header class="atree-head">
+          <span class="kicker">Ability Tree</span>
+          <button class="toggle" type="button" @click="showAtree = !showAtree">
             {{ showAtree ? 'Hide' : 'Show' }}
           </button>
+        </header>
+        <div v-if="showAtree" class="atree-split">
+          <div class="atree-canvas-wrap">
+            <AtreeCanvas />
+          </div>
+          <AtreeActivePanel />
         </div>
-        <AtreeCanvas v-if="showAtree" />
       </section>
     </template>
   </main>
 </template>
 
 <style scoped>
-.builder-page {
+.builder {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 48px 0;
+  gap: 20px;
+  padding: 32px clamp(16px, 3vw, 40px) 64px;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .state-text {
@@ -62,71 +77,96 @@ const showAtree = ref(true)
   color: oklch(62% 0.15 20);
 }
 
-.builder-layout {
+.kicker {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+.zones {
   display: grid;
-  gap: 24px;
-  grid-template-columns: 1fr 220px 1fr;
+  gap: 16px;
+  grid-template-columns: minmax(360px, 1.4fr) minmax(240px, 0.85fr) minmax(280px, 1fr);
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .builder-layout {
-    grid-template-columns: 1fr;
-  }
+.zone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
 }
 
-.powder-panel-below {
-  margin-top: 16px;
+.zone-head {
+  padding: 0 2px;
 }
 
-.tome-panel-below {
-  margin-top: 16px;
+.atree {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-.summary-below {
-  margin-top: 16px;
-}
-
-.atree-section {
-  margin-top: 32px;
-  width: 100%;
-}
-
-.atree-heading {
+.atree-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.atree-title {
+.toggle {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  margin: 0;
-}
-
-.atree-toggle {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 4px;
-  padding: 2px 8px;
+  padding: 3px 10px;
   cursor: pointer;
   transition:
-    color 0.15s,
-    border-color 0.15s;
+    color 0.12s,
+    border-color 0.12s;
+}
+.toggle:hover {
+  color: var(--color-copper);
+  border-color: var(--color-copper);
 }
 
-.atree-toggle:hover {
-  color: var(--color-text);
-  border-color: var(--color-text);
+.atree-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 16px;
+  align-items: start;
+}
+
+.atree-canvas-wrap {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .zones {
+    grid-template-columns: 1fr 1fr;
+  }
+  .zone-inputs {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .zones {
+    grid-template-columns: 1fr;
+  }
+  .zone-inputs {
+    grid-column: auto;
+  }
+  .atree-split {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

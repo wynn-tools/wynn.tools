@@ -60,12 +60,39 @@ describe('adaptCdnAtree', () => {
     })
   })
 
-  it('leaves effects, properties, base_abil undefined', () => {
+  it('leaves effects, properties, base_abil undefined when source omits them', () => {
     for (const ability of archerAbilities) {
       expect(ability.effects).toBeUndefined()
       expect(ability.properties).toBeUndefined()
       expect(ability.base_abil).toBeUndefined()
     }
+  })
+
+  it('passes through effects, properties, baseAbil when source provides them', () => {
+    const synthetic = {
+      nodes: [
+        {
+          id: 0,
+          name: 'Test',
+          description: 'x',
+          cost: 1,
+          location: { page: 0, row: 0, col: 0 },
+          connections: [],
+          dependencies: [],
+          blockers: [],
+          archetype: null,
+          archetypeRequirement: 0,
+          icon: null,
+          effects: [{ type: 'raw_stat', bonuses: [] }],
+          properties: { multiplier: 1.7 },
+          baseAbil: 5,
+        },
+      ],
+    }
+    const out = adaptCdnAtree(synthetic)[0]!
+    expect(out.effects).toEqual([{ type: 'raw_stat', bonuses: [] }])
+    expect(out.properties).toEqual({ multiplier: 1.7 })
+    expect(out.base_abil).toBe(5)
   })
 })
 
