@@ -2,40 +2,52 @@
 import type { IdFilter, IdSort } from '~/lib/items-search/types'
 import { allIdentificationKeys, humanizeField } from '~/lib/data/identifications'
 
-const ids = defineModel<IdFilter[]>('identifications', { required: true })
-const sorts = defineModel<IdSort[]>('idSorts', { required: true })
+const model = defineModel<{ identifications: IdFilter[], idSorts: IdSort[] }>({ required: true })
 
 const options = allIdentificationKeys
   .map(key => ({ key, label: humanizeField(key).label }))
   .sort((a, b) => a.label.localeCompare(b.label))
 
+const ids = computed(() => model.value.identifications)
+
+function update(identifications: IdFilter[], idSorts: IdSort[]) {
+  model.value = { identifications, idSorts }
+}
+
 function addRow(key: string) {
   if (key && !ids.value.some(f => f.key === key))
-    ids.value = [...ids.value, { key, exclude: false }]
+    update([...ids.value, { key, exclude: false }], model.value.idSorts)
 }
 function removeRow(key: string) {
-  ids.value = ids.value.filter(f => f.key !== key)
-  sorts.value = sorts.value.filter(s => s.key !== key)
+  update(
+    ids.value.filter(f => f.key !== key),
+    model.value.idSorts.filter(s => s.key !== key),
+  )
 }
 function toggleExclude(key: string) {
-  ids.value = ids.value.map(f => f.key === key ? { ...f, exclude: !f.exclude } : f)
-  if (ids.value.find(f => f.key === key)?.exclude)
-    sorts.value = sorts.value.filter(s => s.key !== key)
+  const identifications = ids.value.map(f => f.key === key ? { ...f, exclude: !f.exclude } : f)
+  const nowExcluded = identifications.find(f => f.key === key)?.exclude
+  const idSorts = nowExcluded
+    ? model.value.idSorts.filter(s => s.key !== key)
+    : model.value.idSorts
+  update(identifications, idSorts)
 }
 function toggleSort(key: string) {
-  const existing = sorts.value.find(s => s.key === key)
+  const existing = model.value.idSorts.find(s => s.key === key)
+  let idSorts: IdSort[]
   if (!existing)
-    sorts.value = [...sorts.value, { key, dir: 'desc' }]
+    idSorts = [...model.value.idSorts, { key, dir: 'desc' }]
   else if (existing.dir === 'desc')
-    sorts.value = sorts.value.map(s => s.key === key ? { ...s, dir: 'asc' } : s)
+    idSorts = model.value.idSorts.map(s => s.key === key ? { ...s, dir: 'asc' } : s)
   else
-    sorts.value = sorts.value.filter(s => s.key !== key)
+    idSorts = model.value.idSorts.filter(s => s.key !== key)
+  update(ids.value, idSorts)
 }
 function label(key: string) {
   return humanizeField(key).label
 }
 function sortDir(key: string) {
-  return sorts.value.find(s => s.key === key)?.dir ?? null
+  return model.value.idSorts.find(s => s.key === key)?.dir ?? null
 }
 </script>
 

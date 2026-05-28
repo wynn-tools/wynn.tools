@@ -90,10 +90,8 @@ function toggle(list: string[], value: string): string[] {
     <fieldset class="f-group f-group--col">
       <legend>Identifications</legend>
       <IdentificationFilterList
-        :identifications="criteria.identifications"
-        :id-sorts="criteria.idSorts"
-        @update:identifications="criteria = { ...criteria, identifications: $event }"
-        @update:id-sorts="criteria = { ...criteria, idSorts: $event }"
+        :model-value="{ identifications: criteria.identifications, idSorts: criteria.idSorts }"
+        @update:model-value="criteria = { ...criteria, identifications: $event.identifications, idSorts: $event.idSorts }"
       />
     </fieldset>
   </div>
