@@ -146,13 +146,20 @@ export const useBuildStore = defineStore('build', () => {
       const loaded = await loadBuildContext(client, newVersionId)
       const old = rawBuild.value
 
-      const equipmentIds = old.equipmentIds.map(id =>
-        id != null && loaded.ctx.rawItemIndex.resolveId(id) !== null ? id : null,
-      ) as Array<number | null>
-      const tomeIds = old.tomeIds.map(id =>
-        id != null && loaded.ctx.tomeIndex.resolveId(id) !== null ? id : null,
-      ) as Array<number | null>
-      const aspects = old.aspects.map(() => null) as Array<null>
+      const newEquipNum = num(loaded.enc, 'EQUIPMENT_NUM')
+      const equipmentIds = Array.from({ length: newEquipNum }, (_, i) => {
+        const id = old.equipmentIds[i] ?? null
+        return id != null && loaded.ctx.rawItemIndex.resolveId(id) !== null ? id : null
+      }) as Array<number | null>
+
+      const newTomeNum = num(loaded.enc, 'TOME_NUM')
+      const tomeIds = Array.from({ length: newTomeNum }, (_, i) => {
+        const id = old.tomeIds[i] ?? null
+        return id != null && loaded.ctx.tomeIndex.resolveId(id) !== null ? id : null
+      }) as Array<number | null>
+
+      const newAspectNum = num(loaded.enc, 'NUM_ASPECTS')
+      const aspects = Array.from({ length: newAspectNum }).fill(null) as Array<null>
 
       ctx.value = loaded.ctx
       enc.value = loaded.enc

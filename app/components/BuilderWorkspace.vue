@@ -16,7 +16,7 @@ const showAtree = ref(true)
     </p>
     <template v-else-if="store.rawBuild">
       <BuilderOldVersionModal />
-      <BuilderOldVersionBanner />
+      <BuilderOldVersionBanner v-if="store.isOldVersion" />
 
       <!-- Header strip: skillpoints + level live at the top because they
            gate every other input below. -->

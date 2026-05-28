@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
 import { useBuildStore } from '~/stores/build'
 
