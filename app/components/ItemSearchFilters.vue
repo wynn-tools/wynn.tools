@@ -48,12 +48,12 @@ function toggle(list: string[], value: string): string[] {
       <legend>Level</legend>
       <input
         class="f-num" type="number" min="1" max="110" :value="criteria.levelRange[0]"
-        @input="criteria = { ...criteria, levelRange: [Number(($event.target as HTMLInputElement).value), criteria.levelRange[1]] }"
+        @input="criteria = { ...criteria, levelRange: [Number(($event.target as HTMLInputElement).value) || 1, criteria.levelRange[1]] }"
       >
       <span>–</span>
       <input
         class="f-num" type="number" min="1" max="110" :value="criteria.levelRange[1]"
-        @input="criteria = { ...criteria, levelRange: [criteria.levelRange[0], Number(($event.target as HTMLInputElement).value)] }"
+        @input="criteria = { ...criteria, levelRange: [criteria.levelRange[0], Number(($event.target as HTMLInputElement).value) || 110] }"
       >
     </fieldset>
 

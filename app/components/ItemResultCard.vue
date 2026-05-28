@@ -23,7 +23,7 @@ const cols = computed(() => (props.idKeys ?? []).map(k => ({
 </script>
 
 <template>
-  <NuxtLink :to="`/items/${itemSlug(item)}`" class="card">
+  <NuxtLink :to="{ path: `/items/${itemSlug(item)}`, query: { name: item.displayName } }" class="card">
     <img v-if="icon" :src="icon" class="card-icon" alt="" aria-hidden="true">
     <span v-else class="card-icon card-icon--empty" aria-hidden="true" />
     <div class="card-body">
