@@ -26,6 +26,9 @@ export default defineNuxtConfig({
       dev: { satori: 'node', resvg: 'node' },
       runtime: { satori: 'wasm', resvg: 'wasm' },
     },
+    defaults: {
+      cacheMaxAgeSeconds: 60 * 60 * 24 * 365, // 1 year — OG images are immutable once generated
+    },
   },
   eslint: {
     config: {
