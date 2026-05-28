@@ -18,12 +18,22 @@ export function itemIconUrl(item: { icon?: unknown } | null | undefined): string
   return null
 }
 
-const EMBLEM_CDN = 'https://cdn.wynn.tools/nextgen/items/v2/emblem'
+const ITEMS_V2_CDN = 'https://cdn.wynn.tools/nextgen/items/v2'
 
 /**
  * URL for an item's emblem (the decorative shape rendered behind the icon),
  * mirrored on our CDN, or null when the item has no emblem.
  */
 export function emblemUrl(emblem: string | null | undefined): string | null {
-  return emblem ? `${EMBLEM_CDN}/${emblem}.png` : null
+  return emblem ? `${ITEMS_V2_CDN}/emblem/${emblem}.png` : null
+}
+
+/** URL for an element / attack-speed attribute icon (e.g. `water`, `attack_speed`). */
+export function attributeUrl(name: string): string {
+  return `${ITEMS_V2_CDN}/attributes/${name}.png`
+}
+
+/** URL for an item type sprite (e.g. `spear`, `helmet`). */
+export function spriteUrl(subType: string): string {
+  return `${ITEMS_V2_CDN}/sprites/${subType}.png`
 }
