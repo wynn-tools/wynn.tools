@@ -8,7 +8,7 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { anyDir, computeAtreeConnectors, connectorTileName, dirsEqual, nodeImageUrl } from '~/lib/atree/connectors'
 import { useBuildStore } from '~/stores/build'
 
@@ -124,6 +124,120 @@ function onNodeClick(id: number, e: MouseEvent) {
   else
     store.toggleAtreeNode(id)
 }
+
+// Per-state art selection. The CDN ships three variants per node:
+// `base` (disabled / dim), `_pulse` (frontier / ready), `_active` (lit).
+// Using the right variant per state replaces the old grayscale/brightness
+// CSS hacks with the artwork the designer actually intended.
+function restSrc(node: AtreeNode): string {
+  const icon = node.ability.display.icon
+  const s = nodeState(node)
+  if (s === 'active')
+    return nodeImageUrl(icon, 'active')
+  if (s === 'selectable')
+    return nodeImageUrl(icon, 'pulse')
+  return nodeImageUrl(icon, 'base')
+}
+
+// Hover-state art — only selectable nodes preview the lit state on hover.
+function hoverSrc(node: AtreeNode): string | null {
+  if (nodeState(node) === 'selectable')
+    return nodeImageUrl(node.ability.display.icon, 'active')
+  return null
+}
+
+// --- Minimap ---
+// The tree is taller than the viewport almost always; users complain about
+// scroll fatigue and losing orientation. The minimap mirrors node state at
+// low scale and acts as a scrubber.
+const canvasEl = ref<HTMLElement | null>(null)
+const scrollX = ref(0)
+const scrollY = ref(0)
+const viewW = ref(0)
+const viewH = ref(0)
+
+function syncViewport() {
+  if (!canvasEl.value)
+    return
+  scrollX.value = canvasEl.value.scrollLeft
+  scrollY.value = canvasEl.value.scrollTop
+  viewW.value = canvasEl.value.clientWidth
+  viewH.value = canvasEl.value.clientHeight
+}
+
+let ro: ResizeObserver | null = null
+onMounted(() => {
+  syncViewport()
+  if (canvasEl.value && typeof ResizeObserver !== 'undefined') {
+    ro = new ResizeObserver(syncViewport)
+    ro.observe(canvasEl.value)
+  }
+})
+onUnmounted(() => ro?.disconnect())
+
+const MINI_MAX_W = 140
+const MINI_MAX_H = 180
+
+const miniScale = computed(() => {
+  const fullW = cols.value * CELL
+  const fullH = rows.value * CELL
+  if (!fullW || !fullH)
+    return 0
+  return Math.min(MINI_MAX_W / fullW, MINI_MAX_H / fullH)
+})
+const miniW = computed(() => cols.value * CELL * miniScale.value)
+const miniH = computed(() => rows.value * CELL * miniScale.value)
+const miniViewX = computed(() => scrollX.value * miniScale.value)
+const miniViewY = computed(() => scrollY.value * miniScale.value)
+const miniViewW = computed(() => Math.min(miniW.value, viewW.value * miniScale.value))
+const miniViewH = computed(() => Math.min(miniH.value, viewH.value * miniScale.value))
+
+const overflows = computed(() => {
+  if (!viewW.value || !viewH.value)
+    return false
+  return cols.value * CELL > viewW.value || rows.value * CELL > viewH.value
+})
+
+function nodeMiniColor(node: AtreeNode): string {
+  const s = nodeState(node)
+  if (s === 'active')
+    return 'oklch(65% 0.15 48)' // copper — lit
+  if (s === 'selectable')
+    return 'oklch(58% 0.008 30)' // steel mist — reachable
+  if (s === 'blocked')
+    return 'oklch(50% 0.13 22)' // muted red
+  return 'oklch(30% 0.006 30)' // dim — locked
+}
+
+function scrollMiniTo(e: MouseEvent) {
+  if (!canvasEl.value)
+    return
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+  const x = e.clientX - rect.left
+  const y = e.clientY - rect.top
+  const targetX = x / miniScale.value - viewW.value / 2
+  const targetY = y / miniScale.value - viewH.value / 2
+  canvasEl.value.scrollTo({
+    left: Math.max(0, targetX),
+    top: Math.max(0, targetY),
+    behavior: 'smooth',
+  })
+}
+
+let dragging = false
+function onMiniPointerDown(e: PointerEvent) {
+  dragging = true
+  ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+  scrollMiniTo(e)
+}
+function onMiniPointerMove(e: PointerEvent) {
+  if (dragging)
+    scrollMiniTo(e)
+}
+function onMiniPointerUp(e: PointerEvent) {
+  dragging = false
+  ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
+}
 </script>
 
 <template>
@@ -151,120 +265,161 @@ function onNodeClick(id: number, e: MouseEvent) {
         </p>
       </div>
 
-      <!-- Scrollable canvas -->
-      <div class="atree-canvas max-h-[60vh] overflow-auto rounded border border-border">
+      <!-- Scrollable canvas + minimap shell -->
+      <div class="atree-shell relative">
         <div
-          class="atree-grid relative shrink-0"
-          :style="{ width: `${gridWidth}px`, height: `${gridHeight}px` }"
+          ref="canvasEl"
+          class="atree-canvas max-h-[60vh] overflow-auto rounded border border-border"
+          @scroll.passive="syncViewport"
         >
-          <!-- Connector tile images (behind nodes) -->
-          <template v-for="(conn, i) in connectors" :key="i">
-            <!-- Base: all directions, no active glow -->
-            <img
-              :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
-              class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
-              :style="{
-                left: `${conn.col * CELL}px`,
-                top: `${conn.row * CELL}px`,
-                width: `${CELL}px`,
-                height: `${CELL}px`,
-              }"
-              draggable="false"
-              aria-hidden="true"
-              alt=""
-            >
-            <!-- Active overlay: only the active-path directions lit up -->
-            <img
-              v-if="conn.activeName"
-              :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.activeName}_active.png`"
-              class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
-              :style="{
-                left: `${conn.col * CELL}px`,
-                top: `${conn.row * CELL}px`,
-                width: `${CELL}px`,
-                height: `${CELL}px`,
-              }"
-              draggable="false"
-              aria-hidden="true"
-              alt=""
-            >
-          </template>
-
-          <!-- Nodes -->
-          <TooltipRoot
-            v-for="node in store.atreeNodes"
-            :key="node.ability.id"
+          <div
+            class="atree-grid relative shrink-0"
+            :style="{ width: `${gridWidth}px`, height: `${gridHeight}px` }"
           >
-            <TooltipTrigger as-child>
-              <button
-                class="group absolute z-[1] flex size-11 items-center justify-center border-0 bg-transparent p-0 transition-[filter,opacity] duration-100"
-                :class="NODE_STATE_CLASSES[nodeState(node)]"
+            <!-- Connector tile images (behind nodes) -->
+            <template v-for="(conn, i) in connectors" :key="i">
+              <!-- Base: all directions, no active glow -->
+              <img
+                :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
+                class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
                 :style="{
-                  left: `${node.ability.display.col * CELL}px`,
-                  top: `${node.ability.display.row * CELL}px`,
+                  left: `${conn.col * CELL}px`,
+                  top: `${conn.row * CELL}px`,
+                  width: `${CELL}px`,
+                  height: `${CELL}px`,
                 }"
-                :aria-pressed="store.isAtreeActive(node.ability.id)"
-                :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
-                @click="onNodeClick(node.ability.id, $event)"
+                draggable="false"
+                aria-hidden="true"
+                alt=""
               >
-                <!-- Active art sits underneath, hidden at rest; pulse overlays it
-                     and crossfades out on hover (or when selected). -->
-                <img
-                  :src="nodeImageUrl(node.ability.display.icon, 'active')"
-                  :width="CELL"
-                  :height="CELL"
-                  draggable="false"
-                  aria-hidden="true"
-                  alt=""
-                  class="absolute inset-0 block size-11 [image-rendering:pixelated] transition-opacity duration-[400ms]"
-                  :class="store.isAtreeActive(node.ability.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"
-                >
-                <img
-                  :src="nodeImageUrl(node.ability.display.icon, 'pulse')"
-                  :width="CELL"
-                  :height="CELL"
-                  draggable="false"
-                  aria-hidden="true"
-                  alt=""
-                  class="absolute inset-0 block size-11 [image-rendering:pixelated] transition-opacity duration-[400ms]"
-                  :class="store.isAtreeActive(node.ability.id) ? 'opacity-0' : 'opacity-100 group-hover:opacity-0'"
-                >
-              </button>
-            </TooltipTrigger>
-            <TooltipPortal>
-              <TooltipContent
-                class="z-[1000] max-w-[280px] rounded-md border border-border bg-bg px-3 py-2.5 font-mono shadow-[0_6px_24px_oklch(0%_0_0_/_0.35)]"
-                :side-offset="6"
-                :collision-padding="8"
+              <!-- Active overlay: only the active-path directions lit up -->
+              <img
+                v-if="conn.activeName"
+                :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.activeName}_active.png`"
+                class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+                :style="{
+                  left: `${conn.col * CELL}px`,
+                  top: `${conn.row * CELL}px`,
+                  width: `${CELL}px`,
+                  height: `${CELL}px`,
+                }"
+                draggable="false"
+                aria-hidden="true"
+                alt=""
               >
-                <div class="mb-1 flex items-baseline justify-between gap-3">
-                  <span class="text-xs font-semibold text-text">{{ node.ability.display_name }}</span>
-                  <span class="whitespace-nowrap text-[11px] text-copper">{{ node.ability.cost }} AP</span>
-                </div>
-                <p v-if="archetypeLine(node)" class="mb-1.5 text-[10px] uppercase tracking-[0.04em] text-muted">
-                  {{ archetypeLine(node) }}
-                </p>
-                <!-- Rich description: NormalizedText[] segments (live data) render
+            </template>
+
+            <!-- Nodes -->
+            <TooltipRoot
+              v-for="node in store.atreeNodes"
+              :key="node.ability.id"
+            >
+              <TooltipTrigger as-child>
+                <button
+                  class="group absolute z-[1] flex size-11 items-center justify-center border-0 bg-transparent p-0 transition-[filter,opacity] duration-100"
+                  :class="NODE_STATE_CLASSES[nodeState(node)]"
+                  :style="{
+                    left: `${node.ability.display.col * CELL}px`,
+                    top: `${node.ability.display.row * CELL}px`,
+                  }"
+                  :aria-pressed="store.isAtreeActive(node.ability.id)"
+                  :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
+                  @click="onNodeClick(node.ability.id, $event)"
+                >
+                  <!-- Rest art (state-dependent): base for locked/blocked,
+                       pulse for selectable, active for already-selected. -->
+                  <img
+                    :src="restSrc(node)"
+                    :width="CELL"
+                    :height="CELL"
+                    draggable="false"
+                    aria-hidden="true"
+                    alt=""
+                    class="absolute inset-0 block size-11 [image-rendering:pixelated] transition-opacity duration-[400ms]"
+                    :class="hoverSrc(node) ? 'opacity-100 group-hover:opacity-0' : 'opacity-100'"
+                  >
+                  <!-- Hover preview: only selectable nodes light up to active
+                       on hover, previewing the selected state. -->
+                  <img
+                    v-if="hoverSrc(node)"
+                    :src="hoverSrc(node)!"
+                    :width="CELL"
+                    :height="CELL"
+                    draggable="false"
+                    aria-hidden="true"
+                    alt=""
+                    class="absolute inset-0 block size-11 opacity-0 [image-rendering:pixelated] transition-opacity duration-[400ms] group-hover:opacity-100"
+                  >
+                </button>
+              </TooltipTrigger>
+              <TooltipPortal>
+                <TooltipContent
+                  class="z-[1000] max-w-[280px] rounded-md border border-border bg-bg px-3 py-2.5 font-mono shadow-[0_6px_24px_oklch(0%_0_0_/_0.35)]"
+                  :side-offset="6"
+                  :collision-padding="8"
+                >
+                  <div class="mb-1 flex items-baseline justify-between gap-3">
+                    <span class="text-xs font-semibold text-text">{{ node.ability.display_name }}</span>
+                    <span class="whitespace-nowrap text-[11px] text-copper">{{ node.ability.cost }} AP</span>
+                  </div>
+                  <p v-if="archetypeLine(node)" class="mb-1.5 text-[10px] uppercase tracking-[0.04em] text-muted">
+                    {{ archetypeLine(node) }}
+                  </p>
+                  <!-- Rich description: NormalizedText[] segments (live data) render
                      with their parsed color/font/weight; a plain string (historical
                      backfilled data) renders as-is. -->
-                <p
-                  v-if="node.ability.desc && node.ability.desc.length"
-                  class="whitespace-pre-line text-[11px] leading-[1.5] text-text"
-                >
-                  <template v-if="typeof node.ability.desc === 'string'">
-                    {{ node.ability.desc }}
-                  </template>
-                  <template v-else>
-                    <span
-                      v-for="(seg, i) in node.ability.desc"
-                      :key="i"
-                      :style="segmentStyle(seg)"
-                    >{{ seg.text }}</span>
-                  </template>
-                </p>
-              </TooltipContent>
-            </TooltipPortal>
-          </TooltipRoot>
+                  <p
+                    v-if="node.ability.desc && node.ability.desc.length"
+                    class="whitespace-pre-line text-[11px] leading-[1.5] text-text"
+                  >
+                    <template v-if="typeof node.ability.desc === 'string'">
+                      {{ node.ability.desc }}
+                    </template>
+                    <template v-else>
+                      <span
+                        v-for="(seg, i) in node.ability.desc"
+                        :key="i"
+                        :style="segmentStyle(seg)"
+                      >{{ seg.text }}</span>
+                    </template>
+                  </p>
+                </TooltipContent>
+              </TooltipPortal>
+            </TooltipRoot>
+          </div>
+        </div>
+
+        <!-- Minimap overlay: only shown when the tree exceeds the viewport. -->
+        <div
+          v-if="overflows && miniW > 0 && miniH > 0"
+          class="atree-minimap"
+          :style="{ width: `${miniW}px`, height: `${miniH}px` }"
+          role="region"
+          aria-label="Ability tree minimap — click or drag to navigate"
+          @pointerdown="onMiniPointerDown"
+          @pointermove="onMiniPointerMove"
+          @pointerup="onMiniPointerUp"
+          @pointercancel="onMiniPointerUp"
+        >
+          <span
+            v-for="node in store.atreeNodes"
+            :key="node.ability.id"
+            class="atree-minimap-dot"
+            :style="{
+              left: `${node.ability.display.col * CELL * miniScale}px`,
+              top: `${node.ability.display.row * CELL * miniScale}px`,
+              background: nodeMiniColor(node),
+            }"
+          />
+          <div
+            class="atree-minimap-viewport"
+            :style="{
+              left: `${miniViewX}px`,
+              top: `${miniViewY}px`,
+              width: `${miniViewW}px`,
+              height: `${miniViewH}px`,
+            }"
+          />
         </div>
       </div>
     </div>
@@ -277,6 +432,11 @@ function onNodeClick(id: number, e: MouseEvent) {
    the tree so empty regions still feel like coordinate space. */
 .atree-canvas {
   background-color: var(--color-surface);
+  /* Center the grid horizontally; `safe` falls back to flex-start when the
+     grid is wider than the viewport so the left edge stays reachable. */
+  display: flex;
+  justify-content: safe center;
+  align-items: flex-start;
 }
 
 .atree-grid {
@@ -284,49 +444,48 @@ function onNodeClick(id: number, e: MouseEvent) {
   background-size: 44px 44px;
 }
 
-/* Brighten the dim "pulse" rest art so it reads on the lifted surface.
-   Active/hover overlays still hit 100% via their own opacity transitions. */
-:deep(.node--selectable) img,
-:deep(.node--active) img {
-  filter: brightness(1.12) contrast(1.05);
-}
-
-/* Locked / blocked: softer than before. Old multiplied luminance was
-   ~22%; the new combination lands around 50% — clearly inactive without
-   becoming invisible. Grayscale preserved so colored icons read as
-   "out of reach" rather than just dim. */
-:deep(.node--locked) img {
-  opacity: 0.65;
-  filter: grayscale(0.6) brightness(0.78);
-}
+/* The CDN ships purpose-built art per state (base / pulse / active), so no
+   filter is needed for the normal three states — the assets carry it.
+   `blocked` still gets a light red tint so a "conflicts with what you've
+   chosen" node reads differently from a regular "out of reach" one. */
 :deep(.node--blocked) img {
-  opacity: 0.6;
-  filter: grayscale(0.55) brightness(0.72) sepia(0.5) hue-rotate(310deg);
+  filter: sepia(0.45) hue-rotate(310deg) saturate(1.1);
 }
 
-/* Copper halo behind selectable nodes — the frontier of the tree gets a
-   subtle warm glow so the user can see at a glance "I can click here next".
-   Sized larger than the node and pushed behind the icon images. */
-.node--selectable::before {
-  content: '';
+/* Minimap — sits in the top-right corner of the canvas shell, floats over
+   the scrollable area. Click or drag to scrub. */
+.atree-minimap {
   position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at center,
-    oklch(65% 0.15 48 / 0.22) 0%,
-    oklch(65% 0.15 48 / 0.08) 45%,
-    transparent 70%
-  );
-  pointer-events: none;
-  transition: opacity 0.18s ease-out;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  background: oklch(14% 0.006 30 / 0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: crosshair;
+  box-shadow: 0 4px 16px oklch(0% 0 0 / 0.35);
+  user-select: none;
 }
-.node--selectable:hover::before {
-  background: radial-gradient(
-    circle at center,
-    oklch(65% 0.15 48 / 0.38) 0%,
-    oklch(65% 0.15 48 / 0.14) 45%,
-    transparent 72%
-  );
+
+.atree-minimap-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 1px;
+  pointer-events: none;
+  transform: translate(-1px, -1px);
+}
+
+.atree-minimap-viewport {
+  position: absolute;
+  border: 1px solid oklch(65% 0.15 48 / 0.85);
+  background: oklch(65% 0.15 48 / 0.1);
+  border-radius: 2px;
+  pointer-events: none;
+  transition:
+    left 0.08s linear,
+    top 0.08s linear;
 }
 </style>
