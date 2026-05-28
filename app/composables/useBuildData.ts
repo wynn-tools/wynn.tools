@@ -6,6 +6,7 @@ import type { OutputItem } from '~/lib/data/cdn-adapter/item-adapter'
 import type { OutputTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import type { VersionEntry } from '~/lib/data/cdn-adapter/version-paths'
 import type { CdnClient } from '~/lib/data/cdn-client'
+import type { SearchItem } from '~/lib/items-search/types'
 import { buildRawItemIndex, buildRawTomeIndex } from '~/lib/build/resolve'
 import { BitVector, BitVectorCursor } from '~/lib/codec/bit-vector'
 import { decodeHeader } from '~/lib/codec/header'
@@ -16,6 +17,7 @@ import { adaptCdnSets } from '~/lib/data/cdn-adapter/sets-adapter'
 import { adaptCdnTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import { cdnPathFor, latestVersionId, resolveVersionSegment } from '~/lib/data/cdn-adapter/version-paths'
 import { createCdnClient } from '~/lib/data/cdn-client'
+import { adaptItems } from '~/lib/items-search/item-search-adapter'
 
 /** Class name (WynnClass casing) → lowercase per-class file segment. */
 const ATREE_CLASSES = [
@@ -47,6 +49,7 @@ export interface LoadedBuildData {
   ctx: BuildContext
   enc: EncodingConstants
   weaponType: (id: number) => string | null
+  searchItemById: Map<number, SearchItem>
 }
 
 const cache = new Map<number, Promise<LoadedBuildData>>()
@@ -86,10 +89,13 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
       if (typeof it.id === 'number' && typeof it.type === 'string')
         typeById.set(it.id, it.type)
     }
+    const searchItems = adaptItems({ items: itemsFile.items })
+    const searchItemById = new Map<number, SearchItem>(searchItems.map(s => [s.id, s]))
     return {
       ctx: { rawItemIndex, sets, atreeData, tomeIndex, aspectData },
       enc,
       weaponType: (id: number) => typeById.get(id) ?? null,
+      searchItemById,
     } satisfies LoadedBuildData
   })()
   cache.set(versionId, promise)
