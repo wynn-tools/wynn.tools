@@ -1,0 +1,17 @@
+import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'tsup'
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['esm'],
+  platform: 'node',
+  target: 'node22',
+  bundle: true,
+  clean: true,
+  esbuildOptions(options) {
+    options.alias = {
+      '~': fileURLToPath(new URL('../app', import.meta.url)),
+      '@core': fileURLToPath(new URL('../app/lib', import.meta.url)),
+    }
+  },
+})
