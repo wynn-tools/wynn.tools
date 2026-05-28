@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
 const client = useCdnClient()
+
+const visible = computed(() => store.isOldVersion)
 </script>
 
 <template>
-  <div class="banner" role="alert">
+  <div v-if="visible" class="banner" role="alert">
     <span class="banner-text">
       Pinned to Wynncraft <strong>{{ store.loadedGameVersion }}</strong> —
       this build cannot be imported in-game.
