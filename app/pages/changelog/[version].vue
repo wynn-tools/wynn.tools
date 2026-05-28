@@ -190,6 +190,7 @@ function go(gameVersion: string) {
             id="sec-items"
             title="Items"
             :section="filtered.items"
+            link-items
           />
           <ChangelogCategory
             v-if="filtered.tomes"

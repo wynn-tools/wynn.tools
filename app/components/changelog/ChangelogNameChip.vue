@@ -1,16 +1,19 @@
 <script setup lang="ts">
-defineProps<{ name: string, variant: 'added' | 'removed' }>()
+defineProps<{ name: string, variant: 'added' | 'removed', href?: string }>()
 </script>
 
 <template>
-  <span
-    class="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium"
-    :class="
+  <component
+    :is="href ? resolveComponent('NuxtLink') : 'span'"
+    :to="href"
+    class="inline-flex items-center rounded px-2 py-0.5 text-[12px] font-medium transition"
+    :class="[
       variant === 'added'
-        ? 'bg-green-500/10 text-green-400 ring-1 ring-green-500/20'
-        : 'bg-red-500/10 text-red-400 ring-1 ring-red-500/20'
-    "
+        ? 'bg-accent/[0.08] text-accent ring-1 ring-accent/25'
+        : 'bg-rose-500/[0.06] text-rose-300/90 ring-1 ring-rose-500/20 line-through decoration-rose-400/40',
+      href && 'hover:bg-accent/[0.14] hover:ring-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
+    ]"
   >
     {{ name }}
-  </span>
+  </component>
 </template>
