@@ -45,12 +45,15 @@ describe('computeSpellParts', () => {
     expect(parts[0]!.normalTotal[1]).toBeCloseTo(160, 5)
   })
 
-  it('throws on an unsupported (heal) part', () => {
+  it('carries heal parts as HealPartResult without throwing', () => {
     const spell = {
       name: 'Test',
       baseSpell: 1,
       parts: [{ name: 'Heal', power: 0.5 } as any],
     }
-    expect(() => computeSpellParts(spell as any, new Map(), neutralWeapon())).toThrow(/heal/i)
+    const parts = computeSpellParts(spell as any, new Map(), neutralWeapon())
+    expect(parts).toHaveLength(1)
+    expect(parts[0]!.type).toBe('heal')
+    expect(parts[0]!.name).toBe('Heal')
   })
 })

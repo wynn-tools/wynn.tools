@@ -1,9 +1,29 @@
 import type { StatMap } from './merge-stat'
-import type { DamagePartResult } from './spell-calc'
+import type { DamagePartResult, SpellPartResult } from './spell-calc'
 import type { Spell } from './spells'
 // app/lib/math/dps.ts
 import { ATTACK_SPEEDS, BASE_DAMAGE_MULTIPLIER } from './constants'
-import { skillPointsToPercentage } from './skillpoints'
+import { SKILLPOINT_FINAL_MULT, skillPointsToPercentage } from './skillpoints'
+
+export const ATTACK_SPEED_LABELS: Record<string, string> = {
+  SUPER_SLOW: 'Super Slow',
+  VERY_SLOW: 'Very Slow',
+  SLOW: 'Slow',
+  NORMAL: 'Normal',
+  FAST: 'Fast',
+  VERY_FAST: 'Very Fast',
+  SUPER_FAST: 'Super Fast',
+}
+
+/** Effective mana cost of a spell. Port of display.js getSpellCost / getBaseSpellCost. */
+export function getSpellCost(stats: StatMap, spell: Spell): number {
+  const idx = spell.baseSpell
+  const intPct = skillPointsToPercentage(num(stats, 'int')) * SKILLPOINT_FINAL_MULT[2]!
+  let cost = (spell.cost ?? 0) * (1 - intPct)
+  cost += num(stats, `spRaw${idx}`)
+  cost = cost * (1 + num(stats, `spPct${idx}`) / 100)
+  return Math.max(1, cost * (1 + num(stats, `spPct${idx}Final`) / 100))
+}
 
 function num(stats: StatMap, key: string): number {
   const v = stats.get(key)
@@ -42,9 +62,10 @@ export interface MeleeDps {
  * Per-attack average + average DPS for a melee spell (base_spell 0).
  * Port of the melee branch of display.js displaySpellDamage.
  */
-export function computeMeleeDps(spell: Spell, parts: DamagePartResult[], stats: StatMap): MeleeDps {
+export function computeMeleeDps(spell: Spell, parts: SpellPartResult[], stats: StatMap): MeleeDps {
   const crit = critChance(stats)
-  const headline = parts.find(p => p.name === spell.display) ?? parts[parts.length - 1]!
+  const damageParts = parts.filter((p): p is DamagePartResult => p.type === 'damage')
+  const headline = damageParts.find(p => p.name === spell.display) ?? damageParts[damageParts.length - 1]!
   const perAttack = partAverageDamage(headline, crit)
   const idx = adjustedAttackSpeedIndex(stats)
   return {

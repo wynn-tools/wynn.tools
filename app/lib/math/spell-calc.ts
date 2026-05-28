@@ -19,6 +19,15 @@ export interface DamagePartResult {
   multipliers: number[]
 }
 
+/** A heal part — damage math is deferred; carried for display purposes only. */
+export interface HealPartResult {
+  type: 'heal'
+  name: string
+  display: boolean
+}
+
+export type SpellPartResult = DamagePartResult | HealPartResult
+
 const COMBINE_KEYS = [
   'normalMin',
   'normalMax',
@@ -32,8 +41,9 @@ const COMBINE_KEYS = [
 /**
  * Evaluate every part of a spell into damage results.
  * Pure port of builder_graph.js SpellDamageCalcNode.compute_func (damage + total parts only).
+ * Heal parts are carried as HealPartResult without computing heal amounts (deferred).
  */
-export function computeSpellParts(spell: Spell, stats: StatMap, weapon: Map<string, unknown>): DamagePartResult[] {
+export function computeSpellParts(spell: Spell, stats: StatMap, weapon: Map<string, unknown>): SpellPartResult[] {
   const useSpeed = spell.useAtkspd ?? true
   const useSpell = spell.scaling ? spell.scaling === 'spell' : true
 
@@ -42,7 +52,7 @@ export function computeSpellParts(spell: Spell, stats: StatMap, weapon: Map<stri
     byName.set(part.name, part)
   const evaluated = new Map<string, DamagePartResult>()
 
-  function evalPart(name: string): DamagePartResult | undefined {
+  function evalPart(name: string): SpellPartResult | undefined {
     const cached = evaluated.get(name)
     if (cached)
       return cached
@@ -50,7 +60,7 @@ export function computeSpellParts(spell: Spell, stats: StatMap, weapon: Map<stri
     if (!part)
       return undefined
 
-    let result: DamagePartResult
+    let result: SpellPartResult
     if (isDamagePart(part)) {
       const partId = `${spell.baseSpell}.${part.name}`
       const res = calculateSpellDamage(stats, weapon, part.multipliers, useSpell, {
@@ -89,10 +99,10 @@ export function computeSpellParts(spell: Spell, stats: StatMap, weapon: Map<stri
       }
       for (const [subName, hits] of Object.entries(part.hits)) {
         const sub = evalPart(subName)
-        if (!sub)
+        if (!sub || sub.type !== 'damage')
           continue
         for (const key of COMBINE_KEYS) {
-          const target = result[key] as number[]
+          const target = (result as DamagePartResult)[key] as number[]
           const source = sub[key] as number[]
           for (let i = 0; i < target.length; ++i)
             target[i]! += source[i]! * hits
@@ -100,7 +110,8 @@ export function computeSpellParts(spell: Spell, stats: StatMap, weapon: Map<stri
       }
     }
     else {
-      throw new Error(`Unsupported spell part "${part.name}": heal parts are not supported (deferred to a later milestone)`)
+      // Heal part — carry for display, damage math deferred to a later milestone
+      result = { type: 'heal', name: part.name, display: (part.display ?? true) }
     }
 
     evaluated.set(name, result)

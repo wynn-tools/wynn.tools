@@ -15,6 +15,8 @@ import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
 import type { SkillpointResult } from '../math/skillpoint-calc'
+import type { SpellPartResult } from '../math/spell-calc'
+import type { Spell } from '../math/spells'
 import type { RawAspectData } from '../types/aspect'
 import type { AtreeData } from '../types/atree'
 import type { ItemSet } from '../types/item'
@@ -27,7 +29,7 @@ import { WEP_TO_CLASS } from '../codec/wep-to-class'
 import { aggregateBuildStats } from '../math/build-stats'
 import { SKP_ORDER } from '../math/constants'
 import { computeDefenseStats } from '../math/defense'
-import { computeMeleeDps } from '../math/dps'
+import { computeMeleeDps, getSpellCost } from '../math/dps'
 import { mergeStat } from '../math/merge-stat'
 import { calculateSkillpoints } from '../math/skillpoint-calc'
 import { computeSpellParts } from '../math/spell-calc'
@@ -51,6 +53,14 @@ export interface BuildContext {
   aspectData: RawAspectData
 }
 
+/** One evaluated spell ready for display. */
+export interface SpellOutput {
+  spell: Spell
+  parts: SpellPartResult[]
+  /** Effective mana cost (null for melee which has no cost). */
+  cost: number | null
+}
+
 /** Typed result of computeBuild. */
 export interface BuildResult {
   /** Fully-merged build stat map (includes skillpoints, atree raw stats, etc.). */
@@ -61,6 +71,8 @@ export interface BuildResult {
   melee: MeleeDps
   /** Full skillpoint calculation result (finalSkillpoints, baseSkillpoints, assignedTotal, activeSetCounts, etc.). */
   skillpoints: SkillpointResult
+  /** All active spells (index 0 = melee, 1-4 = class spells), sorted by baseSpell. */
+  spells: SpellOutput[]
 }
 
 // ---------------------------------------------------------------------------
@@ -145,5 +157,15 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   // Step 8: defense
   const defense = computeDefenseStats(stats)
 
-  return { stats, defense, melee, skillpoints: skp }
+  // Step 9: evaluate all collected spells for display
+  const spellOutputs: SpellOutput[] = []
+  for (const [, spell] of [...spells.entries()].sort((a, b) => a[0] - b[0])) {
+    if (spell.parts.length === 0)
+      continue
+    const parts = computeSpellParts(spell, stats, weapon)
+    const cost = spell.baseSpell === 0 ? null : getSpellCost(stats, spell)
+    spellOutputs.push({ spell, parts, cost })
+  }
+
+  return { stats, defense, melee, skillpoints: skp, spells: spellOutputs }
 }
