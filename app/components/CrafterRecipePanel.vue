@@ -92,10 +92,7 @@ const levelModel = computed<string | null>({
 </script>
 
 <template>
-  <section class="recipe-panel">
-    <header class="recipe-panel__header">
-      <span class="kicker">Recipe</span>
-    </header>
+  <section class="recipe-panel" aria-label="Recipe">
     <div class="recipe-panel__fields">
       <label class="field">
         <span class="field__label">Item type</span>
@@ -120,53 +117,30 @@ const levelModel = computed<string | null>({
 <style scoped>
 .recipe-panel {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-bg);
   font-family: 'wynn-default', system-ui, sans-serif;
-}
-
-.recipe-panel__header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.kicker {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-faint);
+  min-width: 0;
 }
 
 .recipe-panel__fields {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-end;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0;
+  min-width: 140px;
+  max-width: 200px;
 }
 
 .field__label {
-  font-size: 11px;
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--color-muted);
-  letter-spacing: 0.04em;
-}
-
-@media (min-width: 720px) {
-  .recipe-panel__fields {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
 }
 </style>

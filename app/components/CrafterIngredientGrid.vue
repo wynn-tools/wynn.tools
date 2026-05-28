@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import { computed, ref } from 'vue'
-import { computeAffectedCells } from '~/lib/crafter/compute-craft'
+import { computeAffectedCells, computeEffectiveness } from '~/lib/crafter/compute-craft'
 import { useCraftStore } from '~/stores/craft'
 
 const store = useCraftStore()
@@ -18,6 +18,11 @@ const slotIngredients = computed<(Ingredient | null)[]>(() => {
     return ctx.ingredients.get(id) ?? null
   })
 })
+
+// Per-slot effectiveness moves into the slot cards themselves (was previously
+// rendered in the deleted CrafterRecipeStatsPanel). Compute once per change to
+// the ingredient set — `computeEffectiveness` is a pure function.
+const effectiveness = computed<number[]>(() => computeEffectiveness(slotIngredients.value))
 
 const highlightedCells = computed<Set<number>>(() => {
   const ing = hoveredIngredient.value
@@ -61,6 +66,7 @@ function onHoverIngredient(ing: Ingredient | null) {
         :index="i"
         :ingredient="ing"
         :highlighted="highlightedCells.has(i)"
+        :effectiveness="ing ? effectiveness[i] : undefined"
         @open="openPicker(i)"
         @clear="onClear(i)"
       />

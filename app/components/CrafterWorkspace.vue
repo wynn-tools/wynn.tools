@@ -63,23 +63,22 @@ watch(
       Failed to load crafter: {{ store.error }}
     </p>
     <template v-else-if="store.ctx">
-      <div class="cw-grid">
-        <section class="cw-inputs" aria-label="Recipe and materials">
-          <CrafterRecipePanel />
-          <CrafterMaterialPanel />
+      <header class="crafter-bar">
+        <CrafterRecipePanel />
+        <span class="crafter-bar__divider" aria-hidden="true" />
+        <CrafterMaterialPanel />
+      </header>
+      <div class="crafter-main">
+        <section class="crafter-ingredients" aria-label="Ingredients">
+          <CrafterIngredientGrid />
         </section>
-
-        <section class="cw-preview" aria-label="Crafted item preview">
+        <aside class="crafter-output" aria-label="Crafted item preview">
           <CraftedItemPreview
             :hide-equip-button="embedded && !onEquip"
             :on-equip="onEquip"
             :equip-disabled-reason="equipDisabledReason"
           />
-        </section>
-
-        <section class="cw-ingredients" aria-label="Ingredients">
-          <CrafterIngredientGrid />
-        </section>
+        </aside>
       </div>
     </template>
   </main>
@@ -90,8 +89,8 @@ watch(
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 32px clamp(16px, 3vw, 40px) 64px;
+  gap: 24px;
+  padding: 48px clamp(16px, 3vw, 40px) 80px;
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
@@ -109,55 +108,64 @@ watch(
 }
 
 /*
- * Desktop layout: two columns. Left column stacks recipe/material panels above
- * the ingredient grid; right column is the crafted preview spanning both rows.
- *
- *   ┌────────────────────────┬──────────────┐
- *   │ RecipePanel + MatPanel │              │
- *   ├────────────────────────┤   Preview    │
- *   │ IngredientGrid         │              │
- *   └────────────────────────┴──────────────┘
+ * Top bar: thin divider, not a card. Recipe pickers and materials sit side-
+ * by-side, separated by a vertical hairline. The bar wraps below 1100px.
  */
-.cw-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
-  grid-template-areas:
-    'inputs preview'
-    'ingredients preview';
-  align-items: start;
-}
-
-.cw-inputs {
-  grid-area: inputs;
+.crafter-bar {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 32px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
   min-width: 0;
 }
 
-.cw-preview {
-  grid-area: preview;
-  min-width: 0;
-  position: sticky;
-  top: 68px;
+.crafter-bar__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border);
+  align-self: center;
 }
 
-.cw-ingredients {
-  grid-area: ingredients;
+/*
+ * Main area: ingredients on the left, preview anchored top-right (380px).
+ * `align-items: start` is what keeps the preview at the top of the viewport
+ * — otherwise the ingredient column would stretch to the tooltip's height.
+ */
+.crafter-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
   min-width: 0;
 }
 
-@media (max-width: 1023px) {
-  .cw-grid {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      'inputs'
-      'ingredients'
-      'preview';
+.crafter-ingredients {
+  min-width: 0;
+}
+
+.crafter-output {
+  min-width: 0;
+}
+
+@media (min-width: 1100px) {
+  .crafter-main {
+    grid-template-columns: minmax(0, 1fr) 380px;
   }
-  .cw-preview {
-    position: static;
+
+  .crafter-output {
+    width: 380px;
+  }
+}
+
+@media (max-width: 767px) {
+  .crafter-bar {
+    gap: 16px;
+  }
+
+  .crafter-bar__divider {
+    display: none;
   }
 }
 </style>

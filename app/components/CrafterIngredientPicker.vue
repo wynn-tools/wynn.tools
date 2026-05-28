@@ -3,6 +3,7 @@ import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import type { SearchIngredient } from '~/lib/items-search/types'
 import Fuse from 'fuse.js'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { toSearchIngredient } from '~/lib/items-search/ingredient-to-search'
 import { useCraftStore } from '~/stores/craft'
 
 defineProps<{ slotIndex: number }>()
@@ -17,24 +18,6 @@ const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 
 const MAX_RESULTS = 100
-
-// Convert the store's Ingredient (lvl + skills) to a SearchIngredient shape so
-// the existing IngredientResultCard / IngredientTooltip can render them.
-function toSearchIngredient(ing: Ingredient): SearchIngredient {
-  return {
-    id: ing.id,
-    name: ing.name,
-    displayName: ing.displayName,
-    tier: ing.tier,
-    level: ing.lvl,
-    skills: ing.skills,
-    identifications: ing.identifications,
-    itemOnlyIDs: ing.itemOnlyIDs as unknown as Record<string, number>,
-    consumableOnlyIDs: ing.consumableOnlyIDs as unknown as Record<string, number>,
-    positionModifiers: ing.posMods,
-    icon: ing.icon,
-  }
-}
 
 // Filter by active recipe's skill and level cap.
 const filtered = computed<SearchIngredient[]>(() => {
