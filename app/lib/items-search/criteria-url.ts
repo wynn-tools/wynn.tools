@@ -3,7 +3,7 @@ import type { IdFilter, IdSort, IngredientCriteria, ItemCriteria } from './types
 export type Query = Record<string, string>
 
 export function defaultItemCriteria(): ItemCriteria {
-  return { name: '', types: [], tiers: [], levelRange: [1, 110], restrictions: [], majorId: null, identifications: [], idSorts: [] }
+  return { name: '', types: [], tiers: [], sets: [], levelRange: [1, 110], restrictions: [], majorId: null, identifications: [], idSorts: [] }
 }
 
 export function defaultIngredientCriteria(): IngredientCriteria {
@@ -59,6 +59,8 @@ export function itemCriteriaToQuery(c: ItemCriteria): Query {
     q.type = c.types.join(',')
   if (c.tiers.length)
     q.tier = c.tiers.join(',')
+  if (c.sets.length)
+    q.set = c.sets.join(',')
   if (c.levelRange[0] !== 1 || c.levelRange[1] !== 110)
     q.lvl = `${c.levelRange[0]}-${c.levelRange[1]}`
   if (c.restrictions.length)
@@ -77,6 +79,7 @@ export function queryToItemCriteria(q: Query): ItemCriteria {
     name: q.q ?? '',
     types: q.type ? q.type.split(',') : [],
     tiers: q.tier ? q.tier.split(',') : [],
+    sets: q.set ? q.set.split(',') : [],
     levelRange: decodeLevel(q.lvl, [1, 110]),
     restrictions: q.x ? q.x.split(',') : [],
     majorId: q.major ?? null,

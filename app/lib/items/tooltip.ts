@@ -15,11 +15,11 @@ export interface TierTheme {
 export const TIER_THEME: Record<string, TierTheme> = {
   Normal: { color: '#ffffff', light: '#cccccc', bg: '#303030', margin: '10px 0 0' },
   Unique: { color: '#ffff55', light: '#fdf2b6', bg: '#3e2d1a', margin: '10px 0 0' },
-  Rare: { color: '#ff55ff', light: '#f5b8f5', bg: '#311a5e', margin: '10px 6px 0' },
-  Legendary: { color: '#55ffff', light: '#b8f5f5', bg: '#081d5a', margin: '10px 8px 5px' },
-  Fabled: { color: '#ff5555', light: '#f5b8b8', bg: '#4d0f20', margin: '10px 15px 6px' },
+  Rare: { color: '#ff55ff', light: '#fec3f1', bg: '#311a5e', margin: '10px 6px 0' },
+  Legendary: { color: '#55ffff', light: '#bef6f6', bg: '#081d5a', margin: '10px 8px 5px' },
+  Fabled: { color: '#ff5555', light: '#ffc4c4', bg: '#4d0f20', margin: '10px 15px 6px' },
   Mythic: { color: '#c80db1', light: '#edb7e7', bg: '#53075c', margin: '10px 15px 6px' },
-  Set: { color: '#55ff55', light: '#b8f5b8', bg: '#143714', margin: '10px 6px 0' },
+  Set: { color: '#55ff55', light: '#7feb8e', bg: '#143714', margin: '10px 6px 0' },
   Crafted: { color: '#00bcd4', light: '#a8e6ef', bg: '#142637', margin: '10px 10px 0' },
 }
 

@@ -38,12 +38,17 @@ export function spriteUrl(subType: string): string {
   return `${ITEMS_V2_CDN}/sprites/${subType}.png`
 }
 
-const TIERS_WITH_FRAME = new Set(['normal', 'unique', 'rare', 'legendary', 'fabled', 'mythic'])
+const TIERS_WITH_FRAME = new Set(['normal', 'unique', 'rare', 'legendary', 'fabled', 'mythic', 'ingredient'])
 
 /** URL for a rarity frame border image, or null when that tier has no frame asset. */
 export function frameUrl(tier: string): string | null {
   const t = tier.toLowerCase()
   return TIERS_WITH_FRAME.has(t) ? `${ITEMS_V2_CDN}/frames/${t}.png` : null
+}
+
+/** URL for a profession glyph (e.g. `scribing`, `weaponsmithing`, `cooking`). */
+export function professionUrl(name: string): string {
+  return `${ITEMS_V2_CDN}/professions/${name}.png`
 }
 
 /** URL for a skill-point icon (e.g. `mythic`, `disabled`, `intelligence`, `strength_off`). */

@@ -19,17 +19,24 @@ const majorIdOptions = computed(() =>
     ? [...new Set(data.value.items.flatMap(i => i.majorIds.map(m => m.name)))].sort()
     : [],
 )
+const setOptions = computed(() =>
+  data.value
+    ? [...new Set(data.value.items.flatMap(i => i.sets))].sort()
+    : [],
+)
 </script>
 
 <template>
   <div class="page">
-    <div class="tabs">
-      <button :class="{ on: tab === 'items' }" @click="tab = 'items'">
-        Items
-      </button>
-      <button :class="{ on: tab === 'ingredients' }" @click="tab = 'ingredients'">
-        Ingredients
-      </button>
+    <div class="toolbar">
+      <div class="tabs" role="tablist">
+        <button :class="{ on: tab === 'items' }" role="tab" :aria-selected="tab === 'items'" @click="tab = 'items'">
+          Items
+        </button>
+        <button :class="{ on: tab === 'ingredients' }" role="tab" :aria-selected="tab === 'ingredients'" @click="tab = 'ingredients'">
+          Ingredients
+        </button>
+      </div>
     </div>
 
     <div v-if="pending" class="state">
@@ -43,37 +50,33 @@ const majorIdOptions = computed(() =>
 
     <div v-else class="layout">
       <aside class="sidebar">
-        <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" />
+        <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" :set-options="setOptions" />
         <IngredientSearchFilters v-else v-model="ingredientCriteria" />
       </aside>
 
       <section class="results">
         <template v-if="tab === 'items'">
-          <p class="count">
-            {{ itemResults.length }} results
-          </p>
+          <header class="results-head">
+            <span class="count">{{ itemResults.length.toLocaleString() }} items</span>
+            <span v-if="itemResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+          </header>
           <div v-if="itemResults.length" class="grid">
             <ItemResultCard v-for="it in itemResults.slice(0, RESULT_CAP)" :key="it.id" :item="it" :id-keys="idKeys" />
           </div>
           <p v-else class="state">
             No items match these filters.
           </p>
-          <p v-if="itemResults.length > RESULT_CAP" class="count">
-            Showing {{ RESULT_CAP }} of {{ itemResults.length }}.
-          </p>
         </template>
         <template v-else>
-          <p class="count">
-            {{ ingredientResults.length }} results
-          </p>
+          <header class="results-head">
+            <span class="count">{{ ingredientResults.length.toLocaleString() }} ingredients</span>
+            <span v-if="ingredientResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+          </header>
           <div v-if="ingredientResults.length" class="grid">
             <IngredientResultCard v-for="ing in ingredientResults.slice(0, RESULT_CAP)" :key="ing.id" :ingredient="ing" />
           </div>
           <p v-else class="state">
             No ingredients match these filters.
-          </p>
-          <p v-if="ingredientResults.length > RESULT_CAP" class="count">
-            Showing {{ RESULT_CAP }} of {{ ingredientResults.length }}.
           </p>
         </template>
       </section>
@@ -83,59 +86,104 @@ const majorIdOptions = computed(() =>
 
 <style scoped>
 .page {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 24px 40px;
+  padding: 20px 0 64px;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
 }
 .tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 20px;
-}
-.tabs button {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 8px;
+}
+.tabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
   color: var(--color-muted);
   padding: 6px 14px;
   cursor: pointer;
-  font-size: 13px;
+  font: 600 12px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+.tabs button:hover {
+  color: var(--color-text);
 }
 .tabs button.on {
   color: var(--color-accent);
-  border-color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+.tabs button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 32px;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
 }
 .sidebar {
   position: sticky;
   top: 76px;
   align-self: start;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+.results {
+  min-width: 0;
+}
+.results-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+  height: 22px;
 }
 .count {
-  font-size: 12px;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+.count--dim {
   color: var(--color-muted);
-  margin-bottom: 12px;
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
   gap: 10px;
 }
 .state {
-  padding: 40px;
+  padding: 56px 20px;
   color: var(--color-muted);
   text-align: center;
+  font-size: 14px;
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .layout {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
   .sidebar {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 }
 </style>

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { filterItems } from './filter-items'
 
 function base(): ItemCriteria {
-  return { name: '', types: [], tiers: [], levelRange: [1, 110], restrictions: [], majorId: null, identifications: [], idSorts: [] }
+  return { name: '', types: [], tiers: [], sets: [], levelRange: [1, 110], restrictions: [], majorId: null, identifications: [], idSorts: [] }
 }
 
 function mk(p: Partial<SearchItem>): SearchItem {

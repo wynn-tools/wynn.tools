@@ -29,7 +29,7 @@ const cols = computed(() => (props.idKeys ?? []).map(k => ({
 </script>
 
 <template>
-  <HoverCardRoot :open-delay="200" :close-delay="100">
+  <HoverCardRoot :open-delay="0" :close-delay="0">
     <HoverCardTrigger as-child>
       <NuxtLink :to="{ path: `/items/${itemSlug(item)}`, query: { name: item.displayName } }" class="card">
         <img v-if="icon" :src="icon" class="card-icon" alt="" aria-hidden="true">

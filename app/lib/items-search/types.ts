@@ -27,6 +27,15 @@ export interface SearchItem {
   icon?: unknown
 }
 
+export interface PositionModifiers {
+  above: number
+  under: number
+  left: number
+  right: number
+  touching: number
+  notTouching: number
+}
+
 export interface SearchIngredient {
   id: number
   name: string
@@ -37,6 +46,7 @@ export interface SearchIngredient {
   identifications: Record<string, IdRange>
   itemOnlyIDs: Record<string, number>
   consumableOnlyIDs: Record<string, number>
+  positionModifiers: PositionModifiers
   icon?: unknown
 }
 
@@ -54,6 +64,7 @@ export interface ItemCriteria {
   name: string
   types: string[]
   tiers: string[]
+  sets: string[]
   levelRange: [number, number]
   restrictions: string[]
   majorId: string | null

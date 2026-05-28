@@ -227,6 +227,17 @@ function sepStyle() {
       <p v-if="item.powderSlots" class="tt-row tt-muted">
         Powder Slots [{{ 'o'.repeat(item.powderSlots) }}]
       </p>
+
+      <template v-if="item.lore?.length">
+        <div class="tt-sep" :style="sepStyle()" />
+        <p class="tt-lore">
+          <span
+            v-for="(seg, i) in item.lore" :key="i"
+            :style="{ color: seg.color ?? '#aaaaaa' }"
+            :class="seg.font ? `tt-lore--${seg.font}` : null"
+          >{{ seg.text }}</span>
+        </p>
+      </template>
     </div>
   </div>
 </template>
@@ -377,14 +388,13 @@ function sepStyle() {
 .tt-sep {
   width: 316px;
   max-width: 100%;
-  height: 18px;
-  margin: 12px auto;
+  height: 25px;
+  margin: 10px auto 0;
+  image-rendering: pixelated;
   mask-repeat: no-repeat;
-  mask-size: contain;
-  mask-position: center;
+  mask-size: cover;
   -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-  -webkit-mask-position: center;
+  -webkit-mask-size: cover;
 }
 
 /* Skill points */
@@ -503,5 +513,32 @@ function sepStyle() {
 .tt-major-text {
   color: #aaaaaa;
   font-family: 'wynn-ascii', var(--font-mono);
+}
+
+/* Lore */
+.tt-lore {
+  margin: 4px 0 0;
+  font-family: 'wynn-ascii', var(--font-mono);
+  font-size: 17px;
+  line-height: 1.35;
+  color: #aaaaaa;
+}
+.tt-lore--ascii {
+  font-family: 'wynn-ascii', var(--font-mono);
+}
+.tt-lore--default {
+  font-family: 'wynn-default', var(--font-mono);
+}
+.tt-lore--common {
+  font-family: 'wynn-common', var(--font-mono);
+}
+.tt-lore--wynnic {
+  font-family: 'wynn-wynnic', var(--font-mono);
+}
+.tt-lore--high_gavelian {
+  font-family: 'wynn-high-gavelian', var(--font-mono);
+}
+.tt-lore--old_fruman {
+  font-family: 'wynn-old-fruman', var(--font-mono);
 }
 </style>

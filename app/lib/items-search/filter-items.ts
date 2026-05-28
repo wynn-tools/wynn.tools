@@ -8,6 +8,8 @@ function matches(item: SearchItem, c: ItemCriteria): boolean {
     return false
   if (c.tiers.length && !c.tiers.includes(item.tier))
     return false
+  if (c.sets.length && !item.sets.some(s => c.sets.includes(s)))
+    return false
   if (item.level < c.levelRange[0] || item.level > c.levelRange[1])
     return false
   if (c.restrictions.includes('untradable') && item.restriction !== 'untradable')

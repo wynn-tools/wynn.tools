@@ -12,6 +12,31 @@ const { data: changelogs } = useItemHistorySource()
 const slugIndex = computed(() => searchData.value ? buildSlugIndex(searchData.value.items) : new Map())
 const item = computed(() => resolveSlug(slugIndex.value, slug.value, nameHint.value))
 const history = computed(() => (item.value && changelogs.value) ? itemHistory(item.value.name, changelogs.value) : [])
+
+const pieceLookup = computed(() => {
+  const map = new Map<string, ReturnType<typeof resolveSlug>>()
+  if (!searchData.value)
+    return map
+  for (const i of searchData.value.items)
+    map.set(i.name, i)
+  return map
+})
+
+interface ResolvedSet { name: string, set: NonNullable<ReturnType<typeof getSet>> }
+function getSet(name: string) {
+  return searchData.value?.sets.get(name)
+}
+const itemSets = computed<ResolvedSet[]>(() => {
+  if (!item.value)
+    return []
+  const out: ResolvedSet[] = []
+  for (const name of item.value.sets) {
+    const set = getSet(name)
+    if (set)
+      out.push({ name, set })
+  }
+  return out
+})
 </script>
 
 <template>
@@ -28,14 +53,22 @@ const history = computed(() => (item.value && changelogs.value) ? itemHistory(it
       <NuxtLink to="/items" class="back">
         ← Search
       </NuxtLink>
-      <div class="cols">
-        <div class="col">
+
+      <div class="grid">
+        <aside class="hero">
           <ItemTooltip :item="item" />
-        </div>
-        <div class="col">
+        </aside>
+
+        <div class="panes">
+          <ItemSetSection
+            v-for="s in itemSets"
+            :key="s.name"
+            :set-name="s.name"
+            :set="s.set"
+            :current="item"
+            :piece-lookup="pieceLookup"
+          />
           <ItemObtainSection :item="item" />
-        </div>
-        <div class="col">
           <ItemHistoryTimeline :entries="history" />
         </div>
       </div>
@@ -45,28 +78,52 @@ const history = computed(() => (item.value && changelogs.value) ? itemHistory(it
 
 <style scoped>
 .page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px 40px;
+  padding: 20px 0 80px;
 }
 .back {
-  font-size: 13px;
+  display: inline-block;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--color-muted);
   text-decoration: none;
+  padding: 6px 0;
+  margin-bottom: 18px;
+  transition: color 0.12s ease-out;
 }
 .back:hover {
   color: var(--color-accent);
 }
-.cols {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 32px;
-  margin-top: 20px;
+  grid-template-columns: 482px minmax(0, 1fr);
+  gap: 40px;
   align-items: start;
 }
+.hero {
+  position: sticky;
+  top: 76px;
+  align-self: start;
+}
+.panes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
 .state {
-  padding: 60px;
+  padding: 80px 20px;
   text-align: center;
   color: var(--color-muted);
+}
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .hero {
+    position: static;
+    justify-self: center;
+  }
 }
 </style>

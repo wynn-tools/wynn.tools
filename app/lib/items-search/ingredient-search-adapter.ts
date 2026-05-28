@@ -1,4 +1,4 @@
-import type { IdRange, SearchIngredient } from './types'
+import type { IdRange, PositionModifiers, SearchIngredient } from './types'
 
 interface RawIngredient {
   id: number
@@ -9,8 +9,11 @@ interface RawIngredient {
   identifications?: Record<string, IdRange>
   itemOnlyIDs?: Record<string, number>
   consumableOnlyIDs?: Record<string, number>
+  ingredientPositionModifiers?: Partial<PositionModifiers>
   icon?: unknown
 }
+
+const ZERO_MODS: PositionModifiers = { above: 0, under: 0, left: 0, right: 0, touching: 0, notTouching: 0 }
 
 type RawIngredientFile = { ingredients: RawIngredient[] } | Record<string, RawIngredient>
 
@@ -31,6 +34,7 @@ export function adaptIngredients(file: RawIngredientFile): SearchIngredient[] {
     identifications: ing.identifications ?? {},
     itemOnlyIDs: ing.itemOnlyIDs ?? {},
     consumableOnlyIDs: ing.consumableOnlyIDs ?? {},
+    positionModifiers: { ...ZERO_MODS, ...(ing.ingredientPositionModifiers ?? {}) },
     icon: ing.icon,
   }))
 }
