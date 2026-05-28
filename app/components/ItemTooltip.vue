@@ -49,16 +49,20 @@ const damageLines = computed<DamageLine[]>(() =>
     .sort((a, b) => ELEMENT_ORDER.indexOf(a.element ?? '') - ELEMENT_ORDER.indexOf(b.element ?? '')),
 )
 
-interface StatLine { label: string, element: string | null, text: string }
-const baseStatLines = computed<StatLine[]>(() =>
-  Object.entries(props.item.base).map(([key, v]) => {
-    const meta = baseStatMeta(key)
-    return {
-      label: meta.label,
-      element: meta.element,
-      text: isRange(v) ? (v.min === v.max ? String(v.raw) : `${v.min}-${v.max}`) : String(v),
-    }
-  }),
+const healthBase = computed<number | null>(() => {
+  const h = props.item.base.health
+  return typeof h === 'number' ? h : null
+})
+
+interface DefenceLine { element: string, value: string }
+const defenceLines = computed<DefenceLine[]>(() =>
+  Object.entries(props.item.base)
+    .filter(([key]) => key.endsWith('Defence'))
+    .map(([key, v]) => {
+      const n = typeof v === 'number' ? v : v.raw
+      return { element: baseStatMeta(key).element ?? '', value: `${n > 0 ? '+' : ''}${n}` }
+    })
+    .sort((a, b) => ELEMENT_ORDER.indexOf(a.element) - ELEMENT_ORDER.indexOf(b.element)),
 )
 
 interface SpCircle { skill: string, active: boolean, value: number }
@@ -153,12 +157,23 @@ function sepStyle() {
         </div>
       </template>
 
-      <!-- Armour / accessory: base stats -->
+      <!-- Armour / accessory: health + elemental defences -->
       <template v-else>
-        <div v-for="(s, i) in baseStatLines" :key="i" class="tt-row">
-          <img v-if="s.element" :src="attributeUrl(s.element)" class="tt-attr" alt="" aria-hidden="true">
-          <span class="tt-muted">{{ s.label }} {{ s.text }}</span>
-        </div>
+        <p v-if="healthBase != null" class="tt-dps">
+          <span :style="{ color: theme.light }">{{ healthBase > 0 ? '+' : '' }}{{ healthBase }}</span>
+          <span class="tt-dps-unit">Health</span>
+        </p>
+        <template v-if="defenceLines.length">
+          <div class="tt-row">
+            <span class="tt-muted">Elemental Defences</span>
+          </div>
+          <div class="tt-dmg">
+            <span v-for="(d, i) in defenceLines" :key="i" class="tt-dmg-item">
+              <img :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
+              <span class="tt-muted">{{ d.value }}</span>
+            </span>
+          </div>
+        </template>
       </template>
 
       <div class="tt-sep" :style="sepStyle()" />
