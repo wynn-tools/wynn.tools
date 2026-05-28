@@ -4,7 +4,7 @@
 export interface RawStatBonus {
   type: 'stat' | 'prop'
   name: string
-  abil?: string
+  abil?: number
   value: number
 }
 

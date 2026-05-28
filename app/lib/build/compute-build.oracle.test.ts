@@ -16,6 +16,7 @@
  */
 
 import type { EncodingConstants } from '../codec/encoding-constants'
+import type { CdnMajorIdEntry } from '../data/cdn-adapter/majid-adapter'
 import type { AtreeData } from '../types/atree'
 import type { ItemSet } from '../types/item'
 import { existsSync, readFileSync } from 'node:fs'
@@ -24,6 +25,7 @@ import { describe, expect, it } from 'vitest'
 import { BitVector, BitVectorCursor } from '../codec/bit-vector'
 import { decodeRawBuild } from '../codec/build-codec'
 import { decodeHeader } from '../codec/header'
+import { adaptCdnMajorIds } from '../data/cdn-adapter/majid-adapter'
 import { computeBuild } from './compute-build'
 import { buildRawItemIndex } from './resolve'
 
@@ -47,6 +49,15 @@ const EXPECTED = {
   ehpNoAgi: 8583.46,
   meleeDpsAvg: 90941.85,
   meleePerAttack: 21149.27,
+  // Spell display-part averages from WynnBuilder (crit=56.3%, same build)
+  spells: {
+    1: { name: 'Tick DPS', avg: 3845.07 }, // Totem — Furious Effigy doubles totem_mul
+    3: { name: 'First Wave', avg: 13372.79 }, // Aura
+    8: { name: 'Totem Drain DPS', avg: 90435.05 }, // Twisted Tether
+    9: { name: 'Bleed DPS', avg: 12081.24 }, // Bleeding
+    10: { name: 'Beam DPS', avg: 28879.89 }, // Blood Sorrow
+    11: { name: 'DPS', avg: 20332.31 }, // Eldritch Call
+  } as Record<number, { name: string, avg: number | null }>,
 }
 
 // ---------------------------------------------------------------------------
@@ -83,6 +94,9 @@ describe.skipIf(!haveData)('compute-build oracle (Shaman relik lvl-121)', () => 
       readFileSync(join(dir, 'items.json'), 'utf8'),
     ) as { items: Array<Record<string, unknown> & { id?: number, type?: string }>, sets: Record<string, ItemSet> }
 
+    const majidFile = JSON.parse(readFileSync(join(dir, 'majid.json'), 'utf8')) as Record<string, CdnMajorIdEntry>
+    const majorIdData = adaptCdnMajorIds(majidFile)
+
     // Build item-type lookup for the DecodeProvider
     const itemTypeById = new Map<number, string>()
     for (const it of rawItemsFile.items) {
@@ -111,7 +125,7 @@ describe.skipIf(!haveData)('compute-build oracle (Shaman relik lvl-121)', () => 
       Object.entries(rawItemsFile.sets),
     )
 
-    const ctx = { rawItemIndex, sets, atreeData }
+    const ctx = { rawItemIndex, sets, atreeData, majorIdData }
 
     // -----------------------------------------------------------------------
     // 4. Run the orchestrator
@@ -120,6 +134,16 @@ describe.skipIf(!haveData)('compute-build oracle (Shaman relik lvl-121)', () => 
 
     const { totalHp, ehp } = result.defense
     const { averageDps, perAttack } = result.melee
+
+    // Helper: crit-weighted average of a damage part using build's dex crit chance
+    const critChance = 0.563
+    function partAvg(part: { type: string, normalTotal?: [number, number], critTotal?: [number, number] }): number {
+      if (part.type !== 'damage' || !part.normalTotal || !part.critTotal)
+        return 0
+      const nc = (part.normalTotal[0] + part.normalTotal[1]) / 2 || 0
+      const c = (part.critTotal[0] + part.critTotal[1]) / 2 || 0
+      return (1 - critChance) * nc + critChance * c || 0
+    }
 
     // -----------------------------------------------------------------------
     // 5. Log computed vs expected so any gap is legible
@@ -130,22 +154,18 @@ describe.skipIf(!haveData)('compute-build oracle (Shaman relik lvl-121)', () => 
     console.warn(`EHP no agi     expected: ${EXPECTED.ehpNoAgi}    computed: ${ehp.withoutAgi.toFixed(2)}`)
     console.warn(`Melee avg DPS  expected: ${EXPECTED.meleeDpsAvg} computed: ${averageDps.toFixed(2)}`)
     console.warn(`Per-attack     expected: ${EXPECTED.meleePerAttack} computed: ${perAttack.toFixed(2)}`)
+    for (const [baseSpell, oracle] of Object.entries(EXPECTED.spells)) {
+      const spellOut = result.spells.find(s => s.spell.baseSpell === Number(baseSpell))
+      const displayPart = spellOut?.parts.find(p => p.name === oracle.name)
+      const computed = displayPart ? partAvg(displayPart) : null
+      console.warn(`Spell ${baseSpell} (${oracle.name.padEnd(16)}) expected: ${oracle.avg?.toFixed(2) ?? 'n/a'} computed: ${computed?.toFixed(2) ?? 'missing'}`)
+    }
     console.warn('=========================\n')
 
     // -----------------------------------------------------------------------
     // 6. Assertions
-    //
-    // Strategy (per task spec): assert metrics that match; use expect.soft or
-    // skip those that don't so `npx vitest run app/lib` stays green.
-    //
-    // HP + EHP: PASS — computed matches oracle exactly.
-    // DPS:      FAIL (deferred) — atree spell modifiers / stat-scaling (5f-3)
-    //           not yet applied. The Shaman relik's melee uses atree-scaling
-    //           for strength/spell bonuses. Without them computed ~15818 vs
-    //           expected ~90941 (ratio ~5.74×). Skipped until 5f-3 lands.
     // -----------------------------------------------------------------------
 
-    // All five metrics match the live oracle exactly (within float tolerance).
     expect(totalHp).toBe(EXPECTED.totalHp)
     expect(ehp.withAgi).toBeCloseTo(EXPECTED.ehpWithAgi, 1)
     expect(ehp.withoutAgi).toBeCloseTo(EXPECTED.ehpNoAgi, 1)
@@ -154,5 +174,16 @@ describe.skipIf(!haveData)('compute-build oracle (Shaman relik lvl-121)', () => 
 
     // Skillpoint oracle: relik build at lvl 121 with sp auto → assignedTotal === 170
     expect(result.skillpoints.assignedTotal).toBe(170)
+
+    // Spell display-part averages
+    for (const [baseSpell, oracle] of Object.entries(EXPECTED.spells)) {
+      if (oracle.avg === null)
+        continue
+      const spellOut = result.spells.find(s => s.spell.baseSpell === Number(baseSpell))
+      const displayPart = spellOut?.parts.find(p => p.name === oracle.name)
+      expect(displayPart, `spell ${baseSpell} (${oracle.name}) not found in result.spells`).toBeDefined()
+      if (displayPart)
+        expect(partAvg(displayPart), `spell ${baseSpell} (${oracle.name})`).toBeCloseTo(oracle.avg, -2)
+    }
   })
 })
