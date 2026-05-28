@@ -3,6 +3,7 @@ import type { CleanedRawItem } from '~/lib/build/resolve'
 import type { RawBuild } from '~/lib/codec/build-codec'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
 import type { CdnClient } from '~/lib/data/cdn-client'
+import type { SearchItem } from '~/lib/items-search/types'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 import { loadBuildContext, peekVersionId, resolveLatestVersionId } from '~/composables/useBuildData'
@@ -43,6 +44,7 @@ export const useBuildStore = defineStore('build', () => {
   const ctx = shallowRef<BuildContext | null>(null)
   const enc = shallowRef<EncodingConstants | null>(null)
   const weaponTypeFn = shallowRef<((id: number) => string | null) | null>(null)
+  const searchItemById = shallowRef<Map<number, SearchItem> | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -56,12 +58,14 @@ export const useBuildStore = defineStore('build', () => {
       ctx.value = loaded.ctx
       enc.value = loaded.enc
       weaponTypeFn.value = loaded.weaponType
+      searchItemById.value = loaded.searchItemById
       rawBuild.value = raw
     }
     catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
       rawBuild.value = null
       ctx.value = null
+      searchItemById.value = null
     }
     finally {
       loading.value = false
@@ -79,6 +83,7 @@ export const useBuildStore = defineStore('build', () => {
       ctx.value = loaded.ctx
       enc.value = e
       weaponTypeFn.value = loaded.weaponType
+      searchItemById.value = loaded.searchItemById
       atreeMessage.value = null
       rawBuild.value = {
         versionId,
@@ -95,6 +100,7 @@ export const useBuildStore = defineStore('build', () => {
       error.value = e instanceof Error ? e.message : String(e)
       rawBuild.value = null
       ctx.value = null
+      searchItemById.value = null
     }
     finally {
       loading.value = false
@@ -147,6 +153,13 @@ export const useBuildStore = defineStore('build', () => {
         out.push(item)
     }
     return out.sort((a, b) => String(a.displayName).localeCompare(String(b.displayName)))
+  }
+
+  function equipmentSearchItem(slot: number): SearchItem | null {
+    const id = rawBuild.value?.equipmentIds[slot]
+    if (id == null || !searchItemById.value)
+      return null
+    return searchItemById.value.get(id) ?? null
   }
 
   const result = computed<BuildResult | null>(() => {
@@ -272,5 +285,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, setItem, setLevel, currentHash, itemsForSlot, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, setItem, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
 })
