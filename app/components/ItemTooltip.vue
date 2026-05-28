@@ -145,9 +145,11 @@ function sepStyle() {
             <span v-if="hits != null" class="tt-faint">({{ hits }} hits/s)</span>
           </span>
         </div>
-        <div v-for="(d, i) in damageLines" :key="i" class="tt-row">
-          <img v-if="d.element" :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
-          <span class="tt-muted">{{ d.text }}</span>
+        <div v-if="damageLines.length" class="tt-dmg">
+          <span v-for="(d, i) in damageLines" :key="i" class="tt-dmg-item">
+            <img v-if="d.element" :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
+            <span class="tt-muted">{{ d.text }}</span>
+          </span>
         </div>
       </template>
 
@@ -217,7 +219,7 @@ function sepStyle() {
 <style scoped>
 .tt-container {
   position: relative;
-  width: 420px;
+  width: 482px;
   max-width: 100%;
   font-family: 'wynncraft', var(--font-mono);
   letter-spacing: -1px;
@@ -335,6 +337,19 @@ function sepStyle() {
   height: 26px;
   image-rendering: pixelated;
   object-fit: contain;
+}
+.tt-dmg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin-top: 6px;
+  font-size: 18px;
+}
+.tt-dmg-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .tt-muted {
   color: #aeaeae;

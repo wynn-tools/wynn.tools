@@ -47,7 +47,9 @@ const cols = computed(() => (props.idKeys ?? []).map(k => ({
     </HoverCardTrigger>
     <HoverCardPortal>
       <HoverCardContent :side-offset="8" side="right" align="start" class="quickview">
-        <ItemTooltip :item="item" />
+        <div class="quickview-scale">
+          <ItemTooltip :item="item" />
+        </div>
       </HoverCardContent>
     </HoverCardPortal>
   </HoverCardRoot>
@@ -103,5 +105,8 @@ const cols = computed(() => (props.idKeys ?? []).map(k => ({
 }
 .quickview {
   z-index: 60;
+}
+.quickview-scale {
+  zoom: 0.7;
 }
 </style>
