@@ -26,6 +26,11 @@ const tools = [
     description: 'Inspiration for the builder\'s combat math and loadout UI.',
     url: 'https://hppeng-wynn.github.io/builder',
   },
+  {
+    name: 'Wynntils',
+    description: 'Map data source — map tiles, places, combat locations, caves, services, map icons, territory list, and live player locations are all served from Wynntils\' Static-Storage, Athena, and Hades APIs.',
+    url: 'https://wynntils.com',
+  },
 ]
 
 const assets = [
