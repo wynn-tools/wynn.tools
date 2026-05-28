@@ -36,6 +36,8 @@ function isRange(v: DamageRange | number): v is DamageRange {
   return typeof v === 'object'
 }
 
+const ELEMENT_ORDER = ['neutral', 'earth', 'thunder', 'water', 'fire', 'air']
+
 interface DamageLine { element: string | null, text: string }
 const damageLines = computed<DamageLine[]>(() =>
   Object.entries(props.item.base)
@@ -43,7 +45,8 @@ const damageLines = computed<DamageLine[]>(() =>
     .map(([key, v]) => ({
       element: baseStatMeta(key).element,
       text: isRange(v) ? (v.min === v.max ? String(v.raw) : `${v.min}-${v.max}`) : String(v),
-    })),
+    }))
+    .sort((a, b) => ELEMENT_ORDER.indexOf(a.element ?? '') - ELEMENT_ORDER.indexOf(b.element ?? '')),
 )
 
 interface StatLine { label: string, element: string | null, text: string }
@@ -119,8 +122,12 @@ function sepStyle() {
             <span class="tt-tag" :style="{ background: theme.light }">{{ item.subType }}</span>
           </div>
           <div v-if="item.elements.length" class="tt-tags">
-            <span v-for="el in item.elements" :key="el" class="tt-tag tt-tag--el" :style="{ background: theme.light }">
-              <img :src="attributeUrl(el)" class="tt-tag-icon" alt="" aria-hidden="true"> {{ el }}
+            <span class="tt-tag tt-tag--el" :style="{ background: theme.light }">
+              <img
+                v-for="el in item.elements" :key="el" :src="attributeUrl(el)"
+                class="tt-tag-icon" alt="" aria-hidden="true"
+              >
+              <span v-if="item.elements.length === 1" class="tt-tag-el-name">{{ item.elements[0] }}</span>
             </span>
           </div>
         </div>
@@ -293,8 +300,12 @@ function sepStyle() {
   text-transform: lowercase;
 }
 .tt-tag-icon {
-  height: 14px;
+  height: 15px;
+  margin: 0 2px;
   image-rendering: pixelated;
+}
+.tt-tag-el-name {
+  margin-left: 2px;
 }
 
 /* Weapon / base lines */
