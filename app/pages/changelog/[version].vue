@@ -19,18 +19,23 @@ const {
   data: view,
   pending,
   error,
+  refresh,
 } = await useAsyncData(
   () => `changelog-${version.value}`,
   () => loadChangelog(client, version.value),
   { watch: [version] },
 )
 
-// Unknown version → redirect to latest.
+// A 404 means the version segment doesn't exist → redirect to latest (guarded
+// so we never bounce to the version we're already on, which would loop). Any
+// other failure (transient/network) is surfaced inline with a retry instead.
+const isUnknownVersion = computed(() => /\b404\b/.test(error.value?.message ?? ''))
+
 watchEffect(async () => {
-  if (error.value) {
-    navigateTo(`/changelog/${await latestGameVersion(client)}`, {
-      replace: true,
-    })
+  if (error.value && isUnknownVersion.value) {
+    const latest = await latestGameVersion(client)
+    if (latest !== version.value)
+      navigateTo(`/changelog/${latest}`, { replace: true })
   }
 })
 
@@ -74,6 +79,22 @@ function go(gameVersion: string) {
     <p v-if="pending" class="text-sm text-muted">
       Loading…
     </p>
+
+    <div
+      v-else-if="error && !isUnknownVersion"
+      class="flex flex-col items-start gap-2 rounded-md border border-border bg-surface px-4 py-3 text-sm"
+    >
+      <p class="text-text">
+        Couldn't load the changelog for {{ version }}.
+      </p>
+      <button
+        type="button"
+        class="rounded-md bg-surface-hi px-3 py-1.5 font-medium text-accent ring-1 ring-border hover:bg-surface"
+        @click="refresh()"
+      >
+        Retry
+      </button>
+    </div>
 
     <template v-else-if="filtered">
       <div

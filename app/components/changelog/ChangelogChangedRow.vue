@@ -41,7 +41,7 @@ function fmt(value: number | null, unit: string): string {
                 : 'text-red-400'
           "
         >
-          {{ fmt(field.from, field.unit) }}
+          <span class="opacity-50">{{ fmt(field.from, field.unit) }}</span>
           <span aria-hidden="true">
             {{
               field.direction === "up"
