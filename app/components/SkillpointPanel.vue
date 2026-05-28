@@ -267,15 +267,42 @@ function onLevel(e: Event) {
 @media (max-width: 720px) {
   .skillpoint-bar {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 10px 12px;
   }
   .meta {
     border-right: none;
     border-bottom: 1px solid var(--color-border);
     padding-right: 0;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
+    gap: 10px;
+  }
+  .meta-cell {
+    min-width: 0;
+    flex: 1;
+  }
+  .meta-input {
+    width: 100%;
   }
   .attrs {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .attr {
+    padding: 6px 8px;
+  }
+  .attr-input {
+    width: 36px;
+    font-size: 14px;
+  }
+  .attr-effect {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 380px) {
+  .attrs {
+    grid-template-columns: 1fr;
   }
 }
 </style>

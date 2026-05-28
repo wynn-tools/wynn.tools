@@ -132,4 +132,25 @@ const KIND_TAG: Record<ObtainKind, string> = {
   color: oklch(78% 0.14 75);
   margin-top: 2px;
 }
+
+@media (max-width: 720px) {
+  .obtain {
+    padding: 14px 14px 16px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .method {
+    padding: 10px 12px;
+    gap: 12px;
+  }
+  .glyph {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .desc {
+    font-size: 13px;
+  }
+}
 </style>

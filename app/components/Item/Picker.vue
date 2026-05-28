@@ -192,6 +192,65 @@ function handleEquipCraft() {
   max-height: calc(100vh - 32px);
 }
 
+/* Phone: full-width bottom sheet, ~85vh, rounded only on top.
+   Matches DESIGN.md floating-panel bottom-sheet convention. */
+@media (max-width: 720px) {
+  .picker,
+  .picker--wide {
+    width: 100%;
+    max-height: 88vh;
+    border-radius: 14px 14px 0 0;
+    border-bottom: none;
+    box-shadow: 0 -8px 32px oklch(0% 0 0 / 0.45);
+    animation: picker-rise 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .picker-tabs {
+    padding: 8px 10px;
+  }
+  .picker-tab {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .picker-header {
+    padding: 10px 14px;
+  }
+  .picker-search {
+    font-size: 14px;
+  }
+  .picker-close {
+    font-size: 18px;
+    padding: 6px 10px;
+    margin-left: 6px;
+  }
+  .picker-item {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+  .picker-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@keyframes picker-rise {
+  from {
+    transform: translateY(20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picker,
+  .picker--wide {
+    animation: none;
+  }
+}
+
 .picker-tabs {
   display: flex;
   align-items: center;

@@ -519,4 +519,63 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
   opacity: 0.2;
   cursor: not-allowed;
 }
+
+@media (max-width: 720px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .popover {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 14px 14px 0 0;
+    border-bottom: none;
+    padding: 18px 16px max(20px, env(safe-area-inset-bottom));
+    gap: 14px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 -8px 32px oklch(0% 0 0 / 0.45);
+    animation: powder-rise 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .title {
+    font-size: 18px;
+  }
+  .grid-row {
+    grid-template-columns: 84px 1fr;
+    gap: 6px;
+  }
+  .grid-row-label {
+    font-size: 10px;
+  }
+  .grid-row-tiers {
+    gap: 3px;
+  }
+  .tier-btn {
+    padding: 6px 0;
+    min-height: 32px;
+  }
+  .chip {
+    min-height: 30px;
+  }
+  .copy-btn {
+    min-height: 36px;
+  }
+}
+
+@keyframes powder-rise {
+  from {
+    transform: translateY(20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popover {
+    animation: none;
+  }
+}
 </style>

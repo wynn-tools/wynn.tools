@@ -186,4 +186,36 @@ function atkSpdLabel(spd: AtkSpeed): string {
   background: var(--color-accent);
   border-color: var(--color-accent);
 }
+
+@media (max-width: 720px) {
+  .material-panel {
+    gap: 12px 18px;
+  }
+  .mat {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .mat__name {
+    flex: 1;
+    min-width: 0;
+    white-space: normal;
+  }
+  /* The side-divider reads as a stripe when atkspd wraps below; swap for a
+     top hairline so the visual separation matches the new vertical flow. */
+  .atkspd {
+    width: 100%;
+    padding-left: 0;
+    padding-top: 10px;
+    border-left: none;
+    border-top: 1px solid var(--color-border);
+  }
+  .toggle {
+    min-height: 34px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  .toggle--wide {
+    flex: 1;
+  }
+}
 </style>

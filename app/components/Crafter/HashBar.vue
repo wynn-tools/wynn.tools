@@ -230,4 +230,27 @@ async function copy() {
   letter-spacing: 0.06em;
   color: oklch(62% 0.15 20);
 }
+
+@media (max-width: 720px) {
+  .hash-bar {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 10px;
+    row-gap: 6px;
+    padding: 6px 0 10px;
+  }
+  /* Label sits beside the input; copy button drops below to span full width. */
+  .hash-bar__copy {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    padding: 9px 12px;
+    min-height: 38px;
+  }
+  .hash-bar__input {
+    min-height: 36px;
+    font-size: 13px;
+  }
+  .hash-bar__error {
+    grid-column: 1 / -1;
+  }
+}
 </style>

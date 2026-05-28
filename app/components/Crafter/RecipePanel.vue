@@ -143,4 +143,19 @@ const levelModel = computed<string | null>({
   text-transform: uppercase;
   color: var(--color-muted);
 }
+
+@media (max-width: 720px) {
+  .recipe-panel,
+  .recipe-panel__fields {
+    width: 100%;
+  }
+  .recipe-panel__fields {
+    gap: 10px;
+  }
+  .field {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+}
 </style>

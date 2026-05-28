@@ -245,8 +245,8 @@ function sepStyle() {
 <style scoped>
 .tt-container {
   position: relative;
-  width: 482px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 482px;
   font-family: 'wynncraft', var(--font-mono);
   letter-spacing: -1px;
   overflow: hidden;
@@ -540,5 +540,58 @@ function sepStyle() {
 }
 .tt-lore--old_fruman {
   font-family: 'wynn-old-fruman', var(--font-mono);
+}
+
+/* Below ~480px the 482px in-game tooltip shrinks via max-width:100% but its
+   absolute font sizes (28/34/18px) start crowding the pixel-art frame. Scale
+   the hierarchy down proportionally; the frame border-image stays intact. */
+@media (max-width: 480px) {
+  .tt-inner {
+    padding: 22px 14px 14px;
+  }
+  .tt-name {
+    font-size: 20px;
+  }
+  .tt-dps span:first-child {
+    font-size: 26px;
+  }
+  .tt-dps-unit {
+    font-size: 16px;
+  }
+  .tt-row,
+  .tt-dmg,
+  .tt-meta-row,
+  .tt-id,
+  .tt-sp-val {
+    font-size: 15px;
+  }
+  .tt-tag {
+    font-size: 15px;
+  }
+  .tt-emblemwrap {
+    min-width: 64px;
+    width: 64px;
+    height: 64px;
+  }
+  .tt-sprite {
+    width: 36px;
+    height: 36px;
+  }
+  .tt-attr {
+    width: 22px;
+    height: 22px;
+  }
+  .tt-sp-bg {
+    width: 48px;
+    height: 48px;
+  }
+  .tt-sp-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .tt-major,
+  .tt-lore {
+    font-size: 14px;
+  }
 }
 </style>

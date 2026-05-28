@@ -308,6 +308,30 @@ const powderSlotMax = computed(() =>
   gap: 8px;
 }
 
+@media (max-width: 720px) {
+  .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .slot {
+    padding: 8px 10px;
+    gap: 4px;
+  }
+  .slot-name {
+    font-size: 11px;
+  }
+  .slot-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .powder-cta-label {
+    display: none;
+  }
+  .powder-chips--empty {
+    padding: 2px 5px;
+  }
+}
+
 .slot {
   display: flex;
   flex-direction: column;
@@ -473,8 +497,25 @@ const powderSlotMax = computed(() =>
   backdrop-filter: blur(2px);
 }
 
+/* Phone: slide picker up from the bottom as a sheet — native mobile pattern,
+   easier reach, matches the floating-panel convention in the design system. */
+@media (max-width: 720px) {
+  .picker-overlay {
+    align-items: flex-end;
+    justify-content: stretch;
+  }
+}
+
 .quickview {
   z-index: 9999;
+}
+
+/* Hover quickview is a desktop affordance — hide on coarse/touch pointers
+   so a tap doesn't fire a stuck hover card behind the picker. */
+@media (hover: none), (pointer: coarse) {
+  .quickview {
+    display: none !important;
+  }
 }
 
 .quickview-scale {

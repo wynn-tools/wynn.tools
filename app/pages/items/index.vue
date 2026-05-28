@@ -18,6 +18,8 @@ const { data, pending, error, refresh } = useItemSearchData()
 const { criteria } = useItemSearchQuery()
 const ingredientCriteria = ref<IngredientCriteria>(defaultIngredientCriteria())
 const tab = ref<'items' | 'ingredients'>('items')
+// Mobile-only: filters open inline behind a toggle. Desktop ignores this.
+const mobileFiltersOpen = ref(false)
 
 const itemResults = computed(() => data.value ? filterItems(data.value.items, criteria.value) : [])
 const ingredientResults = computed(() => data.value ? filterIngredients(data.value.ingredients, ingredientCriteria.value) : [])
@@ -57,7 +59,26 @@ const setOptions = computed(() =>
     </div>
 
     <div v-else class="layout">
-      <aside class="sidebar">
+      <button
+        type="button"
+        class="filters-toggle"
+        :aria-expanded="mobileFiltersOpen"
+        aria-controls="search-filters-panel"
+        @click="mobileFiltersOpen = !mobileFiltersOpen"
+      >
+        <span class="filters-toggle-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span>{{ mobileFiltersOpen ? 'Hide filters' : 'Filters' }}</span>
+        <span class="filters-toggle-chevron" :class="{ open: mobileFiltersOpen }" aria-hidden="true">›</span>
+      </button>
+      <aside
+        id="search-filters-panel"
+        class="sidebar"
+        :class="{ 'sidebar--collapsed-mobile': !mobileFiltersOpen }"
+      >
         <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" :set-options="setOptions" />
         <IngredientSearchFilters v-else v-model="ingredientCriteria" />
       </aside>
@@ -144,6 +165,9 @@ const setOptions = computed(() =>
   gap: 40px;
   align-items: start;
 }
+.filters-toggle {
+  display: none;
+}
 .sidebar {
   position: sticky;
   top: 76px;
@@ -188,6 +212,85 @@ const setOptions = computed(() =>
   }
   .sidebar {
     position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 0 48px;
+  }
+  .toolbar {
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+  .tabs button {
+    padding: 8px 16px;
+    min-height: 36px;
+  }
+  .layout {
+    gap: 14px;
+  }
+  /* Filters become a tap-to-expand panel so results dominate the viewport.
+     The toggle is a thin row, not a button card, to stay out of the way
+     when collapsed. */
+  .filters-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: var(--color-muted);
+    cursor: pointer;
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition:
+      color 0.12s ease-out,
+      border-color 0.12s ease-out;
+  }
+  .filters-toggle:hover,
+  .filters-toggle[aria-expanded='true'] {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+  .filters-toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .filters-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    color: currentColor;
+  }
+  .filters-toggle-chevron {
+    margin-left: auto;
+    transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: rotate(90deg);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .filters-toggle-chevron.open {
+    transform: rotate(-90deg);
+    color: var(--color-accent);
+  }
+  .sidebar--collapsed-mobile {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+  }
+  .results-head {
+    margin-bottom: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filters-toggle-chevron {
+    transition: none;
   }
 }
 </style>

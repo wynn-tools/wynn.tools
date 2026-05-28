@@ -261,6 +261,30 @@ function onMiniPointerUp(e: PointerEvent) {
   dragging = false
   ;(e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId)
 }
+
+// --- Zoom (touch-friendly) ---
+// Touch users can't pinch a fixed-grid scroll container reliably, so expose
+// discrete zoom levels. Default is 1; on small viewports we drop to 0.85 so
+// the tree fits with one finger-pan rather than two.
+const ZOOM_LEVELS = [0.6, 0.75, 0.9, 1, 1.15, 1.3]
+const zoomIdx = ref(3)
+const zoom = computed(() => ZOOM_LEVELS[zoomIdx.value] ?? 1)
+const scaledWidth = computed(() => gridWidth.value * zoom.value)
+const scaledHeight = computed(() => gridHeight.value * zoom.value)
+
+function zoomIn() {
+  if (zoomIdx.value < ZOOM_LEVELS.length - 1)
+    zoomIdx.value += 1
+}
+function zoomOut() {
+  if (zoomIdx.value > 0)
+    zoomIdx.value -= 1
+}
+
+onMounted(() => {
+  if (typeof window !== 'undefined' && window.matchMedia('(max-width: 720px)').matches)
+    zoomIdx.value = 2 // 0.9× — fits the typical Archer/Mage tree on a phone screen with light panning
+})
 </script>
 
 <template>
@@ -268,12 +292,37 @@ function onMiniPointerUp(e: PointerEvent) {
     <div class="flex flex-col gap-3">
       <!-- Header -->
       <div class="flex flex-col gap-1.5">
-        <span
-          class="font-mono text-[13px] font-medium tracking-[0.04em]"
-          :class="apOverCap ? 'text-copper' : 'text-text'"
-        >
-          AP {{ store.atreeValidation.apTotal }} / {{ store.atreeValidation.apCap }}
-        </span>
+        <div class="flex items-center gap-3">
+          <span
+            class="flex-1 font-mono text-[13px] font-medium tracking-[0.04em]"
+            :class="apOverCap ? 'text-copper' : 'text-text'"
+          >
+            AP {{ store.atreeValidation.apTotal }} / {{ store.atreeValidation.apCap }}
+          </span>
+          <!-- Zoom controls: discrete steps. Visible on every screen, but they
+               earn their keep on touch where pinch-to-zoom isn't a thing. -->
+          <div class="atree-zoom" role="group" aria-label="Ability tree zoom">
+            <button
+              type="button"
+              class="atree-zoom-btn"
+              :disabled="zoomIdx === 0"
+              aria-label="Zoom out"
+              @click="zoomOut"
+            >
+              −
+            </button>
+            <span class="atree-zoom-readout" aria-live="polite">{{ Math.round(zoom * 100) }}%</span>
+            <button
+              type="button"
+              class="atree-zoom-btn"
+              :disabled="zoomIdx === ZOOM_LEVELS.length - 1"
+              aria-label="Zoom in"
+              @click="zoomIn"
+            >
+              +
+            </button>
+          </div>
+        </div>
         <ul v-if="store.atreeValidation.errors.length" class="flex list-none flex-col gap-0.5">
           <li
             v-for="(err, i) in store.atreeValidation.errors"
@@ -296,122 +345,132 @@ function onMiniPointerUp(e: PointerEvent) {
           @scroll.passive="syncViewport"
         >
           <div
-            class="atree-grid relative shrink-0"
-            :style="{ width: `${gridWidth}px`, height: `${gridHeight}px` }"
+            class="atree-zoom-wrap shrink-0"
+            :style="{ width: `${scaledWidth}px`, height: `${scaledHeight}px` }"
           >
-            <!-- Connector tile images (behind nodes) -->
-            <template v-for="(conn, i) in connectors" :key="i">
-              <!-- Base: all directions, no active glow -->
-              <img
-                :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
-                class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
-                :style="{
-                  left: `${conn.col * CELL}px`,
-                  top: `${conn.row * CELL}px`,
-                  width: `${CELL}px`,
-                  height: `${CELL}px`,
-                }"
-                draggable="false"
-                aria-hidden="true"
-                alt=""
-              >
-              <!-- Active overlay: only the active-path directions lit up -->
-              <img
-                v-if="conn.activeName"
-                :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.activeName}_active.png`"
-                class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
-                :style="{
-                  left: `${conn.col * CELL}px`,
-                  top: `${conn.row * CELL}px`,
-                  width: `${CELL}px`,
-                  height: `${CELL}px`,
-                }"
-                draggable="false"
-                aria-hidden="true"
-                alt=""
-              >
-            </template>
+            <div
+              class="atree-grid relative shrink-0"
+              :style="{
+                width: `${gridWidth}px`,
+                height: `${gridHeight}px`,
+                transform: `scale(${zoom})`,
+                transformOrigin: '0 0',
+              }"
+            >
+              <!-- Connector tile images (behind nodes) -->
+              <template v-for="(conn, i) in connectors" :key="i">
+                <!-- Base: all directions, no active glow -->
+                <img
+                  :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
+                  class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+                  :style="{
+                    left: `${conn.col * CELL}px`,
+                    top: `${conn.row * CELL}px`,
+                    width: `${CELL}px`,
+                    height: `${CELL}px`,
+                  }"
+                  draggable="false"
+                  aria-hidden="true"
+                  alt=""
+                >
+                <!-- Active overlay: only the active-path directions lit up -->
+                <img
+                  v-if="conn.activeName"
+                  :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.activeName}_active.png`"
+                  class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+                  :style="{
+                    left: `${conn.col * CELL}px`,
+                    top: `${conn.row * CELL}px`,
+                    width: `${CELL}px`,
+                    height: `${CELL}px`,
+                  }"
+                  draggable="false"
+                  aria-hidden="true"
+                  alt=""
+                >
+              </template>
 
-            <!-- Nodes. v-memo skips the entire per-node subtree on re-renders
+              <!-- Nodes. v-memo skips the entire per-node subtree on re-renders
                  when this node's state hasn't changed — clicking one node
                  only re-renders nodes whose state actually flipped. -->
-            <TooltipRoot
-              v-for="node in store.atreeNodes"
-              :key="node.ability.id"
-              v-memo="[stateMap.get(node.ability.id)]"
-            >
-              <TooltipTrigger as-child>
-                <button
-                  class="group absolute z-[1] flex size-11 items-center justify-center border-0 bg-transparent p-0 transition-[filter,opacity] duration-100"
-                  :class="[NODE_STATE_CLASSES[nodeState(node)], { 'node--ultimate': isUltimate(node) }]"
-                  :style="{
-                    left: `${node.ability.display.col * CELL}px`,
-                    top: `${node.ability.display.row * CELL}px`,
-                  }"
-                  :aria-pressed="store.isAtreeActive(node.ability.id)"
-                  :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
-                  @click="onNodeClick(node.ability.id, $event)"
-                >
-                  <!-- Rest art (state-dependent): base for locked/blocked,
+              <TooltipRoot
+                v-for="node in store.atreeNodes"
+                :key="node.ability.id"
+                v-memo="[stateMap.get(node.ability.id)]"
+              >
+                <TooltipTrigger as-child>
+                  <button
+                    class="group absolute z-[1] flex size-11 items-center justify-center border-0 bg-transparent p-0 transition-[filter,opacity] duration-100"
+                    :class="[NODE_STATE_CLASSES[nodeState(node)], { 'node--ultimate': isUltimate(node) }]"
+                    :style="{
+                      left: `${node.ability.display.col * CELL}px`,
+                      top: `${node.ability.display.row * CELL}px`,
+                    }"
+                    :aria-pressed="store.isAtreeActive(node.ability.id)"
+                    :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
+                    @click="onNodeClick(node.ability.id, $event)"
+                  >
+                    <!-- Rest art (state-dependent): base for locked/blocked,
                        pulse for selectable, active for already-selected. -->
-                  <img
-                    :src="restSrc(node)"
-                    :width="CELL"
-                    :height="CELL"
-                    draggable="false"
-                    aria-hidden="true"
-                    alt=""
-                    class="absolute inset-0 block size-11 [image-rendering:pixelated] transition-opacity duration-[400ms]"
-                    :class="hoverSrc(node) ? 'opacity-100 group-hover:opacity-0' : 'opacity-100'"
-                  >
-                  <!-- Hover preview: only selectable nodes light up to active
+                    <img
+                      :src="restSrc(node)"
+                      :width="CELL"
+                      :height="CELL"
+                      draggable="false"
+                      aria-hidden="true"
+                      alt=""
+                      class="absolute inset-0 block size-11 [image-rendering:pixelated] transition-opacity duration-[400ms]"
+                      :class="hoverSrc(node) ? 'opacity-100 group-hover:opacity-0' : 'opacity-100'"
+                    >
+                    <!-- Hover preview: only selectable nodes light up to active
                        on hover, previewing the selected state. -->
-                  <img
-                    v-if="hoverSrc(node)"
-                    :src="hoverSrc(node)!"
-                    :width="CELL"
-                    :height="CELL"
-                    draggable="false"
-                    aria-hidden="true"
-                    alt=""
-                    class="absolute inset-0 block size-11 opacity-0 [image-rendering:pixelated] transition-opacity duration-[400ms] group-hover:opacity-100"
+                    <img
+                      v-if="hoverSrc(node)"
+                      :src="hoverSrc(node)!"
+                      :width="CELL"
+                      :height="CELL"
+                      draggable="false"
+                      aria-hidden="true"
+                      alt=""
+                      class="absolute inset-0 block size-11 opacity-0 [image-rendering:pixelated] transition-opacity duration-[400ms] group-hover:opacity-100"
+                    >
+                  </button>
+                </TooltipTrigger>
+                <TooltipPortal>
+                  <TooltipContent
+                    class="z-[1000] max-w-[280px] rounded-md border border-border bg-bg px-3 py-2.5 font-mono shadow-[0_6px_24px_oklch(0%_0_0_/_0.35)]"
+                    :side-offset="6"
+                    :collision-padding="8"
                   >
-                </button>
-              </TooltipTrigger>
-              <TooltipPortal>
-                <TooltipContent
-                  class="z-[1000] max-w-[280px] rounded-md border border-border bg-bg px-3 py-2.5 font-mono shadow-[0_6px_24px_oklch(0%_0_0_/_0.35)]"
-                  :side-offset="6"
-                  :collision-padding="8"
-                >
-                  <div class="mb-1 flex items-baseline justify-between gap-3">
-                    <span class="text-xs font-semibold text-text">{{ node.ability.display_name }}</span>
-                    <span class="whitespace-nowrap text-[11px] text-copper">{{ node.ability.cost }} AP</span>
-                  </div>
-                  <p v-if="archetypeLine(node)" class="mb-1.5 text-[10px] uppercase tracking-[0.04em] text-muted">
-                    {{ archetypeLine(node) }}
-                  </p>
-                  <!-- Rich description: NormalizedText[] segments (live data) render
+                    <div class="mb-1 flex items-baseline justify-between gap-3">
+                      <span class="text-xs font-semibold text-text">{{ node.ability.display_name }}</span>
+                      <span class="whitespace-nowrap text-[11px] text-copper">{{ node.ability.cost }} AP</span>
+                    </div>
+                    <p v-if="archetypeLine(node)" class="mb-1.5 text-[10px] uppercase tracking-[0.04em] text-muted">
+                      {{ archetypeLine(node) }}
+                    </p>
+                    <!-- Rich description: NormalizedText[] segments (live data) render
                      with their parsed color/font/weight; a plain string (historical
                      backfilled data) renders as-is. -->
-                  <p
-                    v-if="node.ability.desc && node.ability.desc.length"
-                    class="whitespace-pre-line text-[11px] leading-[1.5] text-text"
-                  >
-                    <template v-if="typeof node.ability.desc === 'string'">
-                      {{ node.ability.desc }}
-                    </template>
-                    <template v-else>
-                      <span
-                        v-for="(seg, i) in node.ability.desc"
-                        :key="i"
-                        :style="segmentStyle(seg)"
-                      >{{ seg.text }}</span>
-                    </template>
-                  </p>
-                </TooltipContent>
-              </TooltipPortal>
-            </TooltipRoot>
+                    <p
+                      v-if="node.ability.desc && node.ability.desc.length"
+                      class="whitespace-pre-line text-[11px] leading-[1.5] text-text"
+                    >
+                      <template v-if="typeof node.ability.desc === 'string'">
+                        {{ node.ability.desc }}
+                      </template>
+                      <template v-else>
+                        <span
+                          v-for="(seg, i) in node.ability.desc"
+                          :key="i"
+                          :style="segmentStyle(seg)"
+                        >{{ seg.text }}</span>
+                      </template>
+                    </p>
+                  </TooltipContent>
+                </TooltipPortal>
+              </TooltipRoot>
+            </div>
           </div>
         </div>
 
@@ -527,5 +586,72 @@ function onMiniPointerUp(e: PointerEvent) {
   transition:
     left 0.08s linear,
     top 0.08s linear;
+}
+
+/* Zoom controls — sit beside AP readout. Mono, copper on hover, matching the
+   atree node interaction language. */
+.atree-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 2px;
+  background: oklch(14% 0.006 30 / 0.5);
+}
+
+.atree-zoom-btn {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    background 0.12s;
+}
+.atree-zoom-btn:hover:not(:disabled) {
+  color: var(--color-copper);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+.atree-zoom-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.atree-zoom-readout {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-faint);
+  min-width: 38px;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .atree-canvas {
+    max-height: 56vh;
+  }
+  /* Minimap is desktop-only — it's too small to drive on a touchscreen and
+     duplicates the function of pan-by-finger that overflow:auto already
+     provides for touch. */
+  .atree-minimap {
+    display: none;
+  }
+  .atree-zoom-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
 }
 </style>

@@ -354,13 +354,46 @@ main {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 720px) {
   .hero {
-    padding: 56px 0 40px;
+    padding: 48px 0 32px;
   }
+  .hero-title {
+    margin-bottom: 12px;
+  }
+  /* The wynnic decor sits behind the title; at large clamps it gets
+     visually loud on small screens. Soften and shrink it slightly. */
+  .hero-wynnic {
+    opacity: 0.035;
+    font-size: clamp(40px, 14vw, 72px);
+  }
+  .tools {
+    padding-bottom: 40px;
+  }
+  .tool-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .tool-card {
+    padding: 16px;
+    gap: 14px;
+    min-height: 76px;
+  }
+  .tool-card-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .upcoming {
+    padding-bottom: 56px;
+  }
+  .upcoming-heading {
+    margin-bottom: 14px;
+  }
+}
 
+@media (max-width: 600px) {
   .site-footer {
-    padding: 20px;
+    padding: 16px 20px;
   }
 }
 </style>

@@ -360,4 +360,43 @@ const displayQuality = computed(() => `${quality.value}%`)
 .bar-marker--2 {
   background: oklch(60% 0.008 30);
 }
+
+@media (max-width: 720px) {
+  .rolls {
+    padding: 14px 14px 16px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .sim-panel {
+    padding: 12px 12px;
+  }
+  /* id-top grid (90px 1fr auto) crowds the value column on phones; let
+     value drop onto its own row beside the range. */
+  .id-top {
+    grid-template-columns: 1fr auto;
+    gap: 6px 10px;
+  }
+  .id-name {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+  .id-value {
+    text-align: left;
+  }
+  .id-range {
+    text-align: right;
+  }
+  .slider::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+  }
+  .slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+  .slider {
+    height: 8px;
+  }
+}
 </style>

@@ -70,6 +70,13 @@ const showAtree = ref(true)
   margin: 0 auto;
 }
 
+@media (max-width: 720px) {
+  .builder {
+    gap: 14px;
+    padding: 16px 12px 48px;
+  }
+}
+
 .state-text {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 13px;
@@ -165,12 +172,21 @@ const showAtree = ref(true)
 @media (max-width: 720px) {
   .zones {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
   .zone-inputs {
     grid-column: auto;
   }
+  .zone {
+    gap: 10px;
+  }
+  .atree {
+    margin-top: 4px;
+    gap: 8px;
+  }
   .atree-split {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 }
 </style>

@@ -173,4 +173,18 @@ const activeAbilities = computed<AtreeNode[]>(() =>
 .mono {
   font-family: 'Geist Mono', 'Courier New', monospace;
 }
+
+@media (max-width: 720px) {
+  .active-panel {
+    max-height: 48vh;
+    padding: 12px 14px;
+    gap: 10px;
+  }
+  .list {
+    gap: 12px;
+  }
+  .item-title {
+    font-size: 13px;
+  }
+}
 </style>

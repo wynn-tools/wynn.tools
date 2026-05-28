@@ -330,8 +330,8 @@ function handleEquipClick() {
 
 .tt-container {
   position: relative;
-  width: 482px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 482px;
   font-family: 'wynncraft', var(--font-mono);
   letter-spacing: -1px;
   overflow: hidden;
@@ -516,6 +516,41 @@ function handleEquipClick() {
 }
 .tt-id-right {
   text-align: right;
+}
+
+/* On narrow phones the 482px in-game tooltip layout shrinks below ~360px
+   and the absolute padding starts to crowd the frame's inner edge. Trim
+   the inner padding and tighten the headline scale so the tooltip stays
+   readable without losing its pixel-art structure. */
+@media (max-width: 480px) {
+  .tt-inner {
+    padding: 22px 14px 14px;
+  }
+  .tt-name {
+    font-size: 18px;
+  }
+  .tt-dps span:first-child {
+    font-size: 22px;
+  }
+  .tt-dps-unit,
+  .tt-row,
+  .tt-dmg,
+  .tt-meta-row,
+  .tt-id {
+    font-size: 15px;
+  }
+  .tt-tag {
+    font-size: 15px;
+  }
+  .tt-emblemwrap {
+    min-width: 64px;
+    width: 64px;
+    height: 64px;
+  }
+  .tt-sprite {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 /* Equip-in-builder action */

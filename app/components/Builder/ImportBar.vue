@@ -338,6 +338,36 @@ function onKeydown(e: KeyboardEvent) {
   gap: 8px;
 }
 
+@media (max-width: 720px) {
+  .import-bar--collapsed {
+    align-items: stretch;
+  }
+  .trigger {
+    align-self: flex-end;
+  }
+  .input-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .url-input {
+    flex: 1 1 100%;
+    min-height: 36px;
+  }
+  .action-btn {
+    flex: 1;
+    padding: 8px 10px;
+    min-height: 36px;
+  }
+  .confirm-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .confirm-actions {
+    justify-content: flex-end;
+  }
+}
+
 .cancel-btn {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 10px;

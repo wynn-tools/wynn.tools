@@ -252,4 +252,31 @@ function onClear(e: MouseEvent) {
 .quickview-scale {
   zoom: 0.7;
 }
+
+/* Hover quickview is a desktop affordance. On touch a tap fires it stuck
+   behind the ingredient picker, hiding the actual chooser. */
+@media (hover: none), (pointer: coarse) {
+  .quickview {
+    display: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .slot {
+    min-height: 60px;
+    padding: 10px 12px;
+  }
+  .slot-name {
+    font-size: 13px;
+  }
+  .slot-eff {
+    top: 8px;
+    right: 32px;
+    font-size: 11px;
+  }
+  .slot-clear {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
 </style>

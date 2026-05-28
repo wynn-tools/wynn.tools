@@ -170,4 +170,18 @@ const def = computed(() => props.result.defense)
 .mono {
   font-family: 'Geist Mono', 'Courier New', monospace;
 }
+
+@media (max-width: 720px) {
+  .stats {
+    padding: 14px 14px;
+    gap: 12px;
+  }
+  .value--lg {
+    font-size: 20px;
+  }
+  .ledger--util {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
 </style>

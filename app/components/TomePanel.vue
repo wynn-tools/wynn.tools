@@ -159,6 +159,27 @@ const filled = computed(() => {
   border-top: 1px solid var(--color-border);
 }
 
+@media (max-width: 720px) {
+  .tomes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 8px;
+    padding: 10px 10px 12px;
+  }
+  .tome-cell {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .tomes-head {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .tomes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tome-cell {
   display: grid;
   grid-template-columns: 88px 1fr;

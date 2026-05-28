@@ -122,6 +122,7 @@ const itemSets = computed<ResolvedSet[]>(() => {
   position: sticky;
   top: 76px;
   align-self: start;
+  min-width: 0;
 }
 .panes {
   display: flex;
@@ -136,12 +137,33 @@ const itemSets = computed<ResolvedSet[]>(() => {
 }
 @media (max-width: 1024px) {
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 24px;
   }
   .hero {
     position: static;
     justify-self: center;
+    width: 100%;
+    max-width: 482px;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 0 56px;
+  }
+  .back {
+    margin-bottom: 10px;
+    padding: 8px 0;
+  }
+  .grid {
+    gap: 16px;
+  }
+  .panes {
+    gap: 12px;
+  }
+  .hero {
+    justify-self: stretch;
   }
 }
 </style>

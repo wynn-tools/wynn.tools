@@ -210,4 +210,20 @@ const theme = computed(() => tierTheme(props.item.tier))
 .denom--e {
   color: oklch(72% 0.13 140);
 }
+
+@media (max-width: 720px) {
+  .costs {
+    padding: 14px 14px 16px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 6px;
+  }
+  .entry {
+    padding: 10px 12px;
+  }
+}
 </style>

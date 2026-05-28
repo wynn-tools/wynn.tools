@@ -377,4 +377,21 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 .elem-glyph {
   margin-right: 4px;
 }
+
+@media (max-width: 720px) {
+  .output {
+    padding: 14px 14px;
+    gap: 12px;
+  }
+  .headline {
+    font-size: 26px;
+  }
+  .acc-trigger {
+    padding: 11px 12px;
+    min-height: 44px;
+  }
+  .acc-body {
+    padding: 6px 12px 12px 28px;
+  }
+}
 </style>

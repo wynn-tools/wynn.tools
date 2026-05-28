@@ -169,4 +169,22 @@ watch(
     display: none;
   }
 }
+
+@media (max-width: 720px) {
+  .crafter {
+    gap: 16px;
+    padding: 20px 12px 48px;
+  }
+
+  .crafter-main {
+    gap: 18px;
+  }
+
+  .crafter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 10px 0 12px;
+  }
+}
 </style>

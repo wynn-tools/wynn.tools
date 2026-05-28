@@ -298,4 +298,34 @@ function removeSet(name: string): void {
 .f-slider-thumb:active {
   cursor: grabbing;
 }
+
+@media (max-width: 720px) {
+  .filters {
+    gap: 18px;
+  }
+  .f-input {
+    padding: 10px 12px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+  .f-group button {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-height: 34px;
+  }
+  .f-chip {
+    padding: 6px 10px;
+    font-size: 13px;
+    min-height: 32px;
+  }
+  /* Slider thumb needs to be finger-friendly; track stays slim to keep the
+     thermal/precision feel of the design system. */
+  .f-slider {
+    padding-block: 12px;
+  }
+  .f-slider-thumb {
+    height: 20px;
+    width: 20px;
+  }
+}
 </style>

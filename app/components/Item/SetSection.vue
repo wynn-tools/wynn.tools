@@ -232,4 +232,28 @@ const bonuses = computed<BonusRow[]>(() => {
 .bonus-label {
   font-size: 12px;
 }
+
+@media (max-width: 720px) {
+  .set {
+    padding: 14px 14px 16px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .piece {
+    padding: 9px 10px;
+    min-height: 40px;
+  }
+  .bonus {
+    grid-template-columns: 48px 1fr;
+    gap: 12px;
+  }
+  .bonus-pieces {
+    font-size: 20px;
+  }
+  .bonus-list {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 4px 12px;
+  }
+}
 </style>

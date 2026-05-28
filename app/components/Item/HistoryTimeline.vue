@@ -216,6 +216,22 @@ function fmt(v: number | null, unit: string): string {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+@media (max-width: 720px) {
+  .history {
+    padding: 14px 14px 16px;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .entry {
+    padding: 12px 0;
+  }
+  .more {
+    padding: 9px 12px;
+    min-height: 36px;
+  }
+}
+
 @media (max-width: 520px) {
   .entry {
     grid-template-columns: 1fr;

@@ -221,4 +221,56 @@ onUnmounted(() => {
   color: var(--color-muted);
   border-color: var(--color-muted);
 }
+
+@media (max-width: 720px) {
+  .picker-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .picker {
+    width: 100%;
+    max-width: 100%;
+    max-height: 88vh;
+    border-radius: 14px 14px 0 0;
+    border-bottom: none;
+    box-shadow: 0 -8px 32px oklch(0% 0 0 / 0.45);
+    animation: ingredient-picker-rise 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .picker-header {
+    padding: 12px 14px;
+  }
+  .picker-search {
+    font-size: 14px;
+    min-height: 30px;
+  }
+  .picker-close {
+    font-size: 18px;
+    padding: 6px 10px;
+    margin-left: 4px;
+  }
+  .picker-item--none {
+    padding: 12px 14px;
+    font-size: 13px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@keyframes ingredient-picker-rise {
+  from {
+    transform: translateY(20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picker {
+    animation: none;
+  }
+}
 </style>
