@@ -41,7 +41,7 @@ function toggleStr(list: string[], value: string): string[] {
       <SliderRoot
         v-model="levelRange"
         :min="1"
-        :max="110"
+        :max="120"
         :step="1"
         class="f-slider"
       >

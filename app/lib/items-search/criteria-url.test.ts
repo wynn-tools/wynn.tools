@@ -28,7 +28,7 @@ describe('criteria url', () => {
   })
 
   it('malformed query falls back to defaults', () => {
-    expect(queryToItemCriteria({ lvl: 'garbage' }).levelRange).toEqual([1, 110])
+    expect(queryToItemCriteria({ lvl: 'garbage' }).levelRange).toEqual([1, 120])
   })
 
   it('round-trips a populated ingredient criteria', () => {
