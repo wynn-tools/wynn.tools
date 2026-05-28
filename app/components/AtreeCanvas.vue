@@ -109,11 +109,13 @@ const apOverCap = computed(() =>
   store.atreeValidation.apTotal > store.atreeValidation.apCap,
 )
 
+// `node--<state>` drive resting visuals via scoped CSS below. The hover
+// brightness for interactive states stays inline for Tailwind ergonomics.
 const NODE_STATE_CLASSES: Record<NodeState, string> = {
-  active: 'opacity-100 cursor-pointer hover:brightness-[1.15]',
-  selectable: 'opacity-100 cursor-pointer hover:brightness-[1.15]',
-  locked: 'opacity-45 cursor-not-allowed [filter:grayscale(0.7)_brightness(0.5)]',
-  blocked: 'opacity-45 cursor-not-allowed [filter:grayscale(0.7)_brightness(0.5)_sepia(0.5)_hue-rotate(310deg)]',
+  active: 'node--active cursor-pointer hover:brightness-[1.15]',
+  selectable: 'node--selectable cursor-pointer hover:brightness-[1.15]',
+  locked: 'node--locked cursor-not-allowed',
+  blocked: 'node--blocked cursor-not-allowed',
 }
 
 function onNodeClick(id: number, e: MouseEvent) {
@@ -150,9 +152,9 @@ function onNodeClick(id: number, e: MouseEvent) {
       </div>
 
       <!-- Scrollable canvas -->
-      <div class="max-h-[60vh] overflow-auto rounded border border-border bg-bg">
+      <div class="atree-canvas max-h-[60vh] overflow-auto rounded border border-border">
         <div
-          class="relative shrink-0"
+          class="atree-grid relative shrink-0"
           :style="{ width: `${gridWidth}px`, height: `${gridHeight}px` }"
         >
           <!-- Connector tile images (behind nodes) -->
@@ -268,3 +270,63 @@ function onNodeClick(id: number, e: MouseEvent) {
     </div>
   </TooltipProvider>
 </template>
+
+<style scoped>
+/* Lift the canvas above page bg so the pixel-art icons read against
+   something other than near-black, and lay a faint copper grid behind
+   the tree so empty regions still feel like coordinate space. */
+.atree-canvas {
+  background-color: var(--color-surface);
+}
+
+.atree-grid {
+  background-image: radial-gradient(circle at 22px 22px, oklch(65% 0.15 48 / 0.05) 1px, transparent 1.5px);
+  background-size: 44px 44px;
+}
+
+/* Brighten the dim "pulse" rest art so it reads on the lifted surface.
+   Active/hover overlays still hit 100% via their own opacity transitions. */
+:deep(.node--selectable) img,
+:deep(.node--active) img {
+  filter: brightness(1.12) contrast(1.05);
+}
+
+/* Locked / blocked: softer than before. Old multiplied luminance was
+   ~22%; the new combination lands around 50% — clearly inactive without
+   becoming invisible. Grayscale preserved so colored icons read as
+   "out of reach" rather than just dim. */
+:deep(.node--locked) img {
+  opacity: 0.65;
+  filter: grayscale(0.6) brightness(0.78);
+}
+:deep(.node--blocked) img {
+  opacity: 0.6;
+  filter: grayscale(0.55) brightness(0.72) sepia(0.5) hue-rotate(310deg);
+}
+
+/* Copper halo behind selectable nodes — the frontier of the tree gets a
+   subtle warm glow so the user can see at a glance "I can click here next".
+   Sized larger than the node and pushed behind the icon images. */
+.node--selectable::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    oklch(65% 0.15 48 / 0.22) 0%,
+    oklch(65% 0.15 48 / 0.08) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transition: opacity 0.18s ease-out;
+}
+.node--selectable:hover::before {
+  background: radial-gradient(
+    circle at center,
+    oklch(65% 0.15 48 / 0.38) 0%,
+    oklch(65% 0.15 48 / 0.14) 45%,
+    transparent 72%
+  );
+}
+</style>
