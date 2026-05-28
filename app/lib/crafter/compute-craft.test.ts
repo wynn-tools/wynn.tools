@@ -2,7 +2,8 @@ import type { Ingredient } from '../data/cdn-adapter/ingredient-adapter'
 import type { Recipe } from '../data/cdn-adapter/recipe-adapter'
 import type { CraftContext, RawCraft } from './types'
 import { describe, expect, it } from 'vitest'
-import { computeCraft } from './compute-craft'
+import { computeCraft, computeCraftWithEffectiveness } from './compute-craft'
+import { resolveCraft } from './resolve'
 
 // ---------------------------------------------------------------------------
 // Fixture helpers. The shapes mirror what `adaptRecipes` / `adaptIngredients`
@@ -205,6 +206,8 @@ describe('computeCraft — base math (Task 5)', () => {
     // matmult = 1.0, no ingredients → durability unchanged.
     expect(out.durability).toEqual([400, 500])
     // hp/damage range mat-scaling for weapons is deferred (lives in lib/math/dps).
+    // Locks down the "weapon damage range is not computed in compute-craft" decision.
+    expect(out.damage).toBeUndefined()
     expect(out.reqs).toEqual({
       level: 73,
       strReq: 0,
@@ -268,5 +271,194 @@ describe('computeCraft — base math (Task 5)', () => {
     // slots stays 0 for consumables
     expect(out.slots).toBe(0)
     expect(out.identifications).toEqual({ mr: { min: 1, max: 1 } })
+  })
+
+  /**
+   * Accessory (ring): category dispatch + id aggregation; locks down
+   * `slots === 0` (accessories never carry powder slots) and that durability /
+   * duration / charges all stay undefined.
+   */
+  it('accessory: ring carries identifications, slots=0, no durability/duration', () => {
+    const recipe: Recipe = {
+      id: 4,
+      name: 'Ring10-12',
+      type: 'ring',
+      skill: 'jeweling',
+      lvl: [10, 12],
+      durability: [0, 0],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ing = makeIngredient({
+      id: 500,
+      identifications: { hpBonus: { min: 5, max: 10, raw: 5 } },
+      itemOnlyIDs: {
+        durabilityModifier: 0,
+        strReq: 3,
+        dexReq: 0,
+        intReq: 0,
+        defReq: 0,
+        agiReq: 0,
+      },
+    })
+    const ctx: CraftContext = {
+      recipes: new Map([[4, recipe]]),
+      ingredients: new Map([[500, ing]]),
+    }
+    const raw: RawCraft = {
+      recipeId: 4,
+      ingredientIds: [500, null, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [],
+    }
+    const out = computeCraft(raw, ctx)
+    expect(out.category).toBe('accessory')
+    expect(out.type).toBe('ring')
+    expect(out.slots).toBe(0)
+    // accessories carry a durability field today (compute-craft treats anything
+    // non-consumable identically); the recipe has zero durability so it rolls
+    // out to [0, 0]. Renderers ignore this field for accessories.
+    expect(out.durability).toEqual([0, 0])
+    expect(out.duration).toBeUndefined()
+    expect(out.charges).toBeUndefined()
+    expect(out.identifications).toEqual({ hpBonus: { min: 5, max: 10 } })
+    expect(out.reqs).toEqual({
+      level: 12,
+      strReq: 3,
+      dexReq: 0,
+      intReq: 0,
+      defReq: 0,
+      agiReq: 0,
+    })
+  })
+
+  /**
+   * Locks the req-rounding contract: **each per-ingredient contribution is
+   * rounded, then summed** (matches craft.js). The previous implementation
+   * applied a running `Math.round(reqs + v * eff)` which, while numerically
+   * equivalent under standard half-to-+∞ rounding for integer accumulators,
+   * is the wrong shape and would diverge under alternative rounding modes
+   * (banker's, truncation, etc).
+   *
+   * Synthetic injection via `computeCraftWithEffectiveness` lets us exercise
+   * non-100% effectiveness before Task 6 wires the real matrix.
+   *
+   * Hand-derived (slot 0 eff=120, slot 2 eff=80):
+   *   strReq: round(3 * 1.2) + round(5 * 0.8)
+   *         = round(3.6)     + round(4.0)
+   *         = 4              + 4              = 8
+   *   dexReq: round(1 * 1.2) + round(-2 * 0.8)
+   *         = round(1.2)     + round(-1.6)
+   *         = 1              + -2             = -1 → max(0, -1) = 0
+   *   intReq: round(5 * 1.2) + round(2 * 0.8)
+   *         = round(6.0)     + round(1.6)
+   *         = 6              + 2              = 8
+   *   defReq: round(2 * 1.2) + round(2 * 0.8)
+   *         = round(2.4)     + round(1.6)
+   *         = 2              + 2              = 4
+   *   agiReq: 0 (no contributions)
+   *
+   *   identifications mdPct (slot 0 only):
+   *     min = floor(2 * 1.2) = floor(2.4) = 2
+   *     max = floor(6 * 1.2) = floor(7.2) = 7
+   *
+   *   identifications spd (slot 2 only):
+   *     floor(-5 * 0.8) = floor(-4.0) = -4
+   *     floor(-2 * 0.8) = floor(-1.6) = -2
+   *     sorted ascending → [-4, -2]
+   */
+  it('req rounding: rounds each per-ingredient contribution then sums (non-100% eff)', () => {
+    const recipe: Recipe = {
+      id: 10,
+      name: 'Helmet50-55',
+      type: 'helmet',
+      skill: 'armouring',
+      lvl: [50, 55],
+      durability: [100, 100],
+      hp: [50, 60],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ingA = makeIngredient({
+      id: 1000,
+      identifications: { mdPct: { min: 2, max: 6, raw: 2 } },
+      itemOnlyIDs: {
+        durabilityModifier: 0,
+        strReq: 3,
+        dexReq: 1,
+        intReq: 5,
+        defReq: 2,
+        agiReq: 0,
+      },
+    })
+    const ingB = makeIngredient({
+      id: 2000,
+      identifications: { spd: { min: -5, max: -2, raw: -5 } },
+      itemOnlyIDs: {
+        durabilityModifier: 0,
+        strReq: 5,
+        dexReq: -2,
+        intReq: 2,
+        defReq: 2,
+        agiReq: 0,
+      },
+    })
+    const ctx: CraftContext = {
+      recipes: new Map([[10, recipe]]),
+      ingredients: new Map([[1000, ingA], [2000, ingB]]),
+    }
+    const raw: RawCraft = {
+      recipeId: 10,
+      ingredientIds: [1000, null, 2000, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [],
+    }
+
+    const { recipe: r, ingredients } = resolveCraft(raw, ctx)
+    const eff = [120, 100, 80, 100, 100, 100]
+    const out = computeCraftWithEffectiveness(raw, r, ingredients, eff)
+
+    expect(out.reqs).toEqual({
+      level: 55,
+      strReq: 8,
+      dexReq: 0,
+      intReq: 8,
+      defReq: 4,
+      agiReq: 0,
+    })
+    expect(out.identifications).toEqual({
+      mdPct: { min: 2, max: 7 },
+      spd: { min: -4, max: -2 },
+    })
+  })
+
+  it('throws when recipe materials contract is violated (length != 2)', () => {
+    const recipe = {
+      id: 99,
+      name: 'Bad',
+      type: 'boots',
+      skill: 'tailoring',
+      lvl: [1, 1],
+      durability: [10, 10],
+      materials: [{ item: 'mat1', amount: 1 }],
+    } as unknown as Recipe
+    const ctx: CraftContext = {
+      recipes: new Map([[99, recipe]]),
+      ingredients: new Map(),
+    }
+    const raw: RawCraft = {
+      recipeId: 99,
+      ingredientIds: [null, null, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [],
+    }
+    expect(() => computeCraft(raw, ctx)).toThrow(/exactly 2 materials/)
   })
 })

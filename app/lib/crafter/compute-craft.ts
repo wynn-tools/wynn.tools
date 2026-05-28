@@ -8,8 +8,9 @@ import { resolveCraft } from './resolve'
 //
 // Task 5 scope: recipe expansion, mat-tier scaling, identification + req
 // aggregation. Effectiveness is stubbed at 100% (Task 6 will replace
-// `computeEffectiveness` with the real 3×2 matrix). Powders are passed through
-// but not applied (Task 7).
+// `computeEffectiveness` with the real 3×2 matrix); the actual aggregation
+// lives in `computeCraftWithEffectiveness` so tests can inject non-100%
+// arrays. Powders are passed through but not applied (Task 7).
 // ---------------------------------------------------------------------------
 
 const WEAPON_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
@@ -40,13 +41,24 @@ function categoryFor(type: string): Category {
  * craft.js lines 309-314:
  *   matmult = (tierToMult[t1]*amount1 + tierToMult[t2]*amount2) / (amount1+amount2)
  *
- * Recipes always have two materials. Fallback to 1 when amounts are missing so
- * unit tests with synthetic recipes don't divide-by-zero.
+ * The recipe adapter guarantees every recipe carries exactly two materials,
+ * each with a positive `amount`. Violating that contract is a bug in the
+ * adapter (or hand-rolled fixture), not something we silently paper over.
  */
 function computeMatMult(recipe: Recipe, matTiers: [1 | 2 | 3, 1 | 2 | 3]): number {
-  const mats = recipe.materials ?? []
-  const a1 = mats[0]?.amount ?? 1
-  const a2 = mats[1]?.amount ?? 1
+  const mats = recipe.materials
+  if (!mats || mats.length !== 2) {
+    throw new Error(
+      `computeCraft: recipe ${recipe.id} (${recipe.name}) must have exactly 2 materials, got ${mats?.length ?? 0}`,
+    )
+  }
+  const a1 = mats[0]?.amount
+  const a2 = mats[1]?.amount
+  if (typeof a1 !== 'number' || typeof a2 !== 'number') {
+    throw new TypeError(
+      `computeCraft: recipe ${recipe.id} (${recipe.name}) has materials with missing amount`,
+    )
+  }
   return (TIER_TO_MULT[matTiers[0]] * a1 + TIER_TO_MULT[matTiers[1]] * a2) / (a1 + a2)
 }
 
@@ -73,6 +85,22 @@ export function computeEffectiveness(_ingredients: (Ingredient | null)[]): numbe
 
 export function computeCraft(raw: RawCraft, ctx: CraftContext): CraftedItem {
   const { recipe, ingredients } = resolveCraft(raw, ctx)
+  const eff = computeEffectiveness(ingredients)
+  return computeCraftWithEffectiveness(raw, recipe, ingredients, eff)
+}
+
+/**
+ * Internal: same as `computeCraft` but accepts an explicit 6-element
+ * effectiveness array. Exported for tests so they can exercise non-100%
+ * effectiveness before Task 6 replaces `computeEffectiveness` with the real
+ * 3×2 matrix. Production code should call `computeCraft`.
+ */
+export function computeCraftWithEffectiveness(
+  raw: RawCraft,
+  recipe: Recipe,
+  ingredients: (Ingredient | null)[],
+  eff: number[],
+): CraftedItem {
   const category = categoryFor(recipe.type)
   const lvlLow = recipe.lvl[0]
   const lvl = recipe.lvl[1]
@@ -118,8 +146,6 @@ export function computeCraft(raw: RawCraft, ctx: CraftContext): CraftedItem {
   }
 
   // ---------- 2. Aggregate ingredient identifications & itemIDs ----------
-  const eff = computeEffectiveness(ingredients)
-
   // Sum buckets keyed by the adapter's shorthand key.
   const idMin: Record<string, number> = {}
   const idMax: Record<string, number> = {}
@@ -153,7 +179,7 @@ export function computeCraft(raw: RawCraft, ctx: CraftContext): CraftedItem {
       for (const skp of SKP_REQ_KEYS) {
         const v = ing.itemOnlyIDs[skp]
         if (v)
-          reqs[skp] = Math.round(reqs[skp] + v * effMult)
+          reqs[skp] += Math.round(v * effMult)
       }
     }
     // Durability modifier applies to weapons/armor (accessories carry no
