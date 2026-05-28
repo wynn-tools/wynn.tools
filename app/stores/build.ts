@@ -6,7 +6,7 @@ import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
-import { loadBuildContext, peekVersionId, resolveLatestVersionId } from '~/composables/useBuildData'
+import { loadBuildContext, peekVersionId, resolveLatestVersion } from '~/composables/useBuildData'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { unlockPathTo } from '~/lib/atree/pathfind'
 import { validateAtree } from '~/lib/atree/validate'
@@ -46,20 +46,37 @@ export const useBuildStore = defineStore('build', () => {
   const weaponTypeFn = shallowRef<((id: number) => string | null) | null>(null)
   const searchItemById = shallowRef<Map<number, SearchItem> | null>(null)
   const loading = ref(false)
+  const loadedVersionId = ref<number | null>(null)
+  const latestVersionId = ref<number | null>(null)
+  const loadedGameVersion = ref<string | null>(null)
+  const latestGameVersion = ref<string | null>(null)
   const error = ref<string | null>(null)
+
+  const isOldVersion = computed<boolean>(() =>
+    loadedVersionId.value !== null
+    && latestVersionId.value !== null
+    && loadedVersionId.value < latestVersionId.value,
+  )
 
   async function loadFromHash(hash: string, client: CdnClient) {
     loading.value = true
     error.value = null
     try {
       const versionId = peekVersionId(hash)
-      const loaded = await loadBuildContext(client, versionId)
+      const [loaded, latest] = await Promise.all([
+        loadBuildContext(client, versionId),
+        resolveLatestVersion(client),
+      ])
       const raw = decodeRawBuild(hash, () => ({ enc: loaded.enc, atreeData: loaded.ctx.atreeData, weaponType: loaded.weaponType }))
       ctx.value = loaded.ctx
       enc.value = loaded.enc
       weaponTypeFn.value = loaded.weaponType
       searchItemById.value = loaded.searchItemById
       rawBuild.value = raw
+      loadedVersionId.value = versionId
+      loadedGameVersion.value = loaded.gameVersion
+      latestVersionId.value = latest.versionId
+      latestGameVersion.value = latest.gameVersion
     }
     catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
@@ -77,16 +94,20 @@ export const useBuildStore = defineStore('build', () => {
     loading.value = true
     error.value = null
     try {
-      const versionId = await resolveLatestVersionId(client)
-      const loaded = await loadBuildContext(client, versionId)
+      const latest = await resolveLatestVersion(client)
+      const loaded = await loadBuildContext(client, latest.versionId)
       const e = loaded.enc
       ctx.value = loaded.ctx
       enc.value = e
       weaponTypeFn.value = loaded.weaponType
       searchItemById.value = loaded.searchItemById
       atreeMessage.value = null
+      loadedVersionId.value = latest.versionId
+      loadedGameVersion.value = loaded.gameVersion
+      latestVersionId.value = latest.versionId
+      latestGameVersion.value = latest.gameVersion
       rawBuild.value = {
-        versionId,
+        versionId: latest.versionId,
         equipmentIds: Array.from({ length: num(e, 'EQUIPMENT_NUM') }).fill(null),
         powders: Array.from({ length: POWDER_INDEX_BY_SLOT.size }, () => []),
         tomeIds: Array.from({ length: num(e, 'TOME_NUM') }).fill(null),
@@ -101,6 +122,41 @@ export const useBuildStore = defineStore('build', () => {
       rawBuild.value = null
       ctx.value = null
       searchItemById.value = null
+    }
+    finally {
+      loading.value = false
+    }
+  }
+
+  async function upgradeBuild(client: CdnClient) {
+    if (!rawBuild.value || latestVersionId.value === null)
+      return
+    loading.value = true
+    error.value = null
+    try {
+      const newVersionId = latestVersionId.value
+      const loaded = await loadBuildContext(client, newVersionId)
+      const old = rawBuild.value
+
+      const equipmentIds = old.equipmentIds.map(id =>
+        id != null && loaded.ctx.rawItemIndex.resolveId(id) !== null ? id : null,
+      ) as Array<number | null>
+      const tomeIds = old.tomeIds.map(id =>
+        id != null && loaded.ctx.tomeIndex.resolveId(id) !== null ? id : null,
+      ) as Array<number | null>
+      const aspects = old.aspects.map(() => null) as Array<null>
+
+      ctx.value = loaded.ctx
+      enc.value = loaded.enc
+      weaponTypeFn.value = loaded.weaponType
+      searchItemById.value = loaded.searchItemById
+      loadedVersionId.value = newVersionId
+      loadedGameVersion.value = loaded.gameVersion
+      atreeMessage.value = null
+      rawBuild.value = { ...old, versionId: newVersionId, equipmentIds, tomeIds, aspects, activeAtree: [] }
+    }
+    catch (e) {
+      error.value = e instanceof Error ? e.message : String(e)
     }
     finally {
       loading.value = false
@@ -285,5 +341,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, setItem, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
 })
