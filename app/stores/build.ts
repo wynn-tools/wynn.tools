@@ -21,6 +21,18 @@ const DEFAULT_LEVEL = 106
 
 const SLOT_TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'ring', 'bracelet', 'necklace'] as const
 
+const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
+
+function makeRecipeIsWeapon(ctx: BuildContext): (recipeId: number) => boolean {
+  const recipes = ctx.craftContext?.recipes
+  if (!recipes)
+    return () => false
+  return (recipeId: number) => {
+    const rec = recipes.get(recipeId)
+    return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
+  }
+}
+
 export const TOME_SLOT_TYPES: Record<number, string> = {
   0: 'weaponTome',
   1: 'weaponTome',
@@ -71,10 +83,7 @@ export const useBuildStore = defineStore('build', () => {
         enc: loaded.enc,
         atreeData: loaded.ctx.atreeData,
         weaponType: loaded.weaponType,
-        // No crafted-slot support at decode time yet (Task 11 will wire the
-        // real lookup from the recipes CDN). All-false is safe as long as
-        // the encoded build contains no CRAFTED slots.
-        recipeIsWeapon: () => false,
+        recipeIsWeapon: makeRecipeIsWeapon(loaded.ctx),
       }))
       ctx.value = loaded.ctx
       enc.value = loaded.enc

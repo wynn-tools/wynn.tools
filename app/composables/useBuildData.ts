@@ -1,9 +1,12 @@
 import type { BuildContext } from '~/lib/build/compute-build'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
+import type { CraftContext } from '~/lib/crafter/types'
 import type { CdnAspect } from '~/lib/data/cdn-adapter/aspect-adapter'
 import type { CdnAtreeFile } from '~/lib/data/cdn-adapter/atree-adapter'
+import type { RawIngredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import type { OutputItem } from '~/lib/data/cdn-adapter/item-adapter'
 import type { CdnMajorIdEntry } from '~/lib/data/cdn-adapter/majid-adapter'
+import type { RawRecipe } from '~/lib/data/cdn-adapter/recipe-adapter'
 import type { OutputTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import type { VersionEntry } from '~/lib/data/cdn-adapter/version-paths'
 import type { CdnClient } from '~/lib/data/cdn-client'
@@ -13,8 +16,10 @@ import { BitVector, BitVectorCursor } from '~/lib/codec/bit-vector'
 import { decodeHeader } from '~/lib/codec/header'
 import { mergeClassAspects } from '~/lib/data/cdn-adapter/aspect-adapter'
 import { mergeClassAtrees } from '~/lib/data/cdn-adapter/atree-adapter'
+import { adaptIngredients } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import { adaptCdnItem } from '~/lib/data/cdn-adapter/item-adapter'
 import { adaptCdnMajorIds } from '~/lib/data/cdn-adapter/majid-adapter'
+import { adaptRecipes } from '~/lib/data/cdn-adapter/recipe-adapter'
 import { adaptCdnSets } from '~/lib/data/cdn-adapter/sets-adapter'
 import { adaptCdnTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import { cdnPathFor, latestVersionId, resolveVersionSegment } from '~/lib/data/cdn-adapter/version-paths'
@@ -74,7 +79,7 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
     const segment = resolveVersionSegment(versionId, versions)
     const get = <T>(file: string): Promise<T> => client.fetchJson<T>(cdnPathFor(segment, file))
 
-    const [itemsFile, tomesFile, setsFile, enc, atreeEntries, aspectEntries, majidFile] = await Promise.all([
+    const [itemsFile, tomesFile, setsFile, enc, atreeEntries, aspectEntries, majidFile, ingredientsFile, recipesFile] = await Promise.all([
       get<{ items: OutputItem[] }>('items.json'),
       get<{ tomes: OutputTome[] }>('tomes.json'),
       // sets.json is a new file absent from backfilled historical snapshots
@@ -87,6 +92,10 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
         [cls, await get<{ aspects: CdnAspect[] }>(`aspects/${file}.json`)] as const)),
       // majid.json absent from backfilled historical snapshots; tolerate with empty map
       get<Record<string, CdnMajorIdEntry>>('majid.json').catch(() => ({})),
+      // ingredients.json / recipes.json may be absent from older snapshots;
+      // tolerate their absence with empty arrays (crafter is unusable then).
+      get<{ ingredients: RawIngredient[] }>('ingredients.json').catch(() => ({ ingredients: [] })),
+      get<{ recipes: RawRecipe[] }>('recipes.json').catch(() => ({ recipes: [] })),
     ])
     ;(enc as Record<string, unknown>).POWDER_ELEMENTS_COUNT = (enc.POWDER_ELEMENTS as unknown[]).length
 
@@ -105,8 +114,17 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
     }
     const searchItems = adaptItems({ items: itemsFile.items })
     const searchItemById = new Map<number, SearchItem>(searchItems.map(s => [s.id, s]))
+
+    const ingredients = new Map<number, import('~/lib/data/cdn-adapter/ingredient-adapter').Ingredient>()
+    for (const ing of adaptIngredients(ingredientsFile))
+      ingredients.set(ing.id, ing)
+    const recipes = new Map<number, import('~/lib/data/cdn-adapter/recipe-adapter').Recipe>()
+    for (const rec of adaptRecipes(recipesFile))
+      recipes.set(rec.id, rec)
+    const craftContext: CraftContext = { ingredients, recipes }
+
     return {
-      ctx: { rawItemIndex, sets, atreeData, tomeIndex, aspectData, majorIdData },
+      ctx: { rawItemIndex, sets, atreeData, tomeIndex, aspectData, majorIdData, craftContext },
       enc,
       weaponType: (id: number) => typeById.get(id) ?? null,
       searchItemById,

@@ -29,11 +29,18 @@ const { data: buildMeta } = await useAsyncData(
       const client = useCdnClient()
       const versionId = peekVersionId(hash.value)
       const loaded = await loadBuildContext(client, versionId)
+      const recipes = loaded.ctx.craftContext?.recipes
+      const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
       const raw = decodeRawBuild(hash.value, () => ({
         enc: loaded.enc,
         atreeData: loaded.ctx.atreeData,
         weaponType: loaded.weaponType,
-        recipeIsWeapon: () => false,
+        recipeIsWeapon: recipes
+          ? (id: number) => {
+              const rec = recipes.get(id)
+              return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
+            }
+          : () => false,
       }))
       const result = computeBuild(raw, loaded.ctx)
       return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result)
