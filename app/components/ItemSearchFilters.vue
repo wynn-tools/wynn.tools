@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { ItemCriteria } from '~/lib/items-search/types'
 
+const props = defineProps<{ majorIdOptions?: string[] }>()
 const criteria = defineModel<ItemCriteria>({ required: true })
+
+const majorIds = computed(() => props.majorIdOptions ?? [])
 
 const TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'bracelet', 'necklace', 'bow', 'spear', 'wand', 'dagger', 'relik']
 const TIERS = ['Normal', 'Unique', 'Rare', 'Legendary', 'Fabled', 'Mythic', 'Set', 'Crafted']
@@ -68,6 +71,22 @@ function toggle(list: string[], value: string): string[] {
       </button>
     </fieldset>
 
+    <fieldset v-if="majorIds.length" class="f-group f-group--col">
+      <legend>Major ID</legend>
+      <select
+        class="f-select"
+        :value="criteria.majorId ?? ''"
+        @change="criteria = { ...criteria, majorId: ($event.target as HTMLSelectElement).value || null }"
+      >
+        <option value="">
+          Any
+        </option>
+        <option v-for="m in majorIds" :key="m" :value="m">
+          {{ m }}
+        </option>
+      </select>
+    </fieldset>
+
     <fieldset class="f-group f-group--col">
       <legend>Identifications</legend>
       <IdentificationFilterList
@@ -93,6 +112,14 @@ function toggle(list: string[], value: string): string[] {
   padding: 8px 10px;
   color: var(--color-text);
   font-size: 13px;
+}
+.f-select {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: var(--color-text);
+  font-size: 12px;
 }
 .f-group {
   border: none;

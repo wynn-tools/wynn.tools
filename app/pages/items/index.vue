@@ -14,6 +14,11 @@ const tab = ref<'items' | 'ingredients'>('items')
 const itemResults = computed(() => data.value ? filterItems(data.value.items, criteria.value) : [])
 const ingredientResults = computed(() => data.value ? filterIngredients(data.value.ingredients, ingredientCriteria.value) : [])
 const idKeys = computed(() => criteria.value.idSorts.map(s => s.key))
+const majorIdOptions = computed(() =>
+  data.value
+    ? [...new Set(data.value.items.flatMap(i => i.majorIds.map(m => m.name)))].sort()
+    : [],
+)
 </script>
 
 <template>
@@ -38,7 +43,7 @@ const idKeys = computed(() => criteria.value.idSorts.map(s => s.key))
 
     <div v-else class="layout">
       <aside class="sidebar">
-        <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" />
+        <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" />
         <IngredientSearchFilters v-else v-model="ingredientCriteria" />
       </aside>
 
