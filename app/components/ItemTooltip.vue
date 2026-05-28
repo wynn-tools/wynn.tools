@@ -212,7 +212,7 @@ function sepStyle() {
   position: relative;
   width: 420px;
   max-width: 100%;
-  font-family: 'wynn-default', var(--font-mono);
+  font-family: 'wynncraft', var(--font-mono);
   letter-spacing: -1px;
   overflow: hidden;
 }

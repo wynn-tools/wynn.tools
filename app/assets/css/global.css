@@ -3,6 +3,13 @@
 
 /* ── Wynncraft fonts (self-hosted) ── */
 @font-face {
+  font-family: 'wynncraft';
+  src: url('/fonts/wynncraft.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
   font-family: 'wynn-wynnic';
   src: url('/fonts/wynnic.woff') format('woff');
   font-weight: normal;
