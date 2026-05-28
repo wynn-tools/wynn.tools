@@ -47,11 +47,20 @@ export async function resolveLatestVersionId(client: CdnClient): Promise<number>
   return latestVersionId(await fetchVersions(client))
 }
 
+/** Returns the versionId and gameVersion string for the newest CDN snapshot. */
+export async function resolveLatestVersion(client: CdnClient): Promise<{ versionId: number, gameVersion: string }> {
+  const versions = await fetchVersions(client)
+  const versionId = latestVersionId(versions)
+  const gameVersion = resolveVersionSegment(versionId, versions)
+  return { versionId, gameVersion }
+}
+
 export interface LoadedBuildData {
   ctx: BuildContext
   enc: EncodingConstants
   weaponType: (id: number) => string | null
   searchItemById: Map<number, SearchItem>
+  gameVersion: string
 }
 
 const cache = new Map<number, Promise<LoadedBuildData>>()
@@ -101,6 +110,7 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
       enc,
       weaponType: (id: number) => typeById.get(id) ?? null,
       searchItemById,
+      gameVersion: segment,
     } satisfies LoadedBuildData
   })()
   cache.set(versionId, promise)
