@@ -15,6 +15,9 @@ const showAtree = ref(true)
       Failed to load build: {{ store.error }}
     </p>
     <template v-else-if="store.rawBuild">
+      <BuilderOldVersionModal />
+      <BuilderOldVersionBanner />
+
       <!-- Header strip: skillpoints + level live at the top because they
            gate every other input below. -->
       <SkillpointPanel />
