@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Layers, Map, Plug, Share2, Sword, UserCircle } from '@lucide/vue'
+import { Layers, Map, Plug, Search, Share2, Sword, UserCircle } from '@lucide/vue'
 
 const tools = [
   {
@@ -7,6 +7,12 @@ const tools = [
     desc: 'Plan builds, assign skill points, compare gear.',
     href: '/builder',
     icon: Sword,
+  },
+  {
+    name: 'Items',
+    desc: 'Search and filter Wynncraft items and ingredients.',
+    href: '/items',
+    icon: Search,
   },
   {
     name: 'Map',
