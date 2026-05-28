@@ -182,7 +182,7 @@ function onBlur() {
         :style="{
           top: `${listPos.top}px`,
           left: `${listPos.left}px`,
-          width: `${listPos.width}px`,
+          minWidth: `${listPos.width}px`,
         }"
       >
         <li v-if="filtered.length === 0" class="cb-empty" role="option" aria-disabled="true">
@@ -285,6 +285,12 @@ function onBlur() {
 :global(.cb-list) {
   position: fixed;
   z-index: 1000;
+  /* Grow with longest option (kept on one line via .cb-option below), capped
+     so the list never dominates the viewport on tiny screens. min-width is
+     set inline from the field's bounding rect — the list is at least as wide
+     as the trigger, and can expand wider when content needs it. */
+  width: max-content;
+  max-width: min(480px, calc(100vw - 24px));
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 6px;
