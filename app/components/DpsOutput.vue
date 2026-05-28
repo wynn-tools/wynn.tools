@@ -10,7 +10,7 @@ function toggle(key: string) {
   open.value = { ...open.value, [key]: !open.value[key] }
 }
 
-function fmt(n: number, digits = 0) {
+function fmt(n: number, digits = 2) {
   return n.toLocaleString(undefined, {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
@@ -43,11 +43,11 @@ const melee = computed(() => props.result.melee)
           </div>
           <div class="row">
             <span class="label">Per Attack</span>
-            <span class="value mono">{{ fmt(melee.perAttack, 0) }}</span>
+            <span class="value mono">{{ fmt(melee.perAttack) }}</span>
           </div>
           <div class="row">
             <span class="label">Average DPS</span>
-            <span class="value value--copper mono">{{ fmt(melee.averageDps, 0) }}</span>
+            <span class="value value--copper mono">{{ fmt(melee.averageDps) }}</span>
           </div>
         </div>
       </li>

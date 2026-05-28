@@ -26,19 +26,19 @@ const def = computed(() => props.result.defense)
     <div class="ledger">
       <div class="row row--headline">
         <span class="label">Total HP</span>
-        <span class="value value--lg">{{ Math.round(def.totalHp).toLocaleString() }}</span>
+        <span class="value value--lg">{{ def.totalHp.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
       </div>
       <div class="row">
         <span class="label">Effective HP</span>
-        <span class="value mono">{{ Math.round(def.ehp.withAgi).toLocaleString() }}</span>
+        <span class="value mono">{{ def.ehp.withAgi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
       </div>
       <div class="row">
         <span class="label">EHP no agi</span>
-        <span class="value mono">{{ Math.round(def.ehp.withoutAgi).toLocaleString() }}</span>
+        <span class="value mono">{{ def.ehp.withoutAgi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
       </div>
       <div class="row">
         <span class="label">HP Regen</span>
-        <span class="value mono">{{ Math.round(def.totalHpr).toLocaleString() }}<span class="value-unit">/s</span></span>
+        <span class="value mono">{{ def.totalHpr.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}<span class="value-unit">/s</span></span>
       </div>
     </div>
 
@@ -52,7 +52,7 @@ const def = computed(() => props.result.defense)
         <span class="label">
           <span class="el-glyph">{{ e.glyph }}</span>{{ e.name }}
         </span>
-        <span class="value mono">{{ def.elementalDefenses[i]?.toFixed(0) ?? 0 }}</span>
+        <span class="value mono">{{ def.elementalDefenses[i]?.toFixed(2) ?? '0.00' }}</span>
       </div>
     </div>
 
