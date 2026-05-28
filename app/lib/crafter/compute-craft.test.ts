@@ -2,7 +2,7 @@ import type { Ingredient } from '../data/cdn-adapter/ingredient-adapter'
 import type { Recipe } from '../data/cdn-adapter/recipe-adapter'
 import type { CraftContext, RawCraft } from './types'
 import { describe, expect, it } from 'vitest'
-import { computeCraft, computeCraftWithEffectiveness } from './compute-craft'
+import { computeCraft, computeCraftWithEffectiveness, computeEffectiveness } from './compute-craft'
 import { resolveCraft } from './resolve'
 
 // ---------------------------------------------------------------------------
@@ -435,6 +435,196 @@ describe('computeCraft — base math (Task 5)', () => {
     expect(out.identifications).toEqual({
       mdPct: { min: 2, max: 7 },
       spd: { min: -4, max: -2 },
+    })
+  })
+
+  // -------------------------------------------------------------------------
+  // Task 6: position-modifier effectiveness matrix
+  // -------------------------------------------------------------------------
+
+  /**
+   * Empty grid baseline — sanity check that `computeEffectiveness` returns
+   * a flat [100×6] when no slots are filled.
+   */
+  it('computeEffectiveness: empty grid → flat 100s', () => {
+    expect(computeEffectiveness([null, null, null, null, null, null])).toEqual([
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+    ])
+  })
+
+  /**
+   * Touching modifier — hand-derived.
+   *
+   * Grid layout (row, col):
+   *   slot 0 (0,0)  slot 1 (0,1)
+   *   slot 2 (1,0)  slot 3 (1,1)
+   *   slot 4 (2,0)  slot 5 (2,1)
+   *
+   * Ingredient A @ slot 0 (0,0), posMods.touching = +20.
+   *   4-adjacent cells of (0,0) are (0,1) and (1,0) — i.e. slots 1 and 2.
+   *   So eff += 20 at slots 1 and 2.
+   *
+   * Ingredient B @ slot 1 (0,1) — no posMods. Carries the test's ids/reqs.
+   *
+   *   eff = [100, 100+20, 100+20, 100, 100, 100]
+   *       = [100, 120,    120,    100, 100, 100]
+   *
+   * B sits in slot 1 → effMult = parseFloat((120/100).toFixed(2)) = 1.2.
+   *
+   * B identifications: mdPct {min:2, max:6} →
+   *   min = floor(2 * 1.2) = floor(2.4) = 2
+   *   max = floor(6 * 1.2) = floor(7.2) = 7
+   *
+   * B itemOnlyIDs: strReq=4 → round(4 * 1.2) = round(4.8) = 5.
+   */
+  it('computeEffectiveness: touching modifier scales 4-adjacent ingredient cells', () => {
+    const recipe: Recipe = {
+      id: 20,
+      name: 'Helmet50-55',
+      type: 'helmet',
+      skill: 'armouring',
+      lvl: [50, 55],
+      durability: [100, 100],
+      hp: [50, 60],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ingA = makeIngredient({
+      id: 3000,
+      // No ids / reqs — A only contributes a posMod.
+      posMods: { above: 0, under: 0, left: 0, right: 0, touching: 20, notTouching: 0 },
+    })
+    const ingB = makeIngredient({
+      id: 3001,
+      identifications: { mdPct: { min: 2, max: 6, raw: 2 } },
+      itemOnlyIDs: {
+        durabilityModifier: 0,
+        strReq: 4,
+        dexReq: 0,
+        intReq: 0,
+        defReq: 0,
+        agiReq: 0,
+      },
+    })
+    const ctx: CraftContext = {
+      recipes: new Map([[20, recipe]]),
+      ingredients: new Map([[3000, ingA], [3001, ingB]]),
+    }
+    const raw: RawCraft = {
+      recipeId: 20,
+      ingredientIds: [3000, 3001, null, null, null, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [],
+    }
+
+    // Verify the matrix shape directly.
+    const { ingredients } = resolveCraft(raw, ctx)
+    expect(computeEffectiveness(ingredients)).toEqual([100, 120, 120, 100, 100, 100])
+
+    const out = computeCraft(raw, ctx)
+    expect(out.identifications).toEqual({
+      mdPct: { min: 2, max: 7 },
+    })
+    expect(out.reqs).toEqual({
+      level: 55,
+      strReq: 5,
+      dexReq: 0,
+      intReq: 0,
+      defReq: 0,
+      agiReq: 0,
+    })
+  })
+
+  /**
+   * `above` modifier — column-wise scaling, hand-derived.
+   *
+   * Ingredient A @ slot 4 (row 2, col 0), posMods.above = +30.
+   *   `above` from (2,0) adds +30 to every row k<2 in column 0:
+   *     eff[0][0] += 30  (slot 0)
+   *     eff[1][0] += 30  (slot 2)
+   *   No effect on column 1 (slots 1, 3, 5) or on slot 4 itself.
+   *
+   * Ingredient B @ slot 0 (0,0) — carries ids/reqs.
+   *
+   *   eff = [130, 100, 130, 100, 100, 100]
+   *
+   * B sits in slot 0 → effMult = parseFloat((130/100).toFixed(2)) = 1.3.
+   *
+   * B identifications: hpBonus {min:5, max:10} →
+   *   min = floor(5 * 1.3)  = floor(6.5)  = 6
+   *   max = floor(10 * 1.3) = floor(13.0) = 13
+   *
+   * B itemOnlyIDs: intReq=3 → round(3 * 1.3) = round(3.9) = 4.
+   *
+   * A sits in slot 4 (effMult = 1.0) and contributes no ids/reqs, so it has no
+   * additional effect beyond the matrix it produces.
+   */
+  it('computeEffectiveness: above modifier scales upward in same column', () => {
+    const recipe: Recipe = {
+      id: 21,
+      name: 'Chest40-45',
+      type: 'chestplate',
+      skill: 'armouring',
+      lvl: [40, 45],
+      durability: [100, 100],
+      hp: [80, 100],
+      materials: [
+        { item: 'mat1', amount: 1 },
+        { item: 'mat2', amount: 1 },
+      ],
+    }
+    const ingA = makeIngredient({
+      id: 4000,
+      posMods: { above: 30, under: 0, left: 0, right: 0, touching: 0, notTouching: 0 },
+    })
+    const ingB = makeIngredient({
+      id: 4001,
+      identifications: { hpBonus: { min: 5, max: 10, raw: 5 } },
+      itemOnlyIDs: {
+        durabilityModifier: 0,
+        strReq: 0,
+        dexReq: 0,
+        intReq: 3,
+        defReq: 0,
+        agiReq: 0,
+      },
+    })
+    const ctx: CraftContext = {
+      recipes: new Map([[21, recipe]]),
+      ingredients: new Map([[4000, ingA], [4001, ingB]]),
+    }
+    const raw: RawCraft = {
+      recipeId: 21,
+      // B at slot 0 (top-left), A at slot 4 (bottom-left). A's `above` pushes
+      // +30 up column 0 → boosts slot 0 (B) and slot 2.
+      ingredientIds: [4001, null, null, null, 4000, null],
+      matTiers: [1, 1],
+      atkSpdOverride: null,
+      powders: [],
+    }
+
+    const { ingredients } = resolveCraft(raw, ctx)
+    expect(computeEffectiveness(ingredients)).toEqual([130, 100, 130, 100, 100, 100])
+
+    const out = computeCraft(raw, ctx)
+    expect(out.identifications).toEqual({
+      hpBonus: { min: 6, max: 13 },
+    })
+    expect(out.reqs).toEqual({
+      level: 45,
+      strReq: 0,
+      dexReq: 0,
+      intReq: 4,
+      defReq: 0,
+      agiReq: 0,
     })
   })
 

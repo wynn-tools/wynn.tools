@@ -76,11 +76,71 @@ function slotsByLvlLow(lvlLow: number): number {
 
 /**
  * 3×2 effectiveness matrix in row-major order (flattened to 6 entries, one per
- * ingredient slot). Task 5 stubs this at flat 100%; Task 6 will replace it with
- * the actual position-modifier computation.
+ * ingredient slot). Ports the position-modifier accumulator from craft.js
+ * lines 407–455.
+ *
+ * Slot layout: slot n → row i = floor(n/2), col j = n % 2. Each filled slot
+ * contributes its non-zero posMods to other cells:
+ *   - above:       all rows k < i in column j
+ *   - under:       all rows k > i in column j
+ *   - left:        only at col 1 → (i, 0)
+ *   - right:       only at col 0 → (i, 1)
+ *   - touching:    4-adjacent cells (no diagonals, excludes self)
+ *   - notTouching: all non-touching cells (excludes self AND 4-neighbors)
  */
-export function computeEffectiveness(_ingredients: (Ingredient | null)[]): number[] {
-  return [100, 100, 100, 100, 100, 100]
+export function computeEffectiveness(ingredients: (Ingredient | null)[]): number[] {
+  const eff: number[][] = [
+    [100, 100],
+    [100, 100],
+    [100, 100],
+  ]
+  for (let n = 0; n < ingredients.length; n++) {
+    const ing = ingredients[n]
+    if (!ing)
+      continue
+    const i = Math.floor(n / 2)
+    const j = n % 2
+    const pm = ing.posMods
+    // `above`
+    if (pm.above) {
+      for (let k = i - 1; k >= 0; k--)
+        eff[k][j] += pm.above
+    }
+    // `under`
+    if (pm.under) {
+      for (let k = i + 1; k < 3; k++)
+        eff[k][j] += pm.under
+    }
+    // `left` — only meaningful when source sits in col 1
+    if (pm.left && j === 1)
+      eff[i][0] += pm.left
+    // `right` — only meaningful when source sits in col 0
+    if (pm.right && j === 0)
+      eff[i][1] += pm.right
+    // `touching` — 4-adjacent cells
+    if (pm.touching) {
+      for (let k = 0; k < 3; k++) {
+        for (let l = 0; l < 2; l++) {
+          const di = Math.abs(k - i)
+          const dj = Math.abs(l - j)
+          if ((di === 1 && dj === 0) || (di === 0 && dj === 1))
+            eff[k][l] += pm.touching
+        }
+      }
+    }
+    // `notTouching` — strictly more than one step away (excludes self & 4-neighbors)
+    if (pm.notTouching) {
+      for (let k = 0; k < 3; k++) {
+        for (let l = 0; l < 2; l++) {
+          const di = Math.abs(k - i)
+          const dj = Math.abs(l - j)
+          if (di > 1 || (di === 1 && dj === 1))
+            eff[k][l] += pm.notTouching
+        }
+      }
+    }
+  }
+  return [eff[0][0], eff[0][1], eff[1][0], eff[1][1], eff[2][0], eff[2][1]]
 }
 
 export function computeCraft(raw: RawCraft, ctx: CraftContext): CraftedItem {
@@ -158,7 +218,11 @@ export function computeCraftWithEffectiveness(
     const ing = ingredients[n]
     if (!ing)
       continue
-    const effMult = eff[n] / 100
+    // craft.js line 464: `eff_mult = (eff[n] / 100).toFixed(2)`. The result is
+    // a string that JS coerces to a number on arithmetic. We replicate by
+    // parsing back to a float so downstream Math.floor/Math.round see the
+    // exact same value craft.js would.
+    const effMult = Number.parseFloat((eff[n] / 100).toFixed(2))
 
     // identifications: scale {min,max} by effectiveness, floor, sort (per
     // craft.js lines 484-491).
