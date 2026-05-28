@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { NOTE_ONLY_CHANGELOG, SAMPLE_CHANGELOG } from './__fixtures__/sample'
+import {
+  LEGACY_FORMAT_CHANGELOG,
+  NOTE_ONLY_CHANGELOG,
+  SAMPLE_CHANGELOG,
+} from './__fixtures__/sample'
 import { filterChangelogView, normalizeChangelog } from './normalize'
 
 describe('normalizeChangelog', () => {
@@ -61,6 +65,22 @@ describe('normalizeChangelog', () => {
     expect(noteView.note).toContain('Wynn2 launched')
     expect(noteView.isEmpty).toBe(true)
     expect(view.isEmpty).toBe(false)
+  })
+})
+
+describe('legacy object-keyed added/removed format', () => {
+  const view = normalizeChangelog(LEGACY_FORMAT_CHANGELOG)
+
+  it('extracts names from object keys', () => {
+    expect(view.items!.added).toEqual(['Air Relic Bow', 'Coconut'])
+    expect(view.items!.removed).toEqual(['Lockpick'])
+  })
+
+  it('still parses changed deltas', () => {
+    expect(view.items!.changed[0]).toMatchObject({
+      name: 'Abolition',
+      fields: [{ label: 'Life Steal', from: 50, to: 30, direction: 'down' }],
+    })
   })
 })
 

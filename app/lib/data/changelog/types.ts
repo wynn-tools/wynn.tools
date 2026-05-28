@@ -4,9 +4,16 @@ export interface RawFieldDelta {
   to?: number
 }
 
+/**
+ * Added/removed entries. Newer changelogs use an array of names; older
+ * (≈1.17.x–1.18.0) snapshots use an object keyed by name → a legacy stat blob.
+ * Either way the names are what we display.
+ */
+export type RawNameList = string[] | Record<string, unknown>
+
 export interface RawCategory {
-  added: string[]
-  removed: string[]
+  added: RawNameList
+  removed: RawNameList
   changed: Record<string, Record<string, RawFieldDelta>>
 }
 

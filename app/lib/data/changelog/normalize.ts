@@ -7,11 +7,19 @@ import type {
   RawCategory,
   RawChangelog,
   RawFieldDelta,
+  RawNameList,
 } from './types'
 import { fieldKey, humanizeField, isCost } from './field-label'
 
 function byName(a: string, b: string): number {
   return a.toLowerCase().localeCompare(b.toLowerCase())
+}
+
+/** Both changelog formats reduce to a list of names (array, or object keys). */
+function toNames(list: RawNameList | null | undefined): string[] {
+  if (!list)
+    return []
+  return Array.isArray(list) ? [...list] : Object.keys(list)
 }
 
 function toFieldDelta(path: string, delta: RawFieldDelta): FieldDelta {
@@ -31,8 +39,8 @@ function toFieldDelta(path: string, delta: RawFieldDelta): FieldDelta {
 function toSection(raw: RawCategory | null): CategorySection | null {
   if (!raw)
     return null
-  const added = [...raw.added].sort(byName)
-  const removed = [...raw.removed].sort(byName)
+  const added = toNames(raw.added).sort(byName)
+  const removed = toNames(raw.removed).sort(byName)
   const changed: ChangedEntry[] = Object.entries(raw.changed)
     .map(([name, fields]) => ({
       name,
