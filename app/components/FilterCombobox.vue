@@ -6,11 +6,47 @@ const props = defineProps<{
 const model = defineModel<string | null>({ required: true })
 
 const inputRef = ref<HTMLInputElement | null>(null)
+const fieldRef = ref<HTMLElement | null>(null)
 const listRef = ref<HTMLUListElement | null>(null)
 const isOpen = ref(false)
 const query = ref('')
 const highlighted = ref(-1)
 const listId = `cb-list-${Math.random().toString(36).slice(2, 8)}`
+
+// Position of the teleported dropdown in viewport coordinates. Recomputed on
+// open, scroll (capturing), and resize while open — keeps the list anchored
+// to the field even when an ancestor scrolls.
+const listPos = ref<{ top: number, left: number, width: number } | null>(null)
+
+function updateListPos() {
+  const el = fieldRef.value
+  if (!el)
+    return
+  const r = el.getBoundingClientRect()
+  listPos.value = { top: r.bottom + 4, left: r.left, width: r.width }
+}
+
+watch(isOpen, (open) => {
+  if (typeof window === 'undefined')
+    return
+  if (open) {
+    updateListPos()
+    // capture-phase so we react to scrolls of any ancestor, not just window
+    window.addEventListener('scroll', updateListPos, true)
+    window.addEventListener('resize', updateListPos)
+  }
+  else {
+    window.removeEventListener('scroll', updateListPos, true)
+    window.removeEventListener('resize', updateListPos)
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window === 'undefined')
+    return
+  window.removeEventListener('scroll', updateListPos, true)
+  window.removeEventListener('resize', updateListPos)
+})
 
 const filtered = computed(() => {
   if (!query.value)
@@ -95,7 +131,7 @@ function onBlur() {
 
 <template>
   <div class="cb" :aria-expanded="isOpen" role="combobox" aria-haspopup="listbox" :aria-owns="listId">
-    <div class="cb-field" @click="inputRef?.focus()">
+    <div ref="fieldRef" class="cb-field" @click="inputRef?.focus()">
       <input
         ref="inputRef"
         class="cb-input"
@@ -136,33 +172,40 @@ function onBlur() {
       </svg>
     </div>
 
-    <ul
-      v-if="isOpen"
-      :id="listId"
-      ref="listRef"
-      class="cb-list"
-      role="listbox"
-    >
-      <li v-if="filtered.length === 0" class="cb-empty" role="option" aria-disabled="true">
-        No results
-      </li>
-      <li
-        v-for="(opt, i) in filtered"
-        :id="`${listId}-opt-${i}`"
-        :key="opt"
-        class="cb-option"
-        :class="{
-          'cb-option--hi': i === highlighted,
-          'cb-option--sel': opt === model,
+    <Teleport to="body">
+      <ul
+        v-if="isOpen && listPos"
+        :id="listId"
+        ref="listRef"
+        class="cb-list"
+        role="listbox"
+        :style="{
+          top: `${listPos.top}px`,
+          left: `${listPos.left}px`,
+          width: `${listPos.width}px`,
         }"
-        role="option"
-        :aria-selected="opt === model"
-        @mousedown.prevent="select(opt)"
-        @mouseover="highlighted = i"
       >
-        {{ opt }}
-      </li>
-    </ul>
+        <li v-if="filtered.length === 0" class="cb-empty" role="option" aria-disabled="true">
+          No results
+        </li>
+        <li
+          v-for="(opt, i) in filtered"
+          :id="`${listId}-opt-${i}`"
+          :key="opt"
+          class="cb-option"
+          :class="{
+            'cb-option--hi': i === highlighted,
+            'cb-option--sel': opt === model,
+          }"
+          role="option"
+          :aria-selected="opt === model"
+          @mousedown.prevent="select(opt)"
+          @mouseover="highlighted = i"
+        >
+          {{ opt }}
+        </li>
+      </ul>
+    </Teleport>
   </div>
 </template>
 
@@ -236,12 +279,12 @@ function onBlur() {
   color: var(--color-accent);
 }
 
-.cb-list {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  z-index: 50;
+/* Teleported dropdown: positioned in viewport coords (top/left/width set
+   inline). `:global` because <style scoped> won't tag elements rendered into
+   <body> via Teleport. */
+:global(.cb-list) {
+  position: fixed;
+  z-index: 1000;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -255,13 +298,13 @@ function onBlur() {
   scrollbar-color: var(--color-border) transparent;
 }
 
-.cb-empty {
+:global(.cb-empty) {
   padding: 6px 8px;
   font-size: 12px;
   color: var(--color-muted);
 }
 
-.cb-option {
+:global(.cb-option) {
   padding: 5px 8px;
   font-size: 12px;
   color: var(--color-muted);
@@ -272,16 +315,16 @@ function onBlur() {
     color 0.08s ease-out;
 }
 
-.cb-option--hi {
+:global(.cb-option--hi) {
   background: var(--color-surface-hi);
   color: var(--color-text);
 }
 
-.cb-option--sel {
+:global(.cb-option--sel) {
   color: var(--color-accent);
 }
 
-.cb-option--sel.cb-option--hi {
+:global(.cb-option--sel.cb-option--hi) {
   background: oklch(65% 0.15 48 / 0.08);
 }
 </style>
