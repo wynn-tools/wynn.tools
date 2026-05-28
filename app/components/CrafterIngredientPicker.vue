@@ -9,6 +9,7 @@ defineProps<{ slotIndex: number }>()
 const emit = defineEmits<{
   select: [id: number | null]
   close: []
+  hoverIngredient: [ing: Ingredient | null]
 }>()
 
 const store = useCraftStore()
@@ -73,6 +74,15 @@ function selectId(id: number | null) {
   emit('select', id)
 }
 
+function onHoverEnter(id: number) {
+  const ing = store.ctx?.ingredients.get(id) ?? null
+  emit('hoverIngredient', ing)
+}
+
+function onHoverLeave() {
+  emit('hoverIngredient', null)
+}
+
 function onKey(e: KeyboardEvent) {
   if (e.key === 'Escape') {
     e.stopPropagation()
@@ -123,6 +133,8 @@ onUnmounted(() => {
           :key="ing.id"
           class="picker-item"
           @click="selectId(ing.id)"
+          @mouseenter="onHoverEnter(ing.id)"
+          @mouseleave="onHoverLeave"
         >
           <IngredientResultCard :ingredient="ing" />
         </li>

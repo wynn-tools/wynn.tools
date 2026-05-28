@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 
-defineProps<{
+withDefaults(defineProps<{
   index: number
   ingredient: Ingredient | null
-}>()
+  highlighted?: boolean
+}>(), {
+  highlighted: false,
+})
 
 const emit = defineEmits<{
   open: []
@@ -34,7 +37,7 @@ function onClear(e: MouseEvent) {
   <button
     type="button"
     class="slot"
-    :class="{ 'slot--filled': !!ingredient }"
+    :class="{ 'slot--filled': !!ingredient, 'slot--highlighted': highlighted }"
     :aria-label="ingredient ? `Ingredient ${index + 1}: ${ingredient.displayName}` : `Add ingredient to slot ${index + 1}`"
     @click="emit('open')"
   >
@@ -82,6 +85,19 @@ function onClear(e: MouseEvent) {
 
 .slot--filled {
   border-style: solid;
+}
+
+.slot--highlighted {
+  border-color: var(--color-accent);
+}
+
+.slot--highlighted::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in oklch, var(--color-accent) 25%, transparent);
+  pointer-events: none;
 }
 
 .slot:hover {

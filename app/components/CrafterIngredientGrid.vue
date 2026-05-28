@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import { computed, ref } from 'vue'
+import { computeAffectedCells } from '~/lib/crafter/compute-craft'
 import { useCraftStore } from '~/stores/craft'
 
 const store = useCraftStore()
 
 const openSlot = ref<number | null>(null)
+const hoveredIngredient = ref<Ingredient | null>(null)
 
 const slotIngredients = computed<(Ingredient | null)[]>(() => {
   const ctx = store.ctx
@@ -17,12 +19,21 @@ const slotIngredients = computed<(Ingredient | null)[]>(() => {
   })
 })
 
+const highlightedCells = computed<Set<number>>(() => {
+  const ing = hoveredIngredient.value
+  const from = openSlot.value
+  if (!ing || from == null)
+    return new Set()
+  return computeAffectedCells(ing, from)
+})
+
 function openPicker(index: number) {
   openSlot.value = index
 }
 
 function closePicker() {
   openSlot.value = null
+  hoveredIngredient.value = null
 }
 
 function onSelect(id: number | null) {
@@ -35,6 +46,10 @@ function onSelect(id: number | null) {
 function onClear(index: number) {
   store.setIngredient(index, null)
 }
+
+function onHoverIngredient(ing: Ingredient | null) {
+  hoveredIngredient.value = ing
+}
 </script>
 
 <template>
@@ -45,6 +60,7 @@ function onClear(index: number) {
         :key="i"
         :index="i"
         :ingredient="ing"
+        :highlighted="highlightedCells.has(i)"
         @open="openPicker(i)"
         @clear="onClear(i)"
       />
@@ -54,6 +70,7 @@ function onClear(index: number) {
       :slot-index="openSlot"
       @select="onSelect"
       @close="closePicker"
+      @hover-ingredient="onHoverIngredient"
     />
   </div>
 </template>

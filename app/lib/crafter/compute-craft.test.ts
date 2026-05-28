@@ -2,7 +2,7 @@ import type { Ingredient } from '../data/cdn-adapter/ingredient-adapter'
 import type { Recipe } from '../data/cdn-adapter/recipe-adapter'
 import type { CraftContext, RawCraft } from './types'
 import { describe, expect, it } from 'vitest'
-import { computeCraft, computeCraftWithEffectiveness, computeEffectiveness } from './compute-craft'
+import { computeAffectedCells, computeCraft, computeCraftWithEffectiveness, computeEffectiveness } from './compute-craft'
 import { resolveCraft } from './resolve'
 
 // ---------------------------------------------------------------------------
@@ -778,5 +778,67 @@ describe('computeCraft — base math (Task 5)', () => {
       powders: [],
     }
     expect(() => computeCraft(raw, ctx)).toThrow(/exactly 2 materials/)
+  })
+})
+
+describe('computeAffectedCells', () => {
+  it('above: marks all cells in same column with row < i', () => {
+    const ing = makeIngredient({ id: 1, posMods: { above: 10 } })
+    // From slot 4 (row 2, col 0) → cells (0,0)=0 and (1,0)=2
+    expect(computeAffectedCells(ing, 4)).toEqual(new Set([0, 2]))
+    // From slot 0 (row 0, col 0) → no rows above → empty
+    expect(computeAffectedCells(ing, 0)).toEqual(new Set())
+  })
+
+  it('under: marks all cells in same column with row > i', () => {
+    const ing = makeIngredient({ id: 2, posMods: { under: -5 } })
+    // From slot 1 (row 0, col 1) → cells (1,1)=3 and (2,1)=5
+    expect(computeAffectedCells(ing, 1)).toEqual(new Set([3, 5]))
+    // From slot 5 (row 2, col 1) → no rows under → empty
+    expect(computeAffectedCells(ing, 5)).toEqual(new Set())
+  })
+
+  it('left: only at col 1, marks (i, 0); right: only at col 0, marks (i, 1)', () => {
+    const ingL = makeIngredient({ id: 3, posMods: { left: 7 } })
+    // From slot 3 (row 1, col 1) → (1, 0) = 2
+    expect(computeAffectedCells(ingL, 3)).toEqual(new Set([2]))
+    // From slot 2 (row 1, col 0) → left has no effect at col 0
+    expect(computeAffectedCells(ingL, 2)).toEqual(new Set())
+
+    const ingR = makeIngredient({ id: 4, posMods: { right: 7 } })
+    // From slot 2 (row 1, col 0) → (1, 1) = 3
+    expect(computeAffectedCells(ingR, 2)).toEqual(new Set([3]))
+    // From slot 3 (row 1, col 1) → right has no effect at col 1
+    expect(computeAffectedCells(ingR, 3)).toEqual(new Set())
+  })
+
+  it('touching: 4-adjacent cells only (no diagonals, no self)', () => {
+    const ing = makeIngredient({ id: 5, posMods: { touching: 3 } })
+    // From slot 2 (row 1, col 0): neighbors at (0,0)=0, (2,0)=4, (1,1)=3
+    expect(computeAffectedCells(ing, 2)).toEqual(new Set([0, 3, 4]))
+    // From slot 0 (row 0, col 0): neighbors (0,1)=1, (1,0)=2
+    expect(computeAffectedCells(ing, 0)).toEqual(new Set([1, 2]))
+  })
+
+  it('notTouching: cells > 1 step away (excludes self and 4-neighbors, includes diagonals)', () => {
+    const ing = makeIngredient({ id: 6, posMods: { notTouching: 2 } })
+    // From slot 0 (row 0, col 0): diagonals + far cells → (1,1)=3, (2,0)=4, (2,1)=5
+    expect(computeAffectedCells(ing, 0)).toEqual(new Set([3, 4, 5]))
+    // From slot 2 (row 1, col 0): diagonals (0,1)=1, (2,1)=5
+    expect(computeAffectedCells(ing, 2)).toEqual(new Set([1, 5]))
+  })
+
+  it('all-zero posMods returns an empty set', () => {
+    const ing = makeIngredient({ id: 7 })
+    for (let n = 0; n < 6; n++)
+      expect(computeAffectedCells(ing, n)).toEqual(new Set())
+  })
+
+  it('combines multiple modifiers and never includes the source slot', () => {
+    const ing = makeIngredient({ id: 8, posMods: { above: 1, under: 1, right: 1, touching: 1, notTouching: 1 } })
+    // From slot 0 → expect every other cell to be affected, but never slot 0.
+    const got = computeAffectedCells(ing, 0)
+    expect(got.has(0)).toBe(false)
+    expect(got).toEqual(new Set([1, 2, 3, 4, 5]))
   })
 })

@@ -145,6 +145,58 @@ export function computeEffectiveness(ingredients: (Ingredient | null)[]): number
   return [eff[0][0], eff[0][1], eff[1][0], eff[1][1], eff[2][0], eff[2][1]]
 }
 
+/**
+ * For hover hints: given an ingredient and the slot it would be placed in,
+ * return the set of slot indices (0..5) that its position modifiers would
+ * affect. Mirrors the per-modifier branches in `computeEffectiveness` but
+ * accumulates affected cells instead of effectiveness values. Modifiers with
+ * a zero value are ignored. The source slot itself is never included.
+ */
+export function computeAffectedCells(ing: Ingredient, fromSlotIndex: number): Set<number> {
+  const out = new Set<number>()
+  if (fromSlotIndex < 0 || fromSlotIndex > 5)
+    return out
+  const i = Math.floor(fromSlotIndex / 2)
+  const j = fromSlotIndex % 2
+  const pm = ing.posMods
+  const idx = (k: number, l: number) => k * 2 + l
+
+  if (pm.above) {
+    for (let k = i - 1; k >= 0; k--)
+      out.add(idx(k, j))
+  }
+  if (pm.under) {
+    for (let k = i + 1; k < 3; k++)
+      out.add(idx(k, j))
+  }
+  if (pm.left && j === 1)
+    out.add(idx(i, 0))
+  if (pm.right && j === 0)
+    out.add(idx(i, 1))
+  if (pm.touching) {
+    for (let k = 0; k < 3; k++) {
+      for (let l = 0; l < 2; l++) {
+        const di = Math.abs(k - i)
+        const dj = Math.abs(l - j)
+        if ((di === 1 && dj === 0) || (di === 0 && dj === 1))
+          out.add(idx(k, l))
+      }
+    }
+  }
+  if (pm.notTouching) {
+    for (let k = 0; k < 3; k++) {
+      for (let l = 0; l < 2; l++) {
+        const di = Math.abs(k - i)
+        const dj = Math.abs(l - j)
+        if (di > 1 || (di === 1 && dj === 1))
+          out.add(idx(k, l))
+      }
+    }
+  }
+  out.delete(fromSlotIndex)
+  return out
+}
+
 export function computeCraft(raw: RawCraft, ctx: CraftContext): CraftedItem {
   const { recipe, ingredients } = resolveCraft(raw, ctx)
   const eff = computeEffectiveness(ingredients)
