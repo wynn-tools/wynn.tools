@@ -17,15 +17,21 @@ import { useCraftStore } from '~/stores/craft'
 // live "Equip in this slot" action that returns control to the builder.
 // `equipDisabledReason`: when set, the button is disabled and the reason shown
 // as a tooltip (e.g. "Recipe type doesn't match this slot").
+// `crafted`: when supplied, render that pre-computed CraftedItem instead of
+// the global craft store's current craft. Lets the same tooltip surface drive
+// equipment-grid hovers for builds whose slots hold a frozen RawCraft.
 const props = defineProps<{
   hideEquipButton?: boolean
   onEquip?: () => void
   equipDisabledReason?: string | null
+  crafted?: CraftedItem | null
 }>()
 
 const store = useCraftStore()
 
-const crafted = computed<CraftedItem | null>(() => store.crafted)
+const crafted = computed<CraftedItem | null>(() =>
+  props.crafted !== undefined ? props.crafted : store.crafted,
+)
 
 const theme = computed(() => tierTheme('Crafted'))
 const frame = computed(() => frameUrl('normal')) // crafted has no dedicated frame asset; use normal as a neutral surround

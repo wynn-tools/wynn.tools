@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CraftedItem } from '~/lib/crafter/types'
 import {
   HoverCardContent,
   HoverCardPortal,
@@ -6,12 +7,16 @@ import {
   HoverCardTrigger,
 } from 'reka-ui'
 import { computed } from 'vue'
+import { useCdnClient } from '~/composables/useBuildData'
 import { slotItemId } from '~/lib/codec/build-codec'
+import { computeCraft } from '~/lib/crafter/compute-craft'
 import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
 import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
+import { useCraftStore } from '~/stores/craft'
 
 const store = useBuildStore()
+const craftStore = useCraftStore()
 
 function slotIcon(slot: number): string | null {
   const id = slotItemId(store.rawBuild?.equipment[slot])
@@ -48,6 +53,7 @@ const POWDER_COLOR: Record<string, string> = {
 }
 
 const openSlot = ref<number | null>(null)
+const openSlotInitialTab = ref<'items' | 'crafted'>('items')
 const powderSlot = ref<number | null>(null)
 
 function itemName(slot: number): string {
@@ -64,7 +70,36 @@ function itemName(slot: number): string {
   return !name || (item.id as number) >= 10000 ? 'Empty' : name
 }
 
-function openPicker(slot: number) {
+// Compute the CraftedItem for a slot holding a RawCraft. Returns null when
+// the slot isn't crafted, the craft context isn't loaded yet, or the recipe
+// id is unknown to the current snapshot.
+function slotCrafted(slot: number): CraftedItem | null {
+  const entry = store.rawBuild?.equipment[slot]
+  if (entry?.kind !== 'crafted')
+    return null
+  const craftCtx = store.ctx?.craftContext
+  if (!craftCtx || !craftCtx.recipes.has(entry.raw.recipeId))
+    return null
+  try {
+    return computeCraft(entry.raw, craftCtx)
+  }
+  catch {
+    return null
+  }
+}
+
+async function openPicker(slot: number) {
+  // Crafted slot: prefill the crafter with the slot's RawCraft and open the
+  // picker on the Crafted tab so the user lands directly on an editable
+  // version of the existing item.
+  const entry = store.rawBuild?.equipment[slot]
+  if (entry?.kind === 'crafted') {
+    await craftStore.prefillFromRaw(entry.raw, useCdnClient())
+    openSlotInitialTab.value = 'crafted'
+  }
+  else {
+    openSlotInitialTab.value = 'items'
+  }
   openSlot.value = slot
 }
 
@@ -116,7 +151,7 @@ const powderSlotMax = computed(() =>
   <div class="equipment-grid-wrapper">
     <div class="equipment-grid">
       <template v-for="(label, idx) in SLOT_LABELS" :key="idx">
-        <HoverCardRoot v-if="slotSearchItem(idx)" :open-delay="300" :close-delay="0">
+        <HoverCardRoot v-if="slotSearchItem(idx) || slotCrafted(idx)" :open-delay="300" :close-delay="0">
           <HoverCardTrigger as-child>
             <div
               class="slot"
@@ -174,7 +209,12 @@ const powderSlotMax = computed(() =>
           <HoverCardPortal>
             <HoverCardContent side="right" align="start" :side-offset="8" :avoid-collisions="false" class="quickview">
               <div class="quickview-scale">
-                <ItemTooltip :item="slotSearchItem(idx)!" />
+                <ItemTooltip v-if="slotSearchItem(idx)" :item="slotSearchItem(idx)!" />
+                <CrafterItemPreview
+                  v-else
+                  :crafted="slotCrafted(idx)"
+                  hide-equip-button
+                />
               </div>
             </HoverCardContent>
           </HoverCardPortal>
@@ -238,7 +278,12 @@ const powderSlotMax = computed(() =>
 
     <!-- Inline picker panel (no dialog dependency, robust) -->
     <div v-if="openSlot !== null" class="picker-overlay" @click.self="handleClose">
-      <ItemPicker :slot-index="openSlot" @select="handleSelect" @close="handleClose" />
+      <ItemPicker
+        :slot-index="openSlot"
+        :initial-tab="openSlotInitialTab"
+        @select="handleSelect"
+        @close="handleClose"
+      />
     </div>
 
     <PowderInput

@@ -6,7 +6,12 @@ import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
 import { useCraftStore } from '~/stores/craft'
 
-const props = defineProps<{ slotIndex: number }>()
+const props = withDefaults(defineProps<{
+  slotIndex: number
+  initialTab?: 'items' | 'crafted'
+}>(), {
+  initialTab: 'items',
+})
 const emit = defineEmits<{
   select: [id: number | null]
   close: []
@@ -16,7 +21,7 @@ const store = useBuildStore()
 const craftStore = useCraftStore()
 const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
-const tab = ref<'items' | 'crafted'>('items')
+const tab = ref<'items' | 'crafted'>(props.initialTab)
 
 onMounted(() => searchInput.value?.focus())
 

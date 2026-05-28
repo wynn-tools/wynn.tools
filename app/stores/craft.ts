@@ -184,6 +184,20 @@ export const useCraftStore = defineStore('craft', () => {
     raw.value = next
   }
 
+  // Seed the crafter with a RawCraft that came from elsewhere (typically a
+  // build's crafted equipment slot). Ensures the craft context is loaded so
+  // the resulting recipe / ingredients resolve; the input is deep-cloned so
+  // later edits in the crafter don't mutate the source.
+  async function prefillFromRaw(rawInput: RawCraft, client: CdnClient): Promise<void> {
+    if (!ctx.value && !loading.value) {
+      const resolved = await resolveLatestVersionId(client)
+      const built = await loadBuildContext(client, resolved)
+      const craftCtx: CraftContext = built.ctx.craftContext ?? { ingredients: new Map(), recipes: new Map() }
+      applyContext({ ctx: craftCtx, enc: built.enc, versionId: resolved })
+    }
+    raw.value = JSON.parse(JSON.stringify(rawInput)) as RawCraft
+  }
+
   return {
     // state
     raw,
@@ -206,6 +220,7 @@ export const useCraftStore = defineStore('craft', () => {
     setAtkSpdOverride,
     setPowders,
     reset,
+    prefillFromRaw,
   }
 })
 
