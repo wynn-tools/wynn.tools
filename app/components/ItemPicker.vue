@@ -12,6 +12,9 @@ const emit = defineEmits<{
 
 const store = useBuildStore()
 const query = ref('')
+const searchInput = ref<HTMLInputElement | null>(null)
+
+onMounted(() => searchInput.value?.focus())
 
 // Cap only the ranked search results (already most-relevant first); the
 // unfiltered browse list shows everything for the slot.
@@ -41,11 +44,11 @@ function selectItem(id: number | null) {
   <div class="picker">
     <div class="picker-header">
       <input
+        ref="searchInput"
         v-model="query"
         class="picker-search"
         type="text"
         placeholder="Search items…"
-        autofocus
       >
       <button class="picker-close" @click="emit('close')">
         ✕
