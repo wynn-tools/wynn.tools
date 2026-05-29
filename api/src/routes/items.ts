@@ -39,6 +39,26 @@ async function resolveViewerId(cookieHeader?: string, authHeader?: string): Prom
 }
 
 export const items = new Hono()
+  .get('/', async (c) => {
+    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
+    const cursor = decodeCursor(c.req.query('cursor'))
+    const rows = await getDb().query.craftedItems.findMany({
+      where: (i, { and, eq, lt, or }) => and(
+        eq(i.visibility, 'public'),
+        cursor
+          ? or(lt(i.createdAt, cursor.createdAt), and(eq(i.createdAt, cursor.createdAt), lt(i.id, cursor.id)))
+          : undefined,
+      ),
+      orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
+      limit: limit + 1,
+    })
+    const hasMore = rows.length > limit
+    const page = rows.slice(0, limit)
+    const next = hasMore
+      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      : null
+    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, gameVersion: r.gameVersion })), nextCursor: next })
+  })
   .post('/', requireAuth, zValidator('json', createBody), async (c) => {
     const auth = c.get('auth')
     if (!hasScope(auth, 'items:write'))

@@ -19,6 +19,7 @@ const createBody = z.object({
 })
 const patchBody = z.object({
   name: z.string().min(1).max(100).optional(),
+  buildString: z.string().min(1).optional(),
   visibility: visibilityEnum.optional(),
 })
 
@@ -40,6 +41,26 @@ async function resolveViewerId(cookieHeader?: string, authHeader?: string): Prom
 }
 
 export const builds = new Hono()
+  .get('/', async (c) => {
+    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
+    const cursor = decodeCursor(c.req.query('cursor'))
+    const rows = await getDb().query.builds.findMany({
+      where: (b, { and, eq, lt, or }) => and(
+        eq(b.visibility, 'public'),
+        cursor
+          ? or(lt(b.createdAt, cursor.createdAt), and(eq(b.createdAt, cursor.createdAt), lt(b.id, cursor.id)))
+          : undefined,
+      ),
+      orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
+      limit: limit + 1,
+    })
+    const hasMore = rows.length > limit
+    const page = rows.slice(0, limit)
+    const next = hasMore
+      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      : null
+    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, gameVersion: r.gameVersion })), nextCursor: next })
+  })
   .post('/', requireAuth, zValidator('json', createBody), async (c) => {
     const auth = c.get('auth')
     if (!hasScope(auth, 'builds:write'))
@@ -100,7 +121,13 @@ export const builds = new Hono()
       throw new AppError(404, 'not_found', 'Build not found')
     if (!hasScope(auth, 'builds:write'))
       throw new AppError(403, 'forbidden', 'Missing builds:write scope')
-    const [row] = await getDb().update(schema.builds).set({ ...c.req.valid('json'), updatedAt: new Date() }).where(eq(schema.builds.id, existing.id)).returning()
+    const patch = c.req.valid('json')
+    let gameVersion = existing.gameVersion
+    if (patch.buildString) {
+      const decoded = await decodeBuild(patch.buildString)
+      gameVersion = decoded.gameVersion
+    }
+    const [row] = await getDb().update(schema.builds).set({ ...patch, gameVersion, updatedAt: new Date() }).where(eq(schema.builds.id, existing.id)).returning()
     return c.json({ id: row.id, name: row.name, visibility: row.visibility })
   })
   .delete('/:id', requireAuth, async (c) => {
