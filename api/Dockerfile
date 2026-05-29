@@ -7,7 +7,7 @@ COPY app ./app
 COPY api ./api
 RUN pnpm install --frozen-lockfile
 RUN pnpm --filter @wynn.tools/api build
-RUN pnpm deploy --filter @wynn.tools/api --prod /deploy
+RUN pnpm deploy --filter @wynn.tools/api --prod --legacy /deploy
 
 FROM node:22-slim AS runtime
 WORKDIR /app
