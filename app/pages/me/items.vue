@@ -94,6 +94,9 @@ async function deleteItem(id: string) {
           My Items
         </button>
       </div>
+      <NuxtLink to="/crafter" class="page-cta">
+        New item
+      </NuxtLink>
     </div>
 
     <p v-if="mutateError" class="mutate-error" role="alert">
@@ -107,10 +110,10 @@ async function deleteItem(id: string) {
       {{ loadError }}
     </p>
 
-    <div v-if="items.length === 0 && !loading && !loadError" class="empty-state">
-      No items yet.
-      <NuxtLink to="/crafter">
-        Craft your first item in the Crafter →
+    <div v-if="items.length === 0 && !loading && !loadError" class="state-block">
+      <span>No crafted items saved yet.</span>
+      <NuxtLink to="/crafter" class="state-action">
+        Open the Crafter
       </NuxtLink>
     </div>
 
@@ -341,17 +344,5 @@ async function deleteItem(id: string) {
   background: oklch(62% 0.15 20 / 0.08);
   border: 1px solid oklch(62% 0.15 20 / 0.3);
   border-radius: 6px;
-}
-
-.empty-state {
-  font-size: 14px;
-  color: var(--color-muted);
-  padding: 56px 20px;
-  text-align: center;
-}
-
-.empty-state a {
-  color: var(--color-accent);
-  text-decoration: none;
 }
 </style>

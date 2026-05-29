@@ -94,6 +94,9 @@ async function deleteBuild(id: string) {
           My Items
         </button>
       </div>
+      <NuxtLink to="/builder" class="page-cta">
+        New build
+      </NuxtLink>
     </div>
 
     <p v-if="mutateError" class="mutate-error" role="alert">
@@ -107,10 +110,10 @@ async function deleteBuild(id: string) {
       {{ loadError }}
     </p>
 
-    <div v-if="builds.length === 0 && !loading && !loadError" class="empty-state">
-      No builds yet.
-      <NuxtLink to="/builder">
-        Create your first build →
+    <div v-if="builds.length === 0 && !loading && !loadError" class="state-block">
+      <span>No builds saved yet.</span>
+      <NuxtLink to="/builder" class="state-action">
+        Open the Builder
       </NuxtLink>
     </div>
 
@@ -341,17 +344,5 @@ async function deleteBuild(id: string) {
   background: oklch(62% 0.15 20 / 0.08);
   border: 1px solid oklch(62% 0.15 20 / 0.3);
   border-radius: 6px;
-}
-
-.empty-state {
-  font-size: 14px;
-  color: var(--color-muted);
-  padding: 56px 20px;
-  text-align: center;
-}
-
-.empty-state a {
-  color: var(--color-accent);
-  text-decoration: none;
 }
 </style>
