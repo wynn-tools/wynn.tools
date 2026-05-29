@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ApiItemSummary } from '~/composables/useApi'
+import type { SortOption } from '~/components/SearchSortBar.vue'
+import type { ApiItemSummary, ItemListFilters } from '~/composables/useApi'
 import { useApi } from '~/composables/useApi'
 
 useSeoMeta({
@@ -7,17 +8,42 @@ useSeoMeta({
   description: 'Browse crafted items shared by the community.',
 })
 
+const route = useRoute()
+const router = useRouter()
+
+const q = computed(() => (route.query.q as string) || '')
+const sort = computed<SortOption>(() => {
+  const s = route.query.sort as string
+  return s === 'oldest' || s === 'name' ? s : 'newest'
+})
+
+function setFilter(patch: Record<string, string | undefined>) {
+  router.push({ query: { ...route.query, ...patch, cursor: undefined } })
+}
+
+function onQ(val: string) {
+  setFilter({ q: val || undefined })
+}
+function onSort(val: SortOption) {
+  setFilter({ sort: val === 'newest' ? undefined : val })
+}
+
 const api = useApi()
 const items = ref<ApiItemSummary[]>([])
 const nextCursor = ref<string | null>(null)
 const loading = ref(false)
 const loadError = ref<string | null>(null)
 
+const filters = computed<ItemListFilters>(() => ({
+  q: q.value || undefined,
+  sort: sort.value,
+}))
+
 async function load(cursor?: string) {
   loading.value = true
   loadError.value = null
   try {
-    const res = await api.listPublicItems(undefined, cursor, 20)
+    const res = await api.listPublicItems(filters.value, cursor, 20)
     items.value = cursor ? [...items.value, ...res.data] : res.data
     nextCursor.value = res.nextCursor
   }
@@ -28,6 +54,12 @@ async function load(cursor?: string) {
     loading.value = false
   }
 }
+
+watch(filters, () => {
+  items.value = []
+  nextCursor.value = null
+  load()
+}, { deep: true })
 
 await useAsyncData('public-items', () => load())
 </script>
@@ -40,12 +72,16 @@ await useAsyncData('public-items', () => load())
       </h1>
     </header>
 
+    <div class="toolbar">
+      <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
+    </div>
+
     <p v-if="loadError" class="error-text">
       {{ loadError }}
     </p>
 
     <div v-else-if="items.length === 0 && !loading" class="empty-state">
-      No crafted items shared yet.
+      No crafted items match these filters.
     </div>
 
     <div v-else class="card-grid">
@@ -89,6 +125,13 @@ await useAsyncData('public-items', () => load())
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
 }
 
 .card-grid {
