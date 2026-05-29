@@ -74,4 +74,56 @@ describe('items routes', () => {
     })
     expect(res.status).toBe(401)
   })
+
+  it('filters by name with ?q=', async () => {
+    const cookie = await session()
+    await app()('/v1/items', {
+      method: 'POST',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Dragon Ring', itemData: {}, gameVersion: '2.2', visibility: 'public' }),
+    })
+    await app()('/v1/items', {
+      method: 'POST',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Spider Helm', itemData: {}, gameVersion: '2.2', visibility: 'public' }),
+    })
+    const res = await app()('/v1/items?q=dragon')
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('Dragon Ring')
+  })
+
+  it('sorts by name with ?sort=name', async () => {
+    const cookie = await session()
+    for (const name of ['Zebra', 'Apple', 'Mango']) {
+      await app()('/v1/items', {
+        method: 'POST',
+        headers: { cookie, 'content-type': 'application/json' },
+        body: JSON.stringify({ name, itemData: {}, gameVersion: '2.2', visibility: 'public' }),
+      })
+    }
+    const res = await app()('/v1/items?sort=name')
+    const body = await res.json()
+    const names = body.data.map((d: { name: string }) => d.name)
+    expect(names).toEqual(['Apple', 'Mango', 'Zebra'])
+  })
+
+  it('paginates correctly with ?sort=name cursor', async () => {
+    const cookie = await session()
+    for (const name of ['Aardvark Ring', 'Beaver Helm', 'Cougar Boots']) {
+      await app()('/v1/items', {
+        method: 'POST',
+        headers: { cookie, 'content-type': 'application/json' },
+        body: JSON.stringify({ name, itemData: {}, gameVersion: '2.2', visibility: 'public' }),
+      })
+    }
+    const res1 = await app()('/v1/items?sort=name&limit=2')
+    const body1 = await res1.json()
+    expect(body1.data.map((d: { name: string }) => d.name)).toEqual(['Aardvark Ring', 'Beaver Helm'])
+    expect(body1.nextCursor).not.toBeNull()
+    const res2 = await app()(`/v1/items?sort=name&limit=2&cursor=${body1.nextCursor}`)
+    const body2 = await res2.json()
+    expect(body2.data.map((d: { name: string }) => d.name)).toEqual(['Cougar Boots'])
+    expect(body2.nextCursor).toBeNull()
+  })
 })

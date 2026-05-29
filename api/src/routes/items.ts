@@ -1,5 +1,7 @@
+import type { SQL } from 'drizzle-orm'
+import type { CursorData } from '../lib/pagination'
 import { zValidator } from '@hono/zod-validator'
-import { eq } from 'drizzle-orm'
+import { and, asc, desc, eq, ilike, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
@@ -23,6 +25,50 @@ const patchBody = z.object({
   visibility: visibilityEnum.optional(),
 })
 
+const itemsListQuery = z.object({
+  q: z.string().max(100).optional(),
+  sort: z.enum(['newest', 'oldest', 'name']).optional().default('newest'),
+  cursor: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).optional().default(DEFAULT_PAGE_SIZE),
+})
+
+function itemFilterConditions(
+  q: string | undefined,
+  sort: string,
+  cursor: CursorData | null,
+): SQL[] {
+  const extra: SQL[] = []
+  if (q)
+    extra.push(ilike(schema.craftedItems.name, `%${q}%`))
+  if (cursor) {
+    if ('n' in cursor) {
+      extra.push(sql`(${schema.craftedItems.name}, ${schema.craftedItems.id}) > (${cursor.n}, ${cursor.id})`)
+    }
+    else {
+      const d = new Date(cursor.c)
+      if (sort === 'oldest')
+        extra.push(sql`(${schema.craftedItems.createdAt}, ${schema.craftedItems.id}) > (${d.toISOString()}, ${cursor.id})`)
+      else
+        extra.push(sql`(${schema.craftedItems.createdAt}, ${schema.craftedItems.id}) < (${d.toISOString()}, ${cursor.id})`)
+    }
+  }
+  return extra
+}
+
+function itemOrderBy(sort: string) {
+  if (sort === 'name')
+    return [asc(schema.craftedItems.name), asc(schema.craftedItems.id)]
+  if (sort === 'oldest')
+    return [asc(schema.craftedItems.createdAt), asc(schema.craftedItems.id)]
+  return [desc(schema.craftedItems.createdAt), desc(schema.craftedItems.id)]
+}
+
+function itemNextCursor(sort: string, row: { name: string, createdAt: Date, id: string }) {
+  return sort === 'name'
+    ? encodeCursor({ n: row.name, id: row.id })
+    : encodeCursor({ c: row.createdAt.toISOString(), id: row.id })
+}
+
 async function resolveViewerId(cookieHeader?: string, authHeader?: string): Promise<string | null> {
   const bearer = authHeader?.match(/^Bearer (\S+)$/i)?.[1]
   if (bearer) {
@@ -40,26 +86,19 @@ async function resolveViewerId(cookieHeader?: string, authHeader?: string): Prom
 }
 
 export const items = new Hono()
-  .get('/', async (c) => {
-    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
-    const cursor = decodeCursor(c.req.query('cursor'))
+  .get('/', zValidator('query', itemsListQuery), async (c) => {
+    const { q, sort, cursor: rawCursor, limit } = c.req.valid('query')
+    const cursor = decodeCursor(rawCursor)
+    const filterConds = itemFilterConditions(q, sort, cursor)
     const rows = await getDb().query.craftedItems.findMany({
       with: { user: true },
-      where: (i, { and, eq, lt, or }) => and(
-        eq(i.visibility, 'public'),
-        // { n, id } name-sort cursors are handled in Task 5; date-sorted endpoints treat them as no-cursor
-        cursor && 'c' in cursor
-          ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
-          : undefined,
-      ),
-      orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
+      where: and(eq(schema.craftedItems.visibility, 'public'), ...filterConds),
+      orderBy: itemOrderBy(sort),
       limit: limit + 1,
     })
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
-    const next = hasMore
-      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
-      : null
+    const next = hasMore ? itemNextCursor(sort, page[page.length - 1]) : null
     return c.json({
       data: page.map(r => ({
         id: r.id,
@@ -86,28 +125,21 @@ export const items = new Hono()
     }).returning()
     return c.json({ id: row.id }, 201)
   })
-  .get('/mine', requireAuth, async (c) => {
+  .get('/mine', requireAuth, zValidator('query', itemsListQuery), async (c) => {
     const auth = c.get('auth')
     if (!hasScope(auth, 'items:read'))
       throw new AppError(403, 'forbidden', 'Missing items:read scope')
-    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
-    const cursor = decodeCursor(c.req.query('cursor'))
+    const { q, sort, cursor: rawCursor, limit } = c.req.valid('query')
+    const cursor = decodeCursor(rawCursor)
+    const filterConds = itemFilterConditions(q, sort, cursor)
     const rows = await getDb().query.craftedItems.findMany({
-      where: (i, { and, eq, lt, or }) => and(
-        eq(i.userId, auth.user.id),
-        // { n, id } name-sort cursors are handled in Task 5; date-sorted endpoints treat them as no-cursor
-        cursor && 'c' in cursor
-          ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
-          : undefined,
-      ),
-      orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
+      where: and(eq(schema.craftedItems.userId, auth.user.id), ...filterConds),
+      orderBy: itemOrderBy(sort),
       limit: limit + 1,
     })
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
-    const next = hasMore
-      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
-      : null
+    const next = hasMore ? itemNextCursor(sort, page[page.length - 1]) : null
     return c.json({
       data: page.map(r => ({
         id: r.id,
@@ -159,28 +191,24 @@ export const items = new Hono()
     return c.json({ ok: true })
   })
 
-export const userItems = new Hono().get('/:id/items', async (c) => {
+export const userItems = new Hono().get('/:id/items', zValidator('query', itemsListQuery), async (c) => {
   const userId = c.req.param('id')
-  const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
-  const cursor = decodeCursor(c.req.query('cursor'))
+  const { q, sort, cursor: rawCursor, limit } = c.req.valid('query')
+  const cursor = decodeCursor(rawCursor)
+  const filterConds = itemFilterConditions(q, sort, cursor)
   const rows = await getDb().query.craftedItems.findMany({
     with: { user: true },
-    where: (i, { and, eq, lt, or }) => and(
-      eq(i.userId, userId),
-      eq(i.visibility, 'public'),
-      // { n, id } name-sort cursors are handled in Task 5; date-sorted endpoints treat them as no-cursor
-      cursor && 'c' in cursor
-        ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
-        : undefined,
+    where: and(
+      eq(schema.craftedItems.userId, userId),
+      eq(schema.craftedItems.visibility, 'public'),
+      ...filterConds,
     ),
-    orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
+    orderBy: itemOrderBy(sort),
     limit: limit + 1,
   })
   const hasMore = rows.length > limit
   const page = rows.slice(0, limit)
-  const next = hasMore
-    ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
-    : null
+  const next = hasMore ? itemNextCursor(sort, page[page.length - 1]) : null
   return c.json({
     data: page.map(r => ({
       id: r.id,
