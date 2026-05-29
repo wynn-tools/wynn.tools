@@ -14,6 +14,7 @@ function protectedApp() {
     const auth = c.get('auth')
     return c.json({ userId: auth.user.id, canWrite: hasScope(auth, 'builds:write') })
   })
+  app.post('/v1/secret', requireAuth, c => c.json({ ok: true }))
   return (path: string, init?: RequestInit) => app.request(`http://test${path}`, init)
 }
 
@@ -37,5 +38,26 @@ describe('requireAuth', () => {
     const { plaintext } = await createApiKey(u.id, 'ro', ['builds:read'])
     const res = await protectedApp()('/v1/secret', { headers: { authorization: `Bearer ${plaintext}` } })
     expect(await res.json()).toEqual({ userId: u.id, canWrite: false })
+  })
+
+  it('rejects a cookie-authed mutation from a foreign origin', async () => {
+    const [u] = await getDb().insert(schema.users).values({ discordId: 'csrf', username: 'c' }).returning()
+    const token = await createSession(u.id)
+    const res = await protectedApp()('/v1/secret', {
+      method: 'POST',
+      headers: { cookie: `session=${token}`, origin: 'https://evil.example' },
+    })
+    expect(res.status).toBe(403)
+    expect((await res.json()).error.code).toBe('csrf')
+  })
+
+  it('allows a bearer-authed mutation from any origin', async () => {
+    const [u] = await getDb().insert(schema.users).values({ discordId: 'csrf2', username: 'c2' }).returning()
+    const { plaintext } = await createApiKey(u.id, 'w', ['builds:write'])
+    const res = await protectedApp()('/v1/secret', {
+      method: 'POST',
+      headers: { authorization: `Bearer ${plaintext}`, origin: 'https://anything.example' },
+    })
+    expect(res.status).toBe(200)
   })
 })

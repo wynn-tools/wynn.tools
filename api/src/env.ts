@@ -8,7 +8,6 @@ const schema = z.object({
   DISCORD_REDIRECT_URI: z.string().url(),
   FRONTEND_URL: z.string().url(),
   COOKIE_DOMAIN: z.string().min(1),
-  SESSION_SECRET: z.string().min(32),
   CDN_BASE_URL: z.string().url(),
   PORT: z.coerce.number().int().positive().default(8080),
 })

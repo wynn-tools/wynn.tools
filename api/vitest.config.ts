@@ -19,7 +19,6 @@ export default defineConfig({
       DISCORD_REDIRECT_URI: 'https://api.wynn.tools/v1/auth/discord/callback',
       FRONTEND_URL: 'https://wynn.tools',
       COOKIE_DOMAIN: '.wynn.tools',
-      SESSION_SECRET: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
       CDN_BASE_URL: 'https://cdn.wynn.tools/',
     },
   },

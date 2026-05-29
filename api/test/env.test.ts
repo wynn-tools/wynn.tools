@@ -8,7 +8,6 @@ const base = {
   DISCORD_REDIRECT_URI: 'https://api.wynn.tools/v1/auth/discord/callback',
   FRONTEND_URL: 'https://wynn.tools',
   COOKIE_DOMAIN: '.wynn.tools',
-  SESSION_SECRET: 'x'.repeat(32),
   CDN_BASE_URL: 'https://cdn.wynn.tools/',
   PORT: '8080',
 }
@@ -18,9 +17,5 @@ describe('parseEnv', () => {
     const env = parseEnv(base)
     expect(env.PORT).toBe(8080)
     expect(env.FRONTEND_URL).toBe('https://wynn.tools')
-  })
-
-  it('throws when SESSION_SECRET is too short', () => {
-    expect(() => parseEnv({ ...base, SESSION_SECRET: 'short' })).toThrow()
   })
 })

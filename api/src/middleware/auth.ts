@@ -1,5 +1,6 @@
 import type { Context, MiddlewareHandler } from 'hono'
 import { getCookie } from 'hono/cookie'
+import { env } from '../env'
 import { AppError } from '../lib/errors'
 import { verifyApiKey } from '../services/api-keys'
 import { getSessionUser } from '../services/sessions'
@@ -20,6 +21,13 @@ export const requireAuth: MiddlewareHandler = async (c, next) => {
   if (!auth)
     throw new AppError(401, 'unauthorized', 'Authentication required')
   c.set('auth', auth)
+  const isMutation = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(c.req.method)
+  const usedBearer = /^Bearer /i.test(c.req.header('authorization') ?? '')
+  if (isMutation && !usedBearer) {
+    const origin = c.req.header('origin')
+    if (origin && origin !== env().FRONTEND_URL)
+      throw new AppError(403, 'csrf', 'Cross-origin request rejected')
+  }
   await next()
 }
 
