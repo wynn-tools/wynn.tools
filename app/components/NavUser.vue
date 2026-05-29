@@ -6,8 +6,8 @@ const auth = useAuthStore()
 const open = ref(false)
 const wrapRef = ref<HTMLElement | null>(null)
 
-function avatarUrl(id: string, avatar: string) {
-  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=64`
+function avatarUrl(discordId: string, avatar: string) {
+  return `https://cdn.discordapp.com/avatars/${discordId}/${avatar}.webp?size=64`
 }
 
 function close() {
@@ -45,7 +45,7 @@ onClickOutside(wrapRef, close)
       >
         <img
           v-if="auth.user.avatar"
-          :src="avatarUrl(auth.user.id, auth.user.avatar)"
+          :src="avatarUrl(auth.user.discordId, auth.user.avatar)"
           :alt="auth.user.username"
           class="avatar"
           width="28"
@@ -57,7 +57,10 @@ onClickOutside(wrapRef, close)
       </button>
 
       <div v-if="open" role="menu" class="dropdown">
-        <span class="dropdown-name">{{ auth.user.username }}</span>
+        <span class="dropdown-name">{{ auth.user.displayName ?? auth.user.username }}</span>
+        <NuxtLink to="/me/profile" class="dropdown-item" role="menuitem" @click="close">
+          Profile
+        </NuxtLink>
         <NuxtLink to="/me/builds" class="dropdown-item" role="menuitem" @click="close">
           My Builds
         </NuxtLink>
