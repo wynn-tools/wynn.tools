@@ -65,6 +65,12 @@ watch(filters, () => {
 }, { deep: true })
 
 await useAsyncData('public-items', () => load())
+
+const hasActiveFilters = computed(() => !!q.value)
+
+function clearAllFilters() {
+  router.push({ query: {} })
+}
 </script>
 
 <template>
@@ -78,6 +84,12 @@ await useAsyncData('public-items', () => load())
           Crafted Items
         </button>
       </div>
+      <p class="page-desc">
+        Community crafted items — hover any card for a full stat preview.
+      </p>
+      <NuxtLink to="/crafter" class="page-cta">
+        New item
+      </NuxtLink>
     </div>
 
     <div class="layout">
@@ -91,9 +103,18 @@ await useAsyncData('public-items', () => load())
         <p v-if="loadError" class="state">
           {{ loadError }}
         </p>
-        <p v-else-if="items.length === 0 && !loading" class="state">
-          No crafted items match these filters.
-        </p>
+        <div v-else-if="items.length === 0 && !loading && hasActiveFilters" class="state-block">
+          <span>No crafted items match these filters.</span>
+          <button type="button" class="state-action" @click="clearAllFilters">
+            Clear filters
+          </button>
+        </div>
+        <div v-else-if="items.length === 0 && !loading" class="state-block">
+          <span>No crafted items shared yet.</span>
+          <NuxtLink to="/crafter" class="state-action">
+            Create the first item
+          </NuxtLink>
+        </div>
         <template v-else>
           <div class="card-grid">
             <ItemCard
@@ -153,6 +174,10 @@ await useAsyncData('public-items', () => load())
   .card-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
+  }
+
+  .page-desc {
+    display: none;
   }
 }
 </style>

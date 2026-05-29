@@ -125,6 +125,12 @@ watch(selectedItemName, (name) => {
   if (name && !itemPickerOpen.value)
     itemPickerInput.value = name
 })
+
+const hasActiveFilters = computed(() => !!(q.value || activeClass.value || activeItemId.value))
+
+function clearAllFilters() {
+  router.push({ query: {} })
+}
 </script>
 
 <template>
@@ -138,6 +144,12 @@ watch(selectedItemName, (name) => {
           Crafted Items
         </button>
       </div>
+      <p class="page-desc">
+        Community builds — hover any card for a stat preview.
+      </p>
+      <NuxtLink to="/builder" class="page-cta">
+        New build
+      </NuxtLink>
     </div>
 
     <div class="layout">
@@ -212,9 +224,18 @@ watch(selectedItemName, (name) => {
         <p v-if="loadError" class="state">
           {{ loadError }}
         </p>
-        <p v-else-if="builds.length === 0 && !loading" class="state">
-          No builds match these filters.
-        </p>
+        <div v-else-if="builds.length === 0 && !loading && hasActiveFilters" class="state-block">
+          <span>No builds match these filters.</span>
+          <button type="button" class="state-action" @click="clearAllFilters">
+            Clear filters
+          </button>
+        </div>
+        <div v-else-if="builds.length === 0 && !loading" class="state-block">
+          <span>No builds shared yet.</span>
+          <NuxtLink to="/builder" class="state-action">
+            Create the first build
+          </NuxtLink>
+        </div>
         <template v-else>
           <div class="card-grid">
             <BuildCard
@@ -410,6 +431,10 @@ watch(selectedItemName, (name) => {
   .card-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
+  }
+
+  .page-desc {
+    display: none;
   }
 }
 </style>
