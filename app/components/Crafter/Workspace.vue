@@ -69,6 +69,9 @@ watch(
     <template v-else-if="store.ctx">
       <div class="crafter-toolbar">
         <CrafterHashBar />
+        <NuxtLink v-if="!embedded" to="/crafted" class="toolbar-browse">
+          Browse crafted <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
+        </NuxtLink>
         <CrafterSaveButton v-if="!embedded" :saved-id="props.savedId" :is-owner="props.isOwner" />
       </div>
       <header class="crafter-bar">
@@ -109,6 +112,37 @@ watch(
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+}
+
+.toolbar-browse {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-faint);
+  text-decoration: none;
+  white-space: nowrap;
+  align-self: center;
+  transition: color 0.12s ease-out;
+}
+
+.toolbar-browse:hover {
+  color: var(--color-muted);
+}
+
+.toolbar-browse-arrow {
+  display: inline-block;
+  transition: transform 0.15s ease-out;
+}
+
+.toolbar-browse:hover .toolbar-browse-arrow {
+  transform: translateX(3px);
+}
+
+.toolbar-browse:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .state-text {

@@ -1,32 +1,163 @@
 <script setup lang="ts">
-import { FileClock, Hammer, Map, Search, Sword } from '@lucide/vue'
+import { ChevronDown, FileClock, Hammer, LayoutList, Map, Menu, Package, Search, Sword, X } from '@lucide/vue'
+import { onClickOutside } from '@vueuse/core'
 
-const tools = [
-  { name: 'Builder', href: '/builder', icon: Sword },
-  { name: 'Crafter', href: '/crafter', icon: Hammer },
+const route = useRoute()
+
+const dropdownGroups = [
+  {
+    label: 'Build',
+    icon: Sword,
+    items: [
+      { name: 'Builder', href: '/builder', icon: Sword, desc: 'Create and plan builds' },
+      { name: 'Builds', href: '/builds', icon: LayoutList, desc: 'Browse community builds' },
+    ],
+  },
+  {
+    label: 'Craft',
+    icon: Hammer,
+    items: [
+      { name: 'Crafter', href: '/crafter', icon: Hammer, desc: 'Create crafted items' },
+      { name: 'Crafted', href: '/crafted', icon: Package, desc: 'Browse community crafted' },
+    ],
+  },
+]
+
+const standalone = [
   { name: 'Items', href: '/items', icon: Search },
   { name: 'Map', href: '/map', icon: Map },
   { name: 'Changelog', href: '/changelog', icon: FileClock },
 ]
+
+// Desktop dropdowns
+const openGroup = ref<string | null>(null)
+
+function isGroupActive(group: typeof dropdownGroups[number]) {
+  return group.items.some(item => route.path.startsWith(item.href))
+}
+
+// Mobile menu
+const mobileOpen = ref(false)
+const navRef = ref<HTMLElement | null>(null)
+
+onClickOutside(navRef, () => {
+  mobileOpen.value = false
+})
+
+watch(() => route.path, () => {
+  mobileOpen.value = false
+})
 </script>
 
 <template>
-  <nav class="site-nav" aria-label="Main navigation">
+  <nav ref="navRef" class="site-nav" aria-label="Main navigation">
     <div class="nav-inner">
       <NuxtLink to="/" class="nav-logo" aria-label="wynn.tools home">
         <span class="logo-text">wynn<span class="logo-dot">.</span>tools</span>
       </NuxtLink>
 
-      <ul class="nav-links" role="list">
-        <li v-for="tool in tools" :key="tool.name">
-          <NuxtLink :to="tool.href" class="nav-link">
-            <component :is="tool.icon" :size="16" class="nav-icon" aria-hidden="true" />
-            <span class="nav-label">{{ tool.name }}</span>
-          </NuxtLink>
-        </li>
-      </ul>
+      <!-- Desktop nav -->
+      <div class="nav-tools" aria-hidden="false">
+        <div
+          v-for="group in dropdownGroups"
+          :key="group.label"
+          class="nav-dropdown-wrap"
+          @mouseenter="openGroup = group.label"
+          @mouseleave="openGroup = null"
+        >
+          <button
+            class="nav-link nav-dropdown-trigger"
+            :class="{ 'is-group-active': isGroupActive(group) }"
+            type="button"
+            :aria-expanded="openGroup === group.label"
+            :aria-haspopup="true"
+          >
+            <component :is="group.icon" :size="16" class="nav-icon" aria-hidden="true" />
+            <span class="nav-label">{{ group.label }}</span>
+            <ChevronDown :size="12" class="nav-chevron" :class="{ 'is-open': openGroup === group.label }" aria-hidden="true" />
+          </button>
+
+          <Transition name="dropdown">
+            <div v-if="openGroup === group.label" class="nav-dropdown" role="menu">
+              <NuxtLink
+                v-for="item in group.items"
+                :key="item.name"
+                :to="item.href"
+                class="nav-dropdown-item"
+                role="menuitem"
+                @click="openGroup = null"
+              >
+                <component :is="item.icon" :size="14" class="nav-dropdown-item-icon" aria-hidden="true" />
+                <span class="nav-dropdown-item-body">
+                  <span class="nav-dropdown-item-name">{{ item.name }}</span>
+                  <span class="nav-dropdown-item-desc">{{ item.desc }}</span>
+                </span>
+              </NuxtLink>
+            </div>
+          </Transition>
+        </div>
+
+        <ul class="nav-group" role="list">
+          <li v-for="tool in standalone" :key="tool.name">
+            <NuxtLink :to="tool.href" class="nav-link">
+              <component :is="tool.icon" :size="16" class="nav-icon" aria-hidden="true" />
+              <span class="nav-label">{{ tool.name }}</span>
+            </NuxtLink>
+          </li>
+        </ul>
+      </div>
+
       <NavUser />
+
+      <!-- Mobile hamburger -->
+      <button
+        class="nav-hamburger"
+        type="button"
+        :aria-expanded="mobileOpen"
+        aria-label="Open navigation"
+        @click="mobileOpen = !mobileOpen"
+      >
+        <component :is="mobileOpen ? X : Menu" :size="20" aria-hidden="true" />
+      </button>
     </div>
+
+    <!-- Mobile menu panel -->
+    <Transition name="mobile-menu">
+      <div v-if="mobileOpen" class="mobile-menu" role="dialog" aria-label="Navigation">
+        <!-- Grouped sections -->
+        <div v-for="group in dropdownGroups" :key="group.label" class="mobile-section">
+          <span class="mobile-section-label">
+            <component :is="group.icon" :size="12" aria-hidden="true" />
+            {{ group.label }}
+          </span>
+          <NuxtLink
+            v-for="item in group.items"
+            :key="item.name"
+            :to="item.href"
+            class="mobile-item"
+          >
+            <component :is="item.icon" :size="16" class="mobile-item-icon" aria-hidden="true" />
+            <span class="mobile-item-body">
+              <span class="mobile-item-name">{{ item.name }}</span>
+              <span class="mobile-item-desc">{{ item.desc }}</span>
+            </span>
+          </NuxtLink>
+        </div>
+
+        <!-- Standalone links -->
+        <div class="mobile-section mobile-section--flat">
+          <NuxtLink
+            v-for="tool in standalone"
+            :key="tool.name"
+            :to="tool.href"
+            class="mobile-item mobile-item--flat"
+          >
+            <component :is="tool.icon" :size="16" class="mobile-item-icon" aria-hidden="true" />
+            <span class="mobile-item-name">{{ tool.name }}</span>
+          </NuxtLink>
+        </div>
+      </div>
+    </Transition>
   </nav>
 </template>
 
@@ -53,6 +184,8 @@ const tools = [
   width: 100%;
 }
 
+/* ── Logo ───────────────────────────────────────────────────────────── */
+
 .nav-logo {
   text-decoration: none;
   flex-shrink: 0;
@@ -75,11 +208,22 @@ const tools = [
   color: var(--color-accent);
 }
 
-.nav-links {
+/* ── Desktop nav tools ──────────────────────────────────────────────── */
+
+.nav-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-group {
   display: flex;
   align-items: center;
   gap: 2px;
   list-style: none;
+  padding-left: 16px;
+  margin-left: 12px;
+  border-left: 1px solid var(--color-border);
 }
 
 .nav-link {
@@ -117,17 +261,285 @@ const tools = [
   flex-shrink: 0;
 }
 
-@media (max-width: 600px) {
+/* ── Desktop dropdown trigger ───────────────────────────────────────── */
+
+.nav-dropdown-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-dropdown-trigger.is-group-active {
+  color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+
+.nav-chevron {
+  flex-shrink: 0;
+  color: var(--color-faint);
+  transition: transform 0.15s ease-out;
+}
+
+.nav-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+/* ── Desktop dropdown panel ─────────────────────────────────────────── */
+
+.nav-dropdown-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: oklch(19% 0.008 30 / 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(65% 0.15 48 / 0.2);
+  border-radius: 8px;
+  padding: 4px;
+  min-width: 200px;
+  box-shadow: 0 4px 24px oklch(0% 0 0 / 0.3);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--color-muted);
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.nav-dropdown-item:hover {
+  color: var(--color-text);
+  background: var(--color-surface-hi);
+}
+
+.nav-dropdown-item.router-link-active {
+  color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+
+.nav-dropdown-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.nav-dropdown-item-icon {
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.nav-dropdown-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.nav-dropdown-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.nav-dropdown-item-desc {
+  font-size: 11px;
+  color: var(--color-faint);
+  line-height: 1.3;
+}
+
+/* ── Desktop dropdown transition ────────────────────────────────────── */
+
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition:
+    opacity 0.12s ease-out,
+    transform 0.12s ease-out;
+}
+
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ── Mobile hamburger ───────────────────────────────────────────────── */
+
+.nav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.nav-hamburger:hover {
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.nav-hamburger:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ── Mobile menu panel ──────────────────────────────────────────────── */
+
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: oklch(14% 0.006 30 / 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+  padding: 8px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 49;
+}
+
+.mobile-section {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+
+.mobile-section + .mobile-section {
+  border-top: 1px solid var(--color-border);
+  margin-top: 4px;
+}
+
+.mobile-section--flat {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.mobile-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  padding: 0 12px 4px;
+}
+
+.mobile-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--color-muted);
+  min-height: 44px;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.mobile-item:active {
+  background: var(--color-surface);
+}
+
+.mobile-item.router-link-active {
+  color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+
+.mobile-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.mobile-item--flat {
+  flex: 0 0 auto;
+}
+
+.mobile-item-icon {
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.mobile-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.mobile-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.mobile-item-desc {
+  font-size: 12px;
+  color: var(--color-faint);
+  line-height: 1.3;
+}
+
+/* ── Mobile menu transition ─────────────────────────────────────────── */
+
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition:
+    opacity 0.15s ease-out,
+    transform 0.15s ease-out;
+}
+
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
   .nav-inner {
     padding: 0 20px;
+    gap: 12px;
   }
 
-  .nav-label {
+  .nav-tools {
     display: none;
   }
 
-  .nav-link {
-    padding: 6px 8px;
+  .nav-hamburger {
+    display: flex;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Layers, Map, Plug, Search, Share2, Sword, UserCircle } from '@lucide/vue'
+import { Layers, LayoutList, Map, Package, Plug, Search, Share2, Sword, UserCircle } from '@lucide/vue'
 
 useSeoMeta({
   title: 'wynn.tools — Wynncraft Toolkit',
@@ -27,6 +27,18 @@ const tools = [
     desc: 'Explore the Province of Wynn with live location data.',
     href: '/map',
     icon: Map,
+  },
+  {
+    name: 'Builds',
+    desc: 'Browse builds shared by the community.',
+    href: '/builds',
+    icon: LayoutList,
+  },
+  {
+    name: 'Crafted',
+    desc: 'Browse crafted gear shared by the community.',
+    href: '/crafted',
+    icon: Package,
   },
 ]
 

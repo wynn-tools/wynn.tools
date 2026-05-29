@@ -17,6 +17,9 @@ const showAtree = ref(true)
   <main class="builder">
     <div class="builder-toolbar">
       <BuilderImportBar />
+      <NuxtLink to="/builds" class="toolbar-browse">
+        Browse builds <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
+      </NuxtLink>
       <BuilderSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" />
     </div>
     <p v-if="store.loading" class="state-text">
@@ -94,6 +97,37 @@ const showAtree = ref(true)
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 4px;
+}
+
+.toolbar-browse {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-faint);
+  text-decoration: none;
+  white-space: nowrap;
+  align-self: center;
+  transition: color 0.12s ease-out;
+}
+
+.toolbar-browse:hover {
+  color: var(--color-muted);
+}
+
+.toolbar-browse-arrow {
+  display: inline-block;
+  transition: transform 0.15s ease-out;
+}
+
+.toolbar-browse:hover .toolbar-browse-arrow {
+  transform: translateX(3px);
+}
+
+.toolbar-browse:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .state-text {
