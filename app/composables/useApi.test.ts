@@ -29,6 +29,17 @@ describe('api client', () => {
     expect(fetchImpl).toHaveBeenCalledWith('https://api.test/v1/builds?cursor=cur1&limit=10', expect.any(Object))
   })
 
+  it('listPublicBuilds serializes filter params into the URL', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(ok({ data: [], nextCursor: null }))
+    const api = createApiClient('https://api.test', fetchImpl)
+    await api.listPublicBuilds({ q: 'fast', class: 'Warrior', itemId: 42, sort: 'name' })
+    const url = (fetchImpl.mock.calls[0] as [string])[0]
+    expect(url).toContain('q=fast')
+    expect(url).toContain('class=Warrior')
+    expect(url).toContain('itemId=42')
+    expect(url).toContain('sort=name')
+  })
+
   it('createBuild POSTs JSON', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(ok({ id: 'b2' }, 201))
     const api = createApiClient('https://api.test', fetchImpl)

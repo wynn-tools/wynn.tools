@@ -37,6 +37,9 @@ const buildsListQuery = z.object({
   limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).optional().default(DEFAULT_PAGE_SIZE),
 })
 
+// /mine doesn't expose class or itemId filters
+const mineListQuery = buildsListQuery.omit({ class: true, itemId: true })
+
 function buildFilterConditions(
   q: string | undefined,
   playerClass: string | undefined,
@@ -139,11 +142,10 @@ export const builds = new Hono()
     }).returning()
     return c.json({ id: row.id }, 201)
   })
-  .get('/mine', requireAuth, zValidator('query', buildsListQuery), async (c) => {
+  .get('/mine', requireAuth, zValidator('query', mineListQuery), async (c) => {
     const auth = c.get('auth')
     if (!hasScope(auth, 'builds:read'))
       throw new AppError(403, 'forbidden', 'Missing builds:read scope')
-    // class and itemId filters are not exposed on /mine
     const { q, sort, cursor: rawCursor, limit } = c.req.valid('query')
     const cursor = decodeCursor(rawCursor)
     const filterConds = buildFilterConditions(q, undefined, undefined, sort, cursor)
