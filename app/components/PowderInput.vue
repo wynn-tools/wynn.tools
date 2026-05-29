@@ -284,14 +284,6 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
   min-width: 0;
 }
 
-.kicker {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-}
-
 .title {
   font-family: 'Barlow Semi Condensed', system-ui, sans-serif;
   font-size: 20px;

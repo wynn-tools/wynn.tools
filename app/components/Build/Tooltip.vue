@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { useItemSearchData } from '~/composables/useItemSearchData'
 import { classTheme } from '~/lib/build/class-theme'
-import { attributeUrl, miscUrl, spUrl } from '~/lib/items/icon'
+import { attributeUrl, itemIconUrl, miscUrl, spUrl } from '~/lib/items/icon'
 import { TIER_COLORS } from '~/lib/items/tooltip'
 
 const props = defineProps<{
@@ -19,6 +20,20 @@ interface BuildDecoded {
 
 const ELEMENTS = ['earth', 'thunder', 'water', 'fire', 'air'] as const
 const SP_SKILLS = ['strength', 'dexterity', 'intelligence', 'defence', 'agility'] as const
+
+const { data: searchData } = useItemSearchData()
+
+const iconMap = computed(() => {
+  const map = new Map<string, string>()
+  if (!searchData.value)
+    return map
+  for (const item of searchData.value.items) {
+    const url = itemIconUrl(item)
+    if (url)
+      map.set(item.name, url)
+  }
+  return map
+})
 
 const theme = computed(() => classTheme(props.playerClass))
 
@@ -89,6 +104,13 @@ function sepStyle() {
       <!-- Equipment -->
       <ul class="bt-items">
         <li v-for="(item, i) in items" :key="i" class="bt-item" :style="{ color: TIER_COLORS[item.tier] ?? '#aeaeae' }">
+          <img
+            v-if="iconMap.get(item.name)"
+            :src="iconMap.get(item.name)"
+            class="bt-item-icon"
+            alt=""
+            aria-hidden="true"
+          >
           {{ item.name }}
         </li>
       </ul>
@@ -202,11 +224,22 @@ function sepStyle() {
 }
 
 .bt-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 15px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   line-height: 1.5;
+}
+
+.bt-item-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  object-fit: contain;
 }
 
 /* Combat stats */

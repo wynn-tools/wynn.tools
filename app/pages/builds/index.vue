@@ -4,6 +4,7 @@ import type { ApiBuildSummary, BuildListFilters } from '~/composables/useApi'
 import { useApi } from '~/composables/useApi'
 import { useItemSearchData } from '~/composables/useItemSearchData'
 import { CLASS_THEMES, classWeaponUrl } from '~/lib/build/class-theme'
+import { itemIconUrl } from '~/lib/items/icon'
 
 useSeoMeta({
   title: 'Public Builds — wynn.tools',
@@ -37,11 +38,12 @@ const itemSuggestions = computed(() => {
     .filter(i => i.name.toLowerCase().includes(needle))
     .slice(0, 8)
 })
-const selectedItemName = computed(() => {
+const selectedItem = computed(() => {
   if (!activeItemId.value || !searchData.value)
     return null
-  return searchData.value.items.find(i => i.id === activeItemId.value)?.name ?? null
+  return searchData.value.items.find(i => i.id === activeItemId.value) ?? null
 })
+const selectedItemName = computed(() => selectedItem.value?.name ?? null)
 
 function selectItem(id: number, name: string) {
   itemPickerInput.value = name
@@ -180,9 +182,17 @@ watch(selectedItemName, (name) => {
             <legend>Item</legend>
             <div class="item-picker">
               <div class="item-picker-wrap">
+                <img
+                  v-if="selectedItem && itemIconUrl(selectedItem)"
+                  :src="itemIconUrl(selectedItem)!"
+                  class="item-selected-icon"
+                  aria-hidden="true"
+                  alt=""
+                >
                 <input
                   v-model="itemPickerInput"
                   class="item-input"
+                  :class="{ 'item-input--has-icon': selectedItem && itemIconUrl(selectedItem) }"
                   type="text"
                   placeholder="Filter by item…"
                   @focus="itemPickerOpen = true"
@@ -200,6 +210,14 @@ watch(selectedItemName, (name) => {
                   class="item-suggestion"
                   @mousedown.prevent="selectItem(item.id, item.name)"
                 >
+                  <img
+                    v-if="itemIconUrl(item)"
+                    :src="itemIconUrl(item)!"
+                    class="item-suggestion-icon"
+                    aria-hidden="true"
+                    alt=""
+                  >
+                  <span v-else class="item-suggestion-icon item-suggestion-icon--empty" aria-hidden="true" />
                   {{ item.name }}
                 </li>
               </ul>
@@ -253,131 +271,6 @@ watch(selectedItemName, (name) => {
   border-bottom: 1px solid var(--color-border);
 }
 
-.tabs {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  max-width: 100%;
-}
-
-.tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.tabs button {
-  background: transparent;
-  border: 0;
-  border-radius: 5px;
-  color: var(--color-muted);
-  padding: 6px 14px;
-  cursor: pointer;
-  font: 600 12px/1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition:
-    color 0.12s ease-out,
-    background 0.12s ease-out;
-}
-
-.tabs button:hover {
-  color: var(--color-text);
-}
-
-.tabs button.on {
-  color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
-}
-
-.tabs button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 248px minmax(0, 1fr);
-  gap: 40px;
-  align-items: start;
-}
-
-.filters-toggle {
-  display: none;
-}
-
-.sidebar {
-  position: sticky;
-  top: 76px;
-  align-self: start;
-}
-
-.filters {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.f-group {
-  border: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.f-group--col {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.f-group legend {
-  width: 100%;
-  font: 500 11px/1 var(--font-mono);
-  color: var(--color-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-  padding: 0;
-}
-
-.f-group button {
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  color: var(--color-muted);
-  font-size: 12px;
-  padding: 4px 9px;
-  cursor: pointer;
-  text-transform: capitalize;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out,
-    background 0.12s ease-out;
-}
-
-.f-group button:hover {
-  color: var(--color-text);
-  border-color: var(--color-faint);
-}
-
-.f-group button.on {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
-}
-
-.f-group button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
 /* Class filter buttons: per-class color via --cls-color */
 .f-group--class button {
   display: inline-flex;
@@ -418,6 +311,17 @@ watch(selectedItemName, (name) => {
   align-items: center;
 }
 
+.item-selected-icon {
+  position: absolute;
+  left: 8px;
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
 .item-input {
   width: 100%;
   padding: 7px 28px 7px 10px;
@@ -428,6 +332,10 @@ watch(selectedItemName, (name) => {
   border-radius: 6px;
   outline: none;
   transition: border-color 0.12s ease-out;
+}
+
+.item-input--has-icon {
+  padding-left: 32px;
 }
 
 .item-input::placeholder {
@@ -474,7 +382,10 @@ watch(selectedItemName, (name) => {
 }
 
 .item-suggestion {
-  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
   font-size: 13px;
   color: var(--color-text);
   cursor: pointer;
@@ -485,8 +396,16 @@ watch(selectedItemName, (name) => {
   background: var(--color-surface-hi);
 }
 
-.results {
-  min-width: 0;
+.item-suggestion-icon {
+  width: 20px;
+  height: 20px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.item-suggestion-icon--empty {
+  visibility: hidden;
 }
 
 .card-grid {
@@ -494,56 +413,6 @@ watch(selectedItemName, (name) => {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 12px;
   margin-bottom: 24px;
-}
-
-.state {
-  padding: 56px 20px;
-  color: var(--color-muted);
-  text-align: center;
-  font-size: 14px;
-}
-
-.load-more {
-  display: flex;
-  justify-content: center;
-}
-
-.load-more-btn {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-
-.load-more-btn:not(:disabled):hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-.load-more-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  .sidebar {
-    position: static;
-  }
 }
 
 @media (max-width: 720px) {
@@ -556,77 +425,9 @@ watch(selectedItemName, (name) => {
     margin-bottom: 16px;
   }
 
-  .tabs button {
-    padding: 8px 12px;
-    min-height: 36px;
-  }
-
-  .layout {
-    gap: 14px;
-  }
-
-  .filters-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    align-self: flex-start;
-    background: transparent;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    padding: 8px 14px;
-    color: var(--color-muted);
-    cursor: pointer;
-    font: 500 11px/1 var(--font-mono);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    transition:
-      color 0.12s ease-out,
-      border-color 0.12s ease-out;
-  }
-
-  .filters-toggle:hover,
-  .filters-toggle[aria-expanded='true'] {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  .filters-toggle:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .filters-toggle-icon {
-    display: inline-flex;
-    align-items: center;
-    color: currentColor;
-  }
-
-  .filters-toggle-chevron {
-    margin-left: auto;
-    transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
-    transform: rotate(90deg);
-    font-size: 14px;
-    line-height: 1;
-  }
-
-  .filters-toggle-chevron.open {
-    transform: rotate(-90deg);
-    color: var(--color-accent);
-  }
-
-  .sidebar--collapsed-mobile {
-    display: none;
-  }
-
   .card-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .filters-toggle-chevron {
-    transition: none;
   }
 }
 </style>

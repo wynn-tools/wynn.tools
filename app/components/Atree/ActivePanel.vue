@@ -94,15 +94,6 @@ const activeAbilities = computed<AtreeNode[]>(() =>
   border-bottom: 1px solid var(--color-border);
 }
 
-.kicker {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-}
-
 .count {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 12px;

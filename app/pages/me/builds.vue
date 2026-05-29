@@ -194,45 +194,6 @@ async function deleteBuild(id: string) {
   border-bottom: 1px solid var(--color-border);
 }
 
-.tabs {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.tabs button {
-  background: transparent;
-  border: 0;
-  border-radius: 5px;
-  color: var(--color-muted);
-  padding: 6px 14px;
-  cursor: pointer;
-  font: 600 12px/1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition:
-    color 0.12s ease-out,
-    background 0.12s ease-out;
-}
-
-.tabs button:hover {
-  color: var(--color-text);
-}
-
-.tabs button.on {
-  color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
-}
-
-.tabs button:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
 .row-list {
   display: flex;
   flex-direction: column;
@@ -392,37 +353,5 @@ async function deleteBuild(id: string) {
 .empty-state a {
   color: var(--color-accent);
   text-decoration: none;
-}
-
-.load-more {
-  display: flex;
-  justify-content: center;
-}
-
-.load-more-btn {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-
-.load-more-btn:not(:disabled):hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-.load-more-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 </style>

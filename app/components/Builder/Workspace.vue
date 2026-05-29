@@ -143,15 +143,6 @@ const showAtree = ref(true)
   color: oklch(62% 0.15 20);
 }
 
-.kicker {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-}
-
 .zones {
   display: grid;
   gap: 16px;

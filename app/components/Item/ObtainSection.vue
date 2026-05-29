@@ -57,9 +57,8 @@ const KIND_TAG: Record<ObtainKind, string> = {
   margin-bottom: 14px;
 }
 .kicker {
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 11px;
+  line-height: 1;
   color: var(--color-muted);
 }
 .title {

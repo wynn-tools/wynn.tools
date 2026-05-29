@@ -111,8 +111,7 @@ if (!isPrivate.value) {
 
       <div class="tabs" role="tablist">
         <button
-          class="tab"
-          :class="{ 'tab--active': activeTab === 'builds' }"
+          :class="{ on: activeTab === 'builds' }"
           type="button"
           role="tab"
           :aria-selected="activeTab === 'builds'"
@@ -121,8 +120,7 @@ if (!isPrivate.value) {
           Builds
         </button>
         <button
-          class="tab"
-          :class="{ 'tab--active': activeTab === 'items' }"
+          :class="{ on: activeTab === 'items' }"
           type="button"
           role="tab"
           :aria-selected="activeTab === 'items'"
@@ -239,35 +237,6 @@ if (!isPrivate.value) {
   margin: 0;
 }
 
-.tabs {
-  display: flex;
-  gap: 2px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.tab {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-muted);
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 8px 16px;
-  margin-bottom: -1px;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-
-.tab:hover {
-  color: var(--color-text);
-}
-.tab--active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
-}
-
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -280,32 +249,6 @@ if (!isPrivate.value) {
 }
 
 .load-more {
-  display: flex;
-  justify-content: center;
   margin-top: 12px;
-}
-.load-more-btn {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-.load-more-btn:not(:disabled):hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-.load-more-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 </style>
