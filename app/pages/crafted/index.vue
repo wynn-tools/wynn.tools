@@ -56,7 +56,8 @@ await useAsyncData('public-items', () => load())
         :name="item.name"
         :game-version="item.gameVersion"
         :owner-id="item.owner?.id"
-        :owner-name="item.owner?.username"
+        :owner-name="item.owner?.name"
+        :show-owner="true"
       />
     </div>
 

@@ -5,6 +5,7 @@ defineProps<{
   gameVersion: string
   ownerId?: string
   ownerName?: string
+  showOwner?: boolean
 }>()
 </script>
 
@@ -14,10 +15,11 @@ defineProps<{
       <span class="card-name">{{ name }}</span>
       <span class="card-meta">
         <span class="card-version">{{ gameVersion }}</span>
-        <span v-if="ownerName" class="card-owner-wrap">
+        <span v-if="ownerName && ownerId" class="card-owner-wrap">
           by
           <NuxtLink :to="`/u/${ownerId}`" class="card-owner" @click.stop>{{ ownerName }}</NuxtLink>
         </span>
+        <span v-else-if="showOwner" class="card-owner-anon">Anonymous</span>
       </span>
     </NuxtLink>
   </article>
@@ -73,5 +75,10 @@ defineProps<{
 
 .card-owner:hover {
   color: var(--color-accent);
+}
+
+.card-owner-anon {
+  color: var(--color-faint);
+  font-style: italic;
 }
 </style>

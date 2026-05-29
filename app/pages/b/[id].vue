@@ -53,7 +53,9 @@ function fork() {
   <div>
     <div v-if="build && !isOwner" class="fork-bar">
       <span class="fork-label">
-        Viewing build by {{ build.owner?.username ?? 'unknown' }}
+        Viewing build by
+        <NuxtLink v-if="build.owner" :to="`/u/${build.owner.id}`" class="fork-owner-link">{{ build.owner.name }}</NuxtLink>
+        <span v-else>Anonymous</span>
       </span>
       <button class="fork-btn" type="button" @click="fork">
         Fork this build →
@@ -96,5 +98,13 @@ function fork() {
 
 .fork-btn:hover {
   border-color: var(--color-accent);
+}
+
+.fork-owner-link {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.fork-owner-link:hover {
+  text-decoration: underline;
 }
 </style>
