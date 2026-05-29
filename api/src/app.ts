@@ -4,6 +4,7 @@ import { env } from './env'
 import { onError } from './lib/errors'
 import { auth, me } from './routes/auth'
 import { health } from './routes/health'
+import { keys } from './routes/keys'
 
 export function createApp(): Hono {
   const app = new Hono()
@@ -16,5 +17,6 @@ export function createApp(): Hono {
   app.route('/v1/health', health)
   app.route('/v1/auth', auth)
   app.route('/v1/me', me)
+  app.route('/v1/me/keys', keys)
   return app
 }
