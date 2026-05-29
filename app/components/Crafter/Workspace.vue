@@ -14,10 +14,14 @@ const props = withDefaults(defineProps<{
   embedded?: boolean
   onEquip?: () => void
   equipDisabledReason?: string | null
+  savedId?: string
+  isOwner?: boolean
 }>(), {
   embedded: false,
   onEquip: undefined,
   equipDisabledReason: null,
+  savedId: undefined,
+  isOwner: false,
 })
 
 const store = useCraftStore()
@@ -63,7 +67,10 @@ watch(
       Failed to load crafter: {{ store.error }}
     </p>
     <template v-else-if="store.ctx">
-      <CrafterHashBar />
+      <div class="crafter-toolbar">
+        <CrafterHashBar />
+        <CrafterSaveButton v-if="!embedded" :saved-id="props.savedId" :is-owner="props.isOwner" />
+      </div>
       <header class="crafter-bar">
         <CrafterRecipePanel />
         <span class="crafter-bar__divider" aria-hidden="true" />
@@ -95,6 +102,13 @@ watch(
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
+}
+
+.crafter-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .state-text {
