@@ -16,6 +16,17 @@ const saving = ref(false)
 const saved = ref(false)
 const saveError = ref<string | null>(null)
 
+const copied = ref(false)
+function copyProfileLink() {
+  if (!auth.user)
+    return
+  navigator.clipboard.writeText(`${window.location.origin}/u/${auth.user.id}`)
+  copied.value = true
+  setTimeout(() => {
+    copied.value = false
+  }, 2000)
+}
+
 async function save() {
   saving.value = true
   saveError.value = null
@@ -47,9 +58,19 @@ async function save() {
 <template>
   <div class="profile-page">
     <header class="page-header">
-      <h1 class="page-title">
-        Profile
-      </h1>
+      <div class="page-header-row">
+        <h1 class="page-title">
+          Profile
+        </h1>
+        <div class="page-header-actions">
+          <NuxtLink v-if="auth.user" :to="`/u/${auth.user.id}`" class="view-profile-link">
+            View public profile
+          </NuxtLink>
+          <button v-if="auth.user" class="copy-link-btn" type="button" @click="copyProfileLink">
+            {{ copied ? 'Copied!' : 'Copy link' }}
+          </button>
+        </div>
+      </div>
       <p class="page-desc">
         Customise how you appear across wynn.tools.
       </p>
@@ -142,6 +163,31 @@ async function save() {
   flex-direction: column;
   gap: 6px;
 }
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.view-profile-link {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color 0.12s ease-out;
+  white-space: nowrap;
+}
+.view-profile-link:hover {
+  color: var(--color-accent);
+}
 .page-title {
   font-size: 20px;
   font-weight: 600;
@@ -152,6 +198,27 @@ async function save() {
   font-size: 13px;
   color: var(--color-muted);
   margin: 0;
+}
+.copy-link-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out;
+  white-space: nowrap;
+}
+.copy-link-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .avatar-row {
