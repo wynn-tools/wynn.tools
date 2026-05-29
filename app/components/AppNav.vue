@@ -25,6 +25,7 @@ const tools = [
           </NuxtLink>
         </li>
       </ul>
+      <NavUser />
     </div>
   </nav>
 </template>
