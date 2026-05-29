@@ -18,6 +18,54 @@ async function session() {
 describe('builds routes (no network)', () => {
   beforeEach(resetDb)
 
+  it('returns paginated shape for GET /v1/builds when empty', async () => {
+    const res = await app()('/v1/builds')
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toEqual({ data: [], nextCursor: null })
+  })
+
+  it('returns paginated shape for GET /v1/builds/mine', async () => {
+    const { user, cookie } = await session()
+    await getDb().insert(schema.builds).values({
+      id: 'mine1',
+      userId: user.id,
+      name: 'MyBuild',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2.0.31',
+      visibility: 'private',
+    })
+    const res = await app()('/v1/builds/mine', { headers: { cookie } })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('data')
+    expect(body).toHaveProperty('nextCursor')
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('MyBuild')
+    expect(body.data[0].visibility).toBe('private')
+    expect(body.nextCursor).toBeNull()
+  })
+
+  it('patches name on PATCH /v1/builds/:id', async () => {
+    const { user, cookie } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'patch1',
+      userId: user.id,
+      name: 'PatchMe',
+      buildString: ORACLE_HASH,
+      gameVersion: 'old',
+      visibility: 'private',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`, {
+      method: 'PATCH',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Updated' }),
+    })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.name).toBe('Updated')
+  })
+
   it('401 on create without auth', async () => {
     const res = await app()('/v1/builds', {
       method: 'POST',

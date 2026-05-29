@@ -60,4 +60,23 @@ describe('auth routes', () => {
     const res = await app()('/v1/me')
     expect(res.status).toBe(401)
   })
+
+  it('callback with return_to=/builder/abc redirects to frontend/builder/abc', async () => {
+    ;(globalThis as any).__discordFetch = async (url: string) =>
+      url.includes('/token')
+        ? new Response(JSON.stringify({ access_token: 'tok' }))
+        : new Response(JSON.stringify({ id: '42', username: 'morph', avatar: null }))
+
+    const login = await app()('/v1/auth/discord/login?return_to=/builder/abc')
+    const loginCookies = cookiesFrom(login)
+    const state = loginCookies.oauth_state
+    const returnTo = loginCookies.oauth_return_to
+
+    const res = await app()(`/v1/auth/discord/callback?code=xyz&state=${state}`, {
+      headers: { cookie: `oauth_state=${state}; oauth_return_to=${returnTo}` },
+    })
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toBe('https://wynn.tools/builder/abc')
+    delete (globalThis as any).__discordFetch
+  })
 })

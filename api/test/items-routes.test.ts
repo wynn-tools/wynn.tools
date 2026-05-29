@@ -16,6 +16,31 @@ async function session() {
 describe('items routes', () => {
   beforeEach(resetDb)
 
+  it('returns paginated shape for GET /v1/items when empty', async () => {
+    const res = await app()('/v1/items')
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toEqual({ data: [], nextCursor: null })
+  })
+
+  it('returns paginated shape for GET /v1/items/mine', async () => {
+    const cookie = await session()
+    const created = await app()('/v1/items', {
+      method: 'POST',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Ring', itemData: { ids: { hp: 100 } }, gameVersion: '2.2.0.31', visibility: 'private' }),
+    })
+    expect(created.status).toBe(201)
+    const res = await app()('/v1/items/mine', { headers: { cookie } })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('data')
+    expect(body).toHaveProperty('nextCursor')
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('Ring')
+    expect(body.nextCursor).toBeNull()
+  })
+
   it('creates, reads, gates private, deletes', async () => {
     const cookie = await session()
     const created = await app()('/v1/items', {

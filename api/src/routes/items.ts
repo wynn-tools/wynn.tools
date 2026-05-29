@@ -78,12 +78,24 @@ export const items = new Hono()
     const auth = c.get('auth')
     if (!hasScope(auth, 'items:read'))
       throw new AppError(403, 'forbidden', 'Missing items:read scope')
+    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
+    const cursor = decodeCursor(c.req.query('cursor'))
     const rows = await getDb().query.craftedItems.findMany({
-      where: (i, { eq }) => eq(i.userId, auth.user.id),
-      orderBy: (i, { desc }) => [desc(i.createdAt)],
-      limit: DEFAULT_PAGE_SIZE,
+      where: (i, { and, eq, lt, or }) => and(
+        eq(i.userId, auth.user.id),
+        cursor
+          ? or(lt(i.createdAt, cursor.createdAt), and(eq(i.createdAt, cursor.createdAt), lt(i.id, cursor.id)))
+          : undefined,
+      ),
+      orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
+      limit: limit + 1,
     })
-    return c.json(rows.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion })))
+    const hasMore = rows.length > limit
+    const page = rows.slice(0, limit)
+    const next = hasMore
+      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      : null
+    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion })), nextCursor: next })
   })
   .get('/:id', async (c) => {
     const item = await getDb().query.craftedItems.findFirst({ where: (i, { eq }) => eq(i.id, c.req.param('id')) })
