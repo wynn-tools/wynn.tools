@@ -67,6 +67,12 @@ function toggleClass(cls: string) {
   setFilter({ class: activeClass.value === cls ? undefined : cls })
 }
 
+function onItemBlur() {
+  setTimeout(() => {
+    itemPickerOpen.value = false
+  }, 150)
+}
+
 // --- list state ---
 const api = useApi()
 const builds = ref<ApiBuildSummary[]>([])
@@ -145,7 +151,7 @@ watch(selectedItemName, (name) => {
             type="text"
             placeholder="Filter by item…"
             @focus="itemPickerOpen = true"
-            @blur="window.setTimeout(() => { itemPickerOpen = false }, 150)"
+            @blur="onItemBlur"
             @input="itemPickerOpen = true"
           >
           <button v-if="activeItemId" class="item-clear" type="button" aria-label="Clear item filter" @click="clearItem">
