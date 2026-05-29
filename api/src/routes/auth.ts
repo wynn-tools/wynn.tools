@@ -44,7 +44,7 @@ export const auth = new Hono()
     const db = getDb()
     const [user] = await db
       .insert(schema.users)
-      .values({ id: newResourceId(), discordId: profile.id, username: profile.username, avatar: profile.avatar })
+      .values({ id: newResourceId(), discordId: profile.id, username: profile.username, avatar: profile.avatar, displayName: profile.globalName })
       .onConflictDoUpdate({
         target: schema.users.discordId,
         set: { username: profile.username, avatar: profile.avatar, updatedAt: new Date() },

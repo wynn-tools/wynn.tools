@@ -4,6 +4,7 @@ export interface DiscordProfile {
   id: string
   username: string
   avatar: string | null
+  globalName: string | null
 }
 
 type FetchImpl = typeof fetch
@@ -44,6 +45,6 @@ export async function fetchProfile(accessToken: string, fetchImpl: FetchImpl = f
   })
   if (!res.ok)
     throw new Error(`Discord profile fetch failed: ${res.status}`)
-  const json = await res.json() as { id: string, username: string, avatar: string | null }
-  return { id: json.id, username: json.username, avatar: json.avatar }
+  const json = await res.json() as { id: string, username: string, avatar: string | null, global_name: string | null }
+  return { id: json.id, username: json.username, avatar: json.avatar, globalName: json.global_name }
 }
