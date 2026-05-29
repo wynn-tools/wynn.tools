@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onClickOutside } from '@vueuse/core'
 import { useApi } from '~/composables/useApi'
 import { useAuthStore } from '~/stores/auth'
 import { useBuildStore } from '~/stores/build'
@@ -17,6 +18,19 @@ type State = 'idle' | 'auth-prompt' | 'name-prompt' | 'saving' | 'saved'
 const state = ref<State>('idle')
 const buildName = ref('My Build')
 const error = ref<string | null>(null)
+
+const saveWrapRef = ref<HTMLElement | null>(null)
+onClickOutside(saveWrapRef, () => {
+  if (state.value === 'auth-prompt' || state.value === 'name-prompt')
+    dismiss()
+})
+
+let savedTimer: ReturnType<typeof setTimeout> | null = null
+
+onUnmounted(() => {
+  if (savedTimer !== null)
+    clearTimeout(savedTimer)
+})
 
 function handleClick() {
   if (!auth.user) {
@@ -55,7 +69,7 @@ async function save() {
   try {
     await api.updateBuild(props.savedId, { buildString: store.currentHash })
     state.value = 'saved'
-    setTimeout(() => {
+    savedTimer = setTimeout(() => {
       state.value = 'idle'
     }, 1600)
   }
@@ -71,14 +85,14 @@ function dismiss() {
 </script>
 
 <template>
-  <div class="save-wrap">
+  <div ref="saveWrapRef" class="save-wrap">
     <!-- Idle / Saving: main button -->
     <button
       v-if="state === 'idle' || state === 'saving'"
       class="save-btn"
       :class="{ 'save-btn--active': savedId && isOwner }"
       type="button"
-      :disabled="!store.currentHash || state === 'saving'"
+      :disabled="!store.currentHash || store.loading || state === 'saving'"
       @click="handleClick"
     >
       {{ state === 'saving' ? 'Saving…' : (savedId && isOwner ? 'Save' : 'Save build') }}
