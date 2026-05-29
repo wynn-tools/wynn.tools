@@ -8,6 +8,7 @@ import { builds, userBuilds } from './routes/builds'
 import { health } from './routes/health'
 import { items, userItems } from './routes/items'
 import { keys } from './routes/keys'
+import { meProfile, userProfile } from './routes/profile'
 
 export function createApp(): Hono {
   const app = new Hono()
@@ -22,9 +23,11 @@ export function createApp(): Hono {
   app.route('/v1/auth', auth)
   app.route('/v1/me', me)
   app.route('/v1/me/keys', keys)
+  app.route('/v1/me/profile', meProfile)
   app.route('/v1/builds', builds)
   app.route('/v1/users', userBuilds)
-  app.route('/v1/items', items)
   app.route('/v1/users', userItems)
+  app.route('/v1/users', userProfile)
+  app.route('/v1/items', items)
   return app
 }
