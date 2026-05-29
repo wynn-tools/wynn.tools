@@ -18,8 +18,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function login() {
+    if (!import.meta.client)
+      return
     const config = useRuntimeConfig()
-    const returnTo = encodeURIComponent(window.location.pathname + window.location.search)
+    const returnTo = encodeURIComponent(
+      window.location.pathname + window.location.search + window.location.hash,
+    )
     window.location.href = `${config.public.apiBaseUrl}/v1/auth/discord/login?return_to=${returnTo}`
   }
 

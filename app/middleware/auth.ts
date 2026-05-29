@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
           stop()
           resolve()
         }
-      })
+      }, { immediate: true })
     })
   }
   if (!store.user)
