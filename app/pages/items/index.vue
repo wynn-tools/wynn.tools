@@ -24,7 +24,6 @@ const materialCriteria = ref<MaterialCriteria>(defaultMaterialCriteria())
 
 type Tab = 'items' | 'ingredients' | 'tomes' | 'charms' | 'materials'
 const tab = ref<Tab>('items')
-const mobileFiltersOpen = ref(false)
 
 const showSidebar = computed(() => tab.value !== 'charms')
 
@@ -77,34 +76,12 @@ const setOptions = computed(() =>
     </div>
 
     <div v-else class="layout" :class="{ 'layout--full': !showSidebar }">
-      <button
-        v-if="showSidebar"
-        type="button"
-        class="filters-toggle"
-        :aria-expanded="mobileFiltersOpen"
-        aria-controls="search-filters-panel"
-        @click="mobileFiltersOpen = !mobileFiltersOpen"
-      >
-        <span class="filters-toggle-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-          </svg>
-        </span>
-        <span>{{ mobileFiltersOpen ? 'Hide filters' : 'Filters' }}</span>
-        <span class="filters-toggle-chevron" :class="{ open: mobileFiltersOpen }" aria-hidden="true">›</span>
-      </button>
-
-      <aside
-        v-if="showSidebar"
-        id="search-filters-panel"
-        class="sidebar"
-        :class="{ 'sidebar--collapsed-mobile': !mobileFiltersOpen }"
-      >
+      <FiltersSidebar v-if="showSidebar" panel-id="search-filters-panel">
         <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" :set-options="setOptions" />
         <IngredientSearchFilters v-else-if="tab === 'ingredients'" v-model="ingredientCriteria" />
         <TomeSearchFilters v-else-if="tab === 'tomes'" v-model="tomeCriteria" />
         <MaterialSearchFilters v-else-if="tab === 'materials'" v-model="materialCriteria" />
-      </aside>
+      </FiltersSidebar>
 
       <section class="results">
         <template v-if="tab === 'items'">

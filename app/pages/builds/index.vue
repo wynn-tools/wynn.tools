@@ -82,7 +82,6 @@ const builds = ref<ApiBuildSummary[]>([])
 const nextCursor = ref<string | null>(null)
 const loading = ref(false)
 const loadError = ref<string | null>(null)
-const mobileFiltersOpen = ref(false)
 
 const filters = computed<BuildListFilters>(() => ({
   q: q.value || undefined,
@@ -139,27 +138,7 @@ watch(selectedItemName, (name) => {
     </div>
 
     <div class="layout">
-      <button
-        type="button"
-        class="filters-toggle"
-        :aria-expanded="mobileFiltersOpen"
-        aria-controls="builds-filters-panel"
-        @click="mobileFiltersOpen = !mobileFiltersOpen"
-      >
-        <span class="filters-toggle-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-          </svg>
-        </span>
-        <span>{{ mobileFiltersOpen ? 'Hide filters' : 'Filters' }}</span>
-        <span class="filters-toggle-chevron" :class="{ open: mobileFiltersOpen }" aria-hidden="true">›</span>
-      </button>
-
-      <aside
-        id="builds-filters-panel"
-        class="sidebar"
-        :class="{ 'sidebar--collapsed-mobile': !mobileFiltersOpen }"
-      >
+      <FiltersSidebar panel-id="builds-filters-panel">
         <div class="filters">
           <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
 
@@ -224,7 +203,7 @@ watch(selectedItemName, (name) => {
             </div>
           </fieldset>
         </div>
-      </aside>
+      </FiltersSidebar>
 
       <section class="results">
         <p v-if="loadError" class="state">
