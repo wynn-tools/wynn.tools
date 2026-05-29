@@ -44,7 +44,7 @@ export async function decodeBuild(buildString: string): Promise<{
     }))
     const decoded = computeBuild(raw, loaded.ctx)
 
-    // Extract item IDs from NORMAL equipment slots (indices 0–8), excluding nulls
+    // Extract item IDs from NORMAL equipment slots 0–8; crafted/empty slots yield null and are excluded
     const itemIds = raw.equipment
       .map(slot => slotItemId(slot))
       .filter((id): id is number => id !== null)
