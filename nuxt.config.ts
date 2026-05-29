@@ -10,6 +10,7 @@ export default defineNuxtConfig({
       // Root base: versions.json lives at the root; snapshots under data/{hash}/.
       cdnBaseUrl: 'https://cdn.wynn.tools/',
       athenaUrl: 'https://athena.wynntils.com',
+      apiBaseUrl: 'https://api.wynn.tools',
     },
   },
   app: {
