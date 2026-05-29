@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { getDb, schema } from '../src/db/client'
+import { newResourceId } from '../src/lib/ids'
 import { createApiKey, revokeApiKey, verifyApiKey } from '../src/services/api-keys'
 import { resetDb } from './helpers/db'
 
 async function user() {
-  const [u] = await getDb().insert(schema.users).values({ discordId: 'k', username: 'kuser' }).returning()
+  const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'k', username: 'kuser' }).returning()
   return u
 }
 

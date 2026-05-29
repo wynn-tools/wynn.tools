@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { getDb, schema } from '../src/db/client'
+import { newResourceId } from '../src/lib/ids'
 import { resetDb } from './helpers/db'
 
 describe('db schema', () => {
@@ -8,6 +9,7 @@ describe('db schema', () => {
   it('round-trips a user', async () => {
     const db = getDb()
     const [user] = await db.insert(schema.users).values({
+      id: newResourceId(),
       discordId: '123',
       username: 'tester',
       avatar: null,

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from '../src/app'
 import { getDb, schema } from '../src/db/client'
+import { newResourceId } from '../src/lib/ids'
 import { createSession } from '../src/services/sessions'
 import { resetDb } from './helpers/db'
 
@@ -9,7 +10,7 @@ function app() {
   return (p: string, init?: RequestInit) => a.request(`http://test${p}`, init)
 }
 async function session() {
-  const [u] = await getDb().insert(schema.users).values({ discordId: 'ci', username: 'crafter' }).returning()
+  const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'ci', username: 'crafter' }).returning()
   return `session=${await createSession(u.id)}`
 }
 

@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from '../src/app'
 import { getDb, schema } from '../src/db/client'
+import { newResourceId } from '../src/lib/ids'
 import { createSession } from '../src/services/sessions'
 import { resetDb } from './helpers/db'
 
 async function sessionFor() {
-  const [u] = await getDb().insert(schema.users).values({ discordId: 'm', username: 'm' }).returning()
+  const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'm', username: 'm' }).returning()
   return { user: u, cookie: `session=${await createSession(u.id)}` }
 }
 

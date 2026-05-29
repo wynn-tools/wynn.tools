@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { getDb, schema } from '../src/db/client'
 import { onError } from '../src/lib/errors'
+import { newResourceId } from '../src/lib/ids'
 import { hasScope, requireAuth } from '../src/middleware/auth'
 import { createApiKey } from '../src/services/api-keys'
 import { createSession } from '../src/services/sessions'
@@ -26,7 +27,7 @@ describe('requireAuth', () => {
   })
 
   it('accepts a session cookie with full capabilities', async () => {
-    const [u] = await getDb().insert(schema.users).values({ discordId: 's', username: 's' }).returning()
+    const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 's', username: 's' }).returning()
     const token = await createSession(u.id)
     const res = await protectedApp()('/v1/secret', { headers: { cookie: `session=${token}` } })
     expect(res.status).toBe(200)
@@ -34,14 +35,14 @@ describe('requireAuth', () => {
   })
 
   it('accepts a bearer key scoped to its abilities', async () => {
-    const [u] = await getDb().insert(schema.users).values({ discordId: 'b', username: 'b' }).returning()
+    const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'b', username: 'b' }).returning()
     const { plaintext } = await createApiKey(u.id, 'ro', ['builds:read'])
     const res = await protectedApp()('/v1/secret', { headers: { authorization: `Bearer ${plaintext}` } })
     expect(await res.json()).toEqual({ userId: u.id, canWrite: false })
   })
 
   it('rejects a cookie-authed mutation from a foreign origin', async () => {
-    const [u] = await getDb().insert(schema.users).values({ discordId: 'csrf', username: 'c' }).returning()
+    const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'csrf', username: 'c' }).returning()
     const token = await createSession(u.id)
     const res = await protectedApp()('/v1/secret', {
       method: 'POST',
@@ -52,7 +53,7 @@ describe('requireAuth', () => {
   })
 
   it('allows a bearer-authed mutation from any origin', async () => {
-    const [u] = await getDb().insert(schema.users).values({ discordId: 'csrf2', username: 'c2' }).returning()
+    const [u] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'csrf2', username: 'c2' }).returning()
     const { plaintext } = await createApiKey(u.id, 'w', ['builds:write'])
     const res = await protectedApp()('/v1/secret', {
       method: 'POST',
