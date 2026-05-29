@@ -25,7 +25,7 @@ describe('api client', () => {
   it('listPublicBuilds passes cursor and limit as query params', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(ok({ data: [], nextCursor: null }))
     const api = createApiClient('https://api.test', fetchImpl)
-    await api.listPublicBuilds('cur1', 10)
+    await api.listPublicBuilds(undefined, 'cur1', 10)
     expect(fetchImpl).toHaveBeenCalledWith('https://api.test/v1/builds?cursor=cur1&limit=10', expect.any(Object))
   })
 

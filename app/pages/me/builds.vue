@@ -16,7 +16,7 @@ async function load(cursor?: string) {
   loading.value = true
   loadError.value = null
   try {
-    const res = await api.listMyBuilds(cursor, 20)
+    const res = await api.listMyBuilds(undefined, cursor, 20)
     builds.value = cursor ? [...builds.value, ...res.data] : res.data
     nextCursor.value = res.nextCursor
   }

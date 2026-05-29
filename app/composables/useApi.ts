@@ -52,6 +52,7 @@ export interface ApiItemSummary {
   gameVersion: string
   visibility?: 'public' | 'unlisted' | 'private'
   owner?: ApiOwner | null
+  craftHash?: string | null
 }
 
 export interface ApiProfile {
@@ -80,6 +81,18 @@ export interface PageResult<T> {
   nextCursor: string | null
 }
 
+export interface BuildListFilters {
+  q?: string
+  sort?: 'newest' | 'oldest' | 'name'
+  class?: 'Assassin' | 'Warrior' | 'Mage' | 'Archer' | 'Shaman'
+  itemId?: number
+}
+
+export interface ItemListFilters {
+  q?: string
+  sort?: 'newest' | 'oldest' | 'name'
+}
+
 export class ApiError extends Error {
   constructor(public code: string, message: string) {
     super(message)
@@ -102,8 +115,14 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     return { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }
   }
 
-  function paginationQuery(cursor?: string, limit?: number): string {
+  function paginationQuery(filters?: Record<string, string | number | undefined>, cursor?: string, limit?: number): string {
     const params = new URLSearchParams()
+    if (filters) {
+      for (const [k, v] of Object.entries(filters)) {
+        if (v !== undefined)
+          params.set(k, String(v))
+      }
+    }
     if (cursor)
       params.set('cursor', cursor)
     if (limit)
@@ -119,12 +138,12 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
 
     // Builds
     getBuild: (id: string) => request<ApiBuild>(`/v1/builds/${id}`),
-    listPublicBuilds: (cursor?: string, limit?: number) =>
-      request<PageResult<ApiBuildSummary>>(`/v1/builds${paginationQuery(cursor, limit)}`),
-    listMyBuilds: (cursor?: string, limit?: number) =>
-      request<PageResult<ApiBuildSummary>>(`/v1/builds/mine${paginationQuery(cursor, limit)}`),
-    getUserBuilds: (userId: string, cursor?: string, limit?: number) =>
-      request<PageResult<ApiBuildSummary>>(`/v1/users/${userId}/builds${paginationQuery(cursor, limit)}`),
+    listPublicBuilds: (filters?: BuildListFilters, cursor?: string, limit?: number) =>
+      request<PageResult<ApiBuildSummary>>(`/v1/builds${paginationQuery(filters, cursor, limit)}`),
+    listMyBuilds: (filters?: Pick<BuildListFilters, 'q' | 'sort'>, cursor?: string, limit?: number) =>
+      request<PageResult<ApiBuildSummary>>(`/v1/builds/mine${paginationQuery(filters, cursor, limit)}`),
+    getUserBuilds: (userId: string, filters?: BuildListFilters, cursor?: string, limit?: number) =>
+      request<PageResult<ApiBuildSummary>>(`/v1/users/${userId}/builds${paginationQuery(filters, cursor, limit)}`),
     createBuild: (body: { name: string, buildString: string, visibility?: string }) =>
       request<{ id: string }>('/v1/builds', jsonInit('POST', body)),
     updateBuild: (id: string, body: { name?: string, buildString?: string, visibility?: string }) =>
@@ -133,12 +152,12 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
 
     // Items
     getItem: (id: string) => request<ApiItem>(`/v1/items/${id}`),
-    listPublicItems: (cursor?: string, limit?: number) =>
-      request<PageResult<ApiItemSummary>>(`/v1/items${paginationQuery(cursor, limit)}`),
-    listMyItems: (cursor?: string, limit?: number) =>
-      request<PageResult<ApiItemSummary>>(`/v1/items/mine${paginationQuery(cursor, limit)}`),
-    getUserItems: (userId: string, cursor?: string, limit?: number) =>
-      request<PageResult<ApiItemSummary>>(`/v1/users/${userId}/items${paginationQuery(cursor, limit)}`),
+    listPublicItems: (filters?: ItemListFilters, cursor?: string, limit?: number) =>
+      request<PageResult<ApiItemSummary>>(`/v1/items${paginationQuery(filters, cursor, limit)}`),
+    listMyItems: (filters?: ItemListFilters, cursor?: string, limit?: number) =>
+      request<PageResult<ApiItemSummary>>(`/v1/items/mine${paginationQuery(filters, cursor, limit)}`),
+    getUserItems: (userId: string, filters?: ItemListFilters, cursor?: string, limit?: number) =>
+      request<PageResult<ApiItemSummary>>(`/v1/users/${userId}/items${paginationQuery(filters, cursor, limit)}`),
     createItem: (body: { name: string, itemData: Record<string, unknown>, gameVersion: string, visibility?: string }) =>
       request<{ id: string }>('/v1/items', jsonInit('POST', body)),
     updateItem: (id: string, body: { name?: string, itemData?: Record<string, unknown>, visibility?: string }) =>

@@ -1,14 +1,24 @@
 <script setup lang="ts">
+import type { ApiItemSummary } from '~/composables/useApi'
 import type { CleanedRawItem } from '~/lib/build/resolve'
+import type { CraftedItem } from '~/lib/crafter/types'
 import Fuse from 'fuse.js'
-import { computed, onMounted, ref } from 'vue'
+import {
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardRoot,
+  HoverCardTrigger,
+} from 'reka-ui'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useApi } from '~/composables/useApi'
 import { itemIconUrl } from '~/lib/items/icon'
+import { useAuthStore } from '~/stores/auth'
 import { useBuildStore } from '~/stores/build'
 import { useCraftStore } from '~/stores/craft'
 
 const props = withDefaults(defineProps<{
   slotIndex: number
-  initialTab?: 'items' | 'crafted'
+  initialTab?: 'items' | 'crafted' | 'saved'
 }>(), {
   initialTab: 'items',
 })
@@ -19,9 +29,11 @@ const emit = defineEmits<{
 
 const store = useBuildStore()
 const craftStore = useCraftStore()
+const authStore = useAuthStore()
+const api = useApi()
 const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
-const tab = ref<'items' | 'crafted'>(props.initialTab)
+const tab = ref<'items' | 'crafted' | 'saved'>(props.initialTab)
 
 onMounted(() => searchInput.value?.focus())
 
@@ -76,6 +88,12 @@ const SLOT_LABEL: Readonly<Record<number, string>> = {
   8: 'weapon',
 }
 
+// Single allowed type for non-weapon slots; null for weapon slot (multiple types).
+const lockedRecipeType = computed<string | null>(() => {
+  const allowed = ALLOWED_RECIPE_TYPES[props.slotIndex] ?? []
+  return allowed.length === 1 ? (allowed[0] ?? null) : null
+})
+
 const equipDisabledReason = computed<string | null>(() => {
   const rec = craftStore.recipe
   if (!rec)
@@ -96,6 +114,84 @@ function handleEquipCraft() {
   const snapshot = JSON.parse(JSON.stringify(craftStore.raw))
   store.setCraftedSlot(props.slotIndex, snapshot, craftStore.isWeapon)
   emit('close')
+}
+
+// ----- Saved tab -----
+
+const { resolve: resolveCraft } = useCraftedItemPreview()
+
+const savedItems = ref<ApiItemSummary[]>([])
+const savedNextCursor = ref<string | null>(null)
+const savedLoading = ref(false)
+const savedLoaded = ref(false)
+const savedError = ref<string | null>(null)
+const savedMismatch = ref<string | null>(null)
+const savedCraftedCache = new Map<string, CraftedItem>()
+const savedHoverCrafted = ref<CraftedItem | null>(null)
+
+async function loadSaved(cursor?: string) {
+  if (savedLoading.value)
+    return
+  savedLoading.value = true
+  savedError.value = null
+  try {
+    const res = await api.listMyItems(undefined, cursor, 20)
+    savedItems.value = cursor ? [...savedItems.value, ...res.data] : res.data
+    savedNextCursor.value = res.nextCursor
+    savedLoaded.value = true
+  }
+  catch (e: unknown) {
+    savedError.value = e instanceof Error ? e.message : 'Failed to load items'
+  }
+  finally {
+    savedLoading.value = false
+  }
+}
+
+watch(tab, (t) => {
+  if (t === 'saved' && !savedLoaded.value && authStore.user)
+    loadSaved()
+})
+
+async function onSavedHoverOpen(open: boolean, craftHash: string | null | undefined) {
+  if (!open || !craftHash)
+    return
+  if (savedCraftedCache.has(craftHash)) {
+    savedHoverCrafted.value = savedCraftedCache.get(craftHash)!
+    return
+  }
+  try {
+    const resolved = await resolveCraft(craftHash)
+    if (resolved) {
+      savedCraftedCache.set(craftHash, resolved.crafted)
+      savedHoverCrafted.value = resolved.crafted
+    }
+  }
+  catch {
+    // suppress — tooltip just won't show
+  }
+}
+
+async function selectSavedItem(item: ApiItemSummary) {
+  if (!item.craftHash)
+    return
+  savedMismatch.value = null
+  try {
+    const resolved = await resolveCraft(item.craftHash)
+    if (!resolved)
+      return
+    const allowed = ALLOWED_RECIPE_TYPES[props.slotIndex] ?? []
+    if (!allowed.includes(resolved.crafted.type)) {
+      savedMismatch.value = `"${item.name}" is a ${resolved.crafted.type} — this slot accepts ${SLOT_LABEL[props.slotIndex]}`
+      return
+    }
+    const isWeapon = resolved.crafted.category === 'weapon'
+    store.setCraftedSlot(props.slotIndex, resolved.raw, isWeapon)
+    emit('close')
+  }
+  catch {
+    savedMismatch.value = 'Failed to load item'
+  }
 }
 </script>
 
@@ -121,6 +217,16 @@ function handleEquipCraft() {
         @click="tab = 'crafted'"
       >
         Crafted
+      </button>
+      <button
+        type="button"
+        role="tab"
+        :aria-selected="tab === 'saved'"
+        class="picker-tab"
+        :class="{ 'picker-tab--active': tab === 'saved' }"
+        @click="tab = 'saved'; if (!savedLoaded && authStore.user) loadSaved()"
+      >
+        Saved
       </button>
       <button class="picker-close" aria-label="Close" @click="emit('close')">
         ✕
@@ -162,13 +268,77 @@ function handleEquipCraft() {
       </ul>
     </template>
 
-    <div v-else class="picker-crafted-host" @click.stop>
+    <div v-else-if="tab === 'crafted'" class="picker-crafted-host" @click.stop>
       <CrafterWorkspace
         :embedded="true"
         :on-equip="handleEquipCraft"
         :equip-disabled-reason="equipDisabledReason"
+        :locked-type="lockedRecipeType"
       />
     </div>
+
+    <template v-else-if="tab === 'saved'">
+      <div v-if="authStore.pending" class="saved-state">
+        Loading…
+      </div>
+      <div v-else-if="!authStore.user" class="saved-unauthenticated">
+        <p class="saved-auth-msg">
+          Sign in to access your saved crafted items.
+        </p>
+        <button class="saved-signin-btn" type="button" @click="authStore.login()">
+          Sign in with Discord
+        </button>
+      </div>
+      <template v-else>
+        <div v-if="savedLoading && savedItems.length === 0" class="saved-state">
+          Loading…
+        </div>
+        <p v-else-if="savedError" class="saved-state saved-state--error">
+          {{ savedError }}
+        </p>
+        <div v-else-if="savedItems.length === 0" class="saved-state">
+          No saved crafted items.
+        </div>
+        <ul v-else class="picker-list">
+          <HoverCardRoot
+            v-for="item in savedItems"
+            :key="item.id"
+            :open-delay="120"
+            :close-delay="0"
+            @update:open="open => onSavedHoverOpen(open, item.craftHash)"
+          >
+            <HoverCardTrigger as-child>
+              <li class="picker-item" @click="selectSavedItem(item)">
+                <span class="picker-item-name">{{ item.name }}</span>
+                <span class="picker-item-version">{{ item.gameVersion }}</span>
+              </li>
+            </HoverCardTrigger>
+            <HoverCardPortal v-if="item.craftHash">
+              <HoverCardContent :side-offset="8" side="right" align="start" class="saved-quickview">
+                <div class="saved-quickview-scale">
+                  <CrafterItemPreview
+                    v-if="savedCraftedCache.get(item.craftHash)"
+                    :crafted="savedCraftedCache.get(item.craftHash)!"
+                    hide-equip-button
+                  />
+                  <div v-else class="saved-tooltip-loading">
+                    Loading…
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCardPortal>
+          </HoverCardRoot>
+        </ul>
+        <div v-if="savedNextCursor" class="saved-loadmore">
+          <button type="button" :disabled="savedLoading" class="saved-loadmore-btn" @click="loadSaved(savedNextCursor ?? undefined)">
+            {{ savedLoading ? 'Loading…' : 'Load more' }}
+          </button>
+        </div>
+        <p v-if="savedMismatch" class="saved-mismatch">
+          {{ savedMismatch }}
+        </p>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -362,6 +532,13 @@ function handleEquipCraft() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+}
+
+.picker-item-version {
+  font-size: 10px;
+  color: var(--color-faint);
+  flex-shrink: 0;
 }
 
 .picker-item:hover {
@@ -382,5 +559,105 @@ function handleEquipCraft() {
 .picker-crafted-host {
   flex: 1;
   overflow: auto;
+}
+
+/* Saved tab */
+.saved-state {
+  padding: 24px 16px;
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.saved-state--error {
+  color: oklch(62% 0.15 20);
+}
+
+.saved-unauthenticated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 20px;
+}
+
+.saved-auth-msg {
+  font-size: 13px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.saved-signin-btn {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    color 0.1s,
+    border-color 0.1s;
+}
+
+.saved-signin-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.saved-loadmore {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.saved-loadmore-btn {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.1s;
+}
+
+.saved-loadmore-btn:not(:disabled):hover {
+  color: var(--color-muted);
+}
+
+.saved-loadmore-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.saved-mismatch {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: oklch(70% 0.15 48);
+  padding: 8px 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.saved-quickview {
+  z-index: 60;
+}
+
+.saved-quickview-scale {
+  zoom: 0.7;
+}
+
+.saved-tooltip-loading {
+  font-size: 12px;
+  color: var(--color-muted);
+  padding: 16px;
 }
 </style>

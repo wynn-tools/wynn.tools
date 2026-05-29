@@ -44,7 +44,7 @@ const buildsLoading = ref(false)
 async function loadBuilds(cursor?: string) {
   buildsLoading.value = true
   try {
-    const res = await api.getUserBuilds(userId.value, cursor, 20)
+    const res = await api.getUserBuilds(userId.value, undefined, cursor, 20)
     builds.value = cursor ? [...builds.value, ...res.data] : res.data
     buildsNextCursor.value = res.nextCursor
   }
@@ -61,7 +61,7 @@ const itemsLoading = ref(false)
 async function loadItems(cursor?: string) {
   itemsLoading.value = true
   try {
-    const res = await api.getUserItems(userId.value, cursor, 20)
+    const res = await api.getUserItems(userId.value, undefined, cursor, 20)
     items.value = cursor ? [...items.value, ...res.data] : res.data
     itemsNextCursor.value = res.nextCursor
   }
@@ -172,6 +172,7 @@ if (!isPrivate.value) {
             :game-version="i.gameVersion"
             :owner-id="i.owner?.id"
             :owner-name="i.owner?.name"
+            :craft-hash="i.craftHash"
           />
         </div>
         <div v-if="itemsNextCursor" class="load-more">

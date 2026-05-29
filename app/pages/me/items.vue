@@ -16,7 +16,7 @@ async function load(cursor?: string) {
   loading.value = true
   loadError.value = null
   try {
-    const res = await api.listMyItems(cursor, 20)
+    const res = await api.listMyItems(undefined, cursor, 20)
     items.value = cursor ? [...items.value, ...res.data] : res.data
     nextCursor.value = res.nextCursor
   }

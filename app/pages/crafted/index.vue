@@ -17,7 +17,7 @@ async function load(cursor?: string) {
   loading.value = true
   loadError.value = null
   try {
-    const res = await api.listPublicItems(cursor, 20)
+    const res = await api.listPublicItems(undefined, cursor, 20)
     items.value = cursor ? [...items.value, ...res.data] : res.data
     nextCursor.value = res.nextCursor
   }
@@ -58,6 +58,7 @@ await useAsyncData('public-items', () => load())
         :owner-id="item.owner?.id"
         :owner-name="item.owner?.name"
         :show-owner="true"
+        :craft-hash="item.craftHash"
       />
     </div>
 
