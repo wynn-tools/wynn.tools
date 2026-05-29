@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "api_keys" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"label" text NOT NULL,
 	"key_hash" text NOT NULL,
 	"prefix" text NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "api_keys" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "builds" (
 	"id" text PRIMARY KEY NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"name" text NOT NULL,
 	"build_string" text NOT NULL,
 	"game_version" text NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "builds" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "crafted_items" (
 	"id" text PRIMARY KEY NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"name" text NOT NULL,
 	"item_data" jsonb NOT NULL,
 	"game_version" text NOT NULL,
@@ -35,13 +35,13 @@ CREATE TABLE IF NOT EXISTS "crafted_items" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "sessions" (
 	"id" text PRIMARY KEY NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" text NOT NULL,
 	"expires_at" timestamp with time zone NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "users" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"discord_id" text NOT NULL,
 	"username" text NOT NULL,
 	"avatar" text,

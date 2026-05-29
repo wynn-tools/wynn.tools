@@ -1,6 +1,6 @@
 {
-  "id": "84274886-14af-4261-aad6-dd2961096285",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "aeb83d98-ab33-4ba8-9706-2c7fb8272ea8",
+  "prevId": "84274886-14af-4261-aad6-dd2961096285",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -376,6 +376,25 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "profile_visibility": {
+          "name": "profile_visibility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'public'"
         },
         "created_at": {
           "name": "created_at",
