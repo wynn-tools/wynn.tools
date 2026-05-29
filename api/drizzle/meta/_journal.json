@@ -15,6 +15,13 @@
       "when": 1780052017138,
       "tag": "0001_powerful_namora",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780075223237,
+      "tag": "0002_fancy_unus",
+      "breakpoints": true
     }
   ]
 }

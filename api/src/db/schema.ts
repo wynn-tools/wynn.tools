@@ -43,6 +43,8 @@ export const builds = pgTable('builds', {
   gameVersion: text('game_version').notNull(),
   visibility: text('visibility', { enum: visibility }).notNull().default('private'),
   viewCount: integer('view_count').notNull().default(0),
+  playerClass: text('class'),
+  itemIds: integer('item_ids').array(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [index('builds_user_id_idx').on(t.userId)])
