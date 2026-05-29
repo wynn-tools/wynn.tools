@@ -22,8 +22,10 @@ const { data: item, error } = await useAsyncData<ApiItem>(
   { watch: [id] },
 )
 
-if (error.value || !item.value)
+if (error.value || !item.value) {
   await navigateTo('/')
+  throw createError({ statusCode: 404 })
+}
 
 const isOwner = computed(() =>
   !!auth.user && !!item.value?.owner && item.value.owner.id === auth.user.id,

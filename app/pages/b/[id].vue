@@ -22,8 +22,10 @@ const { data: build, error } = await useAsyncData<ApiBuild>(
   { watch: [id] },
 )
 
-if (error.value || !build.value)
+if (error.value || !build.value) {
   await navigateTo('/')
+  throw createError({ statusCode: 404 })
+}
 
 const isOwner = computed(() =>
   !!auth.user && !!build.value?.owner && build.value.owner.id === auth.user.id,
