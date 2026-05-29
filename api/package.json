@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsup",
-    "start": "node dist/index.js",
+    "start": "node --env-file=.env dist/index.js",
     "test": "vitest --no-file-parallelism",
     "test:run": "vitest run --no-file-parallelism",
     "db:generate": "drizzle-kit generate",
