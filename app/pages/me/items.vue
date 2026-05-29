@@ -9,13 +9,19 @@ const api = useApi()
 const items = ref<ApiItemSummary[]>([])
 const nextCursor = ref<string | null>(null)
 const loading = ref(false)
+const loadError = ref<string | null>(null)
+const mutateError = ref<string | null>(null)
 
 async function load(cursor?: string) {
   loading.value = true
+  loadError.value = null
   try {
     const res = await api.listMyItems(cursor, 20)
     items.value = cursor ? [...items.value, ...res.data] : res.data
     nextCursor.value = res.nextCursor
+  }
+  catch (e: unknown) {
+    loadError.value = e instanceof Error ? e.message : 'Failed to load items'
   }
   finally {
     loading.value = false
@@ -39,8 +45,13 @@ async function commitRename(i: ApiItemSummary) {
     editingId.value = null
     return
   }
-  await api.updateItem(i.id, { name })
-  i.name = name
+  try {
+    await api.updateItem(i.id, { name })
+    i.name = name
+  }
+  catch (e: unknown) {
+    mutateError.value = e instanceof Error ? e.message : 'Failed to rename'
+  }
   editingId.value = null
 }
 
@@ -48,16 +59,26 @@ async function commitRename(i: ApiItemSummary) {
 const visibilities = ['public', 'unlisted', 'private'] as const
 
 async function setVisibility(i: ApiItemSummary, v: string) {
-  await api.updateItem(i.id, { visibility: v })
-  i.visibility = v as 'public' | 'unlisted' | 'private'
+  try {
+    await api.updateItem(i.id, { visibility: v })
+    i.visibility = v as 'public' | 'unlisted' | 'private'
+  }
+  catch (e: unknown) {
+    mutateError.value = e instanceof Error ? e.message : 'Failed to update visibility'
+  }
 }
 
 // Delete
 const confirmDeleteId = ref<string | null>(null)
 
 async function deleteItem(id: string) {
-  await api.deleteItem(id)
-  items.value = items.value.filter(i => i.id !== id)
+  try {
+    await api.deleteItem(id)
+    items.value = items.value.filter(i => i.id !== id)
+  }
+  catch (e: unknown) {
+    mutateError.value = e instanceof Error ? e.message : 'Failed to delete'
+  }
   confirmDeleteId.value = null
 }
 </script>
@@ -70,7 +91,18 @@ async function deleteItem(id: string) {
       </h1>
     </header>
 
-    <div v-if="items.length === 0 && !loading" class="empty-state">
+    <p v-if="mutateError" class="mutate-error" role="alert">
+      {{ mutateError }}
+      <button type="button" @click="mutateError = null">
+        ✕
+      </button>
+    </p>
+
+    <p v-if="loadError" class="load-error" role="alert">
+      {{ loadError }}
+    </p>
+
+    <div v-if="items.length === 0 && !loading && !loadError" class="empty-state">
       No items yet.
       <NuxtLink to="/crafter">
         Craft your first item in the Crafter →
@@ -86,6 +118,7 @@ async function deleteItem(id: string) {
             class="rename-input"
             type="text"
             maxlength="100"
+            autofocus
             @keydown.enter="commitRename(i)"
             @keydown.escape="editingId = null"
             @blur="commitRename(i)"
@@ -257,6 +290,40 @@ async function deleteItem(id: string) {
 .action-btn--delete:hover {
   color: oklch(62% 0.15 20);
   border-color: oklch(62% 0.15 20 / 0.4);
+}
+
+.mutate-error {
+  background: oklch(62% 0.15 20 / 0.08);
+  border: 1px solid oklch(62% 0.15 20 / 0.3);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: oklch(62% 0.15 20);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.mutate-error button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px;
+  padding: 0 2px;
+  opacity: 0.7;
+}
+
+.load-error {
+  font-size: 13px;
+  color: oklch(62% 0.15 20);
+  margin: 0;
+  padding: 10px 14px;
+  background: oklch(62% 0.15 20 / 0.08);
+  border: 1px solid oklch(62% 0.15 20 / 0.3);
+  border-radius: 6px;
 }
 
 .empty-state {

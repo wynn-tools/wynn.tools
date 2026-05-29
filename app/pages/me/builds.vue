@@ -9,13 +9,19 @@ const api = useApi()
 const builds = ref<ApiBuildSummary[]>([])
 const nextCursor = ref<string | null>(null)
 const loading = ref(false)
+const loadError = ref<string | null>(null)
+const mutateError = ref<string | null>(null)
 
 async function load(cursor?: string) {
   loading.value = true
+  loadError.value = null
   try {
     const res = await api.listMyBuilds(cursor, 20)
     builds.value = cursor ? [...builds.value, ...res.data] : res.data
     nextCursor.value = res.nextCursor
+  }
+  catch (e: unknown) {
+    loadError.value = e instanceof Error ? e.message : 'Failed to load builds'
   }
   finally {
     loading.value = false
@@ -39,8 +45,13 @@ async function commitRename(b: ApiBuildSummary) {
     editingId.value = null
     return
   }
-  await api.updateBuild(b.id, { name })
-  b.name = name
+  try {
+    await api.updateBuild(b.id, { name })
+    b.name = name
+  }
+  catch (e: unknown) {
+    mutateError.value = e instanceof Error ? e.message : 'Failed to rename'
+  }
   editingId.value = null
 }
 
@@ -48,16 +59,26 @@ async function commitRename(b: ApiBuildSummary) {
 const visibilities = ['public', 'unlisted', 'private'] as const
 
 async function setVisibility(b: ApiBuildSummary, v: string) {
-  await api.updateBuild(b.id, { visibility: v })
-  b.visibility = v as 'public' | 'unlisted' | 'private'
+  try {
+    await api.updateBuild(b.id, { visibility: v })
+    b.visibility = v as 'public' | 'unlisted' | 'private'
+  }
+  catch (e: unknown) {
+    mutateError.value = e instanceof Error ? e.message : 'Failed to update visibility'
+  }
 }
 
 // Delete
 const confirmDeleteId = ref<string | null>(null)
 
 async function deleteBuild(id: string) {
-  await api.deleteBuild(id)
-  builds.value = builds.value.filter(b => b.id !== id)
+  try {
+    await api.deleteBuild(id)
+    builds.value = builds.value.filter(b => b.id !== id)
+  }
+  catch (e: unknown) {
+    mutateError.value = e instanceof Error ? e.message : 'Failed to delete'
+  }
   confirmDeleteId.value = null
 }
 </script>
@@ -70,7 +91,18 @@ async function deleteBuild(id: string) {
       </h1>
     </header>
 
-    <div v-if="builds.length === 0 && !loading" class="empty-state">
+    <p v-if="mutateError" class="mutate-error" role="alert">
+      {{ mutateError }}
+      <button type="button" @click="mutateError = null">
+        ✕
+      </button>
+    </p>
+
+    <p v-if="loadError" class="load-error" role="alert">
+      {{ loadError }}
+    </p>
+
+    <div v-if="builds.length === 0 && !loading && !loadError" class="empty-state">
       No builds yet.
       <NuxtLink to="/builder">
         Create your first build →
@@ -86,6 +118,7 @@ async function deleteBuild(id: string) {
             class="rename-input"
             type="text"
             maxlength="100"
+            autofocus
             @keydown.enter="commitRename(b)"
             @keydown.escape="editingId = null"
             @blur="commitRename(b)"
@@ -257,6 +290,40 @@ async function deleteBuild(id: string) {
 .action-btn--delete:hover {
   color: oklch(62% 0.15 20);
   border-color: oklch(62% 0.15 20 / 0.4);
+}
+
+.mutate-error {
+  background: oklch(62% 0.15 20 / 0.08);
+  border: 1px solid oklch(62% 0.15 20 / 0.3);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: oklch(62% 0.15 20);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.mutate-error button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px;
+  padding: 0 2px;
+  opacity: 0.7;
+}
+
+.load-error {
+  font-size: 13px;
+  color: oklch(62% 0.15 20);
+  margin: 0;
+  padding: 10px 14px;
+  background: oklch(62% 0.15 20 / 0.08);
+  border: 1px solid oklch(62% 0.15 20 / 0.3);
+  border-radius: 6px;
 }
 
 .empty-state {

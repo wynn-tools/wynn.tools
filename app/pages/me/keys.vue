@@ -8,11 +8,17 @@ useSeoMeta({ title: 'API Keys — wynn.tools' })
 const api = useApi()
 const keys = ref<ApiKey[]>([])
 const loading = ref(false)
+const loadError = ref<string | null>(null)
+const revokeError = ref<string | null>(null)
 
 async function loadKeys() {
   loading.value = true
+  loadError.value = null
   try {
     keys.value = await api.listKeys()
+  }
+  catch (e: unknown) {
+    loadError.value = e instanceof Error ? e.message : 'Failed to load keys'
   }
   finally {
     loading.value = false
@@ -67,8 +73,13 @@ async function copyKey() {
 const confirmRevokeId = ref<string | null>(null)
 
 async function revokeKey(id: string) {
-  await api.revokeKey(id)
-  keys.value = keys.value.filter(k => k.id !== id)
+  try {
+    await api.revokeKey(id)
+    keys.value = keys.value.filter(k => k.id !== id)
+  }
+  catch (e: unknown) {
+    revokeError.value = e instanceof Error ? e.message : 'Failed to revoke key'
+  }
   confirmRevokeId.value = null
 }
 </script>
@@ -83,6 +94,17 @@ async function revokeKey(id: string) {
         Keys grant programmatic access to your data. Store them securely — they are shown only once.
       </p>
     </header>
+
+    <p v-if="revokeError" class="revoke-error" role="alert">
+      {{ revokeError }}
+      <button type="button" @click="revokeError = null">
+        ✕
+      </button>
+    </p>
+
+    <p v-if="loadError" class="load-error" role="alert">
+      {{ loadError }}
+    </p>
 
     <!-- New key banner (shown once after creation) -->
     <div v-if="newKeyPlaintext" class="new-key-banner">
@@ -142,7 +164,7 @@ async function revokeKey(id: string) {
       <h2 class="section-title">
         Your keys
       </h2>
-      <div v-if="keys.length === 0 && !loading" class="empty-state">
+      <div v-if="keys.length === 0 && !loading && !loadError" class="empty-state">
         No API keys yet.
       </div>
       <div v-else class="key-list">
@@ -442,6 +464,40 @@ async function revokeKey(id: string) {
 
 .action-btn--danger:hover {
   background: oklch(62% 0.15 20 / 0.06);
+}
+
+.revoke-error {
+  background: oklch(62% 0.15 20 / 0.08);
+  border: 1px solid oklch(62% 0.15 20 / 0.3);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: oklch(62% 0.15 20);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.revoke-error button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px;
+  padding: 0 2px;
+  opacity: 0.7;
+}
+
+.load-error {
+  font-size: 13px;
+  color: oklch(62% 0.15 20);
+  margin: 0;
+  padding: 10px 14px;
+  background: oklch(62% 0.15 20 / 0.08);
+  border: 1px solid oklch(62% 0.15 20 / 0.3);
+  border-radius: 6px;
 }
 
 .empty-state {

@@ -21,7 +21,7 @@ export interface ApiBuildSummary {
   name: string
   gameVersion: string
   visibility?: 'public' | 'unlisted' | 'private'
-  owner: { id: string, username: string } | null
+  owner?: { id: string, username: string } | null
 }
 
 export interface ApiItem {
@@ -40,7 +40,7 @@ export interface ApiItemSummary {
   name: string
   gameVersion: string
   visibility?: 'public' | 'unlisted' | 'private'
-  owner: { id: string, username: string } | null
+  owner?: { id: string, username: string } | null
 }
 
 export interface ApiKey {
