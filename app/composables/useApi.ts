@@ -1,13 +1,24 @@
 export interface ApiUser {
   id: string
+  discordId: string
   username: string
+  avatar: string | null
+  displayName: string | null
+  bio: string | null
+  profileVisibility: 'public' | 'private'
+}
+
+export interface ApiOwner {
+  id: string
+  name: string
+  discordId: string
   avatar: string | null
 }
 
 export interface ApiBuild {
   id: string
   name: string
-  owner: { id: string, username: string } | null
+  owner: ApiOwner | null
   gameVersion: string
   visibility: 'public' | 'unlisted' | 'private'
   buildString: string
@@ -21,13 +32,13 @@ export interface ApiBuildSummary {
   name: string
   gameVersion: string
   visibility?: 'public' | 'unlisted' | 'private'
-  owner?: { id: string, username: string } | null
+  owner?: ApiOwner | null
 }
 
 export interface ApiItem {
   id: string
   name: string
-  owner: { id: string, username: string } | null
+  owner: ApiOwner | null
   gameVersion: string
   visibility: 'public' | 'unlisted' | 'private'
   itemData: Record<string, unknown>
@@ -40,7 +51,19 @@ export interface ApiItemSummary {
   name: string
   gameVersion: string
   visibility?: 'public' | 'unlisted' | 'private'
-  owner?: { id: string, username: string } | null
+  owner?: ApiOwner | null
+}
+
+export interface ApiProfile {
+  id: string
+  name: string
+  bio: string | null
+  avatar: string | null
+  discordId: string
+}
+
+export interface ApiProfilePrivate {
+  private: true
 }
 
 export interface ApiKey {
@@ -121,6 +144,11 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     updateItem: (id: string, body: { name?: string, itemData?: Record<string, unknown>, visibility?: string }) =>
       request<{ id: string, name: string, visibility: string }>(`/v1/items/${id}`, jsonInit('PATCH', body)),
     deleteItem: (id: string) => request<{ ok: boolean }>(`/v1/items/${id}`, { method: 'DELETE' }),
+
+    // Profile
+    getProfile: (id: string) => request<ApiProfile | ApiProfilePrivate>(`/v1/users/${id}`),
+    updateProfile: (body: { displayName?: string | null, bio?: string | null, profileVisibility?: 'public' | 'private' }) =>
+      request<{ displayName: string | null, bio: string | null, profileVisibility: 'public' | 'private' }>('/v1/me/profile', jsonInit('PATCH', body)),
 
     // Keys
     listKeys: () => request<ApiKey[]>('/v1/me/keys'),

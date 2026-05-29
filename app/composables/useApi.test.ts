@@ -64,4 +64,19 @@ describe('api client', () => {
     const res = await api.createKey({ label: 'Bot', scopes: ['builds:read'] })
     expect(res.plaintext).toBe('wt_live_abc')
   })
+
+  it('getProfile returns public profile', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(ok({ id: 'u1', name: 'Scyu_', bio: null, avatar: null, discordId: '123' }))
+    const api = createApiClient('https://api.test', fetchImpl)
+    const profile = await api.getProfile('u1')
+    expect(fetchImpl).toHaveBeenCalledWith('https://api.test/v1/users/u1', expect.any(Object))
+    expect((profile as { id: string }).id).toBe('u1')
+  })
+
+  it('updateProfile PATCHes /v1/me/profile', async () => {
+    const fetchImpl = vi.fn().mockResolvedValue(ok({ displayName: 'Scyu_', bio: null, profileVisibility: 'public' }))
+    const api = createApiClient('https://api.test', fetchImpl)
+    await api.updateProfile({ displayName: 'Scyu_' })
+    expect(fetchImpl).toHaveBeenCalledWith('https://api.test/v1/me/profile', expect.objectContaining({ method: 'PATCH' }))
+  })
 })
