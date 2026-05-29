@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
 import { useApi } from '~/composables/useApi'
-import { useCdnClient } from '~/composables/useBuildData'
-import { resolveVersionSegment } from '~/lib/data/cdn-adapter/version-paths'
+import { resolveLatestVersion, useCdnClient } from '~/composables/useBuildData'
 import { useAuthStore } from '~/stores/auth'
 import { useCraftStore } from '~/stores/craft'
 
@@ -15,6 +14,7 @@ const auth = useAuthStore()
 const store = useCraftStore()
 const api = useApi()
 const router = useRouter()
+const client = useCdnClient()
 
 type State = 'idle' | 'auth-prompt' | 'name-prompt' | 'saving' | 'saved'
 const state = ref<State>('idle')
@@ -53,8 +53,7 @@ async function create() {
   state.value = 'saving'
   error.value = null
   try {
-    const client = useCdnClient()
-    const gameVersion = await resolveVersionSegment(client, store.versionId)
+    const { gameVersion } = await resolveLatestVersion(client)
     const res = await api.createItem({
       name: itemName.value.trim() || 'My Item',
       itemData: { craftHash: store.shareHash },
