@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { onClickOutside } from '@vueuse/core'
 import { useAuthStore } from '~/stores/auth'
 
 const auth = useAuthStore()
 const open = ref(false)
+const wrapRef = ref<HTMLElement | null>(null)
 
 function avatarUrl(id: string, avatar: string) {
   return `https://cdn.discordapp.com/avatars/${id}/${avatar}.webp?size=64`
@@ -11,6 +13,8 @@ function avatarUrl(id: string, avatar: string) {
 function close() {
   open.value = false
 }
+
+onClickOutside(wrapRef, close)
 </script>
 
 <template>
@@ -29,14 +33,15 @@ function close() {
     </button>
 
     <!-- Logged in -->
-    <div v-else class="avatar-wrap">
+    <div v-else ref="wrapRef" class="avatar-wrap">
       <button
         class="avatar-btn"
         type="button"
-        :aria-expanded="open"
-        aria-haspopup="true"
+        :aria-expanded="String(open)"
+        aria-haspopup="menu"
         aria-label="Account menu"
         @click="open = !open"
+        @keydown.escape="close"
       >
         <img
           v-if="auth.user.avatar"
@@ -51,18 +56,18 @@ function close() {
         </span>
       </button>
 
-      <div v-if="open" class="dropdown" @keydown.escape="close">
+      <div v-if="open" role="menu" class="dropdown">
         <span class="dropdown-name">{{ auth.user.username }}</span>
-        <NuxtLink to="/me/builds" class="dropdown-item" @click="close">
+        <NuxtLink to="/me/builds" class="dropdown-item" role="menuitem" @click="close">
           My Builds
         </NuxtLink>
-        <NuxtLink to="/me/items" class="dropdown-item" @click="close">
+        <NuxtLink to="/me/items" class="dropdown-item" role="menuitem" @click="close">
           My Items
         </NuxtLink>
-        <NuxtLink to="/me/keys" class="dropdown-item" @click="close">
+        <NuxtLink to="/me/keys" class="dropdown-item" role="menuitem" @click="close">
           API Keys
         </NuxtLink>
-        <button class="dropdown-item dropdown-item--danger" type="button" @click="auth.logout()">
+        <button class="dropdown-item dropdown-item--danger" role="menuitem" type="button" @click="auth.logout()">
           Sign out
         </button>
       </div>
