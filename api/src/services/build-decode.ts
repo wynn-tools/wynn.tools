@@ -8,6 +8,8 @@ import {
 import { env } from '../env'
 import { AppError } from '../lib/errors'
 
+const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
+
 let client: ReturnType<typeof createCdnClient> | null = null
 function cdn() {
   client ??= createCdnClient(env().CDN_BASE_URL)
@@ -23,11 +25,15 @@ export async function decodeBuild(buildString: string): Promise<{ gameVersion: s
   try {
     const versionId = peekVersionId(buildString)
     const loaded = await loadBuildContext(cdn(), versionId)
+    const recipes = loaded.ctx.craftContext?.recipes
     const raw = decodeRawBuild(buildString, () => ({
       enc: loaded.enc,
       atreeData: loaded.ctx.atreeData,
       weaponType: loaded.weaponType,
-      recipeIsWeapon: () => false,
+      recipeIsWeapon: (recipeId: number) => {
+        const rec = recipes?.get(recipeId)
+        return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
+      },
     }))
     const decoded = computeBuild(raw, loaded.ctx)
     const result = { gameVersion: loaded.gameVersion, decoded }
