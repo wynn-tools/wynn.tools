@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { getDb, schema } from '../db/client'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
+import { resolveOwner } from '../lib/owner'
 import { decodeCursor, DEFAULT_PAGE_SIZE, encodeCursor, MAX_PAGE_SIZE } from '../lib/pagination'
 import { hasScope, requireAuth } from '../middleware/auth'
 import { verifyApiKey } from '../services/api-keys'
@@ -65,7 +66,7 @@ export const builds = new Hono()
         id: r.id,
         name: r.name,
         gameVersion: r.gameVersion,
-        owner: r.user ? { id: r.user.id, username: r.user.username } : null,
+        owner: resolveOwner(r.user),
       })),
       nextCursor: next,
     })
@@ -121,12 +122,12 @@ export const builds = new Hono()
         throw new AppError(404, 'not_found', 'Build not found')
     }
 
-    const owner = await getDb().query.users.findFirst({ where: (u, { eq }) => eq(u.id, build.userId) })
+    const ownerRow = await getDb().query.users.findFirst({ where: (u, { eq }) => eq(u.id, build.userId) })
     const { decoded, gameVersion } = await decodeBuild(build.buildString)
     return c.json({
       id: build.id,
       name: build.name,
-      owner: owner ? { id: owner.id, username: owner.username } : null,
+      owner: resolveOwner(ownerRow),
       gameVersion,
       visibility: build.visibility,
       buildString: build.buildString,
@@ -165,6 +166,7 @@ export const userBuilds = new Hono().get('/:id/builds', async (c) => {
   const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
   const cursor = decodeCursor(c.req.query('cursor'))
   const rows = await getDb().query.builds.findMany({
+    with: { user: true },
     where: (b, { and, eq, lt, or }) => and(
       eq(b.userId, userId),
       eq(b.visibility, 'public'),
@@ -180,5 +182,13 @@ export const userBuilds = new Hono().get('/:id/builds', async (c) => {
   const next = hasMore
     ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
     : null
-  return c.json({ data: page.map(r => ({ id: r.id, name: r.name, gameVersion: r.gameVersion })), nextCursor: next })
+  return c.json({
+    data: page.map(r => ({
+      id: r.id,
+      name: r.name,
+      gameVersion: r.gameVersion,
+      owner: resolveOwner(r.user),
+    })),
+    nextCursor: next,
+  })
 })

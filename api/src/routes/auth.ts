@@ -4,6 +4,7 @@ import { getCookie, setCookie } from 'hono/cookie'
 import { getDb, schema } from '../db/client'
 import { env } from '../env'
 import { AppError } from '../lib/errors'
+import { newResourceId } from '../lib/ids'
 import { buildAuthorizeUrl, exchangeCode, fetchProfile } from '../services/discord'
 import { createSession, deleteSession, getSessionUser } from '../services/sessions'
 
@@ -43,7 +44,7 @@ export const auth = new Hono()
     const db = getDb()
     const [user] = await db
       .insert(schema.users)
-      .values({ discordId: profile.id, username: profile.username, avatar: profile.avatar })
+      .values({ id: newResourceId(), discordId: profile.id, username: profile.username, avatar: profile.avatar })
       .onConflictDoUpdate({
         target: schema.users.discordId,
         set: { username: profile.username, avatar: profile.avatar, updatedAt: new Date() },
@@ -72,5 +73,13 @@ export const me = new Hono().get('/', async (c) => {
   const user = token ? await getSessionUser(token) : null
   if (!user)
     throw new AppError(401, 'unauthorized', 'Not logged in')
-  return c.json({ id: user.id, username: user.username, avatar: user.avatar })
+  return c.json({
+    id: user.id,
+    discordId: user.discordId,
+    username: user.username,
+    avatar: user.avatar,
+    displayName: user.displayName,
+    bio: user.bio,
+    profileVisibility: user.profileVisibility,
+  })
 })

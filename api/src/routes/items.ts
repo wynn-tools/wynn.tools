@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { getDb, schema } from '../db/client'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
+import { resolveOwner } from '../lib/owner'
 import { decodeCursor, DEFAULT_PAGE_SIZE, encodeCursor, MAX_PAGE_SIZE } from '../lib/pagination'
 import { hasScope, requireAuth } from '../middleware/auth'
 import { verifyApiKey } from '../services/api-keys'
@@ -63,7 +64,7 @@ export const items = new Hono()
         id: r.id,
         name: r.name,
         gameVersion: r.gameVersion,
-        owner: r.user ? { id: r.user.id, username: r.user.username } : null,
+        owner: resolveOwner(r.user),
       })),
       nextCursor: next,
     })
@@ -115,11 +116,11 @@ export const items = new Hono()
       if (viewerId !== item.userId)
         throw new AppError(404, 'not_found', 'Item not found')
     }
-    const owner = await getDb().query.users.findFirst({ where: (u, { eq }) => eq(u.id, item.userId) })
+    const ownerRow = await getDb().query.users.findFirst({ where: (u, { eq }) => eq(u.id, item.userId) })
     return c.json({
       id: item.id,
       name: item.name,
-      owner: owner ? { id: owner.id, username: owner.username } : null,
+      owner: resolveOwner(ownerRow),
       gameVersion: item.gameVersion,
       visibility: item.visibility,
       itemData: item.itemData,
@@ -151,6 +152,7 @@ export const userItems = new Hono().get('/:id/items', async (c) => {
   const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
   const cursor = decodeCursor(c.req.query('cursor'))
   const rows = await getDb().query.craftedItems.findMany({
+    with: { user: true },
     where: (i, { and, eq, lt, or }) => and(
       eq(i.userId, userId),
       eq(i.visibility, 'public'),
@@ -166,5 +168,13 @@ export const userItems = new Hono().get('/:id/items', async (c) => {
   const next = hasMore
     ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
     : null
-  return c.json({ data: page.map(r => ({ id: r.id, name: r.name, gameVersion: r.gameVersion })), nextCursor: next })
+  return c.json({
+    data: page.map(r => ({
+      id: r.id,
+      name: r.name,
+      gameVersion: r.gameVersion,
+      owner: resolveOwner(r.user),
+    })),
+    nextCursor: next,
+  })
 })
