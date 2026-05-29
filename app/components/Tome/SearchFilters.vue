@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import type { TomeCriteria } from '~/lib/items-search/types'
+import { TIER_COLORS } from '~/lib/items/tooltip'
+
+function tierColor(tier: string): string {
+  const key = tier.charAt(0).toUpperCase() + tier.slice(1)
+  return TIER_COLORS[key] ?? TIER_COLORS.Normal!
+}
 
 const criteria = defineModel<TomeCriteria>({ required: true })
 
@@ -48,11 +54,12 @@ function toggleStr(list: string[], value: string): string[] {
         {{ label }}
       </button>
     </fieldset>
-    <fieldset class="f-group">
+    <fieldset class="f-group f-group--tier">
       <legend>Tier</legend>
       <button
         v-for="t in TIERS" :key="t" type="button"
         :class="{ on: criteria.tiers.includes(t) }"
+        :style="{ '--tier-color': tierColor(t) }"
         @click="criteria = { ...criteria, tiers: toggleStr(criteria.tiers, t) }"
       >
         {{ t }}
@@ -170,6 +177,22 @@ function toggleStr(list: string[], value: string): string[] {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+.f-group--tier button:hover {
+  color: var(--tier-color);
+  border-color: color-mix(in oklch, var(--tier-color) 45%, var(--color-border));
+}
+
+.f-group--tier button.on {
+  color: var(--tier-color);
+  border-color: var(--tier-color);
+  background: color-mix(in oklch, var(--tier-color) 12%, transparent);
+}
+
+.f-group--tier button:focus-visible {
+  outline-color: var(--tier-color);
+}
+
 .f-slider {
   position: relative;
   display: flex;

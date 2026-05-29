@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { ItemCriteria } from '~/lib/items-search/types'
+import { spriteUrl } from '~/lib/items/icon'
+import { TIER_COLORS } from '~/lib/items/tooltip'
 
 const props = defineProps<{ majorIdOptions?: string[], setOptions?: string[] }>()
 const criteria = defineModel<ItemCriteria>({ required: true })
@@ -51,22 +53,24 @@ function removeSet(name: string): void {
       @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
     >
 
-    <fieldset class="f-group">
+    <fieldset class="f-group f-group--type">
       <legend>Type</legend>
       <button
         v-for="t in TYPES" :key="t" type="button"
         :class="{ on: criteria.types.includes(t) }"
         @click="criteria = { ...criteria, types: toggle(criteria.types, t) }"
       >
+        <img :src="spriteUrl(t)" class="type-icon" alt="" aria-hidden="true">
         {{ t }}
       </button>
     </fieldset>
 
-    <fieldset class="f-group">
+    <fieldset class="f-group f-group--tier">
       <legend>Rarity</legend>
       <button
         v-for="t in TIERS" :key="t" type="button"
         :class="{ on: criteria.tiers.includes(t) }"
+        :style="{ '--tier-color': TIER_COLORS[t] }"
         @click="criteria = { ...criteria, tiers: toggle(criteria.tiers, t) }"
       >
         {{ t }}
@@ -224,6 +228,38 @@ function removeSet(name: string): void {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* Type filter: sprite icon inline */
+.f-group--type button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.type-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Rarity filter: per-tier color via --tier-color */
+.f-group--tier button:hover {
+  color: var(--tier-color);
+  border-color: color-mix(in oklch, var(--tier-color) 45%, var(--color-border));
+}
+
+.f-group--tier button.on {
+  color: var(--tier-color);
+  border-color: var(--tier-color);
+  background: color-mix(in oklch, var(--tier-color) 12%, transparent);
+}
+
+.f-group--tier button:focus-visible {
+  outline-color: var(--tier-color);
+}
+
 .f-chips {
   display: flex;
   flex-wrap: wrap;

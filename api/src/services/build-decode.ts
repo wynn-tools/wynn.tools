@@ -18,13 +18,19 @@ function cdn() {
   return client
 }
 
-const cache = new Map<string, { gameVersion: string, decoded: unknown, playerClass: string | null, itemIds: number[] }>()
+const SLOT_LABELS = ['Helmet', 'Chestplate', 'Leggings', 'Boots', 'Ring', 'Ring', 'Bracelet', 'Necklace', 'Weapon'] as const
+
+type EquipEntry = { name: string, tier: string } | null
+
+const cache = new Map<string, { gameVersion: string, decoded: unknown, playerClass: string | null, itemIds: number[], level: number, equipNames: EquipEntry[] }>()
 
 export async function decodeBuild(buildString: string): Promise<{
   gameVersion: string
   decoded: unknown
   playerClass: string | null
   itemIds: number[]
+  level: number
+  equipNames: EquipEntry[]
 }> {
   const cached = cache.get(buildString)
   if (cached)
@@ -54,7 +60,18 @@ export async function decodeBuild(buildString: string): Promise<{
     const weaponType = weaponId !== null ? loaded.weaponType(weaponId) : null
     const playerClass = weaponType !== null ? (WEP_TO_CLASS[weaponType] ?? null) : null
 
-    const result = { gameVersion: loaded.gameVersion, decoded, playerClass, itemIds }
+    const equipNames: EquipEntry[] = raw.equipment.map((slot, i) => {
+      if (slot.kind === 'crafted')
+        return { name: `Crafted ${SLOT_LABELS[i] ?? ''}`, tier: 'Crafted' }
+      if (slot.id === null)
+        return null
+      const item = loaded.ctx.rawItemIndex.resolveId(slot.id)
+      if (!item)
+        return null
+      return { name: item.displayName, tier: (item.tier as string | undefined) ?? 'Normal' }
+    })
+
+    const result = { gameVersion: loaded.gameVersion, decoded, playerClass, itemIds, level: raw.level, equipNames }
     cache.set(buildString, result)
     return result
   }

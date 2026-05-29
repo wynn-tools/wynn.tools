@@ -63,7 +63,7 @@ function fork() {
         Fork this item →
       </button>
     </div>
-    <CrafterWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" />
+    <CrafterWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="item?.visibility" />
   </div>
 </template>
 

@@ -219,6 +219,9 @@ describe.skipIf(!process.env.LIVE_CDN)('builds routes (live CDN)', () => {
     expect(body.name).toBe('My build')
     expect(body.decoded).toBeTruthy()
     expect(body.gameVersion).toMatch(/^\d+\./)
+    expect(typeof body.level).toBe('number')
+    expect(body.level).toBeGreaterThan(0)
+    expect(typeof body.playerClass === 'string' || body.playerClass === null).toBe(true)
 
     await app()(`/v1/builds/${id}`, {
       method: 'PATCH',

@@ -21,6 +21,9 @@ export interface ApiBuild {
   owner: ApiOwner | null
   gameVersion: string
   visibility: 'public' | 'unlisted' | 'private'
+  playerClass: string | null
+  level: number
+  equipNames: ({ name: string, tier: string } | null)[]
   buildString: string
   decoded: unknown
   createdAt: string

@@ -61,7 +61,7 @@ function fork() {
         Fork this build →
       </button>
     </div>
-    <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" />
+    <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
   </div>
 </template>
 

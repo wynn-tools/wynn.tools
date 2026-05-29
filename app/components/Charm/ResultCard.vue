@@ -6,7 +6,6 @@ import {
   HoverCardRoot,
   HoverCardTrigger,
 } from 'reka-ui'
-import { itemIconUrl } from '~/lib/items/icon'
 
 const props = defineProps<{ charm: SearchCharm }>()
 
@@ -15,8 +14,6 @@ const STAT_LABELS: Record<string, string> = {
   leveledLootBonus: 'Leveled Loot Bonus',
   leveledXpBonus: 'Leveled XP Bonus',
 }
-
-const icon = computed(() => itemIconUrl({ icon: props.charm.icon }))
 
 const baseStats = computed(() =>
   Object.entries(props.charm.base).map(([key, val]) => ({
@@ -38,13 +35,9 @@ const idStats = computed(() =>
   <HoverCardRoot :open-delay="0" :close-delay="0">
     <HoverCardTrigger as-child>
       <div class="card">
-        <div class="card-head">
-          <img v-if="icon" :src="icon" class="card-icon" alt="" aria-hidden="true">
-          <span v-else class="card-icon card-icon--empty" aria-hidden="true" />
-          <div class="card-title">
-            <span class="card-name">{{ charm.displayName }}</span>
-            <span class="card-meta">Fabled · Lv. {{ charm.level }}</span>
-          </div>
+        <div class="card-title">
+          <span class="card-name">{{ charm.displayName }}</span>
+          <span class="card-meta">Fabled · Lv. {{ charm.level }}</span>
         </div>
         <dl v-if="baseStats.length" class="card-stats">
           <div v-for="s in baseStats" :key="s.label" class="stat-row">
@@ -98,22 +91,6 @@ const idStats = computed(() =>
 }
 .card:hover {
   border-color: var(--color-accent);
-}
-.card-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.card-icon {
-  width: 36px;
-  height: 36px;
-  image-rendering: pixelated;
-  flex-shrink: 0;
-}
-.card-icon--empty {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
 }
 .card-title {
   display: flex;

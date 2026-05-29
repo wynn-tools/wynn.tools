@@ -172,13 +172,16 @@ export const builds = new Hono()
     }
 
     const ownerRow = await getDb().query.users.findFirst({ where: (u, { eq }) => eq(u.id, build.userId) })
-    const { decoded, gameVersion } = await decodeBuild(build.buildString)
+    const { decoded, gameVersion, playerClass, level, equipNames } = await decodeBuild(build.buildString)
     return c.json({
       id: build.id,
       name: build.name,
       owner: resolveOwner(ownerRow),
       gameVersion,
       visibility: build.visibility,
+      playerClass,
+      level,
+      equipNames,
       buildString: build.buildString,
       decoded,
       createdAt: build.createdAt,

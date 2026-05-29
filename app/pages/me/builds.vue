@@ -84,12 +84,17 @@ async function deleteBuild(id: string) {
 </script>
 
 <template>
-  <div class="list-page">
-    <header class="list-header">
-      <h1 class="list-title">
-        My Builds
-      </h1>
-    </header>
+  <div class="page">
+    <div class="toolbar">
+      <div class="tabs" role="tablist">
+        <button role="tab" class="on" aria-selected="true" @click="navigateTo('/me/builds')">
+          My Builds
+        </button>
+        <button role="tab" aria-selected="false" @click="navigateTo('/me/items')">
+          My Items
+        </button>
+      </div>
+    </div>
 
     <p v-if="mutateError" class="mutate-error" role="alert">
       {{ mutateError }}
@@ -109,9 +114,9 @@ async function deleteBuild(id: string) {
       </NuxtLink>
     </div>
 
-    <div v-else class="card-list">
-      <div v-for="b in builds" :key="b.id" class="manage-card">
-        <NuxtLink :to="`/b/${b.id}`" class="card-link">
+    <div v-else class="row-list">
+      <div v-for="b in builds" :key="b.id" class="manage-row">
+        <div class="row-name-col">
           <input
             v-if="editingId === b.id"
             v-model="editingName"
@@ -122,13 +127,14 @@ async function deleteBuild(id: string) {
             @keydown.enter="commitRename(b)"
             @keydown.escape="editingId = null"
             @blur="commitRename(b)"
-            @click.prevent.stop
           >
-          <span v-else class="card-name" @click.prevent.stop="startRename(b)">{{ b.name }}</span>
-        </NuxtLink>
+          <NuxtLink v-else :to="`/b/${b.id}`" class="row-name">
+            {{ b.name }}
+          </NuxtLink>
+        </div>
 
-        <div class="card-actions">
-          <span class="card-version">{{ b.gameVersion }}</span>
+        <div class="row-actions">
+          <span class="row-version">{{ b.gameVersion }}</span>
           <select
             class="visibility-select"
             :value="b.visibility ?? 'private'"
@@ -138,6 +144,15 @@ async function deleteBuild(id: string) {
               {{ v }}
             </option>
           </select>
+
+          <button
+            v-if="editingId !== b.id"
+            class="action-btn"
+            type="button"
+            @click="startRename(b)"
+          >
+            Rename
+          </button>
 
           <template v-if="confirmDeleteId === b.id">
             <button class="action-btn action-btn--danger" type="button" @click="deleteBuild(b.id)">
@@ -163,61 +178,101 @@ async function deleteBuild(id: string) {
 </template>
 
 <style scoped>
-.list-page {
+.page {
+  padding: 20px 0 64px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 32px 0;
+  gap: 20px;
 }
 
-.list-header {
+.toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.list-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
-}
-
-.card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.manage-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
+.tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 8px;
 }
 
-.card-link {
-  flex: 1;
-  min-width: 0;
-  text-decoration: none;
+.tabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--color-muted);
+  padding: 6px 14px;
+  cursor: pointer;
+  font: 600 12px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
 }
 
-.card-name {
+.tabs button:hover {
+  color: var(--color-text);
+}
+
+.tabs button.on {
+  color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+
+.tabs button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.row-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.manage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  transition: border-color 0.12s ease-out;
+}
+
+.manage-row:hover {
+  border-color: var(--color-faint);
+}
+
+.row-name-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.row-name {
+  display: block;
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text);
-  cursor: text;
-  display: block;
+  text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.12s ease-out;
 }
 
-.card-name:hover {
+.row-name:hover {
   color: var(--color-accent);
 }
 
@@ -227,23 +282,24 @@ async function deleteBuild(id: string) {
   color: var(--color-text);
   border: 1px solid oklch(65% 0.15 48 / 0.5);
   border-radius: 4px;
-  padding: 4px 8px;
+  padding: 3px 8px;
   font-size: 14px;
   font-weight: 500;
   outline: none;
 }
 
-.card-actions {
+.row-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.card-version {
+.row-version {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-faint);
+  margin-right: 4px;
 }
 
 .visibility-select {
@@ -329,7 +385,8 @@ async function deleteBuild(id: string) {
 .empty-state {
   font-size: 14px;
   color: var(--color-muted);
-  padding: 32px 0;
+  padding: 56px 20px;
+  text-align: center;
 }
 
 .empty-state a {

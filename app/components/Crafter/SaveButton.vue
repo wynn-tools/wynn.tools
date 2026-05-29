@@ -8,7 +8,14 @@ import { useCraftStore } from '~/stores/craft'
 const props = defineProps<{
   savedId?: string
   isOwner?: boolean
+  visibility?: 'public' | 'unlisted' | 'private'
 }>()
+
+const visibilityOptions = [
+  { value: 'public' as const, label: 'Public' },
+  { value: 'unlisted' as const, label: 'Unlisted' },
+  { value: 'private' as const, label: 'Private' },
+]
 
 const auth = useAuthStore()
 const store = useCraftStore()
@@ -16,14 +23,22 @@ const api = useApi()
 const router = useRouter()
 const client = useCdnClient()
 
-type State = 'idle' | 'auth-prompt' | 'name-prompt' | 'saving' | 'saved'
+type State = 'idle' | 'auth-prompt' | 'name-prompt' | 'settings' | 'saving' | 'saved'
 const state = ref<State>('idle')
 const itemName = ref('My Item')
+const selectedVisibility = ref<'public' | 'unlisted' | 'private'>(props.visibility ?? 'public')
 const error = ref<string | null>(null)
+const settingsSaving = ref(false)
+const nameInputRef = ref<HTMLInputElement | null>(null)
+
+watch(() => props.visibility, (v) => {
+  if (v)
+    selectedVisibility.value = v
+})
 
 const saveWrapRef = ref<HTMLElement | null>(null)
 onClickOutside(saveWrapRef, () => {
-  if (state.value === 'auth-prompt' || state.value === 'name-prompt')
+  if (['auth-prompt', 'name-prompt', 'settings'].includes(state.value))
     dismiss()
 })
 
@@ -41,10 +56,11 @@ function handleClick() {
   }
   if (!props.savedId) {
     state.value = 'name-prompt'
+    nextTick(() => nameInputRef.value?.focus())
     return
   }
   if (props.isOwner)
-    save()
+    state.value = 'settings'
 }
 
 async function create() {
@@ -58,6 +74,7 @@ async function create() {
       name: itemName.value.trim() || 'My Item',
       itemData: { craftHash: store.shareHash },
       gameVersion,
+      visibility: selectedVisibility.value,
     })
     await router.push(`/c/${res.id}`)
     state.value = 'idle'
@@ -65,16 +82,20 @@ async function create() {
   catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'Failed to save'
     state.value = 'name-prompt'
+    nextTick(() => nameInputRef.value?.focus())
   }
 }
 
 async function save() {
   if (!store.shareHash || !props.savedId)
     return
-  state.value = 'saving'
   error.value = null
+  settingsSaving.value = true
   try {
-    await api.updateItem(props.savedId, { itemData: { craftHash: store.shareHash } })
+    await api.updateItem(props.savedId, {
+      itemData: { craftHash: store.shareHash },
+      visibility: selectedVisibility.value,
+    })
     state.value = 'saved'
     savedTimer = setTimeout(() => {
       state.value = 'idle'
@@ -82,11 +103,14 @@ async function save() {
   }
   catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'Failed to save'
-    state.value = 'idle'
+  }
+  finally {
+    settingsSaving.value = false
   }
 }
 
 function dismiss() {
+  error.value = null
   state.value = 'idle'
 }
 </script>
@@ -123,30 +147,83 @@ function dismiss() {
       </div>
     </div>
 
-    <!-- Name prompt -->
+    <!-- Name prompt (new item) -->
     <div v-else-if="state === 'name-prompt'" class="popover">
-      <label class="popover-label" for="item-name-input">Item name</label>
-      <div class="popover-row">
-        <input
-          id="item-name-input"
-          v-model="itemName"
-          class="popover-input"
-          type="text"
-          maxlength="100"
-          placeholder="My Item"
-          @keydown.enter="create"
-          @keydown.escape="dismiss"
-        >
-        <button class="popover-save" type="button" :disabled="state === 'saving'" @click="create">
-          Save
-        </button>
-        <button class="popover-cancel" type="button" @click="dismiss">
+      <div class="popover-head">
+        <label class="popover-label" for="item-name-input">Item name</label>
+        <button class="popover-close" type="button" aria-label="Cancel" @click="dismiss">
           ✕
+        </button>
+      </div>
+      <input
+        id="item-name-input"
+        ref="nameInputRef"
+        v-model="itemName"
+        class="popover-input"
+        type="text"
+        maxlength="100"
+        placeholder="My Item"
+        @keydown.enter="create"
+        @keydown.escape="dismiss"
+        @input="error = null"
+      >
+      <div class="vis-row" role="group" aria-label="Visibility">
+        <button
+          v-for="opt in visibilityOptions"
+          :key="opt.value"
+          class="vis-btn"
+          :class="{ 'vis-btn--on': selectedVisibility === opt.value }"
+          type="button"
+          @click="selectedVisibility = opt.value"
+        >
+          {{ opt.label }}
         </button>
       </div>
       <p v-if="error" class="popover-error">
         {{ error }}
       </p>
+      <button
+        class="popover-confirm"
+        type="button"
+        :disabled="!itemName.trim()"
+        @click="create"
+      >
+        Save
+      </button>
+    </div>
+
+    <!-- Settings popover (owner update) -->
+    <div v-else-if="state === 'settings'" class="popover">
+      <div class="popover-head">
+        <span class="popover-label">Visibility</span>
+        <button class="popover-close" type="button" aria-label="Close" :disabled="settingsSaving" @click="dismiss">
+          ✕
+        </button>
+      </div>
+      <div class="vis-row" role="group" aria-label="Visibility">
+        <button
+          v-for="opt in visibilityOptions"
+          :key="opt.value"
+          class="vis-btn"
+          :class="{ 'vis-btn--on': selectedVisibility === opt.value }"
+          type="button"
+          :disabled="settingsSaving"
+          @click="selectedVisibility = opt.value"
+        >
+          {{ opt.label }}
+        </button>
+      </div>
+      <p v-if="error" class="popover-error">
+        {{ error }}
+      </p>
+      <button
+        class="popover-confirm"
+        type="button"
+        :disabled="settingsSaving"
+        @click="save"
+      >
+        {{ settingsSaving ? 'Saving…' : 'Save' }}
+      </button>
     </div>
   </div>
 </template>
@@ -219,6 +296,13 @@ function dismiss() {
   gap: 8px;
 }
 
+.popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .popover-text {
   font-size: 13px;
   color: var(--color-muted);
@@ -233,10 +317,25 @@ function dismiss() {
   letter-spacing: 0.08em;
 }
 
-.popover-row {
-  display: flex;
-  gap: 6px;
-  align-items: center;
+.popover-close {
+  font-size: 12px;
+  color: var(--color-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.12s ease-out;
+}
+
+.popover-close:hover:not(:disabled) {
+  color: var(--color-muted);
+}
+
+.popover-close:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .popover-input {
@@ -254,6 +353,77 @@ function dismiss() {
 
 .popover-input:focus {
   border-color: oklch(65% 0.15 48 / 0.55);
+}
+
+.vis-row {
+  display: flex;
+  gap: 4px;
+}
+
+.vis-btn {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 5px 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out,
+    background-color 0.12s ease-out;
+}
+
+.vis-btn:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: var(--color-faint);
+}
+
+.vis-btn--on {
+  color: var(--color-accent);
+  border-color: oklch(65% 0.15 48 / 0.5);
+  background: oklch(65% 0.15 48 / 0.06);
+}
+
+.vis-btn--on:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+
+.vis-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.popover-confirm {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid oklch(65% 0.15 48 / 0.4);
+  border-radius: 5px;
+  padding: 7px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 100%;
+  transition: border-color 0.12s ease-out;
+}
+
+.popover-confirm:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+
+.popover-confirm:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .popover-actions {
@@ -276,31 +446,6 @@ function dismiss() {
 
 .popover-signin:hover {
   opacity: 0.88;
-}
-
-.popover-save {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  background: transparent;
-  border: 1px solid oklch(65% 0.15 48 / 0.4);
-  border-radius: 5px;
-  padding: 6px 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: border-color 0.12s ease-out;
-}
-
-.popover-save:hover {
-  border-color: var(--color-accent);
-}
-
-.popover-save:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 
 .popover-cancel {

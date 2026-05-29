@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import type { Recipe } from '~/lib/data/cdn-adapter/recipe-adapter'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import FilterCombobox from '~/components/FilterCombobox.vue'
 import { useCraftStore } from '~/stores/craft'
+
+const props = defineProps<{
+  lockedType?: string | null
+}>()
 
 const store = useCraftStore()
 
@@ -89,6 +93,17 @@ const levelModel = computed<string | null>({
     applyPair(type, value)
   },
 })
+
+// When embedded with a locked type, auto-select on mount and whenever the
+// context loads (allRecipes populates asynchronously).
+watch(
+  [() => props.lockedType, allRecipes],
+  ([locked]) => {
+    if (locked && locked !== currentType.value && allRecipes.value.length > 0)
+      typeModel.value = locked
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -96,7 +111,9 @@ const levelModel = computed<string | null>({
     <div class="recipe-panel__fields">
       <label class="field">
         <span class="field__label">Item type</span>
+        <span v-if="lockedType" class="field__locked">{{ lockedType }}</span>
         <FilterCombobox
+          v-else
           v-model="typeModel"
           :options="typeOptions"
           placeholder="Select type…"
@@ -142,6 +159,14 @@ const levelModel = computed<string | null>({
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted);
+}
+
+.field__locked {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--color-muted);
+  text-transform: capitalize;
+  padding: 4px 0;
 }
 
 @media (max-width: 720px) {

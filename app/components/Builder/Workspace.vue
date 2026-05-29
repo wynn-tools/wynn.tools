@@ -4,9 +4,11 @@ import { useBuildStore } from '~/stores/build'
 const props = withDefaults(defineProps<{
   savedId?: string
   isOwner?: boolean
+  visibility?: 'public' | 'unlisted' | 'private'
 }>(), {
   savedId: undefined,
   isOwner: false,
+  visibility: undefined,
 })
 
 const store = useBuildStore()
@@ -20,7 +22,7 @@ const showAtree = ref(true)
       <NuxtLink to="/builds" class="toolbar-browse">
         Browse builds <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
       </NuxtLink>
-      <BuilderSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" />
+      <BuilderSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" :visibility="props.visibility" />
     </div>
     <p v-if="store.loading" class="state-text">
       Loading build…

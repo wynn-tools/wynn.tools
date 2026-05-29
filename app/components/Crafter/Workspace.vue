@@ -14,14 +14,17 @@ const props = withDefaults(defineProps<{
   embedded?: boolean
   onEquip?: () => void
   equipDisabledReason?: string | null
+  lockedType?: string | null
   savedId?: string
   isOwner?: boolean
+  visibility?: 'public' | 'unlisted' | 'private'
 }>(), {
   embedded: false,
   onEquip: undefined,
   equipDisabledReason: null,
   savedId: undefined,
   isOwner: false,
+  visibility: undefined,
 })
 
 const store = useCraftStore()
@@ -72,10 +75,10 @@ watch(
         <NuxtLink v-if="!embedded" to="/crafted" class="toolbar-browse">
           Browse crafted <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
         </NuxtLink>
-        <CrafterSaveButton v-if="!embedded" :saved-id="props.savedId" :is-owner="props.isOwner" />
+        <CrafterSaveButton v-if="!embedded" :saved-id="props.savedId" :is-owner="props.isOwner" :visibility="props.visibility" />
       </div>
       <header class="crafter-bar">
-        <CrafterRecipePanel />
+        <CrafterRecipePanel :locked-type="lockedType" />
         <span class="crafter-bar__divider" aria-hidden="true" />
         <CrafterMaterialPanel />
       </header>
@@ -85,7 +88,7 @@ watch(
         </section>
         <aside class="crafter-output" aria-label="Crafted item preview">
           <CrafterItemPreview
-            :hide-equip-button="embedded && !onEquip"
+            :hide-equip-button="!onEquip"
             :on-equip="onEquip"
             :equip-disabled-reason="equipDisabledReason"
           />

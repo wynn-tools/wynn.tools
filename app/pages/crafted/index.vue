@@ -33,6 +33,7 @@ const items = ref<ApiItemSummary[]>([])
 const nextCursor = ref<string | null>(null)
 const loading = ref(false)
 const loadError = ref<string | null>(null)
+const mobileFiltersOpen = ref(false)
 
 const filters = computed<ItemListFilters>(() => ({
   q: q.value || undefined,
@@ -65,89 +66,176 @@ await useAsyncData('public-items', () => load())
 </script>
 
 <template>
-  <div class="list-page">
-    <header class="list-header">
-      <h1 class="list-title">
-        Public Crafted Items
-      </h1>
-    </header>
-
+  <div class="page">
     <div class="toolbar">
-      <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="false" @click="navigateTo('/builds')">
+          Builds
+        </button>
+        <button role="tab" class="on" aria-selected="true" @click="navigateTo('/crafted')">
+          Crafted Items
+        </button>
+      </div>
     </div>
 
-    <p v-if="loadError" class="error-text">
-      {{ loadError }}
-    </p>
-
-    <div v-else-if="items.length === 0 && !loading" class="empty-state">
-      No crafted items match these filters.
-    </div>
-
-    <div v-else class="card-grid">
-      <ItemCard
-        v-for="item in items"
-        :id="item.id"
-        :key="item.id"
-        :name="item.name"
-        :game-version="item.gameVersion"
-        :owner-id="item.owner?.id"
-        :owner-name="item.owner?.name"
-        :show-owner="true"
-        :craft-hash="item.craftHash"
-      />
-    </div>
-
-    <div v-if="nextCursor" class="load-more">
-      <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
-        {{ loading ? 'Loading…' : 'Load more' }}
+    <div class="layout">
+      <button
+        type="button"
+        class="filters-toggle"
+        :aria-expanded="mobileFiltersOpen"
+        aria-controls="crafted-filters-panel"
+        @click="mobileFiltersOpen = !mobileFiltersOpen"
+      >
+        <span class="filters-toggle-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 4h10M4 7h6M6 10h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span>{{ mobileFiltersOpen ? 'Hide filters' : 'Filters' }}</span>
+        <span class="filters-toggle-chevron" :class="{ open: mobileFiltersOpen }" aria-hidden="true">›</span>
       </button>
+
+      <aside
+        id="crafted-filters-panel"
+        class="sidebar"
+        :class="{ 'sidebar--collapsed-mobile': !mobileFiltersOpen }"
+      >
+        <div class="filters">
+          <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
+        </div>
+      </aside>
+
+      <section class="results">
+        <p v-if="loadError" class="state">
+          {{ loadError }}
+        </p>
+        <p v-else-if="items.length === 0 && !loading" class="state">
+          No crafted items match these filters.
+        </p>
+        <template v-else>
+          <div class="card-grid">
+            <ItemCard
+              v-for="item in items"
+              :id="item.id"
+              :key="item.id"
+              :name="item.name"
+              :game-version="item.gameVersion"
+              :owner-id="item.owner?.id"
+              :owner-name="item.owner?.name"
+              :show-owner="true"
+              :craft-hash="item.craftHash"
+            />
+          </div>
+          <div v-if="nextCursor" class="load-more">
+            <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
+              {{ loading ? 'Loading…' : 'Load more' }}
+            </button>
+          </div>
+        </template>
+      </section>
     </div>
   </div>
 </template>
 
 <style scoped>
-.list-page {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 32px 0;
-}
-
-.list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.list-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--color-text);
-  margin: 0;
+.page {
+  padding: 20px 0 64px;
 }
 
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 100%;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  color: var(--color-muted);
+  padding: 6px 14px;
+  cursor: pointer;
+  font: 600 12px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.tabs button:hover {
+  color: var(--color-text);
+}
+
+.tabs button.on {
+  color: var(--color-accent);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+
+.tabs button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.filters-toggle {
+  display: none;
+}
+
+.sidebar {
+  position: sticky;
+  top: 76px;
+  align-self: start;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.results {
+  min-width: 0;
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 12px;
+  margin-bottom: 24px;
 }
 
-.empty-state {
-  font-size: 14px;
+.state {
+  padding: 56px 20px;
   color: var(--color-muted);
-  padding: 32px 0;
-}
-
-.error-text {
-  color: oklch(62% 0.15 20);
+  text-align: center;
   font-size: 14px;
 }
 
@@ -181,5 +269,100 @@ await useAsyncData('public-items', () => load())
 .load-more-btn:disabled {
   opacity: 0.4;
   cursor: default;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 12px 0 48px;
+  }
+
+  .toolbar {
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+
+  .tabs button {
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+
+  .layout {
+    gap: 14px;
+  }
+
+  .filters-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-start;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    color: var(--color-muted);
+    cursor: pointer;
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition:
+      color 0.12s ease-out,
+      border-color 0.12s ease-out;
+  }
+
+  .filters-toggle:hover,
+  .filters-toggle[aria-expanded='true'] {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .filters-toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .filters-toggle-icon {
+    display: inline-flex;
+    align-items: center;
+    color: currentColor;
+  }
+
+  .filters-toggle-chevron {
+    margin-left: auto;
+    transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform: rotate(90deg);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .filters-toggle-chevron.open {
+    transform: rotate(-90deg);
+    color: var(--color-accent);
+  }
+
+  .sidebar--collapsed-mobile {
+    display: none;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filters-toggle-chevron {
+    transition: none;
+  }
 }
 </style>

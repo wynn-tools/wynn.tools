@@ -6,7 +6,6 @@ import {
   HoverCardRoot,
   HoverCardTrigger,
 } from 'reka-ui'
-import { itemIconUrl } from '~/lib/items/icon'
 
 const props = defineProps<{ material: SearchMaterial }>()
 
@@ -17,7 +16,6 @@ const SUBTYPE_COLORS: Record<string, string> = {
   woodcutting: 'oklch(60% 0.10 40)',
 }
 
-const icon = computed(() => itemIconUrl({ icon: props.material.icon }))
 const subtypeColor = computed(() => SUBTYPE_COLORS[props.material.subType] ?? 'var(--color-muted)')
 
 const totalChance = computed(() => {
@@ -30,8 +28,6 @@ const totalChance = computed(() => {
   <HoverCardRoot :open-delay="0" :close-delay="0">
     <HoverCardTrigger as-child>
       <div class="card">
-        <img v-if="icon" :src="icon" class="card-icon" alt="" aria-hidden="true">
-        <span v-else class="card-icon card-icon--empty" aria-hidden="true" />
         <div class="card-body">
           <span class="card-name">{{ material.displayName }}</span>
           <span class="card-meta">
@@ -75,17 +71,6 @@ const totalChance = computed(() => {
 }
 .card:hover {
   border-color: var(--color-accent);
-}
-.card-icon {
-  width: 32px;
-  height: 32px;
-  image-rendering: pixelated;
-  flex-shrink: 0;
-}
-.card-icon--empty {
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
 }
 .card-body {
   display: flex;
