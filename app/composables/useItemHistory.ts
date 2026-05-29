@@ -15,5 +15,5 @@ export async function loadV2Changelogs(client: CdnClient): Promise<ChangelogView
 }
 
 export function useItemHistorySource() {
-  return useAsyncData<ChangelogView[]>('item-history-source', () => loadV2Changelogs(useCdnClient()))
+  return useAsyncData<ChangelogView[]>('item-history-source', () => loadV2Changelogs(useCdnClient()), { server: false })
 }
