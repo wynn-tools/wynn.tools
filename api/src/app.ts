@@ -3,6 +3,7 @@ import { cors } from 'hono/cors'
 import { env } from './env'
 import { onError } from './lib/errors'
 import { auth, me } from './routes/auth'
+import { builds, userBuilds } from './routes/builds'
 import { health } from './routes/health'
 import { keys } from './routes/keys'
 
@@ -18,5 +19,7 @@ export function createApp(): Hono {
   app.route('/v1/auth', auth)
   app.route('/v1/me', me)
   app.route('/v1/me/keys', keys)
+  app.route('/v1/builds', builds)
+  app.route('/v1/users', userBuilds)
   return app
 }
