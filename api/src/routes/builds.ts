@@ -45,6 +45,7 @@ export const builds = new Hono()
     const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
     const cursor = decodeCursor(c.req.query('cursor'))
     const rows = await getDb().query.builds.findMany({
+      with: { user: true },
       where: (b, { and, eq, lt, or }) => and(
         eq(b.visibility, 'public'),
         cursor
@@ -59,7 +60,15 @@ export const builds = new Hono()
     const next = hasMore
       ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
       : null
-    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, gameVersion: r.gameVersion })), nextCursor: next })
+    return c.json({
+      data: page.map(r => ({
+        id: r.id,
+        name: r.name,
+        gameVersion: r.gameVersion,
+        owner: r.user ? { id: r.user.id, username: r.user.username } : null,
+      })),
+      nextCursor: next,
+    })
   })
   .post('/', requireAuth, zValidator('json', createBody), async (c) => {
     const auth = c.get('auth')

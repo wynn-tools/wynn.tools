@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import {
   index,
   integer,
@@ -50,6 +51,14 @@ export const craftedItems = pgTable('crafted_items', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [index('crafted_items_user_id_idx').on(t.userId)])
+
+export const buildsRelations = relations(builds, ({ one }) => ({
+  user: one(users, { fields: [builds.userId], references: [users.id] }),
+}))
+
+export const craftedItemsRelations = relations(craftedItems, ({ one }) => ({
+  user: one(users, { fields: [craftedItems.userId], references: [users.id] }),
+}))
 
 export const apiKeys = pgTable('api_keys', {
   id: uuid('id').defaultRandom().primaryKey(),

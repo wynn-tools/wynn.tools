@@ -55,6 +55,8 @@ await useAsyncData('public-builds', () => load())
         :key="b.id"
         :name="b.name"
         :game-version="b.gameVersion"
+        :owner-id="b.owner?.id"
+        :owner-name="b.owner?.username"
       />
     </div>
 
