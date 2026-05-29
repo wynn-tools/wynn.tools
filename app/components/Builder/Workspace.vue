@@ -1,13 +1,24 @@
 <script setup lang="ts">
 import { useBuildStore } from '~/stores/build'
 
+const props = withDefaults(defineProps<{
+  savedId?: string
+  isOwner?: boolean
+}>(), {
+  savedId: undefined,
+  isOwner: false,
+})
+
 const store = useBuildStore()
 const showAtree = ref(true)
 </script>
 
 <template>
   <main class="builder">
-    <BuilderImportBar />
+    <div class="builder-toolbar">
+      <BuilderImportBar />
+      <BuilderSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" />
+    </div>
     <p v-if="store.loading" class="state-text">
       Loading build…
     </p>
@@ -75,6 +86,14 @@ const showAtree = ref(true)
     gap: 14px;
     padding: 16px 12px 48px;
   }
+}
+
+.builder-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 4px;
 }
 
 .state-text {

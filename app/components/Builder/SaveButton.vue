@@ -1,0 +1,305 @@
+<script setup lang="ts">
+import { useApi } from '~/composables/useApi'
+import { useAuthStore } from '~/stores/auth'
+import { useBuildStore } from '~/stores/build'
+
+const props = defineProps<{
+  savedId?: string
+  isOwner?: boolean
+}>()
+
+const auth = useAuthStore()
+const store = useBuildStore()
+const api = useApi()
+const router = useRouter()
+
+type State = 'idle' | 'auth-prompt' | 'name-prompt' | 'saving' | 'saved'
+const state = ref<State>('idle')
+const buildName = ref('My Build')
+const error = ref<string | null>(null)
+
+function handleClick() {
+  if (!auth.user) {
+    state.value = 'auth-prompt'
+    return
+  }
+  if (!props.savedId) {
+    state.value = 'name-prompt'
+    return
+  }
+  if (props.isOwner)
+    save()
+}
+
+async function create() {
+  if (!store.currentHash)
+    return
+  state.value = 'saving'
+  error.value = null
+  try {
+    const res = await api.createBuild({ name: buildName.value.trim() || 'My Build', buildString: store.currentHash })
+    await router.push(`/b/${res.id}`)
+    state.value = 'idle'
+  }
+  catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : 'Failed to save'
+    state.value = 'name-prompt'
+  }
+}
+
+async function save() {
+  if (!store.currentHash || !props.savedId)
+    return
+  state.value = 'saving'
+  error.value = null
+  try {
+    await api.updateBuild(props.savedId, { buildString: store.currentHash })
+    state.value = 'saved'
+    setTimeout(() => {
+      state.value = 'idle'
+    }, 1600)
+  }
+  catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : 'Failed to save'
+    state.value = 'idle'
+  }
+}
+
+function dismiss() {
+  state.value = 'idle'
+}
+</script>
+
+<template>
+  <div class="save-wrap">
+    <!-- Idle / Saving: main button -->
+    <button
+      v-if="state === 'idle' || state === 'saving'"
+      class="save-btn"
+      :class="{ 'save-btn--active': savedId && isOwner }"
+      type="button"
+      :disabled="!store.currentHash || state === 'saving'"
+      @click="handleClick"
+    >
+      {{ state === 'saving' ? 'Saving…' : (savedId && isOwner ? 'Save' : 'Save build') }}
+    </button>
+
+    <!-- Saved feedback -->
+    <span v-else-if="state === 'saved'" class="save-confirm">Saved ✓</span>
+
+    <!-- Auth prompt popover -->
+    <div v-else-if="state === 'auth-prompt'" class="popover">
+      <p class="popover-text">
+        Sign in to save your build
+      </p>
+      <div class="popover-actions">
+        <button class="popover-signin" type="button" @click="auth.login()">
+          Sign in with Discord
+        </button>
+        <button class="popover-cancel" type="button" @click="dismiss">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- Name prompt -->
+    <div v-else-if="state === 'name-prompt'" class="popover">
+      <label class="popover-label" for="build-name-input">Build name</label>
+      <div class="popover-row">
+        <input
+          id="build-name-input"
+          v-model="buildName"
+          class="popover-input"
+          type="text"
+          maxlength="100"
+          placeholder="My Build"
+          @keydown.enter="create"
+          @keydown.escape="dismiss"
+        >
+        <button class="popover-save" type="button" :disabled="state === 'saving'" @click="create">
+          Save
+        </button>
+        <button class="popover-cancel" type="button" @click="dismiss">
+          ✕
+        </button>
+      </div>
+      <p v-if="error" class="popover-error">
+        {{ error }}
+      </p>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.save-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.save-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out;
+}
+
+.save-btn--active {
+  color: var(--color-accent);
+  border-color: oklch(65% 0.15 48 / 0.4);
+}
+
+.save-btn:not(:disabled):hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.save-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.save-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.save-confirm {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(70% 0.14 145);
+}
+
+.popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 240px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.popover-text {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.popover-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.popover-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.popover-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.12s ease-out;
+}
+
+.popover-input:focus {
+  border-color: oklch(65% 0.15 48 / 0.55);
+}
+
+.popover-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.popover-signin {
+  font-size: 12px;
+  font-weight: 500;
+  color: oklch(95% 0.02 270);
+  background: oklch(58% 0.2 270);
+  border: none;
+  border-radius: 5px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: opacity 0.12s ease-out;
+}
+
+.popover-signin:hover {
+  opacity: 0.88;
+}
+
+.popover-save {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid oklch(65% 0.15 48 / 0.4);
+  border-radius: 5px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.12s ease-out;
+}
+
+.popover-save:hover {
+  border-color: var(--color-accent);
+}
+
+.popover-save:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.popover-cancel {
+  font-size: 12px;
+  color: var(--color-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.12s ease-out;
+}
+
+.popover-cancel:hover {
+  color: var(--color-muted);
+}
+
+.popover-error {
+  font-size: 11px;
+  color: oklch(62% 0.15 20);
+  margin: 0;
+}
+</style>
