@@ -123,6 +123,9 @@ importers:
       '@hono/zod-validator':
         specifier: ^0.4.0
         version: 0.4.3(hono@4.12.23)(zod@3.25.76)
+      drizzle-kit:
+        specifier: ^0.28.0
+        version: 0.28.1
       drizzle-orm:
         specifier: ^0.36.0
         version: 0.36.4(@types/pg@8.20.0)(pg@8.21.0)
@@ -142,9 +145,6 @@ importers:
       '@types/pg':
         specifier: ^8.11.0
         version: 8.20.0
-      drizzle-kit:
-        specifier: ^0.28.0
-        version: 0.28.1
       tsup:
         specifier: ^8.3.0
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.3)(typescript@5.9.3)(yaml@2.9.0)
