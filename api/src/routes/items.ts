@@ -47,8 +47,8 @@ export const items = new Hono()
       with: { user: true },
       where: (i, { and, eq, lt, or }) => and(
         eq(i.visibility, 'public'),
-        cursor
-          ? or(lt(i.createdAt, cursor.createdAt), and(eq(i.createdAt, cursor.createdAt), lt(i.id, cursor.id)))
+        cursor && 'c' in cursor
+          ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
           : undefined,
       ),
       orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
@@ -57,7 +57,7 @@ export const items = new Hono()
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
     const next = hasMore
-      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
       : null
     return c.json({
       data: page.map(r => ({
@@ -65,6 +65,7 @@ export const items = new Hono()
         name: r.name,
         gameVersion: r.gameVersion,
         owner: resolveOwner(r.user),
+        craftHash: (r.itemData as { craftHash?: string } | null)?.craftHash ?? null,
       })),
       nextCursor: next,
     })
@@ -93,8 +94,8 @@ export const items = new Hono()
     const rows = await getDb().query.craftedItems.findMany({
       where: (i, { and, eq, lt, or }) => and(
         eq(i.userId, auth.user.id),
-        cursor
-          ? or(lt(i.createdAt, cursor.createdAt), and(eq(i.createdAt, cursor.createdAt), lt(i.id, cursor.id)))
+        cursor && 'c' in cursor
+          ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
           : undefined,
       ),
       orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
@@ -103,9 +104,18 @@ export const items = new Hono()
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
     const next = hasMore
-      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
       : null
-    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion })), nextCursor: next })
+    return c.json({
+      data: page.map(r => ({
+        id: r.id,
+        name: r.name,
+        visibility: r.visibility,
+        gameVersion: r.gameVersion,
+        craftHash: (r.itemData as { craftHash?: string } | null)?.craftHash ?? null,
+      })),
+      nextCursor: next,
+    })
   })
   .get('/:id', async (c) => {
     const item = await getDb().query.craftedItems.findFirst({ where: (i, { eq }) => eq(i.id, c.req.param('id')) })
@@ -156,8 +166,8 @@ export const userItems = new Hono().get('/:id/items', async (c) => {
     where: (i, { and, eq, lt, or }) => and(
       eq(i.userId, userId),
       eq(i.visibility, 'public'),
-      cursor
-        ? or(lt(i.createdAt, cursor.createdAt), and(eq(i.createdAt, cursor.createdAt), lt(i.id, cursor.id)))
+      cursor && 'c' in cursor
+        ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
         : undefined,
     ),
     orderBy: (i, { desc }) => [desc(i.createdAt), desc(i.id)],
@@ -166,7 +176,7 @@ export const userItems = new Hono().get('/:id/items', async (c) => {
   const hasMore = rows.length > limit
   const page = rows.slice(0, limit)
   const next = hasMore
-    ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+    ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
     : null
   return c.json({
     data: page.map(r => ({
@@ -174,6 +184,7 @@ export const userItems = new Hono().get('/:id/items', async (c) => {
       name: r.name,
       gameVersion: r.gameVersion,
       owner: resolveOwner(r.user),
+      craftHash: (r.itemData as { craftHash?: string } | null)?.craftHash ?? null,
     })),
     nextCursor: next,
   })

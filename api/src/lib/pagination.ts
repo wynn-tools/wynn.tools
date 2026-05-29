@@ -1,20 +1,25 @@
 import { Buffer } from 'node:buffer'
 
-export interface Cursor { createdAt: Date, id: string }
+export type CursorData
+  = | { c: string, id: string }
+    | { n: string, id: string }
 
-export function encodeCursor(c: Cursor): string {
-  return Buffer.from(`${c.createdAt.toISOString()}|${c.id}`).toString('base64url')
+export function encodeCursor(c: CursorData): string {
+  return Buffer.from(JSON.stringify(c)).toString('base64url')
 }
 
-export function decodeCursor(raw: string | undefined): Cursor | null {
+export function decodeCursor(raw: string | undefined): CursorData | null {
   if (!raw)
     return null
   try {
-    const [iso, id] = Buffer.from(raw, 'base64url').toString('utf8').split('|')
-    const createdAt = new Date(iso)
-    if (!id || Number.isNaN(createdAt.getTime()))
+    const obj = JSON.parse(Buffer.from(raw, 'base64url').toString('utf8'))
+    if (typeof obj !== 'object' || obj === null || typeof obj.id !== 'string')
       return null
-    return { createdAt, id }
+    if ('c' in obj && typeof obj.c === 'string')
+      return { c: obj.c, id: obj.id }
+    if ('n' in obj && typeof obj.n === 'string')
+      return { n: obj.n, id: obj.id }
+    return null
   }
   catch {
     return null

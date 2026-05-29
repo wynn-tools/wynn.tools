@@ -49,8 +49,8 @@ export const builds = new Hono()
       with: { user: true },
       where: (b, { and, eq, lt, or }) => and(
         eq(b.visibility, 'public'),
-        cursor
-          ? or(lt(b.createdAt, cursor.createdAt), and(eq(b.createdAt, cursor.createdAt), lt(b.id, cursor.id)))
+        cursor && 'c' in cursor
+          ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
           : undefined,
       ),
       orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
@@ -59,7 +59,7 @@ export const builds = new Hono()
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
     const next = hasMore
-      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
       : null
     return c.json({
       data: page.map(r => ({
@@ -98,8 +98,8 @@ export const builds = new Hono()
     const rows = await getDb().query.builds.findMany({
       where: (b, { and, eq, lt, or }) => and(
         eq(b.userId, auth.user.id),
-        cursor
-          ? or(lt(b.createdAt, cursor.createdAt), and(eq(b.createdAt, cursor.createdAt), lt(b.id, cursor.id)))
+        cursor && 'c' in cursor
+          ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
           : undefined,
       ),
       orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
@@ -108,7 +108,7 @@ export const builds = new Hono()
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
     const next = hasMore
-      ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
       : null
     return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion })), nextCursor: next })
   })
@@ -176,8 +176,8 @@ export const userBuilds = new Hono().get('/:id/builds', async (c) => {
     where: (b, { and, eq, lt, or }) => and(
       eq(b.userId, userId),
       eq(b.visibility, 'public'),
-      cursor
-        ? or(lt(b.createdAt, cursor.createdAt), and(eq(b.createdAt, cursor.createdAt), lt(b.id, cursor.id)))
+      cursor && 'c' in cursor
+        ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
         : undefined,
     ),
     orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
@@ -186,7 +186,7 @@ export const userBuilds = new Hono().get('/:id/builds', async (c) => {
   const hasMore = rows.length > limit
   const page = rows.slice(0, limit)
   const next = hasMore
-    ? encodeCursor({ createdAt: page[page.length - 1].createdAt, id: page[page.length - 1].id })
+    ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
     : null
   return c.json({
     data: page.map(r => ({
