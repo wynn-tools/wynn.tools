@@ -10,6 +10,15 @@ describe.skipIf(!process.env.LIVE_CDN)('decodeBuild (live CDN)', () => {
     expect(out.gameVersion).toMatch(/^\d+\./)
     expect(out.decoded).toBeTruthy()
   }, 30_000)
+
+  it('returns playerClass and itemIds for a known build', async () => {
+    const result = await decodeBuild(ORACLE_HASH)
+    expect(result).toHaveProperty('playerClass')
+    expect(result).toHaveProperty('itemIds')
+    expect(typeof result.playerClass === 'string' || result.playerClass === null).toBe(true)
+    expect(Array.isArray(result.itemIds)).toBe(true)
+    result.itemIds.forEach(id => expect(typeof id).toBe('number'))
+  }, 30_000)
 })
 
 // Network-independent: malformed input must fail before any CDN call.

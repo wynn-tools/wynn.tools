@@ -76,13 +76,15 @@ export const builds = new Hono()
     if (!hasScope(auth, 'builds:write'))
       throw new AppError(403, 'forbidden', 'Missing builds:write scope')
     const { name, buildString, visibility } = c.req.valid('json')
-    const { gameVersion } = await decodeBuild(buildString) // throws invalid_build on garbage
+    const { gameVersion, playerClass, itemIds } = await decodeBuild(buildString) // throws invalid_build on garbage
     const [row] = await getDb().insert(schema.builds).values({
       id: newResourceId(),
       userId: auth.user.id,
       name,
       buildString,
       gameVersion,
+      playerClass,
+      itemIds,
       visibility: visibility ?? 'private',
     }).returning()
     return c.json({ id: row.id }, 201)
@@ -145,11 +147,15 @@ export const builds = new Hono()
       throw new AppError(403, 'forbidden', 'Missing builds:write scope')
     const patch = c.req.valid('json')
     let gameVersion = existing.gameVersion
+    let playerClass = existing.playerClass
+    let itemIds = existing.itemIds
     if (patch.buildString) {
       const decoded = await decodeBuild(patch.buildString)
       gameVersion = decoded.gameVersion
+      playerClass = decoded.playerClass
+      itemIds = decoded.itemIds
     }
-    const [row] = await getDb().update(schema.builds).set({ ...patch, gameVersion, updatedAt: new Date() }).where(eq(schema.builds.id, existing.id)).returning()
+    const [row] = await getDb().update(schema.builds).set({ ...patch, gameVersion, playerClass, itemIds, updatedAt: new Date() }).where(eq(schema.builds.id, existing.id)).returning()
     return c.json({ id: row.id, name: row.name, visibility: row.visibility })
   })
   .delete('/:id', requireAuth, async (c) => {

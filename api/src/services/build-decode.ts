@@ -4,6 +4,8 @@ import {
   decodeRawBuild,
   loadBuildContext,
   peekVersionId,
+  slotItemId,
+  WEP_TO_CLASS,
 } from '../build-core'
 import { env } from '../env'
 import { AppError } from '../lib/errors'
@@ -16,9 +18,14 @@ function cdn() {
   return client
 }
 
-const cache = new Map<string, { gameVersion: string, decoded: unknown }>()
+const cache = new Map<string, { gameVersion: string, decoded: unknown, playerClass: string | null, itemIds: number[] }>()
 
-export async function decodeBuild(buildString: string): Promise<{ gameVersion: string, decoded: unknown }> {
+export async function decodeBuild(buildString: string): Promise<{
+  gameVersion: string
+  decoded: unknown
+  playerClass: string | null
+  itemIds: number[]
+}> {
   const cached = cache.get(buildString)
   if (cached)
     return cached
@@ -36,7 +43,18 @@ export async function decodeBuild(buildString: string): Promise<{ gameVersion: s
       },
     }))
     const decoded = computeBuild(raw, loaded.ctx)
-    const result = { gameVersion: loaded.gameVersion, decoded }
+
+    // Extract item IDs from NORMAL equipment slots (indices 0–8), excluding nulls
+    const itemIds = raw.equipment
+      .map(slot => slotItemId(slot))
+      .filter((id): id is number => id !== null)
+
+    // Derive player class from weapon slot (index 8)
+    const weaponId = slotItemId(raw.equipment[8])
+    const weaponType = weaponId !== null ? loaded.weaponType(weaponId) : null
+    const playerClass = weaponType !== null ? (WEP_TO_CLASS[weaponType] ?? null) : null
+
+    const result = { gameVersion: loaded.gameVersion, decoded, playerClass, itemIds }
     cache.set(buildString, result)
     return result
   }
