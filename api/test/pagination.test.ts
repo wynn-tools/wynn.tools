@@ -27,4 +27,9 @@ describe('pagination cursor', () => {
   it('returns null for undefined', () => {
     expect(decodeCursor(undefined)).toBeNull()
   })
+
+  it('returns null for a date cursor with invalid date string', () => {
+    const bad = Buffer.from(JSON.stringify({ c: 'not-a-date', id: 'abc' })).toString('base64url')
+    expect(decodeCursor(bad)).toBeNull()
+  })
 })

@@ -15,8 +15,11 @@ export function decodeCursor(raw: string | undefined): CursorData | null {
     const obj = JSON.parse(Buffer.from(raw, 'base64url').toString('utf8'))
     if (typeof obj !== 'object' || obj === null || typeof obj.id !== 'string')
       return null
-    if ('c' in obj && typeof obj.c === 'string')
+    if ('c' in obj && typeof obj.c === 'string') {
+      if (Number.isNaN(new Date(obj.c).getTime()))
+        return null
       return { c: obj.c, id: obj.id }
+    }
     if ('n' in obj && typeof obj.n === 'string')
       return { n: obj.n, id: obj.id }
     return null

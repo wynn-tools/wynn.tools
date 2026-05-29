@@ -49,6 +49,7 @@ export const builds = new Hono()
       with: { user: true },
       where: (b, { and, eq, lt, or }) => and(
         eq(b.visibility, 'public'),
+        // { n, id } name-sort cursors are handled in Task 4; date-sorted endpoints treat them as no-cursor
         cursor && 'c' in cursor
           ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
           : undefined,
@@ -98,6 +99,7 @@ export const builds = new Hono()
     const rows = await getDb().query.builds.findMany({
       where: (b, { and, eq, lt, or }) => and(
         eq(b.userId, auth.user.id),
+        // { n, id } name-sort cursors are handled in Task 4; date-sorted endpoints treat them as no-cursor
         cursor && 'c' in cursor
           ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
           : undefined,

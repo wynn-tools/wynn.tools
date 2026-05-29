@@ -47,6 +47,7 @@ export const items = new Hono()
       with: { user: true },
       where: (i, { and, eq, lt, or }) => and(
         eq(i.visibility, 'public'),
+        // { n, id } name-sort cursors are handled in Task 5; date-sorted endpoints treat them as no-cursor
         cursor && 'c' in cursor
           ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
           : undefined,
@@ -94,6 +95,7 @@ export const items = new Hono()
     const rows = await getDb().query.craftedItems.findMany({
       where: (i, { and, eq, lt, or }) => and(
         eq(i.userId, auth.user.id),
+        // { n, id } name-sort cursors are handled in Task 5; date-sorted endpoints treat them as no-cursor
         cursor && 'c' in cursor
           ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
           : undefined,
@@ -166,6 +168,7 @@ export const userItems = new Hono().get('/:id/items', async (c) => {
     where: (i, { and, eq, lt, or }) => and(
       eq(i.userId, userId),
       eq(i.visibility, 'public'),
+      // { n, id } name-sort cursors are handled in Task 5; date-sorted endpoints treat them as no-cursor
       cursor && 'c' in cursor
         ? or(lt(i.createdAt, new Date(cursor.c)), and(eq(i.createdAt, new Date(cursor.c)), lt(i.id, cursor.id)))
         : undefined,
