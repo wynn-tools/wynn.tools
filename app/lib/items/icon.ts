@@ -38,7 +38,7 @@ export function spriteUrl(subType: string): string {
   return `${ITEMS_V2_CDN}/sprites/${subType}.png`
 }
 
-const TIERS_WITH_FRAME = new Set(['normal', 'unique', 'rare', 'legendary', 'fabled', 'mythic', 'ingredient'])
+const TIERS_WITH_FRAME = new Set(['normal', 'unique', 'rare', 'legendary', 'fabled', 'mythic', 'ingredient', 'material'])
 
 /** URL for a rarity frame border image, or null when that tier has no frame asset. */
 export function frameUrl(tier: string): string | null {

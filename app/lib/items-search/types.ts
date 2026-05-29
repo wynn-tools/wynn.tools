@@ -2,6 +2,17 @@ import type { DamageRange, IdentificationEntry, MajorId, NormalizedText, OutputI
 
 export type IdRange = IdentificationEntry // { min, max, raw }
 
+export interface WynnIcon {
+  format: 'attribute' | 'skin'
+  value: { id: string, name: string, customModelData?: { rangeDispatch?: number[] } } | string
+}
+
+export interface DropMeta {
+  name: string
+  type: string
+  coordinates: [number, number, number]
+}
+
 export interface SearchItem {
   id: number
   name: string
@@ -48,6 +59,56 @@ export interface SearchIngredient {
   consumableOnlyIDs: Record<string, number>
   positionModifiers: PositionModifiers
   icon?: unknown
+}
+
+export interface SearchTome {
+  id: number
+  name: string
+  displayName: string
+  type: string
+  tier: string
+  level: number
+  identifications: Record<string, IdRange>
+  emblem: string | null
+  icon: WynnIcon | null
+  dropMeta: DropMeta | null
+}
+
+export interface SearchCharm {
+  id: number
+  name: string
+  displayName: string
+  tier: string
+  level: number
+  emblem: string
+  icon: WynnIcon | null
+  base: Record<string, IdRange>
+  identifications: Record<string, IdRange>
+}
+
+export interface SearchMaterial {
+  id: number
+  name: string
+  displayName: string
+  subType: string
+  level: number
+  icon: WynnIcon | null
+  lore: NormalizedText[] | null
+  chances: { tier1: number, tier2: number, tier3: number }
+}
+
+export interface TomeCriteria {
+  name: string
+  types: string[]
+  tiers: string[]
+  sources: string[]
+  levelRange: [number, number]
+}
+
+export interface MaterialCriteria {
+  name: string
+  subTypes: string[]
+  levelRange: [number, number]
 }
 
 export interface IdFilter {

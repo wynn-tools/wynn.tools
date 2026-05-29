@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import type { IngredientCriteria } from '~/lib/items-search/types'
-import { defaultIngredientCriteria } from '~/lib/items-search/criteria-url'
+import type { IngredientCriteria, MaterialCriteria, TomeCriteria } from '~/lib/items-search/types'
+import { defaultIngredientCriteria, defaultMaterialCriteria, defaultTomeCriteria } from '~/lib/items-search/criteria-url'
 import { filterIngredients } from '~/lib/items-search/filter-ingredients'
 import { filterItems } from '~/lib/items-search/filter-items'
+import { filterMaterials } from '~/lib/items-search/filter-materials'
+import { filterTomes } from '~/lib/items-search/filter-tomes'
 
 useSeoMeta({
   title: 'Item Search — wynn.tools',
   ogTitle: 'Item Search — wynn.tools',
-  description: 'Search and filter Wynncraft items and ingredients by stats, tier, type, and more.',
-  ogDescription: 'Search and filter Wynncraft items and ingredients by stats, tier, type, and more.',
+  description: 'Search and filter Wynncraft items, ingredients, tomes, charms, and materials by stats, tier, type, and more.',
+  ogDescription: 'Search and filter Wynncraft items, ingredients, tomes, charms, and materials by stats, tier, type, and more.',
   twitterCard: 'summary_large_image',
 })
 
@@ -17,12 +19,19 @@ const RESULT_CAP = 200
 const { data, pending, error, refresh } = useItemSearchData()
 const { criteria } = useItemSearchQuery()
 const ingredientCriteria = ref<IngredientCriteria>(defaultIngredientCriteria())
-const tab = ref<'items' | 'ingredients'>('items')
-// Mobile-only: filters open inline behind a toggle. Desktop ignores this.
+const tomeCriteria = ref<TomeCriteria>(defaultTomeCriteria())
+const materialCriteria = ref<MaterialCriteria>(defaultMaterialCriteria())
+
+type Tab = 'items' | 'ingredients' | 'tomes' | 'charms' | 'materials'
+const tab = ref<Tab>('items')
 const mobileFiltersOpen = ref(false)
+
+const showSidebar = computed(() => tab.value !== 'charms')
 
 const itemResults = computed(() => data.value ? filterItems(data.value.items, criteria.value) : [])
 const ingredientResults = computed(() => data.value ? filterIngredients(data.value.ingredients, ingredientCriteria.value) : [])
+const tomeResults = computed(() => data.value ? filterTomes(data.value.tomes, tomeCriteria.value) : [])
+const materialResults = computed(() => data.value ? filterMaterials(data.value.materials, materialCriteria.value) : [])
 const idKeys = computed(() => criteria.value.idSorts.map(s => s.key))
 const majorIdOptions = computed(() =>
   data.value
@@ -46,6 +55,15 @@ const setOptions = computed(() =>
         <button :class="{ on: tab === 'ingredients' }" role="tab" :aria-selected="tab === 'ingredients'" @click="tab = 'ingredients'">
           Ingredients
         </button>
+        <button :class="{ on: tab === 'tomes' }" role="tab" :aria-selected="tab === 'tomes'" @click="tab = 'tomes'">
+          Tomes
+        </button>
+        <button :class="{ on: tab === 'charms' }" role="tab" :aria-selected="tab === 'charms'" @click="tab = 'charms'">
+          Charms
+        </button>
+        <button :class="{ on: tab === 'materials' }" role="tab" :aria-selected="tab === 'materials'" @click="tab = 'materials'">
+          Materials
+        </button>
       </div>
     </div>
 
@@ -58,8 +76,9 @@ const setOptions = computed(() =>
       </button>
     </div>
 
-    <div v-else class="layout">
+    <div v-else class="layout" :class="{ 'layout--full': !showSidebar }">
       <button
+        v-if="showSidebar"
         type="button"
         class="filters-toggle"
         :aria-expanded="mobileFiltersOpen"
@@ -74,13 +93,17 @@ const setOptions = computed(() =>
         <span>{{ mobileFiltersOpen ? 'Hide filters' : 'Filters' }}</span>
         <span class="filters-toggle-chevron" :class="{ open: mobileFiltersOpen }" aria-hidden="true">›</span>
       </button>
+
       <aside
+        v-if="showSidebar"
         id="search-filters-panel"
         class="sidebar"
         :class="{ 'sidebar--collapsed-mobile': !mobileFiltersOpen }"
       >
         <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" :set-options="setOptions" />
-        <IngredientSearchFilters v-else v-model="ingredientCriteria" />
+        <IngredientSearchFilters v-else-if="tab === 'ingredients'" v-model="ingredientCriteria" />
+        <TomeSearchFilters v-else-if="tab === 'tomes'" v-model="tomeCriteria" />
+        <MaterialSearchFilters v-else-if="tab === 'materials'" v-model="materialCriteria" />
       </aside>
 
       <section class="results">
@@ -96,7 +119,8 @@ const setOptions = computed(() =>
             No items match these filters.
           </p>
         </template>
-        <template v-else>
+
+        <template v-else-if="tab === 'ingredients'">
           <header class="results-head">
             <span class="count">{{ ingredientResults.length.toLocaleString() }} ingredients</span>
             <span v-if="ingredientResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
@@ -106,6 +130,44 @@ const setOptions = computed(() =>
           </div>
           <p v-else class="state">
             No ingredients match these filters.
+          </p>
+        </template>
+
+        <template v-else-if="tab === 'tomes'">
+          <header class="results-head">
+            <span class="count">{{ tomeResults.length.toLocaleString() }} tomes</span>
+            <span v-if="tomeResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+          </header>
+          <div v-if="tomeResults.length" class="grid">
+            <TomeResultCard v-for="tome in tomeResults.slice(0, RESULT_CAP)" :key="tome.id" :tome="tome" />
+          </div>
+          <p v-else class="state">
+            No tomes match these filters.
+          </p>
+        </template>
+
+        <template v-else-if="tab === 'charms'">
+          <header class="results-head">
+            <span class="count">{{ data?.charms.length ?? 0 }} charms</span>
+          </header>
+          <div v-if="data?.charms.length" class="grid grid--charms">
+            <CharmResultCard v-for="charm in data.charms" :key="charm.id" :charm="charm" />
+          </div>
+          <p v-else class="state">
+            No charms available.
+          </p>
+        </template>
+
+        <template v-else-if="tab === 'materials'">
+          <header class="results-head">
+            <span class="count">{{ materialResults.length.toLocaleString() }} materials</span>
+            <span v-if="materialResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+          </header>
+          <div v-if="materialResults.length" class="grid">
+            <MaterialResultCard v-for="mat in materialResults.slice(0, RESULT_CAP)" :key="mat.id" :material="mat" />
+          </div>
+          <p v-else class="state">
+            No materials match these filters.
           </p>
         </template>
       </section>
@@ -133,6 +195,12 @@ const setOptions = computed(() =>
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 100%;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 .tabs button {
   background: transparent;
@@ -144,6 +212,8 @@ const setOptions = computed(() =>
   font: 600 12px/1 var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition:
     color 0.12s ease-out,
     background 0.12s ease-out;
@@ -164,6 +234,9 @@ const setOptions = computed(() =>
   grid-template-columns: 248px minmax(0, 1fr);
   gap: 40px;
   align-items: start;
+}
+.layout--full {
+  grid-template-columns: 1fr;
 }
 .filters-toggle {
   display: none;
@@ -199,6 +272,9 @@ const setOptions = computed(() =>
   grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
   gap: 10px;
 }
+.grid--charms {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
 .state {
   padding: 56px 20px;
   color: var(--color-muted);
@@ -224,15 +300,12 @@ const setOptions = computed(() =>
     margin-bottom: 16px;
   }
   .tabs button {
-    padding: 8px 16px;
+    padding: 8px 12px;
     min-height: 36px;
   }
   .layout {
     gap: 14px;
   }
-  /* Filters become a tap-to-expand panel so results dominate the viewport.
-     The toggle is a thin row, not a button card, to stay out of the way
-     when collapsed. */
   .filters-toggle {
     display: inline-flex;
     align-items: center;
@@ -282,6 +355,9 @@ const setOptions = computed(() =>
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 8px;
+  }
+  .grid--charms {
+    grid-template-columns: 1fr;
   }
   .results-head {
     margin-bottom: 10px;

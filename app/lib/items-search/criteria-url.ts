@@ -1,4 +1,4 @@
-import type { IdFilter, IdSort, IngredientCriteria, ItemCriteria } from './types'
+import type { IdFilter, IdSort, IngredientCriteria, ItemCriteria, MaterialCriteria, TomeCriteria } from './types'
 
 export type Query = Record<string, string>
 
@@ -8,6 +8,14 @@ export function defaultItemCriteria(): ItemCriteria {
 
 export function defaultIngredientCriteria(): IngredientCriteria {
   return { name: '', tiers: [], levelRange: [1, 120], skills: [], identifications: [], idSorts: [] }
+}
+
+export function defaultTomeCriteria(): TomeCriteria {
+  return { name: '', types: [], tiers: [], sources: [], levelRange: [1, 120] }
+}
+
+export function defaultMaterialCriteria(): MaterialCriteria {
+  return { name: '', subTypes: [], levelRange: [1, 120] }
 }
 
 function encodeIds(ids: IdFilter[], sorts: IdSort[]): string {
