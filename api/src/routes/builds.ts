@@ -1,3 +1,4 @@
+import type { SQL } from 'drizzle-orm'
 import type { CursorData } from '../lib/pagination'
 import { zValidator } from '@hono/zod-validator'
 import { and, asc, desc, eq, ilike, sql } from 'drizzle-orm'
@@ -43,7 +44,7 @@ function buildFilterConditions(
   sort: string,
   cursor: CursorData | null,
 ) {
-  const extra: any[] = []
+  const extra: SQL[] = []
   if (q)
     extra.push(ilike(schema.builds.name, `%${q}%`))
   if (playerClass)
@@ -138,17 +139,12 @@ export const builds = new Hono()
     }).returning()
     return c.json({ id: row.id }, 201)
   })
-  .get('/mine', requireAuth, async (c) => {
+  .get('/mine', requireAuth, zValidator('query', buildsListQuery), async (c) => {
     const auth = c.get('auth')
     if (!hasScope(auth, 'builds:read'))
       throw new AppError(403, 'forbidden', 'Missing builds:read scope')
-    const parsed = buildsListQuery.parse({
-      q: c.req.query('q'),
-      sort: c.req.query('sort') ?? 'newest',
-      cursor: c.req.query('cursor'),
-      limit: c.req.query('limit') ?? String(DEFAULT_PAGE_SIZE),
-    })
-    const { q, sort, cursor: rawCursor, limit } = parsed
+    // class and itemId filters are not exposed on /mine
+    const { q, sort, cursor: rawCursor, limit } = c.req.valid('query')
     const cursor = decodeCursor(rawCursor)
     const filterConds = buildFilterConditions(q, undefined, undefined, sort, cursor)
     const rows = await getDb().query.builds.findMany({
@@ -216,17 +212,9 @@ export const builds = new Hono()
     return c.json({ ok: true })
   })
 
-export const userBuilds = new Hono().get('/:id/builds', async (c) => {
+export const userBuilds = new Hono().get('/:id/builds', zValidator('query', buildsListQuery), async (c) => {
   const userId = c.req.param('id')
-  const parsed = buildsListQuery.parse({
-    q: c.req.query('q'),
-    sort: c.req.query('sort') ?? 'newest',
-    class: c.req.query('class'),
-    itemId: c.req.query('itemId'),
-    cursor: c.req.query('cursor'),
-    limit: c.req.query('limit') ?? String(DEFAULT_PAGE_SIZE),
-  })
-  const { q, sort, class: playerClass, itemId, cursor: rawCursor, limit } = parsed
+  const { q, sort, class: playerClass, itemId, cursor: rawCursor, limit } = c.req.valid('query')
   const cursor = decodeCursor(rawCursor)
   const filterConds = buildFilterConditions(q, playerClass, itemId, sort, cursor)
   const rows = await getDb().query.builds.findMany({

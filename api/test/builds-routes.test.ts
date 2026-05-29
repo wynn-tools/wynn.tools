@@ -166,6 +166,26 @@ describe('builds routes (no network)', () => {
     expect(body.data[0].name).toBe('HasIt')
   })
 
+  it('paginates correctly with ?sort=name cursor', async () => {
+    const { user } = await session()
+    // Insert 3 builds alphabetically out of order; use limit=2 to force pagination
+    await getDb().insert(schema.builds).values([
+      { id: 'pag1', userId: user.id, name: 'Aardvark', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+      { id: 'pag2', userId: user.id, name: 'Beaver', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+      { id: 'pag3', userId: user.id, name: 'Cougar', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+    ])
+    // Page 1
+    const res1 = await app()('/v1/builds?sort=name&limit=2')
+    const body1 = await res1.json()
+    expect(body1.data.map((d: { name: string }) => d.name)).toEqual(['Aardvark', 'Beaver'])
+    expect(body1.nextCursor).not.toBeNull()
+    // Page 2
+    const res2 = await app()(`/v1/builds?sort=name&limit=2&cursor=${body1.nextCursor}`)
+    const body2 = await res2.json()
+    expect(body2.data.map((d: { name: string }) => d.name)).toEqual(['Cougar'])
+    expect(body2.nextCursor).toBeNull()
+  })
+
   it('composes q and class filters', async () => {
     const { user } = await session()
     await getDb().insert(schema.builds).values([
