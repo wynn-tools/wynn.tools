@@ -59,9 +59,9 @@ describe('api client', () => {
   })
 
   it('createKey POSTs and returns plaintext key', async () => {
-    const fetchImpl = vi.fn().mockResolvedValue(ok({ id: 'k1', key: 'wt_live_abc', prefix: 'wt_live_' }, 201))
+    const fetchImpl = vi.fn().mockResolvedValue(ok({ id: 'k1', plaintext: 'wt_live_abc', prefix: 'wt_live_', scopes: ['builds:read'] }, 201))
     const api = createApiClient('https://api.test', fetchImpl)
     const res = await api.createKey({ label: 'Bot', scopes: ['builds:read'] })
-    expect(res.key).toBe('wt_live_abc')
+    expect(res.plaintext).toBe('wt_live_abc')
   })
 })

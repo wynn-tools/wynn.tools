@@ -123,7 +123,7 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     // Keys
     listKeys: () => request<ApiKey[]>('/v1/me/keys'),
     createKey: (body: { label: string, scopes: string[] }) =>
-      request<{ id: string, key: string, prefix: string }>('/v1/me/keys', jsonInit('POST', body)),
+      request<{ id: string, plaintext: string, prefix: string, scopes: string[] }>('/v1/me/keys', jsonInit('POST', body)),
     revokeKey: (id: string) => request<{ ok: boolean }>(`/v1/me/keys/${id}`, { method: 'DELETE' }),
   }
 }
