@@ -116,6 +116,68 @@ describe('builds routes (no network)', () => {
     expect(body.data).toHaveLength(1)
     expect(body.data[0].name).toBe('A')
   })
+
+  it('filters by name with ?q=', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values([
+      { id: 'b1', userId: user.id, name: 'Warrior DPS', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+      { id: 'b2', userId: user.id, name: 'Mage Tank', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+    ])
+    const res = await app()('/v1/builds?q=warrior')
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('Warrior DPS')
+  })
+
+  it('sorts by name ascending with ?sort=name', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values([
+      { id: 'c1', userId: user.id, name: 'Zebra', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+      { id: 'c2', userId: user.id, name: 'Apple', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+      { id: 'c3', userId: user.id, name: 'Mango', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public' },
+    ])
+    const res = await app()('/v1/builds?sort=name')
+    const body = await res.json()
+    const names = body.data.map((d: { name: string }) => d.name)
+    expect(names).toEqual(['Apple', 'Mango', 'Zebra'])
+  })
+
+  it('filters by class with ?class=Warrior', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values([
+      { id: 'd1', userId: user.id, name: 'W', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', playerClass: 'Warrior' },
+      { id: 'd2', userId: user.id, name: 'A', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', playerClass: 'Archer' },
+    ])
+    const res = await app()('/v1/builds?class=Warrior')
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('W')
+  })
+
+  it('filters by itemId with ?itemId=42', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values([
+      { id: 'e1', userId: user.id, name: 'HasIt', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', itemIds: [42, 99] },
+      { id: 'e2', userId: user.id, name: 'NoIt', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', itemIds: [7, 8] },
+    ])
+    const res = await app()('/v1/builds?itemId=42')
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('HasIt')
+  })
+
+  it('composes q and class filters', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values([
+      { id: 'f1', userId: user.id, name: 'Fast Archer', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', playerClass: 'Archer' },
+      { id: 'f2', userId: user.id, name: 'Fast Warrior', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', playerClass: 'Warrior' },
+      { id: 'f3', userId: user.id, name: 'Slow Archer', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', playerClass: 'Archer' },
+    ])
+    const res = await app()('/v1/builds?q=fast&class=Archer')
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('Fast Archer')
+  })
 })
 
 describe.skipIf(!process.env.LIVE_CDN)('builds routes (live CDN)', () => {

@@ -1,5 +1,6 @@
+import type { CursorData } from '../lib/pagination'
 import { zValidator } from '@hono/zod-validator'
-import { eq } from 'drizzle-orm'
+import { and, asc, desc, eq, ilike, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
@@ -24,6 +25,60 @@ const patchBody = z.object({
   visibility: visibilityEnum.optional(),
 })
 
+const CLASS_VALUES = ['Assassin', 'Warrior', 'Mage', 'Archer', 'Shaman'] as const
+
+const buildsListQuery = z.object({
+  q: z.string().max(100).optional(),
+  sort: z.enum(['newest', 'oldest', 'name']).optional().default('newest'),
+  class: z.enum(CLASS_VALUES).optional(),
+  itemId: z.coerce.number().int().positive().optional(),
+  cursor: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).optional().default(DEFAULT_PAGE_SIZE),
+})
+
+function buildFilterConditions(
+  q: string | undefined,
+  playerClass: string | undefined,
+  itemId: number | undefined,
+  sort: string,
+  cursor: CursorData | null,
+) {
+  const extra: any[] = []
+  if (q)
+    extra.push(ilike(schema.builds.name, `%${q}%`))
+  if (playerClass)
+    extra.push(eq(schema.builds.playerClass, playerClass))
+  if (itemId != null)
+    extra.push(sql`${schema.builds.itemIds} @> ARRAY[${itemId}]::integer[]`)
+  if (cursor) {
+    if ('n' in cursor) {
+      extra.push(sql`(${schema.builds.name}, ${schema.builds.id}) > (${cursor.n}, ${cursor.id})`)
+    }
+    else {
+      const d = new Date(cursor.c)
+      if (sort === 'oldest')
+        extra.push(sql`(${schema.builds.createdAt}, ${schema.builds.id}) > (${d.toISOString()}, ${cursor.id})`)
+      else
+        extra.push(sql`(${schema.builds.createdAt}, ${schema.builds.id}) < (${d.toISOString()}, ${cursor.id})`)
+    }
+  }
+  return extra
+}
+
+function buildOrderBy(sort: string) {
+  if (sort === 'name')
+    return [asc(schema.builds.name), asc(schema.builds.id)]
+  if (sort === 'oldest')
+    return [asc(schema.builds.createdAt), asc(schema.builds.id)]
+  return [desc(schema.builds.createdAt), desc(schema.builds.id)]
+}
+
+function buildNextCursor(sort: string, row: { name: string, createdAt: Date, id: string }) {
+  return sort === 'name'
+    ? encodeCursor({ n: row.name, id: row.id })
+    : encodeCursor({ c: row.createdAt.toISOString(), id: row.id })
+}
+
 /** Resolve a viewer id from a session cookie or bearer key, or null. */
 async function resolveViewerId(cookieHeader?: string, authHeader?: string): Promise<string | null> {
   const bearer = authHeader?.match(/^Bearer (\S+)$/i)?.[1]
@@ -42,26 +97,19 @@ async function resolveViewerId(cookieHeader?: string, authHeader?: string): Prom
 }
 
 export const builds = new Hono()
-  .get('/', async (c) => {
-    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
-    const cursor = decodeCursor(c.req.query('cursor'))
+  .get('/', zValidator('query', buildsListQuery), async (c) => {
+    const { q, sort, class: playerClass, itemId, cursor: rawCursor, limit } = c.req.valid('query')
+    const cursor = decodeCursor(rawCursor)
+    const filterConds = buildFilterConditions(q, playerClass, itemId, sort, cursor)
     const rows = await getDb().query.builds.findMany({
       with: { user: true },
-      where: (b, { and, eq, lt, or }) => and(
-        eq(b.visibility, 'public'),
-        // { n, id } name-sort cursors are handled in Task 4; date-sorted endpoints treat them as no-cursor
-        cursor && 'c' in cursor
-          ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
-          : undefined,
-      ),
-      orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
+      where: and(eq(schema.builds.visibility, 'public'), ...filterConds),
+      orderBy: buildOrderBy(sort),
       limit: limit + 1,
     })
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
-    const next = hasMore
-      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
-      : null
+    const next = hasMore ? buildNextCursor(sort, page[page.length - 1]) : null
     return c.json({
       data: page.map(r => ({
         id: r.id,
@@ -94,24 +142,23 @@ export const builds = new Hono()
     const auth = c.get('auth')
     if (!hasScope(auth, 'builds:read'))
       throw new AppError(403, 'forbidden', 'Missing builds:read scope')
-    const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
-    const cursor = decodeCursor(c.req.query('cursor'))
+    const parsed = buildsListQuery.parse({
+      q: c.req.query('q'),
+      sort: c.req.query('sort') ?? 'newest',
+      cursor: c.req.query('cursor'),
+      limit: c.req.query('limit') ?? String(DEFAULT_PAGE_SIZE),
+    })
+    const { q, sort, cursor: rawCursor, limit } = parsed
+    const cursor = decodeCursor(rawCursor)
+    const filterConds = buildFilterConditions(q, undefined, undefined, sort, cursor)
     const rows = await getDb().query.builds.findMany({
-      where: (b, { and, eq, lt, or }) => and(
-        eq(b.userId, auth.user.id),
-        // { n, id } name-sort cursors are handled in Task 4; date-sorted endpoints treat them as no-cursor
-        cursor && 'c' in cursor
-          ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
-          : undefined,
-      ),
-      orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
+      where: and(eq(schema.builds.userId, auth.user.id), ...filterConds),
+      orderBy: buildOrderBy(sort),
       limit: limit + 1,
     })
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
-    const next = hasMore
-      ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
-      : null
+    const next = hasMore ? buildNextCursor(sort, page[page.length - 1]) : null
     return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion })), nextCursor: next })
   })
   .get('/:id', async (c) => {
@@ -171,25 +218,26 @@ export const builds = new Hono()
 
 export const userBuilds = new Hono().get('/:id/builds', async (c) => {
   const userId = c.req.param('id')
-  const limit = Math.min(Number(c.req.query('limit')) || DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE)
-  const cursor = decodeCursor(c.req.query('cursor'))
+  const parsed = buildsListQuery.parse({
+    q: c.req.query('q'),
+    sort: c.req.query('sort') ?? 'newest',
+    class: c.req.query('class'),
+    itemId: c.req.query('itemId'),
+    cursor: c.req.query('cursor'),
+    limit: c.req.query('limit') ?? String(DEFAULT_PAGE_SIZE),
+  })
+  const { q, sort, class: playerClass, itemId, cursor: rawCursor, limit } = parsed
+  const cursor = decodeCursor(rawCursor)
+  const filterConds = buildFilterConditions(q, playerClass, itemId, sort, cursor)
   const rows = await getDb().query.builds.findMany({
     with: { user: true },
-    where: (b, { and, eq, lt, or }) => and(
-      eq(b.userId, userId),
-      eq(b.visibility, 'public'),
-      cursor && 'c' in cursor
-        ? or(lt(b.createdAt, new Date(cursor.c)), and(eq(b.createdAt, new Date(cursor.c)), lt(b.id, cursor.id)))
-        : undefined,
-    ),
-    orderBy: (b, { desc }) => [desc(b.createdAt), desc(b.id)],
+    where: and(eq(schema.builds.userId, userId), eq(schema.builds.visibility, 'public'), ...filterConds),
+    orderBy: buildOrderBy(sort),
     limit: limit + 1,
   })
   const hasMore = rows.length > limit
   const page = rows.slice(0, limit)
-  const next = hasMore
-    ? encodeCursor({ c: page[page.length - 1].createdAt.toISOString(), id: page[page.length - 1].id })
-    : null
+  const next = hasMore ? buildNextCursor(sort, page[page.length - 1]) : null
   return c.json({
     data: page.map(r => ({
       id: r.id,
