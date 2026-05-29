@@ -5,6 +5,7 @@ import { onError } from './lib/errors'
 import { auth, me } from './routes/auth'
 import { builds, userBuilds } from './routes/builds'
 import { health } from './routes/health'
+import { items, userItems } from './routes/items'
 import { keys } from './routes/keys'
 
 export function createApp(): Hono {
@@ -21,5 +22,7 @@ export function createApp(): Hono {
   app.route('/v1/me/keys', keys)
   app.route('/v1/builds', builds)
   app.route('/v1/users', userBuilds)
+  app.route('/v1/items', items)
+  app.route('/v1/users', userItems)
   return app
 }
