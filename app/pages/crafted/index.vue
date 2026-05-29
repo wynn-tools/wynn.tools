@@ -5,7 +5,10 @@ import { useApi } from '~/composables/useApi'
 
 useSeoMeta({
   title: 'Public Crafted Items — wynn.tools',
+  ogTitle: 'Public Crafted Items — wynn.tools',
   description: 'Browse crafted items shared by the community.',
+  ogDescription: 'Browse crafted items shared by the community.',
+  twitterCard: 'summary_large_image',
 })
 
 const route = useRoute()

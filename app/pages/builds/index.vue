@@ -8,7 +8,10 @@ import { itemIconUrl } from '~/lib/items/icon'
 
 useSeoMeta({
   title: 'Public Builds — wynn.tools',
+  ogTitle: 'Public Builds — wynn.tools',
   description: 'Browse Wynncraft builds shared by the community.',
+  ogDescription: 'Browse Wynncraft builds shared by the community.',
+  twitterCard: 'summary_large_image',
 })
 
 const route = useRoute()
