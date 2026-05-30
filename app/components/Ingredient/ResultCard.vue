@@ -16,6 +16,15 @@ const TIER_COLOR: Record<number, string> = {
   3: '#07f2f0',
 }
 const nameColor = computed(() => TIER_COLOR[props.ingredient.tier] ?? '#fff')
+
+const dropLabel = computed(() => {
+  const mobs = props.ingredient.droppedBy
+  if (!mobs.length)
+    return null
+  const shown = mobs.slice(0, 2).map(d => d.name).join(', ')
+  const extra = mobs.length > 2 ? ` +${mobs.length - 2} more` : ''
+  return shown + extra
+})
 </script>
 
 <template>
@@ -26,6 +35,14 @@ const nameColor = computed(() => TIER_COLOR[props.ingredient.tier] ?? '#fff')
           <span class="card-name" :style="{ color: nameColor }">{{ ingredient.displayName }}</span>
           <span class="card-meta">Tier {{ ingredient.tier }} · Lv. {{ ingredient.level }}</span>
           <span v-if="ingredient.skills.length" class="card-meta card-skills">{{ ingredient.skills.join(', ') }}</span>
+          <RouterLink
+            v-if="dropLabel"
+            :to="{ path: '/map', query: { ing: ingredient.name } }"
+            class="card-meta card-drop"
+            @click.stop
+          >
+            {{ dropLabel }}
+          </RouterLink>
         </div>
       </div>
     </HoverCardTrigger>
@@ -71,6 +88,13 @@ const nameColor = computed(() => TIER_COLOR[props.ingredient.tier] ?? '#fff')
 }
 .card-skills {
   color: var(--color-faint);
+}
+.card-drop {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+.card-drop:hover {
+  text-decoration: underline;
 }
 .quickview {
   z-index: 60;

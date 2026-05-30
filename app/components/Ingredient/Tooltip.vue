@@ -56,6 +56,8 @@ const idRows = computed<IdRow[]>(() =>
 
 const recipes = computed(() => props.ingredient.skills)
 
+const hasDrops = computed(() => props.ingredient.droppedBy.length > 0)
+
 const hasEffectiveness = computed(() =>
   Object.values(props.ingredient.positionModifiers).some(v => v !== 0),
 )
@@ -150,6 +152,25 @@ function effectivenessBg() {
           <span>{{ s }}</span>
         </span>
       </div>
+
+      <!-- Dropped by -->
+      <template v-if="hasDrops">
+        <p class="tt-muted tt-drop-label">
+          Dropped by
+        </p>
+        <ul class="tt-drops">
+          <li v-for="d in ingredient.droppedBy" :key="d.name">
+            <RouterLink
+              v-if="d.coords"
+              :to="{ path: '/map', query: { ing: ingredient.name } }"
+              class="tt-drop-link"
+            >
+              {{ d.name }}
+            </RouterLink>
+            <span v-else class="tt-drop-plain">{{ d.name }}</span>
+          </li>
+        </ul>
+      </template>
 
       <!-- Separator -->
       <div class="tt-sep" :style="sepStyle()" />
@@ -421,6 +442,33 @@ function effectivenessBg() {
 .tt-id-arrow {
   color: #82c39b;
   font-size: 17px;
+}
+
+/* Dropped by */
+.tt-drop-label {
+  margin: 8px 0 2px;
+  font-size: 16px;
+}
+.tt-drops {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tt-drops li {
+  font-size: 17px;
+}
+.tt-drop-link {
+  color: #83f7c6;
+  text-decoration: none;
+}
+.tt-drop-link:hover {
+  text-decoration: underline;
+}
+.tt-drop-plain {
+  color: #aeaeae;
 }
 
 /* Effectiveness grid */

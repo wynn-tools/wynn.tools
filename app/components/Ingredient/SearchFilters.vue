@@ -24,6 +24,10 @@ function toggleStr(list: string[], value: string): string[] {
       :value="criteria.name" class="f-input" type="text" placeholder="Ingredient name…"
       @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
     >
+    <input
+      :value="criteria.mob" class="f-input" type="text" placeholder="Mob name…"
+      @input="criteria = { ...criteria, mob: ($event.target as HTMLInputElement).value }"
+    >
     <fieldset class="f-group">
       <legend>Tier</legend>
       <button
