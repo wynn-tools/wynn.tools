@@ -160,7 +160,7 @@ function onGlobalKey(e: KeyboardEvent) {
     return
   }
   if (e.key === 'Escape') {
-    if (!store.focus && !servicePopup.value && !territoryPopup.value && !shortcutsOpen.value) {
+    if (!store.focus && !servicePopup.value && !territoryPopup.value && !shortcutsOpen.value && !store.ingredientDrop) {
       store.setCoordPin(null)
     }
   }
