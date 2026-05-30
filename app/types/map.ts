@@ -88,3 +88,24 @@ export interface TerritoryEntry {
   endX: number
   endZ: number
 }
+
+export interface WorldEventLocation {
+  event: WorldPosition
+  spawn: WorldPosition
+  reward: WorldPosition
+  radius: number
+  spawnRadius: number
+}
+
+export interface WorldEvent {
+  name: string
+  internalName: string
+  lore: string
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD'
+  level: number
+  length: 'SHORT' | 'MEDIUM' | 'LONG'
+  rewardPerLevel: string[][]
+  requirements: { type: string, value: number }[]
+  location: WorldEventLocation[]
+  schedule: string | null
+}
