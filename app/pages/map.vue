@@ -346,6 +346,8 @@ watch(exploreOpen, (v) => {
   if (v) {
     lootrunPanelOpen.value = false
     store.setFocus(null)
+    selectedEvent.value = null
+    eventsListMode.value = false
   }
 })
 watch(selectedEvent, (ev) => {
