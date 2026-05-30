@@ -150,3 +150,24 @@ describe('computeBuild with boosts', () => {
     expect(damMult?.get('Judgement')).toBeUndefined()
   })
 })
+
+describe('computeBuild with powder specials', () => {
+  it('injects damage-boost specials into damMult', () => {
+    const result = computeBuild(
+      makeRawBuild(),
+      makeBuildContext(),
+      undefined,
+      [0, 0, 7, 0, 6],
+    )
+    const damMult = result.stats.get('damMult') as Map<string, number>
+    expect(damMult.get('Curse')).toBe(25)
+    expect(damMult.get('Wind Prison')).toBe(225)
+  })
+  it('no-op when powderActive omitted', () => {
+    const result = computeBuild(makeRawBuild(), makeBuildContext())
+    const damMult = result.stats.get('damMult') as
+      | Map<string, number>
+      | undefined
+    expect(damMult?.get('Curse')).toBeUndefined()
+  })
+})

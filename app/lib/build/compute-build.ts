@@ -16,6 +16,7 @@ import type { BuildBoosts } from '../math/boosts'
 import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
+import type { PowderActive } from '../math/powder-specials'
 import type { SkillpointResult } from '../math/skillpoint-calc'
 import type { SpWarning } from '../math/sp-warning'
 import type { SpellPartResult } from '../math/spell-calc'
@@ -36,6 +37,7 @@ import { SKP_ORDER } from '../math/constants'
 import { computeDefenseStats } from '../math/defense'
 import { computeMeleeDps, getSpellCost } from '../math/dps'
 import { mergeStat } from '../math/merge-stat'
+import { applyPowderSpecialBoosts } from '../math/powder-specials'
 import { calculateSkillpoints } from '../math/skillpoint-calc'
 import { levelToSkillPoints } from '../math/skillpoints'
 import { computeSpWarning } from '../math/sp-warning'
@@ -109,7 +111,7 @@ export interface BuildResult {
  *  7. computeSpellParts(melee, stats, weapon) + computeMeleeDps
  *  8. computeDefenseStats(stats) → defense
  */
-export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: BuildBoosts): BuildResult {
+export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: BuildBoosts, powderActive?: PowderActive): BuildResult {
   const { rawItemIndex, sets, atreeData } = ctx
 
   // Step 1: resolve items
@@ -257,6 +259,11 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: Bui
   // before spells see the stat map. Faithful to WynnBuilder's boosts_node.
   if (boosts)
     applyBoostMultipliers(stats, boosts)
+
+  // Powder special damage-boosts (Curse/Courage/Wind Prison) → damMult.{name},
+  // merged alongside the other multipliers before spell collection.
+  if (powderActive)
+    applyPowderSpecialBoosts(stats, powderActive)
 
   // Step 6: collect spells
   const effectiveWeaponType = cls !== undefined ? weaponType : 'dagger' // fallback for default spells

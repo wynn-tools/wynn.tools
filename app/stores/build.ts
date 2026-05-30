@@ -6,6 +6,7 @@ import type { RawCraft } from '~/lib/crafter/types'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
 import type { BoostId, BuildBoosts } from '~/lib/math/boosts'
+import type { PowderActive } from '~/lib/math/powder-specials'
 import type { Aspect } from '~/lib/types/aspect'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
@@ -20,6 +21,7 @@ import { num } from '~/lib/codec/codec-util'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { emptyBoosts } from '~/lib/math/boosts'
 import { SKP_ORDER } from '~/lib/math/constants'
+import { emptyPowderActive } from '~/lib/math/powder-specials'
 
 const DEFAULT_LEVEL = 106
 
@@ -57,6 +59,7 @@ export const TOME_SLOT_TYPES: Record<number, string> = {
 export const useBuildStore = defineStore('build', () => {
   const rawBuild = shallowRef<RawBuild | null>(null)
   const boosts = ref<BuildBoosts>(emptyBoosts())
+  const powderActive = ref<PowderActive>(emptyPowderActive())
   const atreeMessage = ref<string | null>(null)
   const ctx = shallowRef<BuildContext | null>(null)
   const enc = shallowRef<EncodingConstants | null>(null)
@@ -298,10 +301,24 @@ export const useBuildStore = defineStore('build', () => {
     boosts.value = emptyBoosts()
   }
 
+  function setPowderTier(index: number, tier: number) {
+    const next = [...powderActive.value] as PowderActive
+    next[index] = tier
+    powderActive.value = next
+  }
+
+  function setPowderActive(next: PowderActive) {
+    powderActive.value = next
+  }
+
+  function resetPowderActive() {
+    powderActive.value = emptyPowderActive()
+  }
+
   const result = computed<BuildResult | null>(() => {
     if (!rawBuild.value || !ctx.value)
       return null
-    return computeBuild(rawBuild.value, ctx.value, boosts.value)
+    return computeBuild(rawBuild.value, ctx.value, boosts.value, powderActive.value)
   })
 
   const skillpoints = computed<number[]>(() => {
@@ -470,5 +487,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, boosts, toggleBoost, setElemDmg, setBoosts, resetBoosts, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, classAspects, currentAspect, setAspect, setAspectTier, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, boosts, toggleBoost, setElemDmg, setBoosts, resetBoosts, powderActive, setPowderTier, setPowderActive, resetPowderActive, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, classAspects, currentAspect, setAspect, setAspectTier, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
 })
