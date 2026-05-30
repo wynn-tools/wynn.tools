@@ -27,6 +27,8 @@ export function encodeViewToQuery(v: ShareView): Record<string, string> {
     q.focus = v.focus
   if (v.fs)
     q.fs = '1'
+  if (v.ing)
+    q.ing = v.ing
   return q
 }
 
@@ -47,7 +49,8 @@ export function decodeQueryToView(q: LocationQuery | Record<string, string>): Sh
   const cats = catsStr ? (catsStr.split(',') as MapCategoryId[]) : defaultEnabledCategories()
   const focus = get('focus') ?? null
   const fs = get('fs') === '1'
-  return { world, center: { x, z }, zoom, cats, focus, fs }
+  const ing = get('ing') ?? null
+  return { world, center: { x, z }, zoom, cats, focus, fs, ing }
 }
 
 function numOr(v: string | undefined, d: number) {

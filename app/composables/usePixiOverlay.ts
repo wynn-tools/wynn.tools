@@ -9,6 +9,7 @@ export interface PixiHandle {
     markers: Container
     clusters: Container
     lootrun: Container
+    ingredientDrops: Container
     players: Container
     focus: Container
     coordPin: Container
@@ -46,17 +47,19 @@ export async function mountPixiOverlay(map: LMap): Promise<PixiHandle> {
     markers: new Container(),
     clusters: new Container(),
     lootrun: new Container(),
+    ingredientDrops: new Container(),
     players: new Container(),
     focus: new Container(),
     coordPin: new Container(),
   }
-  // Render order: territories → markers → clusters → lootrun → place labels → players → coordPin
+  // Render order: territories → markers → clusters → lootrun → ingredientDrops → focus → players → coordPin
   // players must be above focus (place labels) so player heads are never buried under city text
   root.addChild(
     layers.territories,
     layers.markers,
     layers.clusters,
     layers.lootrun,
+    layers.ingredientDrops,
     layers.focus,
     layers.players,
     layers.coordPin,

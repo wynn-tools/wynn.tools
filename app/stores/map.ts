@@ -22,6 +22,7 @@ export const useMapStore = defineStore('map', {
     showTerritories: false,
     coordPin: null as { x: number, z: number } | null,
     levelRange: null as [number, number] | null,
+    ingredientDrop: null as string | null,
     viewBounds: null as { x1: number, z1: number, x2: number, z2: number } | null,
   }),
   actions: {
@@ -74,6 +75,9 @@ export const useMapStore = defineStore('map', {
     setCoordPin(pin: { x: number, z: number } | null) {
       this.coordPin = pin
     },
+    setIngredientDrop(name: string | null) {
+      this.ingredientDrop = name
+    },
     toggleTerritories() {
       this.showTerritories = !this.showTerritories
     },
@@ -96,6 +100,8 @@ export const useMapStore = defineStore('map', {
         this.setFocus(v.focus)
       if (v.fs !== undefined)
         this.setFullscreen(v.fs)
+      if (v.ing !== undefined)
+        this.setIngredientDrop(v.ing ?? null)
     },
     resetToDefaults() {
       this.world = DEFAULTS.world
@@ -107,6 +113,7 @@ export const useMapStore = defineStore('map', {
       this.lootrun = null
       this.showTerritories = false
       this.levelRange = null
+      this.ingredientDrop = null
     },
   },
 })

@@ -76,6 +76,7 @@ export interface ShareView {
   fs: boolean
   lootrunId?: string | null
   title?: string | null
+  ing?: string | null
 }
 
 export interface TerritoryEntry {
