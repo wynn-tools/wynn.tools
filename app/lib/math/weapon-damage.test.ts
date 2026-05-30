@@ -33,13 +33,19 @@ describe('weapon damage', () => {
     expect(getBaseDps(w)).toBeCloseTo(266.5, 6) // (100+160)*2.05/2
   })
 
-  it('a fire powder adds fire damage without reducing neutral', () => {
-    // fire t1 id = element 3 * 7 = 21 -> POWDER_STATS[21]
-    // WynnBuilder does NOT subtract from neutral when converting — additive only.
+  it('a fire powder converts neutral into fire (neutral reduced)', () => {
+    // fire t1 id = element 3 * 7 = 21 -> POWDER_STATS[21] (convert 14%, flat +2..+5).
+    // WynnBuilder converts: the converted portion is SUBTRACTED from neutral and
+    // added to the element, plus a flat element bonus (powders.js:256
+    // `damages[0] = neutralRemainingRaw`).
     const w = weapon({ nDam: '100-160', powders: [21] })
     const { damages, present } = calcWeaponPowder(w)
     expect(present[4]).toBe(true)
-    expect(damages[0][1]).toBe(160) // neutral unchanged
-    expect(damages[4][1]).toBeGreaterThan(0) // fire added
+    // neutral reduced by 14%: 100->86, 160->137.6
+    expect(damages[0][0]).toBeCloseTo(86, 6)
+    expect(damages[0][1]).toBeCloseTo(137.6, 6)
+    // fire = converted (14% of neutral) + flat bonus: [14+2, 22.4+5]
+    expect(damages[4][0]).toBeCloseTo(16, 6)
+    expect(damages[4][1]).toBeCloseTo(27.4, 6)
   })
 })
