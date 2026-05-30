@@ -3,7 +3,6 @@ import type { BoostId } from '~/lib/math/boosts'
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  BOOST_ELEM_CAPS,
   boostsAreEmpty,
   deserializeBoosts,
   serializeBoosts,
@@ -29,14 +28,6 @@ const BUFF_GROUP: { id: BoostId, label: string }[] = [
   { id: 'fortitude', label: 'Fortitude +40%' },
   { id: 'fanatic', label: 'Fanatic Haunt +15%' },
   { id: 'lunatic', label: 'Lunatic Haunt' },
-]
-
-const ELEMENTS: { label: string, color: string }[] = [
-  { label: 'Earth', color: 'var(--color-elem-earth)' },
-  { label: 'Thunder', color: 'var(--color-elem-thunder)' },
-  { label: 'Water', color: 'var(--color-elem-water)' },
-  { label: 'Fire', color: 'var(--color-elem-fire)' },
-  { label: 'Air', color: 'var(--color-elem-air)' },
 ]
 
 const anyActive = computed(() => !boostsAreEmpty(store.boosts))
@@ -78,10 +69,6 @@ function syncFromQuery() {
 }
 onMounted(syncFromQuery)
 watch(() => route.params.hash, syncFromQuery)
-
-function onSlider(i: number, e: Event) {
-  store.setElemDmg(i, Number.parseFloat((e.target as HTMLInputElement).value) || 0)
-}
 </script>
 
 <template>
@@ -117,22 +104,6 @@ function onSlider(i: number, e: Event) {
       >
         {{ b.label }}
       </button>
-    </div>
-
-    <div class="sliders">
-      <span class="sliders-head">Armor Powder Damage Boost</span>
-      <label v-for="(el, i) in ELEMENTS" :key="el.label" class="slider">
-        <span class="slider-name" :style="{ color: el.color }">{{ el.label }}</span>
-        <input
-          type="range"
-          min="0"
-          :max="BOOST_ELEM_CAPS[i]"
-          step="1"
-          :value="store.boosts.elemDmg[i]"
-          @input="onSlider(i, $event)"
-        >
-        <span class="slider-val mono">{{ store.boosts.elemDmg[i] }}%</span>
-      </label>
     </div>
   </section>
 </template>
@@ -192,42 +163,5 @@ function onSlider(i: number, e: Event) {
   background: color-mix(in oklch, var(--color-copper) 18%, transparent);
   border-color: var(--color-copper);
   color: var(--color-copper);
-}
-.sliders {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 10px;
-  border-top: 1px solid color-mix(in oklch, var(--color-surface-hi) 60%, transparent);
-}
-.sliders-head {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-}
-.slider {
-  display: grid;
-  grid-template-columns: 4rem 1fr 2.75rem;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
-}
-.slider-name {
-  font-weight: 600;
-}
-.slider input {
-  width: 100%;
-  accent-color: var(--color-copper);
-}
-.slider-val {
-  text-align: right;
-  font-size: 11px;
-  color: var(--color-faint);
-}
-.mono {
-  font-family: 'Geist Mono', 'Courier New', monospace;
 }
 </style>
