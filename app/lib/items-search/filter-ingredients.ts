@@ -10,6 +10,11 @@ function matches(ing: SearchIngredient, c: IngredientCriteria): boolean {
     return false
   if (c.skills.length && !c.skills.every(s => ing.skills.includes(s)))
     return false
+  if (c.mob) {
+    const lower = c.mob.toLowerCase()
+    if (!ing.droppedBy.some(d => d.name.toLowerCase().includes(lower)))
+      return false
+  }
   for (const f of c.identifications) {
     const has = ing.identifications[f.key] !== undefined
     if (f.exclude ? has : !has)

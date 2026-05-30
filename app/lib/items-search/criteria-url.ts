@@ -7,7 +7,7 @@ export function defaultItemCriteria(): ItemCriteria {
 }
 
 export function defaultIngredientCriteria(): IngredientCriteria {
-  return { name: '', tiers: [], levelRange: [1, 120], skills: [], identifications: [], idSorts: [] }
+  return { name: '', tiers: [], levelRange: [1, 120], skills: [], mob: '', identifications: [], idSorts: [] }
 }
 
 export function defaultTomeCriteria(): TomeCriteria {
@@ -119,6 +119,7 @@ export function queryToIngredientCriteria(q: Query): IngredientCriteria {
     tiers: q.tier ? q.tier.split(',').map(Number).filter(Number.isFinite) : [],
     levelRange: decodeLevel(q.lvl, [1, 120]),
     skills: q.skill ? q.skill.split(',') : [],
+    mob: q.mob ?? '',
     identifications: ids,
     idSorts: sorts,
   }

@@ -139,6 +139,7 @@ export interface IngredientCriteria {
   tiers: number[]
   levelRange: [number, number]
   skills: string[]
+  mob: string
   identifications: IdFilter[]
   idSorts: IdSort[]
 }
