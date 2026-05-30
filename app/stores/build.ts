@@ -5,6 +5,7 @@ import type { EncodingConstants } from '~/lib/codec/encoding-constants'
 import type { RawCraft } from '~/lib/crafter/types'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
+import type { Aspect } from '~/lib/types/aspect'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 import { loadBuildContext, peekVersionId, resolveLatestVersion } from '~/composables/useBuildData'
@@ -353,6 +354,47 @@ export const useBuildStore = defineStore('build', () => {
     return out.sort((a, b) => String(a.displayName).localeCompare(String(b.displayName)))
   }
 
+  // --- Aspects ---------------------------------------------------------------
+  // Aspect data is keyed by class; the build's class is derived from the weapon.
+  const classAspects = computed<Aspect[]>(() => {
+    const wt = currentWeaponType()
+    const cls = wt ? WEP_TO_CLASS[wt] : undefined
+    if (!cls || !ctx.value?.aspectData)
+      return []
+    return (ctx.value.aspectData[cls] ?? []).filter(a => !a.NONE)
+  })
+
+  function currentAspect(slot: number): [number, number] | null {
+    return rawBuild.value?.aspects[slot] ?? null
+  }
+
+  /** Equip an aspect into a slot (defaults to its highest tier) or clear it. */
+  function setAspect(slot: number, id: number | null) {
+    if (!rawBuild.value)
+      return
+    const aspects = rawBuild.value.aspects.slice()
+    if (id == null) {
+      aspects[slot] = null
+    }
+    else {
+      const asp = classAspects.value.find(a => a.id === id)
+      const tier = asp && asp.tiers.length > 0 ? asp.tiers.length : 1
+      aspects[slot] = [id, tier]
+    }
+    rawBuild.value = { ...rawBuild.value, aspects }
+  }
+
+  function setAspectTier(slot: number, tier: number) {
+    if (!rawBuild.value)
+      return
+    const cur = rawBuild.value.aspects[slot]
+    if (!cur)
+      return
+    const aspects = rawBuild.value.aspects.slice()
+    aspects[slot] = [cur[0], tier]
+    rawBuild.value = { ...rawBuild.value, aspects }
+  }
+
   const atreeNodes = computed(() => {
     if (!ctx.value || !rawBuild.value)
       return []
@@ -402,5 +444,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, classAspects, currentAspect, setAspect, setAspectTier, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
 })

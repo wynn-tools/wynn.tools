@@ -660,8 +660,13 @@ onMounted(() => {
 }
 
 @media (max-width: 720px) {
+  /* Drop the inner vertical scroll on touch. A 56vh scroll region mid-page
+     captures finger-drags, so the user fights to scroll the tree instead of the
+     page and can't reach the panels below. Letting the tree flow at full height
+     means the page scrolls through it naturally; overflow:auto then only kicks
+     in horizontally for trees wider than the phone (one-finger pan). */
   .atree-canvas {
-    max-height: 56vh;
+    max-height: none;
   }
   /* Minimap is desktop-only — it's too small to drive on a touchscreen and
      duplicates the function of pan-by-finger that overflow:auto already

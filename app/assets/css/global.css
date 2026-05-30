@@ -109,6 +109,9 @@
      unaffected; on 1440p (2560px) screens it reclaims the dead side margins.
      Single source of truth — keep nav, shell, and workspaces in sync. */
   --shell-max: 1800px;
+  /* Phone-width horizontal gutter on the page shell. Tool workspaces negate it
+     to run edge to edge; keep the shell padding and those breakouts in sync. */
+  --shell-pad-mobile: 14px;
 }
 
 /* ── Theme overrides ───────────────────────────────────────────────────
@@ -154,14 +157,17 @@
   image-rendering: pixelated;
 }
 
-/* ── Section kicker label: mono uppercase, very subdued ── */
+/* ── Section kicker label: mono uppercase panel/section header ──
+   Single source of truth for the "Combat Output" / "Aspects" / "Tomes" style
+   header label (DESIGN.md §3 section markers: 11px mono, tracking, uppercase).
+   Builder panels consume this directly; don't redefine it per-component. */
 @utility kicker {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-faint);
+  color: var(--color-muted);
 }
 
 @utility shadow-accent-sm {

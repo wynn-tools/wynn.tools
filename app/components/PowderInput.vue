@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { POWDER_ID_BY_NAME, POWDER_NAME_BY_ID, POWDER_TIERS, SKP_ELEMENTS } from '~/lib/data/powder-constants'
+import { POWDER_ELEMENT_META as ELEMENT_META, powderElementMeta } from '~/lib/data/powder-elements'
 
 const props = defineProps<{
   slotLabel: string
@@ -13,12 +14,8 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const ELEMENT_META: Record<string, { name: string, glyph: string, color: string }> = {
-  e: { name: 'Earth', glyph: '✤', color: 'oklch(72% 0.18 145)' },
-  t: { name: 'Thunder', glyph: '✦', color: 'oklch(82% 0.15 95)' },
-  w: { name: 'Water', glyph: '❉', color: 'oklch(75% 0.13 215)' },
-  f: { name: 'Fire', glyph: '✹', color: 'oklch(68% 0.18 35)' },
-  a: { name: 'Air', glyph: '❋', color: 'oklch(85% 0.04 250)' },
+function meta(id: number) {
+  return powderElementMeta(POWDER_NAME_BY_ID.get(id))
 }
 
 function idsToShorthand(ids: number[]): string {
@@ -200,10 +197,10 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
             type="button"
             class="chip"
             :title="`Remove ${POWDER_NAME_BY_ID.get(id)}`"
-            :style="{ color: ELEMENT_META[POWDER_NAME_BY_ID.get(id)![0]!]!.color }"
+            :style="{ color: meta(id)?.color ?? 'inherit' }"
             @click="removeAt(idx)"
           >
-            <span class="chip-glyph">{{ ELEMENT_META[POWDER_NAME_BY_ID.get(id)![0]!]!.glyph }}</span>
+            <span class="chip-letter">{{ meta(id)?.letter }}</span>
             <span class="chip-tier">{{ POWDER_NAME_BY_ID.get(id)!.slice(1) }}</span>
           </button>
           <span v-for="i in Math.max(0, maxSlots - localIds.length)" :key="`empty-${i}`" class="chip chip--empty">·</span>
@@ -435,8 +432,9 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
   border-color: currentColor;
   background: color-mix(in oklch, var(--color-surface) 60%, transparent);
 }
-.chip-glyph {
+.chip-letter {
   font-size: 11px;
+  font-weight: 700;
 }
 .chip-tier {
   font-weight: 600;

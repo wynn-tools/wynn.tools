@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { levelToSkillPoints, SKILLPOINT_FINAL_MULT, skillPointsToPercentage } from '~/lib/math/skillpoints'
 import { useBuildStore } from '~/stores/build'
 
@@ -25,6 +25,35 @@ const assigned = computed<number[]>(() => {
 const totalAssigned = computed(() => assigned.value.reduce((a, b) => a + b, 0))
 const available = computed(() => levelToSkillPoints(store.rawBuild?.level ?? 1))
 const remaining = computed(() => available.value - totalAssigned.value)
+
+// Feasibility status drives the SP box tint + hover detail. Manual over-assignment
+// (remaining < 0) is its own red state; otherwise the computed feasibility warning
+// (insufficient / over-cap / needs the guild tome) classifies the box.
+const warning = computed(() => store.result?.spWarning ?? null)
+const boxStatus = computed<'ok' | 'warn' | 'error' | 'over'>(() => {
+  if (remaining.value < 0)
+    return 'over'
+  const s = warning.value?.status
+  if (s === 'needs-tomes')
+    return 'warn'
+  if (s === 'over-cap' || s === 'insufficient')
+    return 'error'
+  return 'ok'
+})
+const tipTitle = computed(() => {
+  if (boxStatus.value === 'over')
+    return 'Over-assigned'
+  return warning.value?.message ?? ''
+})
+const tipText = computed(() => {
+  if (boxStatus.value === 'over') {
+    const n = -remaining.value
+    return `You've assigned ${n} more skill point${n === 1 ? '' : 's'} than your level grants.`
+  }
+  return warning.value?.detail ?? ''
+})
+const hasTip = computed(() => boxStatus.value !== 'ok' && tipText.value !== '')
+const showTip = ref(false)
 
 const skillEffect = computed(() =>
   store.skillpoints.map((sp, i) =>
@@ -56,12 +85,27 @@ function onLevel(e: Event) {
           @input="onLevel($event)"
         >
       </div>
-      <div class="sp-remaining-info">
-        <span
-          class="sp-remaining"
-          :class="{ 'sp-remaining--over': remaining < 0 }"
-        >{{ remaining }}</span>
+      <div
+        class="sp-remaining-info"
+        :class="[`sp-remaining-info--${boxStatus}`, { 'sp-remaining-info--interactive': hasTip }]"
+        :tabindex="hasTip ? 0 : undefined"
+        :role="hasTip ? 'button' : undefined"
+        :aria-label="hasTip ? `${tipTitle}. ${tipText}` : undefined"
+        @mouseenter="showTip = hasTip"
+        @mouseleave="showTip = false"
+        @focus="showTip = hasTip"
+        @blur="showTip = false"
+      >
+        <span v-if="boxStatus !== 'ok'" class="sp-flag" aria-hidden="true">{{ boxStatus === 'warn' ? '▲' : '✕' }}</span>
+        <span class="sp-remaining">{{ remaining }}</span>
         <span class="sp-remaining-label">/ {{ available }} SP</span>
+
+        <transition name="sp-tip">
+          <div v-if="showTip" class="sp-tip" role="tooltip">
+            <span class="sp-tip-title">{{ tipTitle }}</span>
+            <span class="sp-tip-body">{{ tipText }}</span>
+          </div>
+        </transition>
       </div>
     </div>
 
@@ -142,24 +186,118 @@ function onLevel(e: Event) {
 }
 
 .sp-remaining-info {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: 4px;
+  padding: 2px 7px;
+  margin: -2px -3px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  transition:
+    border-color 0.12s,
+    background 0.12s,
+    color 0.12s;
 }
+.sp-remaining-info--interactive {
+  cursor: help;
+}
+.sp-remaining-info--interactive:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* warn = amber (works, but depends on the guild tome); error/over = red. */
+.sp-remaining-info--warn {
+  border-color: oklch(70% 0.14 75 / 0.5);
+  background: oklch(70% 0.14 75 / 0.08);
+}
+.sp-remaining-info--error,
+.sp-remaining-info--over {
+  border-color: oklch(62% 0.16 22 / 0.5);
+  background: oklch(62% 0.16 22 / 0.08);
+}
+
+.sp-flag {
+  font-size: 9px;
+  line-height: 1;
+  align-self: center;
+}
+.sp-remaining-info--warn .sp-flag {
+  color: oklch(78% 0.14 75);
+}
+.sp-remaining-info--error .sp-flag,
+.sp-remaining-info--over .sp-flag {
+  color: oklch(66% 0.18 22);
+}
+
 .sp-remaining {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 14px;
   font-weight: 600;
   color: var(--color-text);
 }
-.sp-remaining--over {
-  color: oklch(62% 0.16 22);
+.sp-remaining-info--warn .sp-remaining {
+  color: oklch(80% 0.13 75);
+}
+.sp-remaining-info--error .sp-remaining,
+.sp-remaining-info--over .sp-remaining {
+  color: oklch(68% 0.16 22);
 }
 .sp-remaining-label {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 10px;
   color: var(--color-faint);
   letter-spacing: 0.04em;
+}
+
+/* Hover/focus detail. Anchored to the right edge of the box so a ~260px panel
+   keeps it inside the column. */
+.sp-tip {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  width: max(240px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 11px;
+  background: var(--color-surface-hi);
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  box-shadow: 0 4px 20px oklch(0% 0 0 / 0.35);
+  text-align: left;
+}
+.sp-tip-title {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+}
+.sp-tip-body {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+.sp-tip-enter-active,
+.sp-tip-leave-active {
+  transition:
+    opacity 0.12s ease-out,
+    transform 0.12s ease-out;
+}
+.sp-tip-enter-from,
+.sp-tip-leave-to {
+  opacity: 0;
+  transform: translateY(-3px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-tip-enter-active,
+  .sp-tip-leave-active {
+    transition: none;
+  }
 }
 
 .sp-attrs {

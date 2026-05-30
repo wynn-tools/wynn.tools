@@ -161,6 +161,8 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
         </div>
       </li>
     </ul>
+
+    <ManaCalculator :result="result" />
   </section>
 </template>
 
@@ -177,15 +179,6 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 .output-head {
   display: flex;
   align-items: baseline;
-}
-
-.kicker {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-muted);
 }
 
 .acc {

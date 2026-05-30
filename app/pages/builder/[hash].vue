@@ -101,10 +101,11 @@ function syncFromRoute(h: string) {
 onMounted(() => syncFromRoute(hash.value))
 watch(hash, syncFromRoute)
 
-// Edit → URL
+// Edit → URL. Preserve the query string (mana CPS/cycle defaults ride along in
+// the shared link) when the hash changes.
 watch(() => store.currentHash, (h) => {
   if (h && h !== hash.value)
-    router.replace(`/builder/${h}`)
+    router.replace({ path: `/builder/${h}`, query: route.query })
 })
 </script>
 

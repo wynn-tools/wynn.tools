@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -21,8 +21,6 @@ const SLOT_LABELS: Record<number, string> = {
   12: 'Expertise 1',
   13: 'Expertise 2',
 }
-
-const expanded = ref(false)
 
 // FilterCombobox is string-keyed; tome ids aren't unique-display by name alone
 // (different tiers share a name), so we use "Display Name (Tier)" as the
@@ -79,13 +77,12 @@ const filled = computed(() => {
 
 <template>
   <section class="tomes">
-    <button class="tomes-head" type="button" @click="expanded = !expanded">
+    <header class="tomes-head">
       <span class="kicker">Tomes</span>
       <span class="tomes-count mono">{{ filled }} / {{ TOME_SLOTS.length }}</span>
-      <span class="chevron" :class="{ 'chevron--open': expanded }">▸</span>
-    </button>
+    </header>
 
-    <div v-if="expanded" class="tomes-grid">
+    <div class="tomes-grid">
       <div v-for="slot in TOME_SLOTS" :key="slot" class="tome-cell">
         <span class="slot-label">{{ SLOT_LABELS[slot] }}</span>
         <FilterCombobox
@@ -103,29 +100,15 @@ const filled = computed(() => {
 .tomes {
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  overflow: hidden;
+  padding: 8px 12px 10px;
 }
 
 .tomes-head {
-  width: 100%;
   display: flex;
-  align-items: center;
+  align-items: baseline;
+  justify-content: space-between;
   gap: 10px;
-  padding: 10px 14px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.12s;
-  font-family: inherit;
-}
-.tomes-head:hover {
-  background: color-mix(in oklch, var(--color-surface) 60%, transparent);
-}
-
-.kicker {
-  color: var(--color-muted);
-  flex: 1;
+  padding-bottom: 6px;
 }
 
 .tomes-count {
@@ -135,58 +118,55 @@ const filled = computed(() => {
   font-weight: 600;
 }
 
-.chevron {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 11px;
-  color: var(--color-muted);
-  transition: transform 0.15s ease-out;
-}
-.chevron--open {
-  transform: rotate(90deg);
-  color: var(--color-copper);
-}
-
+/* Always expanded, two tight columns so the 14 slots fill the space under the
+   gear grid and bring the inputs column up to roughly the stats column height. */
 .tomes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 10px 14px;
-  padding: 12px 14px 14px;
-  border-top: 1px solid var(--color-border);
-}
-
-@media (max-width: 720px) {
-  .tomes-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 8px;
-    padding: 10px 10px 12px;
-  }
-  .tome-cell {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-  .tomes-head {
-    padding: 10px 12px;
-  }
-}
-
-@media (max-width: 380px) {
-  .tomes-grid {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
 }
 
 .tome-cell {
   display: grid;
-  grid-template-columns: 88px 1fr;
+  grid-template-columns: 62px 1fr;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .slot-label {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-muted);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1100px) {
+  .tomes-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .tome-cell {
+    grid-template-columns: 78px 1fr;
+  }
+}
+
+/* Phones: one tome per row. Two columns starved the combobox to ~100px and
+   clipped the slot label; a full-width row gives the picker the whole line and
+   restores a comfortable tap target. */
+@media (max-width: 720px) {
+  .tomes-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .tome-cell {
+    grid-template-columns: 96px 1fr;
+    gap: 10px;
+  }
+  .slot-label {
+    font-size: 11px;
+  }
 }
 </style>

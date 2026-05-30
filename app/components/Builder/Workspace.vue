@@ -66,6 +66,7 @@ const showAtree = ref(true)
             <AtreeCanvas />
           </div>
           <AtreeActivePanel />
+          <AtreeAspectsPanel />
         </div>
       </section>
     </template>
@@ -88,6 +89,17 @@ const showAtree = ref(true)
   .builder {
     gap: 12px;
     padding: 14px 10px 40px;
+  }
+}
+
+/* Phones: break out of the page shell's gutter so the workspace runs edge to
+   edge and the panels get the full width. The 10px side padding above keeps
+   content off the screen edge. Width/margin negate the shell's gutter token. */
+@media (max-width: 600px) {
+  .builder {
+    width: calc(100% + 2 * var(--shell-pad-mobile));
+    max-width: none;
+    margin-inline: calc(-1 * var(--shell-pad-mobile));
   }
 }
 
@@ -189,19 +201,32 @@ const showAtree = ref(true)
   border-color: var(--color-copper);
 }
 
-/* The ability tree is at most 9 tiles (~396px) wide, so the canvas hugs its
-   content rather than filling a greedy column. The canvas + active panel
-   cluster centers in the section instead of stranding the tree in empty space. */
+/* Three columns: the ability-tree canvas (at most 9 tiles ~396px, so it hugs its
+   content), then Active Abilities, then Aspects. The cluster centers in the
+   section instead of stranding the tree in empty space. */
 .atree-split {
   display: grid;
-  grid-template-columns: auto minmax(280px, 360px);
+  grid-template-columns: auto minmax(250px, 330px) minmax(250px, 330px);
   justify-content: center;
-  gap: 18px;
+  gap: 16px;
   align-items: start;
 }
 
 .atree-canvas-wrap {
   min-width: 0;
+}
+
+/* Below the width that fits all three columns, drop the canvas to a full-width
+   row and sit Active Abilities + Aspects side by side beneath it. */
+@media (max-width: 1240px) {
+  .atree-split {
+    grid-template-columns: 1fr 1fr;
+  }
+  .atree-canvas-wrap {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 1100px) {

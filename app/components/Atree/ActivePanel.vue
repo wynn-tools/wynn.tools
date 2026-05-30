@@ -87,11 +87,6 @@ const activeAbilities = computed<AtreeNode[]>(() =>
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  position: sticky;
-  top: 0;
-  background: var(--color-surface);
-  padding-bottom: 4px;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .count {
@@ -166,8 +161,12 @@ const activeAbilities = computed<AtreeNode[]>(() =>
 }
 
 @media (max-width: 720px) {
+  /* Match the canvas: no inner scroll on touch. The list flows full-height and
+     the page scrolls through it, rather than nesting a second scroll region
+     directly below the tree. */
   .active-panel {
-    max-height: 48vh;
+    max-height: none;
+    overflow-y: visible;
     padding: 12px 14px;
     gap: 10px;
   }

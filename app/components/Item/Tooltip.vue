@@ -250,6 +250,11 @@ function sepStyle() {
   font-family: 'wynncraft', var(--font-mono);
   letter-spacing: -1px;
   overflow: hidden;
+  /* The inner body is inset by a per-rarity margin so it nests inside the pixel
+     frame. Without a fill behind it, that inset exposed the transparent page as
+     a seam between the colored frame and the dark body. Match the gradient's top
+     stop so the gap reads as tooltip body, not a hole. */
+  background: #0d0d0d;
 }
 .tt-frame {
   position: absolute;

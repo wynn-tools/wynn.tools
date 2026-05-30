@@ -16,6 +16,7 @@ import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
 import type { SkillpointResult } from '../math/skillpoint-calc'
+import type { SpWarning } from '../math/sp-warning'
 import type { SpellPartResult } from '../math/spell-calc'
 import type { Spell } from '../math/spells'
 import type { RawAspectData } from '../types/aspect'
@@ -34,6 +35,8 @@ import { computeDefenseStats } from '../math/defense'
 import { computeMeleeDps, getSpellCost } from '../math/dps'
 import { mergeStat } from '../math/merge-stat'
 import { calculateSkillpoints } from '../math/skillpoint-calc'
+import { levelToSkillPoints } from '../math/skillpoints'
+import { computeSpWarning } from '../math/sp-warning'
 import { computeSpellParts } from '../math/spell-calc'
 import { resolveBuildItems, resolveTomes } from './resolve'
 
@@ -83,6 +86,8 @@ export interface BuildResult {
   skillpoints: SkillpointResult
   /** All active spells (index 0 = melee, 1-4 = class spells), sorted by baseSpell. */
   spells: SpellOutput[]
+  /** Skill-point feasibility classification (drives the SP warning box). */
+  spWarning: SpWarning
 }
 
 // ---------------------------------------------------------------------------
@@ -116,6 +121,21 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   // Step 2: skillpoints (wynnOrder now includes guildTome as 9th entry)
   const skp = calculateSkillpoints(wynnOrderWithGuild, weapon, sets)
   const { activeSetCounts, finalSkillpoints } = skp
+
+  // Skill-point feasibility (drives the SP warning box). The guild tome is the
+  // only tome that contributes skill points, so we only pay for a second
+  // "without it" pass when the equipped guild tome actually supplies points and
+  // the build is otherwise wearable — i.e. exactly when a tome dependency is
+  // possible. Infeasible builds are classified from the primary pass alone.
+  const available = levelToSkillPoints(rawBuild.level)
+  const guildSp = (guildTome.get('skillpoints') as number[] | undefined) ?? [0, 0, 0, 0, 0]
+  const guildSuppliesSp = guildSp.some(v => v > 0)
+  const feasibleAsEquipped
+    = skp.assignedTotal <= available && skp.baseSkillpoints.every(v => v <= 100)
+  const skpNoGuild = guildSuppliesSp && feasibleAsEquipped
+    ? calculateSkillpoints(wynnOrder, weapon, sets)
+    : null
+  const spWarning = computeSpWarning(skp, skpNoGuild, available, guildSp)
 
   // Step 3: aggregate build stats (classDef is set here from weapon type)
   const stats = aggregateBuildStats(allItems, weapon, rawBuild.level, activeSetCounts, sets)
@@ -255,5 +275,5 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
     spellOutputs.push({ spell, parts, cost })
   }
 
-  return { stats, defense, melee, skillpoints: skp, spells: spellOutputs }
+  return { stats, defense, melee, skillpoints: skp, spells: spellOutputs, spWarning }
 }

@@ -11,6 +11,7 @@ import { useCdnClient } from '~/composables/useBuildData'
 import { slotItemId } from '~/lib/codec/build-codec'
 import { computeCraft } from '~/lib/crafter/compute-craft'
 import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
+import { powderElementMeta } from '~/lib/data/powder-elements'
 import { itemIconUrl } from '~/lib/items/icon'
 import { useBuildStore } from '~/stores/build'
 import { useCraftStore } from '~/stores/craft'
@@ -41,19 +42,11 @@ const SLOT_LABELS = [
 // CSS grid-area names — see .equipment-grid template-areas below
 const SLOT_AREAS = ['helmet', 'chest', 'legs', 'boots', 'ring1', 'ring2', 'bracelet', 'necklace', 'weapon'] as const
 
-const POWDER_GLYPH: Record<string, string> = {
-  e: '✤',
-  t: '✦',
-  w: '❉',
-  f: '✹',
-  a: '❋',
+function pmeta(pid: number) {
+  return powderElementMeta(POWDER_NAME_BY_ID.get(pid))
 }
-const POWDER_COLOR: Record<string, string> = {
-  e: 'oklch(72% 0.18 145)',
-  t: 'oklch(82% 0.15 95)',
-  w: 'oklch(75% 0.13 215)',
-  f: 'oklch(68% 0.18 35)',
-  a: 'oklch(85% 0.04 250)',
+function ptier(pid: number) {
+  return POWDER_NAME_BY_ID.get(pid)?.slice(1) ?? ''
 }
 
 const openSlot = ref<number | null>(null)
@@ -190,9 +183,10 @@ const powderSlotMax = computed(() =>
                       v-for="(pid, i) in powdersFor(idx)"
                       :key="i"
                       class="powder-chip"
-                      :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
+                      :style="{ color: pmeta(pid)?.color ?? 'inherit' }"
+                      :title="`${pmeta(pid)?.name ?? ''} ${ptier(pid)}`"
                     >
-                      <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+                      <span class="powder-letter">{{ pmeta(pid)?.letter }}</span><span class="powder-tier">{{ ptier(pid) }}</span>
                     </span>
                     <span
                       v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
@@ -259,9 +253,10 @@ const powderSlotMax = computed(() =>
                   v-for="(pid, i) in powdersFor(idx)"
                   :key="i"
                   class="powder-chip"
-                  :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
+                  :style="{ color: pmeta(pid)?.color ?? 'inherit' }"
+                  :title="`${pmeta(pid)?.name ?? ''} ${ptier(pid)}`"
                 >
-                  <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+                  <span class="powder-letter">{{ pmeta(pid)?.letter }}</span><span class="powder-tier">{{ ptier(pid) }}</span>
                 </span>
                 <span
                   v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
@@ -427,8 +422,8 @@ const powderSlotMax = computed(() =>
   gap: 1px;
   letter-spacing: 0;
 }
-.powder-glyph {
-  font-size: 8px;
+.powder-letter {
+  font-weight: 700;
 }
 .powder-tier {
   font-weight: 600;

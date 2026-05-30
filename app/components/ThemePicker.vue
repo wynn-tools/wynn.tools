@@ -225,4 +225,12 @@ const swatches: { value: ThemePref, label: string, bg: string, panel: string, ac
   opacity: 0;
   transform: translateY(-4px);
 }
+
+/* Touch needs a 44px hit area; the icon stays 17px, centered. */
+@media (max-width: 720px) {
+  .theme-trigger {
+    width: 44px;
+    height: 44px;
+  }
+}
 </style>

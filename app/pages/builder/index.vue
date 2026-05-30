@@ -11,6 +11,7 @@ useSeoMeta({
 })
 
 const router = useRouter()
+const route = useRoute()
 const store = useBuildStore()
 
 // The empty build already has a (stable) hash once loaded; capture it so we can
@@ -22,10 +23,11 @@ onMounted(async () => {
   initialHash = store.currentHash
 })
 
-// First edit → switch to the canonical /builder/<hash> URL.
+// First edit → switch to the canonical /builder/<hash> URL, preserving any query
+// (e.g. mana CPS/cycle defaults).
 watch(() => store.currentHash, (h) => {
   if (h && initialHash !== null && h !== initialHash)
-    router.replace(`/builder/${h}`)
+    router.replace({ path: `/builder/${h}`, query: route.query })
 })
 </script>
 

@@ -16,9 +16,13 @@
   padding: 0 40px;
 }
 
+/* Phones keep a tight 14px gutter so text-content pages (Items, Builds, Profile,
+   Changelog) don't slam against the screen edge. Width-hungry tool workspaces
+   break out of this gutter to run edge to edge (see the −14px breakout in their
+   own styles). Single source for that value below. */
 @media (max-width: 600px) {
   .page-shell {
-    padding: 0 20px;
+    padding: 0 var(--shell-pad-mobile, 14px);
   }
 }
 </style>

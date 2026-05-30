@@ -191,4 +191,16 @@ onClickOutside(wrapRef, close)
 .dropdown-item--danger:hover {
   color: oklch(62% 0.15 20);
 }
+
+/* Touch: pad the 28px avatar out to a 44px hit area and give the sign-in button
+   a 44px tall tap zone, without changing their visual size. */
+@media (max-width: 720px) {
+  .avatar-btn {
+    padding: 8px;
+  }
+  .signin-btn {
+    min-height: 44px;
+    padding: 8px 14px;
+  }
+}
 </style>

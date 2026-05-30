@@ -541,15 +541,25 @@ watch(() => route.path, () => {
 @media (max-width: 720px) {
   .nav-inner {
     padding: 0 20px;
-    gap: 12px;
+    gap: 8px;
   }
 
   .nav-tools {
     display: none;
   }
 
+  /* With the desktop tools hidden, space-between would strand the theme +
+     account controls in the middle of the bar. Push the trailing cluster (and
+     the hamburger after it) to the right so they group at the edge. */
+  .nav-trailing {
+    margin-left: auto;
+  }
+
+  /* 44px touch target (was 36) for the primary mobile control. */
   .nav-hamburger {
     display: flex;
+    width: 44px;
+    height: 44px;
   }
 }
 </style>

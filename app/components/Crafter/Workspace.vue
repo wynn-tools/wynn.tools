@@ -238,4 +238,14 @@ watch(
     padding: 10px 0 12px;
   }
 }
+
+/* Phones: break out of the page shell's gutter so the workspace runs edge to
+   edge. The 12px side padding above keeps content off the screen edge. */
+@media (max-width: 600px) {
+  .crafter {
+    width: calc(100% + 2 * var(--shell-pad-mobile));
+    max-width: none;
+    margin-inline: calc(-1 * var(--shell-pad-mobile));
+  }
+}
 </style>
