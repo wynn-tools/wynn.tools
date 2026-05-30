@@ -57,7 +57,6 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
   <section class="output">
     <header class="output-head">
       <span class="kicker">Combat Output</span>
-      <span class="headline mono">{{ fmt(melee.averageDps) }} <span class="headline-unit">DPS</span></span>
     </header>
 
     <ul class="acc">
@@ -177,26 +176,16 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 
 .output-head {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: baseline;
 }
 
-.headline {
+.kicker {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 30px;
-  font-weight: 600;
-  color: var(--color-copper);
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-
-.headline-unit {
-  font-size: 12px;
-  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-weight: 500;
-  margin-left: 4px;
+  color: var(--color-muted);
 }
 
 .acc {
