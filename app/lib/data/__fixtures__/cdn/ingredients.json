@@ -32,6 +32,16 @@
         "intelligenceRequirement": 0,
         "strengthRequirement": 0
       },
+      "droppedBy": [
+        { "name": "Pyroclastic Hydra", "coords": null },
+        {
+          "name": "Magma Entity",
+          "coords": [
+            [1203, 31, -5386, 30],
+            [1234, 22, -5370, 30]
+          ]
+        }
+      ],
       "name": "Acid Magma",
       "requirements": { "level": 91, "skills": ["tailoring", "alchemism"] },
       "tier": 0

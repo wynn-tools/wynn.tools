@@ -58,6 +58,7 @@ export interface SearchIngredient {
   itemOnlyIDs: Record<string, number>
   consumableOnlyIDs: Record<string, number>
   positionModifiers: PositionModifiers
+  droppedBy: { name: string, coords: [number, number, number, number][] | null }[]
   icon?: unknown
 }
 
