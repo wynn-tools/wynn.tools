@@ -92,14 +92,13 @@ watch(() => route.params.hash, syncFromQuery)
       </button>
     </header>
 
-    <div class="ps-tabs" role="tablist">
+    <div class="tabs ps-tabs" role="tablist">
       <button
         v-for="(el, i) in ELEMENTS"
         :key="el.label"
         type="button"
         role="tab"
-        class="ps-tab"
-        :class="{ 'ps-tab--on': selected === i }"
+        :class="{ on: selected === i }"
         :aria-selected="selected === i"
         @click="selected = i"
       >
@@ -186,32 +185,10 @@ watch(() => route.params.hash, syncFromQuery)
 .ps-reset:hover {
   color: var(--color-copper);
 }
-.ps-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  border-bottom: 1px solid var(--color-border);
-}
-.ps-tab {
-  position: relative;
+.ps-tabs button {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  font-size: 12px;
-  color: var(--color-muted);
-  background: none;
-  border: none;
-  border-bottom: 1px solid transparent;
-  margin-bottom: -1px;
-  cursor: pointer;
-}
-.ps-tab:hover {
-  color: var(--color-text);
-}
-.ps-tab--on {
-  color: var(--color-copper);
-  border-bottom-color: var(--color-copper);
+  gap: 6px;
 }
 .ps-dot {
   width: 7px;
@@ -223,7 +200,7 @@ watch(() => route.params.hash, syncFromQuery)
   width: 5px;
   height: 5px;
   border-radius: 999px;
-  background: var(--color-copper);
+  background: var(--color-accent);
 }
 .ps-active,
 .ps-passive {
