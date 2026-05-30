@@ -179,7 +179,7 @@ watch(() => route.path, () => {
   gap: 24px;
   padding: 0 40px;
   height: 52px;
-  max-width: 1440px;
+  max-width: var(--shell-max);
   margin: 0 auto;
   width: 100%;
 }

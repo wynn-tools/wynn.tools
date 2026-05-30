@@ -11,7 +11,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1440px;
+  max-width: var(--shell-max);
   margin: 0 auto;
   padding: 0 40px;
 }

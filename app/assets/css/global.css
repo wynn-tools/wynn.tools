@@ -98,6 +98,13 @@
   --font-display: 'Barlow Semi Condensed', system-ui, sans-serif;
   --font-body: 'Figtree', system-ui, sans-serif;
   --font-mono: 'Geist Mono', 'Courier New', monospace;
+
+  /* ── Layout ── */
+  /* Outer bound for the page shell + nav + width-hungry tool surfaces. Below
+     this viewport width everything is width:100%, so smaller displays are
+     unaffected; on 1440p (2560px) screens it reclaims the dead side margins.
+     Single source of truth — keep nav, shell, and workspaces in sync. */
+  --shell-max: 1800px;
 }
 
 @utility pixelated {

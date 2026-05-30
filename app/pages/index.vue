@@ -370,7 +370,7 @@ main {
 .site-footer {
   padding: 20px 40px;
   border-top: 1px solid var(--color-border);
-  max-width: 1440px;
+  max-width: var(--shell-max);
   margin: 0 auto;
   width: 100%;
 }

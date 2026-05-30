@@ -79,7 +79,7 @@ const showAtree = ref(true)
   flex-direction: column;
   gap: 16px;
   padding: 24px clamp(12px, 2.5vw, 36px) 56px;
-  max-width: 1600px;
+  max-width: var(--shell-max);
   width: 100%;
   margin: 0 auto;
 }
