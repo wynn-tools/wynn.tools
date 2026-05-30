@@ -72,10 +72,12 @@ watch(
     <template v-else-if="store.ctx">
       <div class="crafter-toolbar">
         <CrafterHashBar />
-        <NuxtLink v-if="!embedded" to="/crafted" class="toolbar-browse">
-          Browse crafted <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
-        </NuxtLink>
-        <CrafterSaveButton v-if="!embedded" :saved-id="props.savedId" :is-owner="props.isOwner" :visibility="props.visibility" />
+        <div v-if="!embedded" class="crafter-toolbar__actions">
+          <NuxtLink to="/crafted" class="toolbar-browse">
+            Browse crafted <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
+          </NuxtLink>
+          <CrafterSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" :visibility="props.visibility" />
+        </div>
       </div>
       <header class="crafter-bar">
         <CrafterRecipePanel :locked-type="lockedType" />
@@ -115,6 +117,13 @@ watch(
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+}
+
+.crafter-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
 }
 
 .toolbar-browse {
@@ -225,6 +234,18 @@ watch(
   .crafter {
     gap: 16px;
     padding: 20px 12px 48px;
+  }
+
+  /* Stack the toolbar so the share/import hash field gets the full width
+     instead of being squeezed by the browse + save controls on its row. */
+  .crafter-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .crafter-toolbar__actions {
+    justify-content: space-between;
   }
 
   .crafter-main {
