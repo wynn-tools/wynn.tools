@@ -1,142 +1,142 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-05-26T00:00:00Z",
+  "generatedAt": "2026-05-30T00:00:00Z",
   "title": "Design System: wynn.tools",
   "extensions": {
     "colorMeta": {
       "bg": {
         "role": "neutral",
-        "displayName": "Carbon Hearth",
-        "canonical": "oklch(14% 0.006 30)",
+        "displayName": "Graphite Ground",
+        "canonical": "oklch(16% 0.008 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(50% 0.007 30)",
-          "oklch(70% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(12% 0.007 265)",
+          "oklch(16% 0.008 265)",
+          "oklch(21% 0.01 265)",
+          "oklch(26% 0.012 265)",
+          "oklch(40% 0.014 265)",
+          "oklch(62% 0.014 265)",
+          "oklch(72% 0.012 265)",
+          "oklch(95% 0.004 265)"
         ]
       },
       "surface": {
         "role": "neutral",
-        "displayName": "Aged Iron",
-        "canonical": "oklch(19% 0.008 30)",
+        "displayName": "Graphite Surface",
+        "canonical": "oklch(21% 0.01 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(50% 0.007 30)",
-          "oklch(70% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(13% 0.008 265)",
+          "oklch(17% 0.009 265)",
+          "oklch(21% 0.01 265)",
+          "oklch(26% 0.012 265)",
+          "oklch(33% 0.013 265)",
+          "oklch(45% 0.014 265)",
+          "oklch(62% 0.014 265)",
+          "oklch(95% 0.004 265)"
         ]
       },
       "surface-hi": {
         "role": "neutral",
-        "displayName": "Iron Lift",
-        "canonical": "oklch(24% 0.009 30)",
+        "displayName": "Graphite Lift",
+        "canonical": "oklch(26% 0.012 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(50% 0.007 30)",
-          "oklch(70% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(16% 0.008 265)",
+          "oklch(21% 0.01 265)",
+          "oklch(26% 0.012 265)",
+          "oklch(33% 0.013 265)",
+          "oklch(45% 0.014 265)",
+          "oklch(60% 0.014 265)",
+          "oklch(75% 0.012 265)",
+          "oklch(95% 0.004 265)"
         ]
       },
       "border": {
         "role": "neutral",
-        "displayName": "Forge Seam",
-        "canonical": "oklch(26% 0.008 30)",
+        "displayName": "Seam",
+        "canonical": "oklch(40% 0.014 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(50% 0.007 30)",
-          "oklch(70% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(21% 0.01 265)",
+          "oklch(26% 0.012 265)",
+          "oklch(33% 0.013 265)",
+          "oklch(40% 0.014 265)",
+          "oklch(52% 0.014 265)",
+          "oklch(62% 0.014 265)",
+          "oklch(78% 0.01 265)",
+          "oklch(95% 0.004 265)"
         ]
       },
       "faint": {
         "role": "neutral",
-        "displayName": "Ash",
-        "canonical": "oklch(36% 0.007 30)",
+        "displayName": "Faint",
+        "canonical": "oklch(62% 0.014 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(50% 0.007 30)",
-          "oklch(70% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(26% 0.012 265)",
+          "oklch(36% 0.014 265)",
+          "oklch(46% 0.014 265)",
+          "oklch(54% 0.014 265)",
+          "oklch(62% 0.014 265)",
+          "oklch(72% 0.012 265)",
+          "oklch(84% 0.008 265)",
+          "oklch(95% 0.004 265)"
         ]
       },
       "muted": {
         "role": "neutral",
-        "displayName": "Steel Mist",
-        "canonical": "oklch(58% 0.008 30)",
+        "displayName": "Muted",
+        "canonical": "oklch(72% 0.012 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(58% 0.008 30)",
-          "oklch(75% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(40% 0.014 265)",
+          "oklch(50% 0.014 265)",
+          "oklch(60% 0.014 265)",
+          "oklch(66% 0.013 265)",
+          "oklch(72% 0.012 265)",
+          "oklch(80% 0.01 265)",
+          "oklch(88% 0.007 265)",
+          "oklch(95% 0.004 265)"
         ]
       },
       "text": {
         "role": "neutral",
-        "displayName": "Off-White Steel",
-        "canonical": "oklch(92% 0.004 30)",
+        "displayName": "Off-White",
+        "canonical": "oklch(95% 0.004 265)",
         "tonalRamp": [
-          "oklch(10% 0.004 30)",
-          "oklch(14% 0.006 30)",
-          "oklch(19% 0.008 30)",
-          "oklch(24% 0.009 30)",
-          "oklch(36% 0.007 30)",
-          "oklch(58% 0.008 30)",
-          "oklch(75% 0.005 30)",
-          "oklch(92% 0.004 30)"
+          "oklch(60% 0.012 265)",
+          "oklch(68% 0.011 265)",
+          "oklch(76% 0.009 265)",
+          "oklch(83% 0.007 265)",
+          "oklch(88% 0.006 265)",
+          "oklch(92% 0.005 265)",
+          "oklch(95% 0.004 265)",
+          "oklch(98% 0.003 265)"
         ]
       },
       "accent": {
         "role": "primary",
-        "displayName": "Forge Copper",
-        "canonical": "oklch(65% 0.15 48)",
+        "displayName": "Arc Blue",
+        "canonical": "oklch(68% 0.16 245)",
         "tonalRamp": [
-          "oklch(15% 0.06 48)",
-          "oklch(25% 0.09 48)",
-          "oklch(35% 0.12 48)",
-          "oklch(45% 0.13 48)",
-          "oklch(52% 0.12 48)",
-          "oklch(65% 0.15 48)",
-          "oklch(75% 0.12 48)",
-          "oklch(90% 0.06 48)"
+          "oklch(28% 0.08 245)",
+          "oklch(38% 0.11 245)",
+          "oklch(48% 0.13 245)",
+          "oklch(56% 0.13 245)",
+          "oklch(68% 0.16 245)",
+          "oklch(76% 0.13 245)",
+          "oklch(85% 0.08 245)",
+          "oklch(93% 0.04 245)"
         ]
       },
       "accent-dim": {
         "role": "primary",
-        "displayName": "Deep Copper",
-        "canonical": "oklch(52% 0.12 48)",
+        "displayName": "Arc Blue Dim",
+        "canonical": "oklch(56% 0.13 245)",
         "tonalRamp": [
-          "oklch(15% 0.06 48)",
-          "oklch(25% 0.09 48)",
-          "oklch(35% 0.12 48)",
-          "oklch(45% 0.13 48)",
-          "oklch(52% 0.12 48)",
-          "oklch(65% 0.15 48)",
-          "oklch(75% 0.12 48)",
-          "oklch(90% 0.06 48)"
+          "oklch(26% 0.07 245)",
+          "oklch(34% 0.09 245)",
+          "oklch(42% 0.11 245)",
+          "oklch(50% 0.12 245)",
+          "oklch(56% 0.13 245)",
+          "oklch(66% 0.13 245)",
+          "oklch(78% 0.09 245)",
+          "oklch(90% 0.04 245)"
         ]
       },
       "gold": {
@@ -144,13 +144,13 @@
         "displayName": "Ingot Gold",
         "canonical": "oklch(78% 0.14 75)",
         "tonalRamp": [
-          "oklch(15% 0.05 75)",
-          "oklch(25% 0.08 75)",
-          "oklch(38% 0.11 75)",
-          "oklch(50% 0.13 75)",
-          "oklch(62% 0.11 75)",
+          "oklch(38% 0.07 75)",
+          "oklch(48% 0.09 75)",
+          "oklch(58% 0.11 75)",
+          "oklch(68% 0.13 75)",
           "oklch(78% 0.14 75)",
-          "oklch(88% 0.09 75)",
+          "oklch(85% 0.12 75)",
+          "oklch(90% 0.08 75)",
           "oklch(95% 0.04 75)"
         ]
       },
@@ -159,228 +159,339 @@
         "displayName": "Dim Gold",
         "canonical": "oklch(62% 0.11 75)",
         "tonalRamp": [
-          "oklch(15% 0.05 75)",
-          "oklch(25% 0.08 75)",
-          "oklch(38% 0.11 75)",
-          "oklch(50% 0.13 75)",
+          "oklch(34% 0.06 75)",
+          "oklch(42% 0.08 75)",
+          "oklch(52% 0.1 75)",
           "oklch(62% 0.11 75)",
-          "oklch(78% 0.14 75)",
-          "oklch(88% 0.09 75)",
-          "oklch(95% 0.04 75)"
+          "oklch(70% 0.12 75)",
+          "oklch(80% 0.1 75)",
+          "oklch(88% 0.07 75)",
+          "oklch(94% 0.04 75)"
+        ]
+      },
+      "elem-earth": {
+        "role": "tertiary",
+        "displayName": "Earth",
+        "canonical": "oklch(72% 0.18 145)",
+        "tonalRamp": [
+          "oklch(34% 0.09 145)",
+          "oklch(44% 0.12 145)",
+          "oklch(54% 0.15 145)",
+          "oklch(63% 0.17 145)",
+          "oklch(72% 0.18 145)",
+          "oklch(81% 0.15 145)",
+          "oklch(88% 0.1 145)",
+          "oklch(94% 0.05 145)"
+        ]
+      },
+      "elem-thunder": {
+        "role": "tertiary",
+        "displayName": "Thunder",
+        "canonical": "oklch(82% 0.15 95)",
+        "tonalRamp": [
+          "oklch(42% 0.08 95)",
+          "oklch(52% 0.1 95)",
+          "oklch(62% 0.12 95)",
+          "oklch(72% 0.14 95)",
+          "oklch(82% 0.15 95)",
+          "oklch(88% 0.13 95)",
+          "oklch(92% 0.09 95)",
+          "oklch(96% 0.05 95)"
+        ]
+      },
+      "elem-water": {
+        "role": "tertiary",
+        "displayName": "Water",
+        "canonical": "oklch(75% 0.13 215)",
+        "tonalRamp": [
+          "oklch(36% 0.07 215)",
+          "oklch(46% 0.09 215)",
+          "oklch(56% 0.11 215)",
+          "oklch(66% 0.12 215)",
+          "oklch(75% 0.13 215)",
+          "oklch(83% 0.11 215)",
+          "oklch(89% 0.08 215)",
+          "oklch(95% 0.04 215)"
+        ]
+      },
+      "elem-fire": {
+        "role": "tertiary",
+        "displayName": "Fire",
+        "canonical": "oklch(68% 0.18 35)",
+        "tonalRamp": [
+          "oklch(32% 0.1 35)",
+          "oklch(42% 0.13 35)",
+          "oklch(52% 0.15 35)",
+          "oklch(60% 0.17 35)",
+          "oklch(68% 0.18 35)",
+          "oklch(78% 0.15 35)",
+          "oklch(86% 0.1 35)",
+          "oklch(93% 0.05 35)"
+        ]
+      },
+      "elem-air": {
+        "role": "tertiary",
+        "displayName": "Air",
+        "canonical": "oklch(85% 0.04 250)",
+        "tonalRamp": [
+          "oklch(46% 0.03 250)",
+          "oklch(56% 0.035 250)",
+          "oklch(66% 0.04 250)",
+          "oklch(76% 0.04 250)",
+          "oklch(85% 0.04 250)",
+          "oklch(90% 0.03 250)",
+          "oklch(94% 0.02 250)",
+          "oklch(97% 0.01 250)"
         ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display",
-        "purpose": "Hero page title only. The logo rendered at scale."
+        "purpose": "Hero page title only — the logo rendered large."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Tool card names, panel headings, component titles."
+        "purpose": "Panel headings, tool-row names, section titles."
       },
-      "label": {
-        "displayName": "Label Mono",
-        "purpose": "Section markers, counts, coordinates, category headers — any text that reads as system output."
+      "title": {
+        "displayName": "Title",
+        "purpose": "Subheadings, upcoming-feature names, in-panel labels."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Page prose and descriptions. Cap at 65ch."
+        "purpose": "Page body copy and descriptions. Cap at 65ch."
       },
       "small": {
         "displayName": "Small",
-        "purpose": "Card descriptions, filter labels, secondary info."
+        "purpose": "Card and row descriptions, filter labels, secondary content."
+      },
+      "label": {
+        "displayName": "Label / Kicker",
+        "purpose": "Mono uppercase system output: section kickers, group rules, counts, CTA text."
       }
     },
     "shadows": [
       {
         "name": "glow-sm",
-        "value": "0 0 16px oklch(65% 0.15 48 / 0.18)",
-        "purpose": "Icon tray hover glow, small accent element attention."
+        "value": "0 0 16px color-mix(in oklch, var(--color-accent) 18%, transparent)",
+        "purpose": "Small accent-element attention. The shadow-accent-sm utility."
       },
       {
         "name": "glow-md",
-        "value": "0 0 32px oklch(65% 0.15 48 / 0.28)",
-        "purpose": "Focus ring halos on elevated interactive elements."
+        "value": "0 0 32px color-mix(in oklch, var(--color-accent) 28%, transparent)",
+        "purpose": "Focus halos on elevated interactive elements. The shadow-accent-md utility."
       },
       {
         "name": "glow-lg",
-        "value": "0 0 56px oklch(65% 0.15 48 / 0.40)",
-        "purpose": "High-emphasis selected state or featured elements."
-      },
-      {
-        "name": "card-hover",
-        "value": "0 0 0 1px oklch(65% 0.15 48 / 0.12), 0 4px 16px oklch(0% 0 0 / 0.3)",
-        "purpose": "Tool card on hover — inner accent ring plus depth shadow."
+        "value": "0 0 56px color-mix(in oklch, var(--color-accent) 40%, transparent)",
+        "purpose": "High-emphasis selected or featured state. The shadow-accent-lg utility."
       },
       {
         "name": "float",
         "value": "0 4px 24px oklch(0% 0 0 / 0.3)",
-        "purpose": "Structural float for map panels, dropdowns, and bottom sheets."
+        "purpose": "Structural float for dropdowns, popovers, and panels. Pair with backdrop-blur and an accent/20 ring."
       }
     ],
     "motion": [
       {
-        "name": "ease-standard",
-        "value": "0.12s ease-out",
-        "purpose": "Default for color and background state transitions (nav links, buttons)."
+        "name": "ease-state",
+        "value": "ease-out",
+        "purpose": "Default easing for color/background state transitions, 0.12-0.15s."
       },
       {
-        "name": "ease-card",
-        "value": "0.15s ease-out",
-        "purpose": "Tool card hover transitions (background, border-color, box-shadow)."
-      },
-      {
-        "name": "ease-sheet",
-        "value": "0.2s",
-        "purpose": "Mobile bottom sheet enter. 0.15s for leave."
-      },
-      {
-        "name": "ring-pulse",
-        "value": "0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-        "purpose": "Map zoom button confirmation pulse. Only fires on explicit interaction."
+        "name": "ease-chevron",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Chevron rotation and the only permitted horizontal nudges, 0.15-0.18s."
       }
     ],
     "breakpoints": [
+      { "name": "tablet", "value": "900px" },
+      { "name": "mobile", "value": "720px" },
+      { "name": "shell-max", "value": "1800px" }
+    ],
+    "themes": [
       {
-        "name": "mobile",
-        "value": "600px",
-        "purpose": "Nav label collapse, hero padding reduction, footer padding reduction."
+        "name": "dark",
+        "displayName": "Dark",
+        "default": true,
+        "ground": "oklch(16% 0.008 265)",
+        "accent": "oklch(68% 0.16 245)"
       },
       {
-        "name": "tablet",
-        "value": "768px",
-        "purpose": "Map filter panel switches from mobile sheet to desktop rail."
+        "name": "midnight",
+        "displayName": "Midnight",
+        "ground": "oklch(9% 0.006 265)",
+        "accent": "oklch(70% 0.16 245)"
       },
       {
-        "name": "max-content",
-        "value": "1440px",
-        "purpose": "Nav inner and footer max-width cap."
+        "name": "light",
+        "displayName": "Light",
+        "ground": "oklch(96.5% 0.004 265)",
+        "accent": "oklch(56% 0.18 245)"
       }
     ]
   },
   "components": [
     {
-      "name": "Navigation Bar",
+      "name": "Nav Link",
       "kind": "nav",
       "refersTo": "nav-link",
-      "description": "Sticky 52px nav with backdrop-blur, monospace logo, and copper-accented active links.",
-      "html": "<nav class=\"ds-nav\"><div class=\"ds-nav-inner\"><a class=\"ds-nav-logo\" href=\"/\">wynn<span class=\"ds-nav-dot\">.</span>tools</a><ul class=\"ds-nav-links\"><li><a class=\"ds-nav-link\" href=\"/builder\"><span>Builder</span></a></li><li><a class=\"ds-nav-link ds-nav-link--active\" href=\"/map\"><span>Map</span></a></li></ul></div></nav>",
-      "css": ".ds-nav { position: sticky; top: 0; z-index: 50; background: oklch(14% 0.006 30 / 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid oklch(26% 0.008 30); } .ds-nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 40px; height: 52px; max-width: 1440px; margin: 0 auto; } .ds-nav-logo { font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 500; letter-spacing: -0.02em; color: oklch(92% 0.004 30); text-decoration: none; transition: color 0.12s ease-out; } .ds-nav-logo:hover { color: oklch(65% 0.15 48); } .ds-nav-dot { color: oklch(65% 0.15 48); } .ds-nav-links { display: flex; align-items: center; gap: 2px; list-style: none; } .ds-nav-link { display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 6px; text-decoration: none; color: oklch(58% 0.008 30); font-size: 13px; font-weight: 500; letter-spacing: 0.01em; transition: color 0.12s ease-out, background 0.12s ease-out; } .ds-nav-link:hover { color: oklch(92% 0.004 30); background: oklch(19% 0.008 30); } .ds-nav-link--active { color: oklch(65% 0.15 48); background: oklch(65% 0.15 48 / 0.08); } .ds-nav-link:focus-visible { outline: 2px solid oklch(65% 0.15 48); outline-offset: 2px; }"
+      "description": "Top-bar tool link. Muted at rest, Off-White on hover, Arc Blue when active.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\"><svg class=\"ds-nav-ico\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg>Items</a><a class=\"ds-nav-link is-active\" href=\"#\"><svg class=\"ds-nav-ico\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"/><path d=\"M7 12h13\"/><path d=\"M10 18h8\"/></svg>Map</a></nav>",
+      "css": ".ds-nav { display:flex; gap:2px; padding:8px 12px; background:color-mix(in oklch, var(--color-bg) 92%, transparent); backdrop-filter:blur(12px); border-bottom:1px solid var(--color-border); } .ds-nav-link { display:flex; align-items:center; gap:7px; padding:6px 12px; border-radius:6px; text-decoration:none; color:var(--color-muted); font-family:'Figtree',system-ui,sans-serif; font-size:13px; font-weight:500; letter-spacing:0.01em; transition:color 0.12s ease-out, background 0.12s ease-out; } .ds-nav-link:hover { color:var(--color-text); background:var(--color-surface); } .ds-nav-link.is-active { color:var(--color-accent); background:color-mix(in oklch, var(--color-accent) 8%, transparent); } .ds-nav-link:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }"
     },
     {
-      "name": "Tool Card",
-      "kind": "card",
-      "refersTo": "card-tool",
-      "description": "Interactive link card for live tools on the landing page. Horizontal layout: icon container, body text, arrow.",
-      "html": "<a class=\"ds-tool-card\" href=\"/builder\"><div class=\"ds-tool-card-icon\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 17.5L3 6V3h3l11.5 11.5\"/><path d=\"M13 19l6-6\"/><path d=\"M16 16l4 4\"/></svg></div><div class=\"ds-tool-card-body\"><span class=\"ds-tool-card-name\">Builder</span><span class=\"ds-tool-card-desc\">Plan builds, assign skill points, compare gear.</span></div><span class=\"ds-tool-arrow\" aria-hidden=\"true\">→</span></a>",
-      "css": ".ds-tool-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: oklch(19% 0.008 30); border: 1px solid oklch(26% 0.008 30); border-radius: 10px; text-decoration: none; color: inherit; transition: background 0.15s ease-out, border-color 0.15s ease-out, box-shadow 0.15s ease-out; min-height: 88px; } .ds-tool-card:hover { background: oklch(24% 0.009 30); border-color: oklch(52% 0.12 48); box-shadow: 0 0 0 1px oklch(65% 0.15 48 / 0.12), 0 4px 16px oklch(0% 0 0 / 0.3); } .ds-tool-card:hover .ds-tool-arrow { color: oklch(65% 0.15 48); transform: translateX(3px); } .ds-tool-card:focus-visible { outline: 2px solid oklch(65% 0.15 48); outline-offset: 2px; } .ds-tool-card-icon { flex-shrink: 0; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: oklch(65% 0.15 48 / 0.08); border-radius: 8px; color: oklch(65% 0.15 48); } .ds-tool-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; } .ds-tool-card-name { font-family: 'Barlow Semi Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: oklch(92% 0.004 30); } .ds-tool-card-desc { font-size: 13px; color: oklch(58% 0.008 30); line-height: 1.4; } .ds-tool-arrow { font-size: 16px; color: oklch(36% 0.007 30); flex-shrink: 0; transition: color 0.15s ease-out, transform 0.15s ease-out; }"
+      "name": "Pill Tabs",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Canonical segmented control for builder panels. Mono uppercase; active tab takes Arc Blue.",
+      "html": "<div class=\"ds-tabs\"><button>Earth</button><button class=\"on\">Thunder</button><button>Water</button><button>Fire</button><button>Air</button></div>",
+      "css": ".ds-tabs { display:inline-flex; gap:2px; padding:3px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:8px; } .ds-tabs button { background:transparent; border:0; border-radius:5px; color:var(--color-muted); padding:6px 14px; cursor:pointer; font:600 12px/1 'Geist Mono','Courier New',monospace; letter-spacing:0.08em; text-transform:uppercase; transition:color 0.12s ease-out, background 0.12s ease-out; } .ds-tabs button:hover { color:var(--color-text); } .ds-tabs button.on { color:var(--color-accent); background:color-mix(in oklch, var(--color-accent) 8%, transparent); } .ds-tabs button:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }"
     },
     {
-      "name": "Map Control Button",
-      "kind": "button",
-      "refersTo": "button-map-ctrl",
-      "description": "Ghost bordered button for map toolbar controls. Muted at rest, copper on hover and active.",
-      "html": "<button class=\"ds-map-ctrl\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polygon points=\"22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3\"/></svg> Filters</button>",
-      "css": ".ds-map-ctrl { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; border: 1px solid oklch(26% 0.008 30); background: transparent; color: oklch(58% 0.008 30); font-size: 13px; font-weight: 600; cursor: pointer; transition: color 0.12s ease-out, background 0.12s ease-out, border-color 0.12s ease-out; } .ds-map-ctrl:hover { color: oklch(65% 0.15 48); background: oklch(65% 0.15 48 / 0.05); border-color: oklch(52% 0.12 48 / 0.3); } .ds-map-ctrl.ds-map-ctrl--active { color: oklch(65% 0.15 48); background: oklch(65% 0.15 48 / 0.05); border-color: oklch(65% 0.15 48 / 0.4); } .ds-map-ctrl:focus-visible { outline: 2px solid oklch(65% 0.15 48); outline-offset: 2px; }"
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "filter-chip",
+      "description": "Toggleable filter chip. Ghost border at rest; Arc Blue text + border + tint when on.",
+      "html": "<div class=\"ds-fgroup\"><button>Helmet</button><button class=\"on\">Chestplate</button><button>Leggings</button><button>Boots</button></div>",
+      "css": ".ds-fgroup { display:flex; flex-wrap:wrap; gap:6px; } .ds-fgroup button { background:transparent; border:1px solid var(--color-border); border-radius:4px; color:var(--color-muted); font-family:'Figtree',system-ui,sans-serif; font-size:12px; padding:4px 8px; cursor:pointer; text-transform:capitalize; transition:color 0.12s ease-out, border-color 0.12s ease-out, background 0.12s ease-out; } .ds-fgroup button:hover { color:var(--color-text); border-color:var(--color-faint); } .ds-fgroup button.on { color:var(--color-accent); border-color:var(--color-accent); background:color-mix(in oklch, var(--color-accent) 8%, transparent); } .ds-fgroup button:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }"
     },
     {
-      "name": "Zoom Button Group",
-      "kind": "button",
-      "refersTo": "button-map-ctrl",
-      "description": "Stacked +/- buttons for map zoom. Grouped in a single rounded container with a divider.",
-      "html": "<div class=\"ds-zoom-group\"><button class=\"ds-zoom-btn\" type=\"button\" aria-label=\"Zoom in\">+</button><div class=\"ds-zoom-divider\"></div><button class=\"ds-zoom-btn\" type=\"button\" aria-label=\"Zoom out\">−</button></div>",
-      "css": ".ds-zoom-group { display: flex; flex-direction: column; overflow: hidden; border-radius: 6px; background: oklch(14% 0.006 30 / 0.9); box-shadow: 0 0 0 1px oklch(65% 0.15 48 / 0.2); backdrop-filter: blur(8px); } .ds-zoom-btn { padding: 8px 12px; background: transparent; border: none; color: oklch(65% 0.15 48); font-size: 16px; font-weight: 300; line-height: 1; cursor: pointer; transition: background 0.12s ease-out; } .ds-zoom-btn:hover { background: oklch(65% 0.15 48 / 0.1); } .ds-zoom-divider { height: 1px; background: oklch(65% 0.15 48 / 0.1); }"
-    },
-    {
-      "name": "Search Input",
+      "name": "Filter Input",
       "kind": "input",
-      "refersTo": "input-search",
-      "description": "Map search field with backdrop-blur and copper ring. Placeholder muted; text copper.",
-      "html": "<input class=\"ds-search\" type=\"text\" placeholder=\"Search places, caves... or paste coords\" aria-label=\"Search map features\">",
-      "css": ".ds-search { width: 100%; padding: 8px 12px; border-radius: 6px; background: oklch(14% 0.006 30 / 0.9); backdrop-filter: blur(8px); border: none; box-shadow: 0 0 0 1px oklch(65% 0.15 48 / 0.2); color: oklch(65% 0.15 48); font-family: 'Figtree', sans-serif; font-size: 13px; outline: none; transition: box-shadow 0.12s ease-out; } .ds-search::placeholder { color: oklch(58% 0.008 30 / 0.6); } .ds-search:focus { box-shadow: 0 0 0 1px oklch(65% 0.15 48 / 0.6); }"
+      "refersTo": "input-filter",
+      "description": "Search / filter text field. Border shifts to Arc Blue on focus, no glow.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Search items\" />",
+      "css": ".ds-input { background:var(--color-surface); border:1px solid var(--color-border); border-radius:6px; padding:8px 10px; color:var(--color-text); font-family:'Figtree',system-ui,sans-serif; font-size:13px; transition:border-color 0.12s ease-out; } .ds-input::placeholder { color:var(--color-muted); } .ds-input:focus-visible { outline:none; border-color:var(--color-accent); }"
     },
     {
-      "name": "Filter Panel",
+      "name": "Tool Row",
       "kind": "custom",
-      "refersTo": "card-tool",
-      "description": "Floating map panel with backdrop-blur and copper ring. Used for filter sidebar and popups.",
-      "html": "<div class=\"ds-float-panel\"><header class=\"ds-float-panel-header\"><h3 class=\"ds-float-panel-title\">Filters</h3><button class=\"ds-float-panel-action\" type=\"button\">Reset</button></header><div class=\"ds-float-panel-body\"><!-- content --></div></div>",
-      "css": ".ds-float-panel { border-radius: 8px; background: oklch(14% 0.006 30 / 0.95); backdrop-filter: blur(12px); box-shadow: 0 0 0 1px oklch(65% 0.15 48 / 0.2), 0 4px 24px oklch(0% 0 0 / 0.3); padding: 12px; max-height: calc(100vh - 9rem); overflow-y: auto; } .ds-float-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; } .ds-float-panel-title { font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 600; color: oklch(65% 0.15 48); } .ds-float-panel-action { background: none; border: none; font-size: 12px; color: oklch(58% 0.008 30); cursor: pointer; padding: 0; transition: color 0.12s ease-out; } .ds-float-panel-action:hover { color: oklch(65% 0.15 48); }"
+      "refersTo": "card",
+      "description": "Landing-page tool entry. Borderless row, not a boxed card; everything shifts to Arc Blue on hover and the arrow nudges right.",
+      "html": "<div class=\"ds-toolgroup\"><span class=\"ds-group-rule\">Build</span><a class=\"ds-tool-row\" href=\"#\"><svg class=\"ds-tool-ico\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14.5 17.5 3 6V3h3l11.5 11.5\"/><path d=\"m13 19 6-6\"/><path d=\"m16 16 4 4\"/></svg><span class=\"ds-tool-name\">Builder</span><span class=\"ds-tool-desc\">Create and plan builds</span><span class=\"ds-tool-arrow\">&rarr;</span></a></div>",
+      "css": ".ds-toolgroup { display:flex; flex-direction:column; } .ds-group-rule { font:500 11px/1 'Geist Mono','Courier New',monospace; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-faint); padding-bottom:10px; } .ds-tool-row { display:grid; grid-template-columns:auto auto 1fr auto; align-items:center; gap:14px; padding:14px 4px; border-top:1px solid var(--color-border); text-decoration:none; color:var(--color-text); } .ds-tool-ico, .ds-tool-arrow { color:var(--color-faint); transition:color 0.12s ease-out, transform 0.15s cubic-bezier(0.2,0.8,0.2,1); } .ds-tool-name { font-family:'Barlow Semi Condensed',system-ui,sans-serif; font-weight:700; font-size:16px; } .ds-tool-desc { font-family:'Figtree',system-ui,sans-serif; font-size:13px; color:var(--color-muted); } .ds-tool-arrow { font-size:15px; } .ds-tool-row:hover .ds-tool-name, .ds-tool-row:hover .ds-tool-ico, .ds-tool-row:hover .ds-tool-arrow { color:var(--color-accent); } .ds-tool-row:hover .ds-tool-arrow { transform:translateX(3px); } .ds-tool-row:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }"
+    },
+    {
+      "name": "Range Slider",
+      "kind": "input",
+      "refersTo": "input-filter",
+      "description": "Filter range slider. Seam track, accent/70 range fill, accent-bordered thumb on the page ground.",
+      "html": "<div class=\"ds-slider\"><span class=\"ds-slider-track\"><span class=\"ds-slider-range\"></span></span><span class=\"ds-slider-thumb\"></span></div>",
+      "css": ".ds-slider { position:relative; display:flex; align-items:center; width:220px; padding-block:6px; } .ds-slider-track { position:relative; height:4px; width:100%; border-radius:9999px; background:var(--color-border); overflow:hidden; } .ds-slider-range { position:absolute; left:0; height:100%; width:62%; background:color-mix(in oklch, var(--color-accent) 70%, transparent); } .ds-slider-thumb { position:absolute; left:60%; height:14px; width:14px; border-radius:9999px; border:1px solid color-mix(in oklch, var(--color-accent) 60%, transparent); background:var(--color-bg); box-shadow:0 1px 4px oklch(0% 0 0 / 0.3); cursor:grab; } .ds-slider-thumb:focus-visible { outline:none; box-shadow:0 0 0 2px color-mix(in oklch, var(--color-accent) 50%, transparent); border-color:var(--color-accent); }"
+    },
+    {
+      "name": "Page CTA",
+      "kind": "button",
+      "refersTo": "page-cta",
+      "description": "Mono uppercase ghost CTA in toolbars. Arc Blue text inside a low-opacity accent border.",
+      "html": "<a class=\"ds-cta\" href=\"#\">New Build</a>",
+      "css": ".ds-cta { display:inline-flex; align-items:center; font:600 11px/1 'Geist Mono','Courier New',monospace; letter-spacing:0.08em; text-transform:uppercase; color:var(--color-accent); text-decoration:none; padding:6px 12px; border:1px solid color-mix(in oklch, var(--color-accent) 35%, transparent); border-radius:6px; transition:border-color 0.12s ease-out, background 0.12s ease-out; } .ds-cta:hover { border-color:var(--color-accent); background:color-mix(in oklch, var(--color-accent) 6%, transparent); } .ds-cta:focus-visible { outline:2px solid var(--color-accent); outline-offset:2px; }"
+    },
+    {
+      "name": "Floating Panel",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Shared pattern for nav dropdowns, map filter panels, and search results: blurred translucent surface, accent/20 ring, Float shadow.",
+      "html": "<div class=\"ds-panel\"><span class=\"ds-panel-kicker\">Appearance</span><div class=\"ds-panel-row\">Dark</div><div class=\"ds-panel-row ds-panel-row--on\">Midnight</div><div class=\"ds-panel-row\">Light</div></div>",
+      "css": ".ds-panel { width:200px; background:color-mix(in oklch, var(--color-surface) 96%, transparent); backdrop-filter:blur(12px); border:1px solid color-mix(in oklch, var(--color-accent) 20%, transparent); border-radius:8px; padding:4px; box-shadow:0 4px 24px oklch(0% 0 0 / 0.3); display:flex; flex-direction:column; gap:2px; } .ds-panel-kicker { font:500 11px/1 'Geist Mono','Courier New',monospace; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-faint); padding:6px 10px 4px; } .ds-panel-row { padding:8px 10px; border-radius:6px; color:var(--color-muted); font-family:'Figtree',system-ui,sans-serif; font-size:13px; cursor:pointer; transition:color 0.12s ease-out, background 0.12s ease-out; } .ds-panel-row:hover { color:var(--color-text); background:var(--color-surface-hi); } .ds-panel-row--on { color:var(--color-accent); background:color-mix(in oklch, var(--color-accent) 8%, transparent); }"
+    },
+    {
+      "name": "In-Game Tooltip",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Signature game-world surface: a pixel-faithful Wynncraft item card (Item / Build / Charm / Ingredient / Material / Tome). Pixel fonts, pure #0d0d0d ground, per-rarity pixel-art frame, hardcoded rarity hex. Theme-independent; the design system's tokens and type roles are intentionally suspended inside. Static Legendary example shown; in production the frame is a per-rarity border-image sprite.",
+      "html": "<div class=\"ds-tt\"><div class=\"ds-tt-inner\"><div class=\"ds-tt-name\">Hero of Gavel</div><div class=\"ds-tt-tags\"><span class=\"ds-tt-tag\" style=\"background:#55ffff\">legendary</span><span class=\"ds-tt-tag\" style=\"background:#bef6f6\">relik</span></div><div class=\"ds-tt-dps\"><span class=\"ds-tt-dps-n\">412</span><span class=\"ds-tt-dps-u\">DPS</span></div><div class=\"ds-tt-sep\"></div><ul class=\"ds-tt-ids\"><li><span class=\"ds-tt-good\">+120</span><span class=\"ds-tt-id-name\">Spell Damage</span><span class=\"ds-tt-good\">+180</span></li><li><span class=\"ds-tt-bad\">-9</span><span class=\"ds-tt-id-name\">Walk Speed</span><span class=\"ds-tt-bad\">-5</span></li></ul><p class=\"ds-tt-lore\">A relic of the war for Gavel.</p></div></div>",
+      "css": ".ds-tt { position:relative; width:340px; font-family:'wynncraft','Geist Mono',monospace; letter-spacing:-1px; background:#0d0d0d; border:2px solid #55ffff; image-rendering:pixelated; } .ds-tt-inner { padding:20px 18px 14px; background:linear-gradient(#0d0d0df7, #081d5af7); margin:10px 8px 5px; color:#fcfcfc; } .ds-tt-name { font-size:26px; line-height:1; color:#55ffff; text-shadow:3px 3px 0 rgba(0,0,0,0.45); } .ds-tt-tags { display:flex; gap:5px; margin-top:6px; } .ds-tt-tag { color:#000; font-family:'wynn-five','wynn-default',monospace; font-size:16px; line-height:14px; padding:2px 6px; text-transform:lowercase; } .ds-tt-dps { display:flex; align-items:baseline; gap:6px; margin-top:8px; } .ds-tt-dps-n { font-size:30px; color:#bef6f6; } .ds-tt-dps-u { font-size:18px; } .ds-tt-sep { height:2px; margin:12px auto 8px; background:repeating-linear-gradient(90deg,#bef6f6 0 6px,transparent 6px 10px); opacity:0.7; } .ds-tt-ids { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:3px; } .ds-tt-ids li { display:grid; grid-template-columns:1fr auto 1fr; align-items:baseline; gap:10px; font-size:17px; } .ds-tt-ids li span:first-child { text-align:left; } .ds-tt-ids li span:last-child { text-align:right; } .ds-tt-id-name { color:#fcfcfc; text-align:center; } .ds-tt-good { color:#83f7c6; } .ds-tt-bad { color:#f78383; } .ds-tt-lore { margin:10px 0 0; font-family:'wynn-ascii',monospace; font-size:16px; line-height:1.35; color:#aaaaaa; }"
     }
   ],
   "narrative": {
-    "northStar": "The Forge Log",
-    "overview": "wynn.tools is a craftsman's logbook — dense, purposeful, made by someone who actually uses the tools they're documenting. The visual language starts from worn copper resting on carbon steel: a dark, near-black ground with a very slight warm cast (hue 30, barely perceptible), crossed by copper-bronze accents that light up under interaction like metal in firelight. The system never decorates; it indexes.\n\nThe display font is condensed and heavy — Barlow Semi Condensed at high weight — because players read stat tables and item names fast. The logo and section labels use monospace to mark them as system output, not marketing. Body text is Figtree: clean, warm, readable without trying to be friendly. The overall density is deliberate: Wynncraft endgame players are used to parsing dense data UIs. White space is earned by content, not distributed by default.\n\nWhat this system refuses: RPG fantasy aesthetics (parchment, medieval ornament, pixel art), crypto-era maximalism (neon halos, blurry hero gradients, hype copy), and generic SaaS calm (orbital glows, rounded-everything, feature-icon grids). This is built by players with 400 hours in-game — it should feel like it.",
+    "northStar": "The Cold Forge",
+    "overview": "wynn.tools is a precision instrument cooled to working temperature. The visual language is graphite under arc light: a dark, cool-cast ground (OKLCH hue 265, a near-neutral blue-grey) crossed by a single electric-blue accent (hue 245) that reads as cold light, not heat. Where the old system glowed copper like metal in a hearth, this one glows like a weld arc or an instrument LED: the readiness signal of a tool that has been calibrated rather than decorated. The display face is condensed and heavy because players parse stat tables fast; section labels, counts, and the logo are mono to mark them as system output; body copy is Figtree, legible without performing friendliness. The system is themeable from the ground up: every surface, tint, and glow resolves through --color-* tokens, so the same instrument re-lights cleanly across Dark, Midnight, and Light. It refuses RPG fantasy ornament, crypto-era maximalism, and generic SaaS calm.",
     "keyCharacteristics": [
-      "Dark ground, copper light — near-black warm surfaces; copper accent is the only color that truly illuminates",
-      "Condensed display weight paired with humanist body — authority and legibility at different scales",
-      "Monospace for system labels — timestamps, counts, the logo itself: anything that reads as output",
-      "No decorative elements except Wynnic script — the only permitted ornament is the game's own glyph system, used as texture at very low opacity",
-      "Flat at rest, glow halos on state change — depth is not structural; it's thermal"
+      "Cool graphite ground, electric-blue light — near-neutral hue-265 surfaces; one blue accent (hue 245) is the only color that truly illuminates",
+      "Token-driven theming — Dark / Midnight / Light all re-point the same --color-* names; components stay theme-agnostic",
+      "Condensed display weight over humanist body — authority and legibility at different scales",
+      "Mono for system output — counts, coordinates, section kickers, the logo: anything that reads as the machine talking",
+      "Flat at rest, blue glow on state change — depth is thermal and electric, never structural shadow at rest",
+      "Gold quarantined to the game world — item rarities and stat highlights only, never UI chrome"
     ],
     "rules": [
       {
-        "name": "The One Ember Rule",
-        "body": "Forge Copper appears on ≤15% of any given screen. Its presence means something is interactive or selected. Using it as a decorative fill collapses the signal.",
+        "name": "The One Arc Rule",
+        "body": "Arc Blue appears on <=15% of any given screen. Its presence means interactive or selected. Using it as a decorative fill collapses the signal. When in doubt, use Muted and let the blue arrive on hover or focus.",
         "section": "colors"
       },
       {
-        "name": "The No-Pure-Black Rule",
-        "body": "#000 and #fff are forbidden. Every neutral is tinted toward hue 30 (chroma 0.005–0.009). The floor is Carbon Hearth; the ceiling is Off-White Steel.",
+        "name": "The No-Pure-Black/White Rule",
+        "body": "#000 and #fff are forbidden in every theme. Each neutral is tinted toward hue 265 (chroma 0.004-0.014). The Dark floor is Graphite Ground; the ceiling is Off-White.",
         "section": "colors"
       },
       {
         "name": "The Gold Quarantine Rule",
-        "body": "Ingot Gold is game-world only. It does not appear on buttons, links, focus rings, or any UI element.",
+        "body": "Ingot Gold is game-world only. It does not appear on buttons, links, focus rings, or any UI element. The same quarantine applies to the five element hues and to the eight in-game tooltip rarity colors.",
+        "section": "colors"
+      },
+      {
+        "name": "The Walled-Garden Rule",
+        "body": "The in-game tooltips are a sealed surface. Their pixel fonts, pure #0d0d0d ground, hardcoded rarity hex, and pixelated rendering live only inside the tooltip and never leak into the chrome; conversely, the --color-* tokens, Figtree/Barlow type, and theme system never reach inside the tooltip. The boundary is the point.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token-Resolved Rule",
+        "body": "Never hardcode a neutral or accent value in a component. Reference --color-* so the element re-tints across Dark, Midnight, and Light. A literal oklch() neutral baked into a component is a theming bug.",
         "section": "colors"
       },
       {
         "name": "The Mono-for-System Rule",
-        "body": "Any text that reads as output from the system — counts, coordinates, section labels, the logo — uses Geist Mono. Prose uses Figtree. Headings use Barlow Semi Condensed. These roles don't cross.",
+        "body": "Any text that reads as output from the system rather than communication to the user — counts, coordinates, section kickers, the logo — uses Geist Mono. Prose uses Figtree. Headings use Barlow Semi Condensed. These roles do not cross.",
         "section": "typography"
       },
       {
         "name": "The No-Decorative-Type Rule",
-        "body": "Barlow Semi Condensed does not appear at low weights. It ships at 600 minimum, 700–800 preferred.",
+        "body": "Barlow Semi Condensed ships at 600 minimum, 700-800 preferred. A condensed face at 300 weight is aesthetically incoherent with this system.",
         "section": "typography"
       },
       {
         "name": "The Flat-By-Default Rule",
-        "body": "No element casts a shadow at rest. Shadows and glows are purely state responses — hover, focus, elevation.",
+        "body": "No element casts a shadow at rest. Shadows and glows are state responses — hover, focus, float — only. A surface that glows at rest is broken.",
         "section": "elevation"
       },
       {
         "name": "The No-Lift Rule",
-        "body": "transform: translateY(-Xpx) is forbidden on hover for panels and cards. Horizontal nudge (translateX(3px) on arrow icons) is the permitted exception.",
+        "body": "transform: translateY(-Xpx) is forbidden on hover for panels, cards, and rows. The permitted exception is a horizontal nudge (translateX(3px)) on a chevron or arrow.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do tint every neutral toward hue 30. oklch(14% 0.006 30) is the floor; oklch(92% 0.004 30) is the ceiling.",
-      "Do use Forge Copper only on interactive, selected, or focused elements.",
-      "Do use Geist Mono for anything that reads as system output: counts, coordinates, section labels, the logo.",
-      "Do use Barlow Semi Condensed at weight 600 minimum.",
-      "Do cap body line length at 65ch.",
-      "Do use backdrop-blur + bg/90–95% opacity for floating map panels.",
-      "Do transition colors and background at 0.12–0.15s ease-out.",
-      "Do reserve Wynnic script decoration for hero sections at ≤5% opacity.",
-      "Do use prefers-reduced-motion: reduce to kill all transitions and animations unconditionally.",
-      "Do put focus rings at 2px solid Forge Copper with 2px offset on every interactive element."
+      "Do tint every neutral toward hue 265 and resolve it through a --color-* token so it re-tints across Dark, Midnight, and Light.",
+      "Do use Arc Blue only on interactive, selected, or focused elements (<=15% of a screen). If it appears decoratively at rest, remove it.",
+      "Do use Geist Mono for anything that reads as system output: counts, coordinates, section kickers, group rules, the logo.",
+      "Do use Barlow Semi Condensed at weight 600 minimum, 700-800 for hero and headings.",
+      "Do cap body line length at 65ch. Dense data UI does not mean dense reading columns.",
+      "Do reach for .tabs, .f-group, .f-input, .f-slider, and the kicker utility before hand-rolling a new variant of a control that already exists.",
+      "Do use backdrop-blur + a --color-* surface at 92-97% opacity with an accent/20 ring for every floating panel.",
+      "Do transition colors and background at 0.12-0.15s ease-out. Faster reads as broken; slower reads as laggy.",
+      "Do keep Wynnic decoration to the hero at <=5% opacity.",
+      "Do keep the in-game tooltips sealed: pixel fonts, pure #0d0d0d ground, per-rarity hex, and pixelated rendering stay inside the tooltip and render identically across all three themes.",
+      "Do put a 2px solid Arc Blue focus ring with 2px offset on every interactive element, and kill all motion under prefers-reduced-motion: reduce."
     ],
     "donts": [
-      "Don't use #000 or #fff. Every surface is tinted.",
-      "Don't use Ingot Gold (--color-gold) on UI elements. It's game-world context only.",
-      "Don't use a border-left greater than 1px as a colored accent stripe on cards, list items, or callouts.",
-      "Don't use gradient text (background-clip: text with a gradient). Use Forge Copper solid.",
-      "Don't use Glassmorphism decoratively. Backdrop-blur is structural only.",
-      "Don't use the hero-metric template (big number, small label, gradient accent).",
-      "Don't build identical icon-heading-text card grids.",
-      "Don't add parchment textures, medieval ornament, pixel art fonts, or anything that says 'this is a game' instead of 'this is a tool.'",
-      "Don't use crypto/NFT visual language: neon on black, blurry hero gradients, vague hype copy, orbital glows.",
-      "Don't use generic SaaS landing patterns: feature-icon grids, 'Ship faster' headlines, three-card feature rows.",
-      "Don't apply transform: translateY(-Xpx) to cards on hover.",
-      "Don't shadow elements at rest."
+      "Don't use #000 or #fff in any theme. Pure black or white reads immediately as foreign on a hue-265 ground.",
+      "Don't hardcode a neutral or accent oklch() value in a component. That breaks theming — reference the token.",
+      "Don't use Ingot Gold or the element hues on UI chrome. They are game-world semantics — item rarities, stat highlights, elemental glyphs — never buttons, links, or focus rings.",
+      "Don't use a border-left (or border-right) greater than 1px as a colored accent stripe on cards, rows, or callouts.",
+      "Don't use gradient text (background-clip: text with a gradient). Use solid Arc Blue; emphasize with weight or size.",
+      "Don't use glassmorphism decoratively. Backdrop-blur is structural — it belongs to floating panels in a layered environment, not to flat surfaces.",
+      "Don't use the hero-metric template (big number, small label, gradient accent). That is SaaS cliche territory.",
+      "Don't rebuild the landing tool rows as an identical icon-heading-text card grid. The borderless row with a trailing arrow is intentional.",
+      "Don't let the in-game tooltip aesthetic leak into the chrome (pixel fonts, #0d0d0d, rarity hex, pixelated edges) or apply --color-* tokens, the UI fonts, or the theme system inside a tooltip. The Walled-Garden boundary runs both ways.",
+      "Don't add parchment textures, medieval ornament, pixel art fonts, or anything that says 'this is a game' instead of 'this is a tool.' That is the hppeng-wynn / WynnData aesthetic this project replaces.",
+      "Don't use crypto/NFT visual language: neon on black, blurry hero gradients, vague hype copy ('the future of X'), orbital glows.",
+      "Don't use generic SaaS landing patterns: 'Ship faster' headlines, three-card feature rows, frosted-glass hero panels.",
+      "Don't apply transform: translateY(-Xpx) to cards or rows on hover. A horizontal nudge on a chevron or arrow is the only permitted movement.",
+      "Don't let any surface cast a shadow or glow at rest. Shadows and glows are state responses — hover, focus, float — not decoration."
     ]
   }
 }
