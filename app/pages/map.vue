@@ -21,6 +21,8 @@ import TerritoryLeaderboard from '~/components/map/TerritoryLeaderboard.vue'
 import TerritoryPopup from '~/components/map/TerritoryPopup.vue'
 import TerritoryToggle from '~/components/map/TerritoryToggle.vue'
 import Toast from '~/components/map/Toast.vue'
+import WorldEventPanel from '~/components/map/WorldEventPanel.vue'
+import WorldEventsStrip from '~/components/map/WorldEventsStrip.vue'
 import WorldPicker from '~/components/map/WorldPicker.vue'
 import ZoomControls from '~/components/map/ZoomControls.vue'
 import { detailFromFeature } from '~/composables/useFeatureDetails'
@@ -38,6 +40,7 @@ import { addRecent } from '~/composables/useRecents'
 import { buildIndexes } from '~/composables/useSearch'
 import { ensureTerritoryData } from '~/composables/useTerritoryData'
 import { useToast } from '~/composables/useToast'
+import { useWorldEvents } from '~/composables/useWorldEvents'
 import { useMapStore } from '~/stores/map'
 
 definePageMeta({ layout: 'map', ssr: false })
@@ -74,6 +77,10 @@ function markStep(id: string) {
 }
 const { push: pushToast } = useToast()
 const lootrunPanelOpen = ref(false)
+const eventsStripOpen = ref(true)
+const selectedEvent = ref<import('~/types/map').WorldEvent | null>(null)
+const eventsListMode = ref(false)
+const { events: worldEvents, loading: eventsLoading, error: eventsError } = useWorldEvents()
 const exploreOpen = ref(false)
 const mobileFiltersOpen = ref(false)
 const shortcutsOpen = ref(false)
@@ -320,20 +327,32 @@ watch(
 watch(
   () => store.focus,
   (f) => {
-    if (f)
+    if (f) {
       exploreOpen.value = false
+      selectedEvent.value = null
+      eventsListMode.value = false
+    }
   },
 )
 watch(lootrunPanelOpen, (v) => {
   if (v) {
     exploreOpen.value = false
     store.setFocus(null)
+    selectedEvent.value = null
+    eventsListMode.value = false
   }
 })
 watch(exploreOpen, (v) => {
   if (v) {
     lootrunPanelOpen.value = false
     store.setFocus(null)
+  }
+})
+watch(selectedEvent, (ev) => {
+  if (ev) {
+    store.setFocus(null)
+    servicePopup.value = null
+    territoryPopup.value = null
   }
 })
 
@@ -423,8 +442,40 @@ function onCursorMove(p: { x: number, z: number }) {
           <span v-if="inViewCount > 0" class="tabular-nums">{{ inViewCount }}</span>
           in view
         </MapNavBtn>
+
+        <!-- Events -->
+        <MapNavBtn
+          :active="eventsStripOpen"
+          :aria-pressed="eventsStripOpen"
+          @click="eventsStripOpen = !eventsStripOpen"
+        >
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+          <span v-if="worldEvents.length > 0" class="tabular-nums">{{ worldEvents.length }}</span>
+          Events
+        </MapNavBtn>
       </div>
     </header>
+
+    <WorldEventsStrip
+      v-if="eventsStripOpen"
+      :events="worldEvents"
+      :loading="eventsLoading"
+      :error="eventsError"
+      :selected-event="selectedEvent"
+      @select="selectedEvent = $event; eventsListMode = false"
+    />
 
     <!-- ── Map canvas ──────────────────────────────────── -->
     <div class="relative min-h-0 flex-1">
@@ -451,8 +502,17 @@ function onCursorMove(p: { x: number, z: number }) {
           :open="exploreOpen"
           @update:open="exploreOpen = $event"
         />
-        <MobileControls @open-filters="mobileFiltersOpen = true" />
+        <MobileControls
+          @open-filters="mobileFiltersOpen = true"
+          @open-events="eventsListMode = true; selectedEvent = null"
+        />
         <FocusPanel :detail="focusDetail" />
+        <WorldEventPanel
+          :event="selectedEvent"
+          :list-mode="eventsListMode"
+          :all-events="worldEvents"
+          @close="selectedEvent = null; eventsListMode = false"
+        />
         <IngredientDropPanel
           :ingredient="activeIngredient"
           :palette="ingredientPalette"

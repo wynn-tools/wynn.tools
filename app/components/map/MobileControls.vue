@@ -3,7 +3,7 @@ import { nextTick, ref } from 'vue'
 import WorldPicker from '~/components/map/WorldPicker.vue'
 import { useMapStore } from '~/stores/map'
 
-const emit = defineEmits<{ openFilters: [] }>()
+const emit = defineEmits<{ openFilters: [], openEvents: [] }>()
 const store = useMapStore()
 const open = ref(false)
 
@@ -204,6 +204,28 @@ async function onDragEnd() {
               @click="openFilters"
             >
               <span>Marker Filters</span>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+
+            <!-- World Events -->
+            <button
+              type="button"
+              class="flex items-center justify-between rounded-lg px-3 py-3 text-sm font-medium text-muted transition-colors hover:bg-card hover:text-text"
+              @click="open = false; emit('openEvents')"
+            >
+              <span>World Events</span>
               <svg
                 width="14"
                 height="14"
