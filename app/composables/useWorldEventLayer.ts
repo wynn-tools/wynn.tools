@@ -27,8 +27,8 @@ export function useWorldEventLayer(
     const icon = L.divIcon({
       className: '',
       html: '<div class="world-event-marker"></div>',
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
     })
 
     for (const event of events.value) {
