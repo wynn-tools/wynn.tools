@@ -3,11 +3,12 @@ import type { BuildContext, BuildResult } from './compute-build'
 import { slotItemId } from '../codec/build-codec'
 import { WEP_TO_CLASS } from '../codec/wep-to-class'
 import { POWDER_NAME_BY_ID } from '../data/powder-constants'
+import { itemIconUrl } from '../items/icon'
 
 export interface BuildMeta {
   level: number
   className: string
-  items: Array<{ slot: string, name: string, powders?: string }>
+  items: Array<{ slot: string, name: string, tier?: string | null, icon?: string | null, powders?: string }>
   dps: number
   ehp: number
 }
@@ -55,6 +56,8 @@ export function extractBuildMeta(
     return {
       slot: SLOT_LABELS[slot]!,
       name: isCrafted ? 'Crafted' : (isNone ? '—' : String(item!.displayName)),
+      tier: isCrafted ? 'Crafted' : (isNone ? null : String(item!.tier ?? 'Normal')),
+      icon: !isCrafted && !isNone ? itemIconUrl(item) : null,
       powders,
     }
   })

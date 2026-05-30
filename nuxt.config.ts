@@ -32,10 +32,6 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image', '@nuxt/icon'],
   ogImage: {
-    compatibility: {
-      dev: { satori: 'node', resvg: 'node' },
-      runtime: { satori: 'wasm', resvg: 'wasm' },
-    },
     defaults: {
       cacheMaxAgeSeconds: 60 * 60 * 24 * 365, // 1 year — OG images are immutable once generated
     },
@@ -53,6 +49,12 @@ export default defineNuxtConfig({
       { name: 'Barlow Semi Condensed', weights: [400, 500, 600, 700, 800], global: true },
       { name: 'Figtree', weights: [300, 400, 500, 600, 700], global: true },
       { name: 'Geist Mono', weights: [400, 500], global: true },
+      // Wynncraft pixel font for the OG image (Takumi) renderer. Fresh family
+      // name + matching public/fonts/wynncraftog.otf so @nuxt/fonts' local
+      // provider resolves it (the 'wynncraft' family is skipped because
+      // global.css already declares its @font-face). global:false — web keeps
+      // using the woff @font-face.
+      { name: 'WynncraftOg', provider: 'local', weights: [400], global: false },
     ],
   },
 })

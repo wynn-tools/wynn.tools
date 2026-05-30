@@ -117,20 +117,22 @@ function sepStyle() {
 
       <div v-if="dps != null || hp != null || elementalRows.length" class="bt-sep" :style="sepStyle()" />
 
-      <!-- Combat stats -->
+      <!-- Combat stats. HP leads (universal); Melee DPS is de-emphasized and
+           explicitly labelled, since it only reflects melee and misleads
+           spell-focused builds. -->
       <div v-if="dps != null || hp != null || elementalRows.length" class="bt-combat">
-        <p v-if="dps != null" class="bt-dps">
-          <span :style="{ color: theme.light }">{{ dps }}</span>
-          <span class="bt-dps-unit">DPS</span>
+        <p v-if="hp != null" class="bt-hp">
+          <span :style="{ color: theme.light }">{{ hp }}</span>
+          <span class="bt-hp-unit">HP</span>
         </p>
-        <div v-if="hp != null" class="bt-stat-row">
-          <span class="bt-muted">{{ hp }} HP</span>
-        </div>
         <div v-if="elementalRows.length" class="bt-el">
           <span v-for="el in elementalRows" :key="el.element" class="bt-el-item">
             <img :src="attributeUrl(el.element)" class="bt-attr" alt="" aria-hidden="true">
             <span :class="el.positive ? 'bt-positive' : 'bt-negative'">{{ el.value }}</span>
           </span>
+        </div>
+        <div v-if="dps != null" class="bt-stat-row">
+          <span class="bt-muted">{{ dps }} Melee DPS</span>
         </div>
       </div>
 
@@ -247,25 +249,25 @@ function sepStyle() {
   margin-top: 2px;
 }
 
-.bt-dps {
+.bt-hp {
   margin: 0;
   display: flex;
   align-items: baseline;
   gap: 6px;
 }
 
-.bt-dps span:first-child {
+.bt-hp span:first-child {
   font-size: 28px;
   line-height: 1;
 }
 
-.bt-dps-unit {
+.bt-hp-unit {
   font-size: 18px;
   color: #fcfcfc;
 }
 
 .bt-stat-row {
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 16px;
 }
 
