@@ -12,6 +12,7 @@
 
 import type { RawBuild } from '../codec/build-codec'
 import type { RawMajorIdData } from '../data/cdn-adapter/majid-adapter'
+import type { BuildBoosts } from '../math/boosts'
 import type { DefenseStats } from '../math/defense'
 import type { MeleeDps } from '../math/dps'
 import type { StatMap } from '../math/merge-stat'
@@ -29,6 +30,7 @@ import { applyAtreePropBonuses, collectAtreeRawStats } from '../atree/raw-stats'
 import { collectAtreeSpells } from '../atree/spell-collect'
 import { collectAtreeStatScaling } from '../atree/stat-scaling'
 import { WEP_TO_CLASS } from '../codec/wep-to-class'
+import { applyBoostMultipliers, applyRadiance } from '../math/boosts'
 import { aggregateBuildStats } from '../math/build-stats'
 import { SKP_ORDER } from '../math/constants'
 import { computeDefenseStats } from '../math/defense'
@@ -107,7 +109,7 @@ export interface BuildResult {
  *  7. computeSpellParts(melee, stats, weapon) + computeMeleeDps
  *  8. computeDefenseStats(stats) → defense
  */
-export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult {
+export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: BuildBoosts): BuildResult {
   const { rawItemIndex, sets, atreeData } = ctx
 
   // Step 1: resolve items
@@ -146,6 +148,11 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
     const skp = SKP_ORDER[i]!
     stats.set(skp, rawBuild.sp?.[i] ?? finalSkillpoints[i]!)
   }
+
+  // Radiance scaling (boosts): scales item stats + item skillpoints before the
+  // ability tree merges in. Faithful to WynnBuilder's pre_scale_agg → radiance_node.
+  if (boosts)
+    applyRadiance(stats, skp.totalItemSkillpoints, boosts)
 
   // Step 5: atree — resolve class and merge tree
   const weaponType = weapon.get('type') as string
@@ -245,6 +252,11 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   const atreeScaled = collectAtreeStatScaling(merged, stats)
   for (const [name, value] of atreeScaled)
     mergeStat(stats, name, value)
+
+  // Toggle + element-slider multipliers (boosts): merged after atree raw stats,
+  // before spells see the stat map. Faithful to WynnBuilder's boosts_node.
+  if (boosts)
+    applyBoostMultipliers(stats, boosts)
 
   // Step 6: collect spells
   const effectiveWeaponType = cls !== undefined ? weaponType : 'dagger' // fallback for default spells

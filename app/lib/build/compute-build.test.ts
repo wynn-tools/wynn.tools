@@ -1,4 +1,5 @@
 import type { RawBuild } from '../codec/build-codec'
+import type { BoostId } from '../math/boosts'
 import type { AtreeData } from '../types/atree'
 // app/lib/build/compute-build.test.ts
 import { describe, expect, it } from 'vitest'
@@ -125,5 +126,27 @@ describe('computeBuild (synthetic)', () => {
     const ctx = makeBuildContext()
     // atreeData with empty array is already default — just ensure no throw
     expect(() => computeBuild(rawBuild, ctx)).not.toThrow()
+  })
+})
+
+describe('computeBuild with boosts', () => {
+  it('injects boost multipliers into stats', () => {
+    const rawBuild = makeRawBuild()
+    const ctx = makeBuildContext()
+    const result = computeBuild(rawBuild, ctx, {
+      toggles: new Set<BoostId>(['fortitude', 'judgement']),
+      elemDmg: [0, 0, 0, 0, 0],
+    })
+    const damMult = result.stats.get('damMult') as Map<string, number>
+    expect(damMult.get('Potion')).toBe(40)
+    expect(damMult.get('Judgement')).toBe(20)
+  })
+
+  it('omitting boosts leaves boost-only multipliers unset (no-op identity)', () => {
+    const rawBuild = makeRawBuild()
+    const ctx = makeBuildContext()
+    const result = computeBuild(rawBuild, ctx)
+    const damMult = result.stats.get('damMult') as Map<string, number> | undefined
+    expect(damMult?.get('Judgement')).toBeUndefined()
   })
 })
