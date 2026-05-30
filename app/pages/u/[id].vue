@@ -27,10 +27,21 @@ function avatarUrl(discordId: string, avatar: string) {
   return `https://cdn.discordapp.com/avatars/${discordId}/${avatar}.webp?size=80`
 }
 
+const seoTitle = computed(() =>
+  profile.value ? `${profile.value.name} — wynn.tools` : 'User Profile — wynn.tools',
+)
+const seoDesc = computed(() =>
+  profile.value
+    ? profile.value.bio || `View ${profile.value.name}'s builds and items on wynn.tools.`
+    : 'View this user\'s builds and items on wynn.tools.',
+)
+
 useSeoMeta({
-  title: computed(() =>
-    profile.value ? `${profile.value.name} — wynn.tools` : 'User Profile — wynn.tools',
-  ),
+  title: seoTitle,
+  ogTitle: seoTitle,
+  description: seoDesc,
+  ogDescription: seoDesc,
+  twitterCard: 'summary_large_image',
 })
 
 type Tab = 'builds' | 'items'
