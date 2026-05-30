@@ -41,6 +41,7 @@ const showAtree = ref(true)
           <SkillpointPanel />
           <EquipmentGrid />
           <TomePanel />
+          <BoostPanel />
           <BuildSummary />
         </section>
 

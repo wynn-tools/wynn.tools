@@ -66,15 +66,18 @@ watch(
       delete query.edmg
     router.replace({ query })
   },
-  { deep: true },
 )
 
-// Hydrate store from URL on mount (shared links reproduce boosts).
-onMounted(() => {
-  const b = deserializeBoosts(queryStr('boosts'), queryStr('edmg'))
-  if (!boostsAreEmpty(b))
-    store.setBoosts(b)
-})
+// Hydrate the store from the URL query — on mount and whenever the build hash
+// changes. The builder page uses a stable key (definePageMeta key: 'builder')
+// and never remounts on build navigation, so without re-syncing here the boosts
+// from one build would silently carry into the next. Always setting (even to an
+// empty object) means navigating to a build with no boost params resets cleanly.
+function syncFromQuery() {
+  store.setBoosts(deserializeBoosts(queryStr('boosts'), queryStr('edmg')))
+}
+onMounted(syncFromQuery)
+watch(() => route.params.hash, syncFromQuery)
 
 function onSlider(i: number, e: Event) {
   store.setElemDmg(i, Number.parseFloat((e.target as HTMLInputElement).value) || 0)
