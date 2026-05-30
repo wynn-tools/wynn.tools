@@ -180,6 +180,34 @@ export function isCost(key: string): boolean {
 /** Every known identification key (for filter dropdowns). */
 export const allIdentificationKeys: string[] = Object.keys(IDENTIFICATION_MAP)
 
+// Precompute which labels are shared by multiple keys (used for disambiguation).
+const _labelCollisions = new Set<string>()
+const _labelCount: Record<string, number> = {}
+for (const { label } of Object.values(IDENTIFICATION_MAP)) {
+  _labelCount[label] = (_labelCount[label] ?? 0) + 1
+  if (_labelCount[label] > 1)
+    _labelCollisions.add(label)
+}
+
+/**
+ * Disambiguation suffix for filter dropdowns. Returns a label with a "(raw)",
+ * "(%)", or "(base)" suffix when multiple keys share the same base label.
+ * humanizeField is left unchanged for tooltips/changelogs.
+ */
+export function filterLabel(key: string): string {
+  const entry = IDENTIFICATION_MAP[key]
+  const { label, unit } = entry ?? { label: camelToTitle(key), unit: '' }
+  if (!_labelCollisions.has(label))
+    return label
+  if (unit === '%')
+    return `${label} (%)`
+  if (key.startsWith('raw'))
+    return `${label} (raw)`
+  if (key.startsWith('base'))
+    return `${label} (base)`
+  return label
+}
+
 /** Cost-type ids invert the good/bad direction (lower is better). */
 export function isInverted(key: string): boolean {
   return isCost(key)

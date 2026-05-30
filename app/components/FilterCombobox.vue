@@ -16,14 +16,19 @@ const listId = `cb-list-${Math.random().toString(36).slice(2, 8)}`
 // Position of the teleported dropdown in viewport coordinates. Recomputed on
 // open, scroll (capturing), and resize while open — keeps the list anchored
 // to the field even when an ancestor scrolls.
-const listPos = ref<{ top: number, left: number, width: number } | null>(null)
+const LIST_MAX_HEIGHT = 220
+const listPos = ref<{ top?: number, bottom?: number, left: number, width: number } | null>(null)
 
 function updateListPos() {
   const el = fieldRef.value
   if (!el)
     return
   const r = el.getBoundingClientRect()
-  listPos.value = { top: r.bottom + 4, left: r.left, width: r.width }
+  const spaceBelow = window.innerHeight - r.bottom
+  if (spaceBelow < LIST_MAX_HEIGHT)
+    listPos.value = { bottom: window.innerHeight - r.top + 4, left: r.left, width: r.width }
+  else
+    listPos.value = { top: r.bottom + 4, left: r.left, width: r.width }
 }
 
 watch(isOpen, (open) => {
@@ -180,7 +185,8 @@ function onBlur() {
         class="cb-list"
         role="listbox"
         :style="{
-          top: `${listPos.top}px`,
+          top: listPos.top != null ? `${listPos.top}px` : undefined,
+          bottom: listPos.bottom != null ? `${listPos.bottom}px` : undefined,
           left: `${listPos.left}px`,
           minWidth: `${listPos.width}px`,
         }"

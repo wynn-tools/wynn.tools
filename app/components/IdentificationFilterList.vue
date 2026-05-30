@@ -1,14 +1,30 @@
 <script setup lang="ts">
 import type { IdFilter, IdSort } from '~/lib/items-search/types'
-import { allIdentificationKeys, humanizeField } from '~/lib/data/identifications'
+import { allIdentificationKeys, filterLabel } from '~/lib/data/identifications'
 
 const model = defineModel<{ identifications: IdFilter[], idSorts: IdSort[] }>({ required: true })
 
-const options = allIdentificationKeys
-  .map(key => ({ key, label: humanizeField(key).label }))
+const _options = allIdentificationKeys
+  .map(key => ({ key, label: filterLabel(key) }))
   .sort((a, b) => a.label.localeCompare(b.label))
 
+const labelToKey = Object.fromEntries(_options.map(o => [o.label, o.key]))
+
 const ids = computed(() => model.value.identifications)
+
+const availableLabels = computed(() =>
+  _options.filter(o => !ids.value.some(f => f.key === o.key)).map(o => o.label),
+)
+
+const addModel = ref<string | null>(null)
+watch(addModel, (v) => {
+  if (!v)
+    return
+  const key = labelToKey[v]
+  if (key)
+    addRow(key)
+  addModel.value = null
+})
 
 function update(identifications: IdFilter[], idSorts: IdSort[]) {
   model.value = { identifications, idSorts }
@@ -44,7 +60,7 @@ function toggleSort(key: string) {
   update(ids.value, idSorts)
 }
 function label(key: string) {
-  return humanizeField(key).label
+  return filterLabel(key)
 }
 function sortDir(key: string) {
   return model.value.idSorts.find(s => s.key === key)?.dir ?? null
@@ -53,14 +69,12 @@ function sortDir(key: string) {
 
 <template>
   <div class="idlist">
-    <select class="idlist-add" @change="addRow(($event.target as HTMLSelectElement).value); ($event.target as HTMLSelectElement).value = ''">
-      <option value="">
-        + Add identification…
-      </option>
-      <option v-for="o in options" :key="o.key" :value="o.key">
-        {{ o.label }}
-      </option>
-    </select>
+    <FilterCombobox
+      v-if="availableLabels.length"
+      v-model="addModel"
+      :options="availableLabels"
+      placeholder="+ Add identification…"
+    />
     <ul class="idlist-rows">
       <li v-for="f in ids" :key="f.key" class="idlist-row">
         <span class="idlist-label">{{ label(f.key) }}</span>
@@ -83,14 +97,6 @@ function sortDir(key: string) {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-.idlist-add {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 6px 8px;
-  color: var(--color-text);
-  font-size: 12px;
 }
 .idlist-rows {
   list-style: none;
