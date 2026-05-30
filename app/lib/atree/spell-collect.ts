@@ -74,10 +74,18 @@ export function collectAtreeSpells(merged: Map<number, MergedAbility>, weaponTyp
         continue
       const converted = convertReplaceSpell(effect as Raw, merged)
       const existing = spells.get(converted.baseSpell)
-      if (existing)
-        Object.assign(existing, converted)
-      else
+      if (existing) {
+        // Copy only keys the replacement actually defines, mirroring WynnBuilder's
+        // `for (key in effect)` merge. A replace_spell that omits `cost` (e.g. Ophanim)
+        // must preserve the base spell's cost rather than clobber it with undefined.
+        for (const [key, value] of Object.entries(converted)) {
+          if (value !== undefined)
+            (existing as Record<string, unknown>)[key] = value
+        }
+      }
+      else {
         spells.set(converted.baseSpell, converted)
+      }
     }
   }
 

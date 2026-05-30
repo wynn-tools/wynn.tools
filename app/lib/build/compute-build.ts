@@ -158,15 +158,55 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
     }
   }
 
+  // Collect aspect tier abilities active for this build's class. Each selected
+  // aspect contributes its chosen tier's abilities (e.g. +num_orbs), merged like
+  // atree nodes via base_abil. Mirrors WynnBuilder's atree aspect loop.
+  const aspectAbilities: AtreeAbility[] = []
+  if (cls !== undefined && ctx.aspectData) {
+    const classAspects = ctx.aspectData[cls]
+    if (classAspects) {
+      const activeNodes = new Set(rawBuild.activeAtree)
+      const aspectById = new Map(classAspects.map(a => [a.id, a]))
+      for (const slot of rawBuild.aspects) {
+        if (slot === null)
+          continue
+        const [id, tier] = slot
+        const aspect = aspectById.get(id)
+        const tierEntry = aspect?.tiers[tier - 1]
+        if (!aspect || !tierEntry?.abilities)
+          continue
+        for (const abil of tierEntry.abilities) {
+          // Dependency gate: every referenced node must be actively selected.
+          if (abil.dependencies && !abil.dependencies.every(d => activeNodes.has(d)))
+            continue
+          aspectAbilities.push({
+            id: -1,
+            display_name: aspect.displayName,
+            desc: '',
+            parents: [],
+            dependencies: [],
+            blockers: [],
+            cost: 0,
+            base_abil: abil.base_abil,
+            properties: abil.properties ?? {},
+            effects: abil.effects ?? [],
+          })
+        }
+      }
+    }
+  }
+
+  const extraAbilities = [...majorIdAbilities, ...aspectAbilities]
+
   let merged: Map<number, import('../atree/effect-types').MergedAbility>
   if (cls === undefined) {
     // Unknown weapon type — seed default melee only (no class tree)
-    merged = mergeAtree([], new Map(), '', majorIdAbilities)
+    merged = mergeAtree([], new Map(), '', extraAbilities)
   }
   else {
     const sorted = getSortedClassAtree(atreeData, cls)
     const selection = new Map(rawBuild.activeAtree.map(id => [id, true] as [number, boolean]))
-    merged = mergeAtree(sorted, selection, cls, majorIdAbilities)
+    merged = mergeAtree(sorted, selection, cls, extraAbilities)
   }
 
   // Merge atree raw stats into the build stats (additive, faithfully after editAgg)

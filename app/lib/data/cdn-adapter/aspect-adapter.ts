@@ -11,9 +11,18 @@ interface NormalizedText {
   [key: string]: unknown
 }
 
+interface CdnAspectAbility {
+  base_abil: number
+  properties?: Record<string, number>
+  effects?: unknown[]
+  dependencies?: number[]
+}
+
 interface CdnAspectTier {
   threshold: number
   description: NormalizedText[]
+  /** Game-mechanics; present only on backfilled snapshots. */
+  abilities?: CdnAspectAbility[]
 }
 
 export interface CdnAspect {
@@ -36,6 +45,7 @@ export function adaptCdnAspects(file: { aspects: CdnAspect[] }): Aspect[] {
     tiers: a.tiers.map(t => ({
       threshold: t.threshold,
       description: t.description.map(n => n.text).join(''),
+      ...(t.abilities !== undefined ? { abilities: t.abilities } : {}),
     })),
   }))
 }
