@@ -53,6 +53,21 @@ describe('applyRadiance', () => {
     expect(stats.get('sdPct')).toBe(10)
     expect(stats.get('str')).toBeUndefined()
   })
+  it('scales raw + elemental damage stats from the full whitelist', () => {
+    const stats: StatMap = new Map([['sdRaw', 100], ['eDamPct', 20], ['critDamPct', 30]])
+    applyRadiance(stats, [0, 0, 0, 0, 0], mk(['radiance'])) // 1.15
+    // Floored like WynnBuilder's Math.floor(stat * boost); 100*1.15 is
+    // 114.999… in IEEE-754 → 114, matching the reference exactly.
+    expect(stats.get('sdRaw')).toBe(114)
+    expect(stats.get('eDamPct')).toBe(23)
+    expect(stats.get('critDamPct')).toBe(34)
+  })
+  it('scales reversed-id spell-cost stats on the negative branch only', () => {
+    const stats: StatMap = new Map([['spRaw1', -10], ['spRaw2', 10]])
+    applyRadiance(stats, [0, 0, 0, 0, 0], mk(['judgement'])) // 1.4
+    expect(stats.get('spRaw1')).toBe(-14) // floor(-10*1.4)=-14 (more cost reduction)
+    expect(stats.get('spRaw2')).toBe(10) // positive reversed-id untouched
+  })
 })
 
 describe('applyBoostMultipliers', () => {
