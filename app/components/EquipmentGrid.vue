@@ -38,9 +38,6 @@ const SLOT_LABELS = [
   'Weapon',
 ] as const
 
-// Compact display labels for the slot cards
-const SLOT_DISPLAY = ['Helm', 'Chest', 'Legs', 'Boots', 'Ring', 'Ring', 'Brace', 'Neck', 'Wpn'] as const
-
 // CSS grid-area names — see .equipment-grid template-areas below
 const SLOT_AREAS = ['helmet', 'chest', 'legs', 'boots', 'ring1', 'ring2', 'bracelet', 'necklace', 'weapon'] as const
 
@@ -169,11 +166,11 @@ const powderSlotMax = computed(() =>
                 aria-hidden="true"
                 alt=""
               >
+              <span v-else class="slot-icon slot-icon--empty" aria-hidden="true" />
               <div class="slot-body">
                 <div class="slot-head">
-                  <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
                   <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-                    {{ itemName(idx) }}
+                    {{ itemName(idx) === 'Empty' ? label : itemName(idx) }}
                   </span>
                 </div>
                 <button
@@ -238,11 +235,11 @@ const powderSlotMax = computed(() =>
             aria-hidden="true"
             alt=""
           >
+          <span v-else class="slot-icon slot-icon--empty" aria-hidden="true" />
           <div class="slot-body">
             <div class="slot-head">
-              <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
               <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-                {{ itemName(idx) }}
+                {{ itemName(idx) === 'Empty' ? label : itemName(idx) }}
               </span>
             </div>
             <button
@@ -371,24 +368,23 @@ const powderSlotMax = computed(() =>
   object-fit: contain;
 }
 
-.slot-label {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-  flex-shrink: 0;
-  min-width: 28px;
+/* Empty slot: dashed placeholder keeps the left edge aligned with filled rows
+   and reads as "drop an item here". */
+.slot-icon--empty {
+  border: 1px dashed var(--color-border);
+  border-radius: 4px;
+  transition: border-color 0.12s;
 }
-
-.slot--active .slot-label {
-  color: var(--color-copper);
+.slot:hover .slot-icon--empty {
+  border-color: var(--color-muted);
+}
+.slot--active .slot-icon--empty {
+  border-color: var(--color-copper);
 }
 
 .slot-name {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text);
   flex: 1;
   min-width: 0;
@@ -398,8 +394,7 @@ const powderSlotMax = computed(() =>
 }
 
 .slot-name--empty {
-  color: var(--color-faint);
-  font-style: italic;
+  color: var(--color-muted);
 }
 
 .powder-chips {
