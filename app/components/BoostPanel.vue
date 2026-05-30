@@ -120,7 +120,7 @@ function onSlider(i: number, e: Event) {
     </div>
 
     <div class="sliders">
-      <span class="sliders-head">Manual damage %</span>
+      <span class="sliders-head">Armor Powder Damage Boost</span>
       <label v-for="(el, i) in ELEMENTS" :key="el.label" class="slider">
         <span class="slider-name" :style="{ color: el.color }">{{ el.label }}</span>
         <input
