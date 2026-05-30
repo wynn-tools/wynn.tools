@@ -26,6 +26,7 @@ import { getSortedClassAtree } from '../atree/build-atree'
 import { mergeAtree } from '../atree/merge'
 import { applyAtreePropBonuses, collectAtreeRawStats } from '../atree/raw-stats'
 import { collectAtreeSpells } from '../atree/spell-collect'
+import { collectAtreeStatScaling } from '../atree/stat-scaling'
 import { WEP_TO_CLASS } from '../codec/wep-to-class'
 import { aggregateBuildStats } from '../math/build-stats'
 import { SKP_ORDER } from '../math/constants'
@@ -177,6 +178,13 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext): BuildResult
   // Apply raw_stat prop bonuses back onto ability properties (mirrors atree_scaling in WynnBuilder).
   // This makes property references like "9.num_totems" in spell hits resolve to the upgraded value.
   applyAtreePropBonuses(merged)
+
+  // Apply always-on stat_scaling effects (e.g. Seance: lifesteal → +Spell Damage %).
+  // Reads the post-raw_stat stats as WynnBuilder's pre-scale snapshot, then folds
+  // the stat outputs in. Runs before spell collection so prop outputs are visible.
+  const atreeScaled = collectAtreeStatScaling(merged, stats)
+  for (const [name, value] of atreeScaled)
+    mergeStat(stats, name, value)
 
   // Step 6: collect spells
   const effectiveWeaponType = cls !== undefined ? weaponType : 'dagger' // fallback for default spells
