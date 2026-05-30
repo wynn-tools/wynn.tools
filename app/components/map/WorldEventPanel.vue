@@ -120,7 +120,7 @@ const LENGTH_LABEL: Record<WorldEvent['length'], string> = {
           <MapCloseBtn aria-label="Close events" @click="emit('close')" />
         </header>
         <ul class="space-y-1">
-          <li v-for="ev in allEvents" :key="ev.internalName">
+          <li v-for="ev in (allEvents ?? [])" :key="ev.internalName">
             <button
               type="button"
               class="w-full rounded-lg px-3 py-2 text-left transition-colors hover:bg-surface"
