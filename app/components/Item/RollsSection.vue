@@ -189,7 +189,7 @@ const displayQuality = computed(() => `${quality.value}%`)
   padding: 5px 10px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: oklch(14% 0.006 30 / 0.5);
+  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
   font-size: 13px;
 }
 .cost-icon {
@@ -209,7 +209,7 @@ const displayQuality = computed(() => `${quality.value}%`)
 
 /* Simulator */
 .sim-panel {
-  background: oklch(14% 0.006 30 / 0.5);
+  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 12px 14px;
@@ -353,11 +353,11 @@ const displayQuality = computed(() => `${quality.value}%`)
   top: -3px;
   width: 1px;
   height: 10px;
-  background: oklch(50% 0.008 30);
+  background: var(--color-faint);
   pointer-events: none;
 }
 .bar-marker--2 {
-  background: oklch(60% 0.008 30);
+  background: var(--color-muted);
 }
 
 @media (max-width: 720px) {

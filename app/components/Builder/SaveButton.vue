@@ -250,7 +250,7 @@ function dismiss() {
 
 .save-btn--active {
   color: var(--color-accent);
-  border-color: oklch(65% 0.15 48 / 0.4);
+  border-color: color-mix(in oklch, var(--color-accent) 40%, transparent);
 }
 
 .save-btn:not(:disabled):hover {
@@ -348,7 +348,7 @@ function dismiss() {
 }
 
 .popover-input:focus {
-  border-color: oklch(65% 0.15 48 / 0.55);
+  border-color: color-mix(in oklch, var(--color-accent) 55%, transparent);
 }
 
 .vis-row {
@@ -383,8 +383,8 @@ function dismiss() {
 
 .vis-btn--on {
   color: var(--color-accent);
-  border-color: oklch(65% 0.15 48 / 0.5);
-  background: oklch(65% 0.15 48 / 0.06);
+  border-color: color-mix(in oklch, var(--color-accent) 50%, transparent);
+  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
 }
 
 .vis-btn--on:hover:not(:disabled) {
@@ -404,7 +404,7 @@ function dismiss() {
   text-transform: uppercase;
   color: var(--color-accent);
   background: transparent;
-  border: 1px solid oklch(65% 0.15 48 / 0.4);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 40%, transparent);
   border-radius: 5px;
   padding: 7px 12px;
   cursor: pointer;

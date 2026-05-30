@@ -118,8 +118,8 @@ const source = computed(() => {
   border-radius: 3px;
 }
 .card-source--raid {
-  color: oklch(65% 0.15 48);
-  background: oklch(65% 0.15 48 / 0.1);
+  color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-accent) 10%, transparent);
 }
 .card-source--guild {
   color: oklch(72% 0.12 150);

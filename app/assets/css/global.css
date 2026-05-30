@@ -62,19 +62,23 @@
 }
 
 @theme {
-  /* ── Neutrals (hue 30 — near-neutral, very slight warm cast) ── */
-  --color-bg: oklch(14% 0.006 30);
-  --color-surface: oklch(19% 0.008 30);
-  --color-surface-hi: oklch(24% 0.009 30);
-  --color-border: oklch(26% 0.008 30);
-  --color-faint: oklch(36% 0.007 30);
-  --color-muted: oklch(58% 0.008 30);
-  --color-text: oklch(92% 0.004 30);
+  /* ── Neutrals (hue 265 — cool graphite, default dark theme) ──
+     Theme values live here as the default (dark). Other themes override the
+     same --color-* names under :root[data-theme='…'] in the base layer below,
+     and every utility/literal resolves through these tokens so the whole UI
+     re-tints on theme change. */
+  --color-bg: oklch(16% 0.008 265);
+  --color-surface: oklch(21% 0.01 265);
+  --color-surface-hi: oklch(26% 0.012 265);
+  --color-border: oklch(40% 0.014 265);
+  --color-faint: oklch(62% 0.014 265);
+  --color-muted: oklch(72% 0.012 265);
+  --color-text: oklch(95% 0.004 265);
 
-  /* ── Accent: copper-bronze ── */
-  --color-accent: oklch(65% 0.15 48);
-  --color-accent-dim: oklch(52% 0.12 48);
-  --color-accent-glow: oklch(65% 0.15 48 / 0.15);
+  /* ── Accent: cool blue ── */
+  --color-accent: oklch(68% 0.16 245);
+  --color-accent-dim: oklch(56% 0.13 245);
+  --color-accent-glow: oklch(68% 0.16 245 / 0.15);
 
   /* ── Gold: item rarities, stat highlights ── */
   --color-gold: oklch(78% 0.14 75);
@@ -107,6 +111,45 @@
   --shell-max: 1800px;
 }
 
+/* ── Theme overrides ───────────────────────────────────────────────────
+   Dark (cool graphite) is the default, defined in @theme above. Each block
+   below re-points the same --color-* tokens, so every utility, color-mix
+   tint, and component restyles itself when html[data-theme] changes. The
+   pre-paint script in nuxt.config sets the attribute before first paint. */
+
+/* Midnight — near-black OLED variant, same cool blue accent. */
+:root[data-theme='midnight'] {
+  --color-bg: oklch(9% 0.006 265);
+  --color-surface: oklch(13% 0.008 265);
+  --color-surface-hi: oklch(17% 0.01 265);
+  --color-border: oklch(33% 0.012 265);
+  --color-faint: oklch(60% 0.014 265);
+  --color-muted: oklch(70% 0.012 265);
+  --color-text: oklch(94% 0.004 265);
+  --color-accent: oklch(70% 0.16 245);
+  --color-accent-dim: oklch(58% 0.13 245);
+  --color-accent-glow: oklch(70% 0.16 245 / 0.15);
+}
+
+/* Light — cool near-white. Neutrals invert (low lightness = prominent), and
+   game-world gold darkens so item rarities stay legible on white. */
+:root[data-theme='light'] {
+  --color-bg: oklch(96.5% 0.004 265);
+  --color-surface: oklch(99.5% 0.002 265);
+  --color-surface-hi: oklch(94% 0.006 265);
+  --color-border: oklch(82% 0.011 265);
+  --color-faint: oklch(47% 0.022 265);
+  --color-muted: oklch(40% 0.022 265);
+  --color-text: oklch(24% 0.018 265);
+  --color-accent: oklch(56% 0.18 245);
+  --color-accent-dim: oklch(48% 0.15 245);
+  --color-accent-glow: oklch(56% 0.18 245 / 0.14);
+
+  --color-gold: oklch(58% 0.13 75);
+  --color-gold-dim: oklch(50% 0.11 75);
+  --color-copper: oklch(58% 0.13 75);
+}
+
 @utility pixelated {
   image-rendering: pixelated;
 }
@@ -122,26 +165,26 @@
 }
 
 @utility shadow-accent-sm {
-  box-shadow: 0 0 16px oklch(65% 0.15 48 / 0.18);
+  box-shadow: 0 0 16px color-mix(in oklch, var(--color-accent) 18%, transparent);
 }
 
 @utility shadow-accent-md {
-  box-shadow: 0 0 32px oklch(65% 0.15 48 / 0.28);
+  box-shadow: 0 0 32px color-mix(in oklch, var(--color-accent) 28%, transparent);
 }
 
 @utility shadow-accent-lg {
-  box-shadow: 0 0 56px oklch(65% 0.15 48 / 0.4);
+  box-shadow: 0 0 56px color-mix(in oklch, var(--color-accent) 40%, transparent);
 }
 
 /* Legacy alias — existing components using --color-copper still work */
 @utility shadow-copper-sm {
-  box-shadow: 0 0 16px oklch(62% 0.11 42 / 0.2);
+  box-shadow: 0 0 16px oklch(62% 0.11 245 / 0.2);
 }
 @utility shadow-copper-md {
-  box-shadow: 0 0 32px oklch(62% 0.11 42 / 0.32);
+  box-shadow: 0 0 32px oklch(62% 0.11 245 / 0.32);
 }
 @utility shadow-copper-lg {
-  box-shadow: 0 0 56px oklch(62% 0.11 42 / 0.45);
+  box-shadow: 0 0 56px oklch(62% 0.11 245 / 0.45);
 }
 
 @layer base {
@@ -237,7 +280,7 @@
 
   .tabs button.on {
     color: var(--color-accent);
-    background: oklch(65% 0.15 48 / 0.08);
+    background: color-mix(in oklch, var(--color-accent) 8%, transparent);
   }
 
   .tabs button:focus-visible {
@@ -305,7 +348,7 @@
   .f-group button.on {
     color: var(--color-accent);
     border-color: var(--color-accent);
-    background: oklch(65% 0.15 48 / 0.08);
+    background: color-mix(in oklch, var(--color-accent) 8%, transparent);
   }
 
   .f-group button:focus-visible {
@@ -357,7 +400,7 @@
   .f-slider-range {
     position: absolute;
     height: 100%;
-    background: oklch(65% 0.15 48 / 0.7);
+    background: color-mix(in oklch, var(--color-accent) 70%, transparent);
   }
 
   .f-slider-thumb {
@@ -365,7 +408,7 @@
     height: 14px;
     width: 14px;
     border-radius: 9999px;
-    border: 1px solid oklch(65% 0.15 48 / 0.6);
+    border: 1px solid color-mix(in oklch, var(--color-accent) 60%, transparent);
     background: var(--color-bg);
     box-shadow: 0 1px 4px oklch(0% 0 0 / 0.3);
     transition: border-color 0.12s ease-out;
@@ -374,7 +417,7 @@
 
   .f-slider-thumb:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px oklch(65% 0.15 48 / 0.5);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent) 50%, transparent);
     border-color: var(--color-accent);
   }
 
@@ -462,7 +505,7 @@
     color: var(--color-accent);
     text-decoration: none;
     padding: 6px 12px;
-    border: 1px solid oklch(65% 0.15 48 / 0.35);
+    border: 1px solid color-mix(in oklch, var(--color-accent) 35%, transparent);
     border-radius: 6px;
     white-space: nowrap;
     flex-shrink: 0;
@@ -473,7 +516,7 @@
 
   .page-cta:hover {
     border-color: var(--color-accent);
-    background: oklch(65% 0.15 48 / 0.06);
+    background: color-mix(in oklch, var(--color-accent) 6%, transparent);
   }
 
   .page-cta:focus-visible {
@@ -635,26 +678,26 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: oklch(62% 0.11 48);
+  background: var(--color-accent-dim);
   cursor: pointer;
   animation: world-event-pulse 2s ease-out infinite;
 }
 
 @keyframes world-event-pulse {
   0% {
-    box-shadow: 0 0 0 0 oklch(62% 0.11 48 / 0.6);
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-accent-dim) 60%, transparent);
   }
   70% {
-    box-shadow: 0 0 0 10px oklch(62% 0.11 48 / 0);
+    box-shadow: 0 0 0 10px transparent;
   }
   100% {
-    box-shadow: 0 0 0 0 oklch(62% 0.11 48 / 0);
+    box-shadow: 0 0 0 0 transparent;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .world-event-marker {
     animation: none;
-    box-shadow: 0 0 0 2px oklch(62% 0.11 48 / 0.4);
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent-dim) 40%, transparent);
   }
 }

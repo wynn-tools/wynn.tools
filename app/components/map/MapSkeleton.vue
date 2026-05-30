@@ -237,19 +237,19 @@ const zones = [
         fill="none"
         aria-hidden="true"
       >
-        <circle cx="32" cy="32" r="28" stroke="oklch(62% 0.11 42 / 0.35)" stroke-width="1.5" />
-        <circle cx="32" cy="32" r="20" stroke="oklch(62% 0.11 42 / 0.2)" stroke-width="1" />
+        <circle cx="32" cy="32" r="28" stroke="oklch(62% 0.11 245 / 0.35)" stroke-width="1.5" />
+        <circle cx="32" cy="32" r="20" stroke="oklch(62% 0.11 245 / 0.2)" stroke-width="1" />
         <!-- Compass arms -->
-        <line x1="32" y1="8" x2="32" y2="56" stroke="oklch(62% 0.11 42 / 0.15)" stroke-width="0.75" />
-        <line x1="8" y1="32" x2="56" y2="32" stroke="oklch(62% 0.11 42 / 0.15)" stroke-width="0.75" />
+        <line x1="32" y1="8" x2="32" y2="56" stroke="oklch(62% 0.11 245 / 0.15)" stroke-width="0.75" />
+        <line x1="8" y1="32" x2="56" y2="32" stroke="oklch(62% 0.11 245 / 0.15)" stroke-width="0.75" />
         <!-- North pointer -->
-        <polygon points="32,12 29,26 32,23 35,26" fill="oklch(62% 0.11 42 / 0.9)" />
+        <polygon points="32,12 29,26 32,23 35,26" fill="oklch(62% 0.11 245 / 0.9)" />
         <!-- South pointer -->
-        <polygon points="32,52 29,38 32,41 35,38" fill="oklch(62% 0.11 42 / 0.3)" />
+        <polygon points="32,52 29,38 32,41 35,38" fill="oklch(62% 0.11 245 / 0.3)" />
         <!-- Center dot -->
-        <circle cx="32" cy="32" r="3" fill="oklch(62% 0.11 42)" />
+        <circle cx="32" cy="32" r="3" fill="oklch(62% 0.11 245)" />
         <!-- N label -->
-        <text x="32" y="10" text-anchor="middle" dominant-baseline="auto" font-size="6" font-weight="700" letter-spacing="0.1em" fill="oklch(62% 0.11 42 / 0.7)">N</text>
+        <text x="32" y="10" text-anchor="middle" dominant-baseline="auto" font-size="6" font-weight="700" letter-spacing="0.1em" fill="oklch(62% 0.11 245 / 0.7)">N</text>
       </svg>
       <p class="label text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-muted">
         Loading map data
@@ -267,7 +267,7 @@ const zones = [
 <style scoped>
 /* ── Grid ── */
 .grid-line {
-  stroke: oklch(62% 0.11 42 / 0.1);
+  stroke: oklch(62% 0.11 245 / 0.1);
   stroke-width: 0.5;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
@@ -276,7 +276,7 @@ const zones = [
 
 /* ── Axis labels ── */
 .axis-label {
-  fill: oklch(62% 0.11 42 / 0.28);
+  fill: oklch(62% 0.11 245 / 0.28);
   font-size: 7.5px;
   font-weight: 600;
   letter-spacing: 0.07em;
@@ -290,10 +290,10 @@ const zones = [
   animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) var(--d, 0.75s) forwards;
 }
 .zone-dot {
-  fill: oklch(62% 0.11 42 / 0.55);
+  fill: oklch(62% 0.11 245 / 0.55);
 }
 .zone-label {
-  fill: oklch(62% 0.11 42 / 0.5);
+  fill: oklch(62% 0.11 245 / 0.5);
   font-size: 7px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -307,15 +307,15 @@ const zones = [
   animation: line-draw 0.4s cubic-bezier(0.16, 1, 0.3, 1) calc(0.55s + var(--d, 0s)) forwards;
 }
 .compass-cardinal {
-  stroke: oklch(62% 0.11 42 / 0.22);
+  stroke: oklch(62% 0.11 245 / 0.22);
   stroke-width: 0.75;
 }
 .compass-ordinal {
-  stroke: oklch(62% 0.11 42 / 0.1);
+  stroke: oklch(62% 0.11 245 / 0.1);
   stroke-width: 0.5;
 }
 .dir-label {
-  fill: oklch(62% 0.11 42 / 0.4);
+  fill: oklch(62% 0.11 245 / 0.4);
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -363,21 +363,21 @@ const zones = [
   from {
     opacity: 0;
     transform: scale(0.82);
-    filter: drop-shadow(0 0 0px oklch(62% 0.11 42 / 0));
+    filter: drop-shadow(0 0 0px oklch(62% 0.11 245 / 0));
   }
   to {
     opacity: 1;
     transform: scale(1);
-    filter: drop-shadow(0 6px 28px oklch(62% 0.11 42 / 0.22));
+    filter: drop-shadow(0 6px 28px oklch(62% 0.11 245 / 0.22));
   }
 }
 @keyframes crest-glow {
   0%,
   100% {
-    filter: drop-shadow(0 6px 28px oklch(62% 0.11 42 / 0.15));
+    filter: drop-shadow(0 6px 28px oklch(62% 0.11 245 / 0.15));
   }
   50% {
-    filter: drop-shadow(0 6px 44px oklch(62% 0.11 42 / 0.5));
+    filter: drop-shadow(0 6px 44px oklch(62% 0.11 245 / 0.5));
   }
 }
 
@@ -391,13 +391,13 @@ const zones = [
   display: flex;
   align-items: center;
   gap: 5px;
-  color: oklch(62% 0.11 42 / 0.25);
+  color: oklch(62% 0.11 245 / 0.25);
   transition:
     color 0.35s ease,
     opacity 0.35s ease;
 }
 .step-done {
-  color: oklch(62% 0.11 42 / 0.65);
+  color: oklch(62% 0.11 245 / 0.65);
 }
 .step-dot {
   width: 4px;
@@ -408,7 +408,7 @@ const zones = [
   transition: box-shadow 0.35s ease;
 }
 .step-done .step-dot {
-  box-shadow: 0 0 6px oklch(62% 0.11 42 / 0.6);
+  box-shadow: 0 0 6px oklch(62% 0.11 245 / 0.6);
 }
 
 /* ── Reduced motion ── */
@@ -436,7 +436,7 @@ const zones = [
   .crest {
     animation: none;
     opacity: 1;
-    filter: drop-shadow(0 6px 28px oklch(62% 0.11 42 / 0.25));
+    filter: drop-shadow(0 6px 28px oklch(62% 0.11 245 / 0.25));
   }
   .label {
     animation: none;

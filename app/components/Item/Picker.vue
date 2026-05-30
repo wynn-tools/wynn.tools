@@ -642,7 +642,7 @@ async function selectSavedItem(item: ApiItemSummary) {
 .saved-mismatch {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 11px;
-  color: oklch(70% 0.15 48);
+  color: var(--color-accent);
   padding: 8px 14px;
   border-top: 1px solid var(--color-border);
 }

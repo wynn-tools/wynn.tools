@@ -179,7 +179,7 @@ function onLevel(e: Event) {
   padding: 5px 6px;
   border: 1px solid var(--color-border);
   border-radius: 5px;
-  background: oklch(14% 0.006 30 / 0.4);
+  background: color-mix(in oklch, var(--color-bg) 40%, transparent);
   transition:
     border-color 0.12s,
     background 0.12s;

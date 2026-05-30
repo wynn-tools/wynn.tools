@@ -151,7 +151,7 @@ const theme = computed(() => tierTheme(props.item.tier))
   padding: 12px 14px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: oklch(14% 0.006 30 / 0.5);
+  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
 }
 .entry-label {
   font: 500 10px/1 var(--font-mono);

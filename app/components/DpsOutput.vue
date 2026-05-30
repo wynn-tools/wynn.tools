@@ -205,7 +205,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 }
 
 .acc-item--open {
-  border-color: oklch(52% 0.12 48);
+  border-color: var(--color-accent-dim);
 }
 
 .acc-trigger {
@@ -223,7 +223,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 }
 
 .acc-trigger:hover {
-  background: oklch(19% 0.008 30 / 0.6);
+  background: color-mix(in oklch, var(--color-surface) 60%, transparent);
 }
 
 .acc-chevron {
@@ -311,7 +311,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
   gap: 1px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid oklch(28% 0.008 30 / 0.6);
+  border-top: 1px solid color-mix(in oklch, var(--color-surface-hi) 60%, transparent);
 }
 
 .part-name {

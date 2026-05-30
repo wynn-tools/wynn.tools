@@ -147,7 +147,7 @@ const bonuses = computed<BonusRow[]>(() => {
   flex-shrink: 0;
 }
 .piece:hover {
-  background: oklch(65% 0.15 48 / 0.06);
+  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
   color: var(--color-text);
 }
 .piece-name {
@@ -162,12 +162,12 @@ const bonuses = computed<BonusRow[]>(() => {
   color: var(--color-faint);
 }
 .current .piece {
-  background: oklch(65% 0.15 48 / 0.1);
+  background: color-mix(in oklch, var(--color-accent) 10%, transparent);
   color: var(--color-accent);
 }
 .current .piece-mark {
   background: var(--color-accent);
-  box-shadow: 0 0 8px oklch(65% 0.15 48 / 0.6);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--color-accent) 60%, transparent);
 }
 .current .piece-name {
   font-weight: 600;

@@ -79,7 +79,7 @@ async function onHoverOpen(open: boolean, craftHash: string | null | undefined) 
 }
 
 .item-card:hover {
-  border-color: oklch(65% 0.15 48 / 0.4);
+  border-color: color-mix(in oklch, var(--color-accent) 40%, transparent);
   background: var(--color-surface-hi);
 }
 

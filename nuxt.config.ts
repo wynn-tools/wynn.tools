@@ -19,6 +19,15 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       ],
+      script: [
+        {
+          // Pre-paint: apply the saved (or system) theme before first paint so
+          // light-theme users never flash the dark default. Mirrors useTheme.
+          tagPosition: 'head',
+          innerHTML:
+            'try{var p=localStorage.getItem(\'wynn:theme\')||\'dark\';var r=p===\'system\'?(matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'):p;document.documentElement.dataset.theme=r}catch(e){}',
+        },
+      ],
     },
   },
   modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image', '@nuxt/icon'],

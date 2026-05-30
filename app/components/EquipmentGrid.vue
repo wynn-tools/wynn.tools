@@ -416,7 +416,7 @@ const powderSlotMax = computed(() =>
 }
 .powder-chips:hover {
   border-color: var(--color-border);
-  background: oklch(14% 0.006 30 / 0.6);
+  background: color-mix(in oklch, var(--color-bg) 60%, transparent);
 }
 
 .powder-chip {
@@ -446,7 +446,7 @@ const powderSlotMax = computed(() =>
   border-color: var(--color-muted);
 }
 .powder-chips:hover .powder-pip {
-  border-color: oklch(65% 0.15 48 / 0.5);
+  border-color: color-mix(in oklch, var(--color-accent) 50%, transparent);
   border-style: solid;
 }
 
@@ -456,7 +456,7 @@ const powderSlotMax = computed(() =>
 }
 .powder-chips--empty:hover {
   border-color: var(--color-copper);
-  background: oklch(65% 0.15 48 / 0.06);
+  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
   color: var(--color-copper);
 }
 .powder-cta-plus {
@@ -482,7 +482,7 @@ const powderSlotMax = computed(() =>
   display: flex;
   align-items: center;
   justify-content: center;
-  background: oklch(14% 0.006 30 / 0.7);
+  background: color-mix(in oklch, var(--color-bg) 70%, transparent);
   backdrop-filter: blur(2px);
 }
 

@@ -120,7 +120,7 @@ const filled = computed(() => {
   font-family: inherit;
 }
 .tomes-head:hover {
-  background: oklch(19% 0.008 30 / 0.6);
+  background: color-mix(in oklch, var(--color-surface) 60%, transparent);
 }
 
 .kicker {

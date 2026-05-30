@@ -321,7 +321,7 @@ async function revokeKey(id: string) {
 }
 
 .label-input:focus {
-  border-color: oklch(65% 0.15 48 / 0.55);
+  border-color: color-mix(in oklch, var(--color-accent) 55%, transparent);
 }
 
 .scopes-field {
@@ -366,7 +366,7 @@ async function revokeKey(id: string) {
   text-transform: uppercase;
   color: var(--color-accent);
   background: none;
-  border: 1px solid oklch(65% 0.15 48 / 0.4);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 40%, transparent);
   border-radius: 6px;
   padding: 8px 16px;
   cursor: pointer;

@@ -331,6 +331,6 @@ function onBlur() {
 }
 
 :global(.cb-option--sel.cb-option--hi) {
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 </style>

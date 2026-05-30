@@ -253,7 +253,7 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
   display: flex;
   align-items: center;
   justify-content: center;
-  background: oklch(14% 0.006 30 / 0.7);
+  background: color-mix(in oklch, var(--color-bg) 70%, transparent);
   backdrop-filter: blur(2px);
   padding: 16px;
 }
@@ -343,7 +343,7 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
   font-size: 14px;
   letter-spacing: 0.04em;
   color: var(--color-copper);
-  background: oklch(14% 0.006 30 / 0.9);
+  background: color-mix(in oklch, var(--color-bg) 90%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 8px 12px;
@@ -354,7 +354,7 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
 }
 .shorthand-input:focus {
   border-color: var(--color-copper);
-  box-shadow: 0 0 0 2px oklch(65% 0.15 48 / 0.2);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent) 20%, transparent);
 }
 .shorthand-input--bad {
   border-color: oklch(60% 0.16 22);
@@ -433,7 +433,7 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
 }
 .chip:hover {
   border-color: currentColor;
-  background: oklch(19% 0.008 30 / 0.6);
+  background: color-mix(in oklch, var(--color-surface) 60%, transparent);
 }
 .chip-glyph {
   font-size: 11px;

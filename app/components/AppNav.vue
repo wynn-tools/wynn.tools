@@ -107,7 +107,10 @@ watch(() => route.path, () => {
         </ul>
       </div>
 
-      <NavUser />
+      <div class="nav-trailing">
+        <ThemePicker />
+        <NavUser />
+      </div>
 
       <!-- Mobile hamburger -->
       <button
@@ -166,7 +169,7 @@ watch(() => route.path, () => {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: oklch(14% 0.006 30 / 0.92);
+  background: color-mix(in oklch, var(--color-bg) 92%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -216,6 +219,13 @@ watch(() => route.path, () => {
   gap: 4px;
 }
 
+.nav-trailing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .nav-group {
   display: flex;
   align-items: center;
@@ -249,7 +259,7 @@ watch(() => route.path, () => {
 
 .nav-link.router-link-active {
   color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
 .nav-link:focus-visible {
@@ -271,7 +281,7 @@ watch(() => route.path, () => {
 
 .nav-dropdown-trigger.is-group-active {
   color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
 .nav-chevron {
@@ -297,10 +307,10 @@ watch(() => route.path, () => {
   top: calc(100% + 4px);
   left: 50%;
   transform: translateX(-50%);
-  background: oklch(19% 0.008 30 / 0.96);
+  background: color-mix(in oklch, var(--color-surface) 96%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid oklch(65% 0.15 48 / 0.2);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 20%, transparent);
   border-radius: 8px;
   padding: 4px;
   min-width: 200px;
@@ -331,7 +341,7 @@ watch(() => route.path, () => {
 
 .nav-dropdown-item.router-link-active {
   color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
 .nav-dropdown-item:focus-visible {
@@ -414,7 +424,7 @@ watch(() => route.path, () => {
   top: 100%;
   left: 0;
   right: 0;
-  background: oklch(14% 0.006 30 / 0.97);
+  background: color-mix(in oklch, var(--color-bg) 97%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--color-border);
@@ -475,7 +485,7 @@ watch(() => route.path, () => {
 
 .mobile-item.router-link-active {
   color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
 .mobile-item:focus-visible {

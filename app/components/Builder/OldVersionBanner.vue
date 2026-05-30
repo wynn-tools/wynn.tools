@@ -32,8 +32,8 @@ const visible = computed(() => store.isOldVersion)
   justify-content: space-between;
   gap: 12px;
   padding: 10px 16px;
-  background: oklch(38% 0.09 48 / 0.18);
-  border: 1px solid oklch(65% 0.13 48 / 0.35);
+  background: oklch(38% 0.09 245 / 0.18);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 35%, transparent);
   border-radius: 6px;
   flex-wrap: wrap;
 }
@@ -41,13 +41,13 @@ const visible = computed(() => store.isOldVersion)
 .banner-text {
   font-family: 'Figtree', system-ui, sans-serif;
   font-size: 13px;
-  color: oklch(85% 0.09 48);
+  color: oklch(85% 0.09 245);
   line-height: 1.4;
 }
 
 .banner-text strong {
   font-weight: 600;
-  color: oklch(92% 0.1 48);
+  color: oklch(92% 0.1 245);
 }
 
 .update-btn {
@@ -56,9 +56,9 @@ const visible = computed(() => store.isOldVersion)
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: oklch(85% 0.1 48);
+  color: oklch(85% 0.1 245);
   background: transparent;
-  border: 1px solid oklch(65% 0.13 48 / 0.5);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 50%, transparent);
   border-radius: 5px;
   padding: 6px 14px;
   cursor: pointer;

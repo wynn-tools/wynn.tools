@@ -197,7 +197,7 @@ function removeSet(name: string): void {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
   border: 1px solid var(--color-accent);
   color: var(--color-accent);
   border-radius: 4px;
@@ -207,7 +207,7 @@ function removeSet(name: string): void {
   transition: background 0.12s ease-out;
 }
 .f-chip:hover {
-  background: oklch(65% 0.15 48 / 0.16);
+  background: color-mix(in oklch, var(--color-accent) 16%, transparent);
 }
 .f-chip span {
   color: var(--color-muted);

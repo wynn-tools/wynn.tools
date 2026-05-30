@@ -81,7 +81,7 @@ const KIND_TAG: Record<ObtainKind, string> = {
   padding: 12px 14px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: oklch(14% 0.006 30 / 0.5);
+  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
   align-items: center;
 }
 .method--quest {
@@ -97,7 +97,7 @@ const KIND_TAG: Record<ObtainKind, string> = {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: oklch(19% 0.008 30);
+  background: var(--color-surface);
   color: var(--color-accent);
   font-size: 16px;
   flex-shrink: 0;

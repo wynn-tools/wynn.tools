@@ -224,12 +224,12 @@ const overflows = computed(() => {
 function nodeMiniColor(node: AtreeNode): string {
   const s = nodeState(node)
   if (s === 'active')
-    return 'oklch(65% 0.15 48)' // copper — lit
+    return 'var(--color-accent)' // copper — lit
   if (s === 'selectable')
-    return 'oklch(58% 0.008 30)' // steel mist — reachable
+    return 'var(--color-muted)' // steel mist — reachable
   if (s === 'blocked')
     return 'oklch(50% 0.13 22)' // muted red
-  return 'oklch(30% 0.006 30)' // dim — locked
+  return 'var(--color-border)' // dim — locked
 }
 
 function scrollMiniTo(e: MouseEvent) {
@@ -536,7 +536,11 @@ onMounted(() => {
 }
 
 .atree-grid {
-  background-image: radial-gradient(circle at 22px 22px, oklch(65% 0.15 48 / 0.05) 1px, transparent 1.5px);
+  background-image: radial-gradient(
+    circle at 22px 22px,
+    color-mix(in oklch, var(--color-accent) 5%, transparent) 1px,
+    transparent 1.5px
+  );
   background-size: 44px 44px;
 }
 
@@ -570,7 +574,7 @@ onMounted(() => {
   position: sticky;
   top: 10px;
   flex-shrink: 0;
-  background: oklch(14% 0.006 30 / 0.92);
+  background: color-mix(in oklch, var(--color-bg) 92%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 6px;
@@ -596,8 +600,8 @@ onMounted(() => {
 
 .atree-minimap-viewport {
   position: absolute;
-  border: 1px solid oklch(65% 0.15 48 / 0.85);
-  background: oklch(65% 0.15 48 / 0.1);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 85%, transparent);
+  background: color-mix(in oklch, var(--color-accent) 10%, transparent);
   border-radius: 2px;
   pointer-events: none;
   transition:
@@ -614,7 +618,7 @@ onMounted(() => {
   border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 2px;
-  background: oklch(14% 0.006 30 / 0.5);
+  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
 }
 
 .atree-zoom-btn {
@@ -638,7 +642,7 @@ onMounted(() => {
 }
 .atree-zoom-btn:hover:not(:disabled) {
   color: var(--color-copper);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 .atree-zoom-btn:disabled {
   opacity: 0.35;

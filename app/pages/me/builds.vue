@@ -244,7 +244,7 @@ async function deleteBuild(id: string) {
   width: 100%;
   background: var(--color-bg);
   color: var(--color-text);
-  border: 1px solid oklch(65% 0.15 48 / 0.5);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 50%, transparent);
   border-radius: 4px;
   padding: 3px 8px;
   font-size: 14px;

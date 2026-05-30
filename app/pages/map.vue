@@ -591,9 +591,9 @@ function onCursorMove(p: { x: number, z: number }) {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    oklch(62% 0.11 42 / 0.1) 40%,
-    oklch(62% 0.11 42 / 0.18) 50%,
-    oklch(62% 0.11 42 / 0.1) 60%,
+    oklch(62% 0.11 245 / 0.1) 40%,
+    oklch(62% 0.11 245 / 0.18) 50%,
+    oklch(62% 0.11 245 / 0.1) 60%,
     transparent 100%
   );
   animation: navbar-scan 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;

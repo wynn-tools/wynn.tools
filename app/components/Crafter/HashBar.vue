@@ -179,8 +179,8 @@ async function copy() {
 }
 
 .hash-bar__input:focus {
-  border-color: oklch(65% 0.15 48 / 0.55);
-  box-shadow: 0 0 0 2px oklch(65% 0.15 48 / 0.1);
+  border-color: color-mix(in oklch, var(--color-accent) 55%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent) 10%, transparent);
 }
 
 .hash-bar__input--error,

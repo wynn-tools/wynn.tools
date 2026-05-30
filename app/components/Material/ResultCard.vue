@@ -109,8 +109,8 @@ const totalChance = computed(() => {
   background: oklch(72% 0.08 60 / 0.1);
 }
 .chance--t2 {
-  color: oklch(65% 0.12 48);
-  background: oklch(65% 0.12 48 / 0.12);
+  color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-accent) 12%, transparent);
 }
 .chance--t3 {
   color: oklch(72% 0.14 75);

@@ -140,7 +140,7 @@ function fork() {
   text-transform: uppercase;
   color: var(--color-accent);
   background: none;
-  border: 1px solid oklch(65% 0.15 48 / 0.4);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 40%, transparent);
   border-radius: 5px;
   padding: 4px 12px;
   cursor: pointer;

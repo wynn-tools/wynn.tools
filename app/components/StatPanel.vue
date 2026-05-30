@@ -121,7 +121,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 
 .seg-btn--active {
   color: var(--color-copper);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
 .seg-btn:focus-visible {

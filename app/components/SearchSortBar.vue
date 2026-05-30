@@ -144,7 +144,7 @@ const SORT_OPTIONS: { value: SortOption, label: string }[] = [
 
 .sort-btn.active {
   color: var(--color-accent);
-  background: oklch(65% 0.15 48 / 0.08);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
 .sort-btn:focus-visible {

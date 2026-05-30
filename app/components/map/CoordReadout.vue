@@ -86,7 +86,7 @@ function copyCoords() {
 }
 .coord-sep {
   height: 1px;
-  background: oklch(62% 0.11 42 / 0.12);
+  background: oklch(62% 0.11 245 / 0.12);
   margin: 3px 0;
 }
 .coord-axis {
@@ -94,7 +94,7 @@ function copyCoords() {
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: oklch(62% 0.11 42 / 0.6);
+  color: oklch(62% 0.11 245 / 0.6);
   width: 0.75rem;
   flex-shrink: 0;
   user-select: none;

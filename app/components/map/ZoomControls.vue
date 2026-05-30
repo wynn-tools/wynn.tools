@@ -51,10 +51,10 @@ function handleZoomOut() {
 }
 @keyframes ring-pulse {
   0% {
-    box-shadow: 0 0 0 0 oklch(62% 0.11 42 / 0.5);
+    box-shadow: 0 0 0 0 oklch(62% 0.11 245 / 0.5);
   }
   100% {
-    box-shadow: 0 0 0 9px oklch(62% 0.11 42 / 0);
+    box-shadow: 0 0 0 9px oklch(62% 0.11 245 / 0);
   }
 }
 @media (prefers-reduced-motion: reduce) {

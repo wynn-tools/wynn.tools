@@ -15,9 +15,9 @@ export const CLASS_THEMES: Record<string, ClassTheme> = {
 }
 
 export const DEFAULT_CLASS_THEME: ClassTheme = {
-  color: 'oklch(65% 0.15 48)',
-  light: 'oklch(75% 0.12 48)',
-  bg: 'oklch(18% 0.06 48)',
+  color: 'oklch(68% 0.16 245)',
+  light: 'oklch(78% 0.13 245)',
+  bg: 'oklch(20% 0.06 245)',
 }
 
 const CLASS_WEAPON: Record<string, string> = {
