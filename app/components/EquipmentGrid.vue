@@ -169,38 +169,43 @@ const powderSlotMax = computed(() =>
                 aria-hidden="true"
                 alt=""
               >
-              <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
-              <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-                {{ itemName(idx) }}
-              </span>
-              <button
-                v-if="maxPowders(idx) > 0"
-                class="powder-chips"
-                :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
-                type="button"
-                :aria-label="`Powders for ${label}`"
-                @click="openPowders(idx, $event)"
-              >
-                <template v-if="powdersFor(idx).length === 0">
-                  <span class="powder-cta-plus" aria-hidden="true">+</span>
-                </template>
-                <template v-else>
-                  <span
-                    v-for="(pid, i) in powdersFor(idx)"
-                    :key="i"
-                    class="powder-chip"
-                    :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
-                  >
-                    <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+              <div class="slot-body">
+                <div class="slot-head">
+                  <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
+                  <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
+                    {{ itemName(idx) }}
                   </span>
-                  <span
-                    v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
-                    :key="`e-${i}`"
-                    class="powder-pip"
-                    aria-hidden="true"
-                  />
-                </template>
-              </button>
+                </div>
+                <button
+                  v-if="maxPowders(idx) > 0"
+                  class="powder-chips"
+                  :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
+                  type="button"
+                  :aria-label="`Powders for ${label}`"
+                  @click="openPowders(idx, $event)"
+                >
+                  <template v-if="powdersFor(idx).length === 0">
+                    <span class="powder-cta-plus" aria-hidden="true">+</span>
+                    <span class="powder-cta-label">Powders</span>
+                  </template>
+                  <template v-else>
+                    <span
+                      v-for="(pid, i) in powdersFor(idx)"
+                      :key="i"
+                      class="powder-chip"
+                      :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
+                    >
+                      <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+                    </span>
+                    <span
+                      v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
+                      :key="`e-${i}`"
+                      class="powder-pip"
+                      aria-hidden="true"
+                    />
+                  </template>
+                </button>
+              </div>
             </div>
           </HoverCardTrigger>
           <HoverCardPortal>
@@ -233,38 +238,43 @@ const powderSlotMax = computed(() =>
             aria-hidden="true"
             alt=""
           >
-          <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
-          <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-            {{ itemName(idx) }}
-          </span>
-          <button
-            v-if="maxPowders(idx) > 0"
-            class="powder-chips"
-            :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
-            type="button"
-            :aria-label="`Powders for ${label}`"
-            @click="openPowders(idx, $event)"
-          >
-            <template v-if="powdersFor(idx).length === 0">
-              <span class="powder-cta-plus" aria-hidden="true">+</span>
-            </template>
-            <template v-else>
-              <span
-                v-for="(pid, i) in powdersFor(idx)"
-                :key="i"
-                class="powder-chip"
-                :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
-              >
-                <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+          <div class="slot-body">
+            <div class="slot-head">
+              <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
+              <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
+                {{ itemName(idx) }}
               </span>
-              <span
-                v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
-                :key="`e-${i}`"
-                class="powder-pip"
-                aria-hidden="true"
-              />
-            </template>
-          </button>
+            </div>
+            <button
+              v-if="maxPowders(idx) > 0"
+              class="powder-chips"
+              :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
+              type="button"
+              :aria-label="`Powders for ${label}`"
+              @click="openPowders(idx, $event)"
+            >
+              <template v-if="powdersFor(idx).length === 0">
+                <span class="powder-cta-plus" aria-hidden="true">+</span>
+                <span class="powder-cta-label">Powders</span>
+              </template>
+              <template v-else>
+                <span
+                  v-for="(pid, i) in powdersFor(idx)"
+                  :key="i"
+                  class="powder-chip"
+                  :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
+                >
+                  <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+                </span>
+                <span
+                  v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
+                  :key="`e-${i}`"
+                  class="powder-pip"
+                  aria-hidden="true"
+                />
+              </template>
+            </button>
+          </div>
         </div>
       </template>
     </div>
@@ -313,15 +323,35 @@ const powderSlotMax = computed(() =>
 .slot {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
+  gap: 8px;
+  padding: 5px 9px;
   min-height: 34px;
+  /* Grid items default to min-width:auto, which a nowrap name resists shrinking
+     below — pinning it to 0 lets long names ellipsis instead of forcing overflow. */
+  min-width: 0;
   border: 1px solid var(--color-border);
   border-radius: 5px;
   cursor: pointer;
   transition:
     border-color 0.12s,
     background 0.12s;
+}
+
+/* Item name on its own line, powders stacked beneath — long names never
+   collide with the powder chips. */
+.slot-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.slot-head {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
 }
 
 .slot:hover {
@@ -334,8 +364,8 @@ const powderSlotMax = computed(() =>
 }
 
 .slot-icon {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
   image-rendering: pixelated;
   object-fit: contain;
@@ -373,15 +403,17 @@ const powderSlotMax = computed(() =>
 }
 
 .powder-chips {
+  align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
-  padding: 1px 4px;
+  padding: 1px 5px 1px 3px;
+  margin-left: -3px;
   cursor: pointer;
-  flex-shrink: 0;
+  max-width: 100%;
   transition:
     border-color 0.12s,
     background 0.12s,
@@ -437,6 +469,14 @@ const powderSlotMax = computed(() =>
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
+  color: inherit;
+}
+.powder-cta-label {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: inherit;
 }
 
