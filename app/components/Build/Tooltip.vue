@@ -162,6 +162,7 @@ function sepStyle() {
   letter-spacing: -1px;
   overflow: hidden;
   border-radius: 4px;
+  background: #0d0d0d;
 }
 
 .bt-inner {
