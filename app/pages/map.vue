@@ -357,6 +357,11 @@ watch(selectedEvent, (ev) => {
     territoryPopup.value = null
   }
 })
+watch(worldEvents, (fresh) => {
+  if (selectedEvent.value && !fresh.some(e => e.internalName === selectedEvent.value!.internalName)) {
+    selectedEvent.value = null
+  }
+})
 
 const cursor = ref({ x: 0, z: 0 })
 function onCursorMove(p: { x: number, z: number }) {
