@@ -106,6 +106,8 @@ export function ingredientCriteriaToQuery(c: IngredientCriteria): Query {
     q.lvl = `${c.levelRange[0]}-${c.levelRange[1]}`
   if (c.skills.length)
     q.skill = c.skills.join(',')
+  if (c.mob)
+    q.mob = c.mob
   const ids = encodeIds(c.identifications, c.idSorts)
   if (ids)
     q.id = ids
