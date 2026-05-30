@@ -267,7 +267,7 @@ function onMiniPointerUp(e: PointerEvent) {
 // discrete zoom levels. Default is 1; on small viewports we drop to 0.85 so
 // the tree fits with one finger-pan rather than two.
 const ZOOM_LEVELS = [0.6, 0.75, 0.9, 1, 1.15, 1.3]
-const zoomIdx = ref(3)
+const zoomIdx = ref(2)
 const zoom = computed(() => ZOOM_LEVELS[zoomIdx.value] ?? 1)
 const scaledWidth = computed(() => gridWidth.value * zoom.value)
 const scaledHeight = computed(() => gridHeight.value * zoom.value)

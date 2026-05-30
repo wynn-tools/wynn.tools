@@ -34,13 +34,11 @@ const showAtree = ref(true)
       <BuilderOldVersionModal />
       <BuilderOldVersionBanner v-if="store.isOldVersion" />
 
-      <!-- Header strip: skillpoints + level live at the top because they
-           gate every other input below. -->
-      <SkillpointPanel />
-
       <!-- 3-zone shell: Inputs / Stats / Combat Output -->
       <div class="zones">
-        <section class="zone zone-inputs" aria-label="Equipment and tomes">
+        <section class="zone zone-inputs" aria-label="Equipment and skillpoints">
+          <!-- Level + SP lives at the top of the inputs column — gates everything below -->
+          <SkillpointPanel />
           <EquipmentGrid />
           <TomePanel />
           <BuildSummary />
@@ -55,7 +53,7 @@ const showAtree = ref(true)
         </section>
       </div>
 
-      <!-- Tree + active abilities pair -->
+      <!-- Ability tree -->
       <section class="atree" aria-label="Ability tree">
         <header class="atree-head">
           <span class="kicker">Ability Tree</span>
@@ -79,8 +77,8 @@ const showAtree = ref(true)
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 32px clamp(16px, 3vw, 40px) 64px;
+  gap: 16px;
+  padding: 24px clamp(12px, 2.5vw, 36px) 56px;
   max-width: 1600px;
   width: 100%;
   margin: 0 auto;
@@ -88,8 +86,8 @@ const showAtree = ref(true)
 
 @media (max-width: 720px) {
   .builder {
-    gap: 14px;
-    padding: 16px 12px 48px;
+    gap: 12px;
+    padding: 14px 10px 40px;
   }
 }
 
@@ -145,27 +143,23 @@ const showAtree = ref(true)
 
 .zones {
   display: grid;
-  gap: 16px;
-  grid-template-columns: minmax(360px, 1.4fr) minmax(240px, 0.85fr) minmax(280px, 1fr);
+  gap: 14px;
+  grid-template-columns: minmax(280px, 1.2fr) minmax(200px, 0.7fr) minmax(240px, 0.9fr);
   align-items: start;
 }
 
 .zone {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
-}
-
-.zone-head {
-  padding: 0 2px;
 }
 
 .atree {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .atree-head {
@@ -198,7 +192,7 @@ const showAtree = ref(true)
 .atree-split {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  gap: 16px;
+  gap: 14px;
   align-items: start;
 }
 
@@ -218,13 +212,13 @@ const showAtree = ref(true)
 @media (max-width: 720px) {
   .zones {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
   .zone-inputs {
     grid-column: auto;
   }
   .zone {
-    gap: 10px;
+    gap: 8px;
   }
   .atree {
     margin-top: 4px;

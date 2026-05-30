@@ -25,6 +25,7 @@ function slotIcon(slot: number): string | null {
   return itemIconUrl(store.ctx?.rawItemIndex.resolveId(id))
 }
 
+// Full names — used for accessibility labels and PowderInput
 const SLOT_LABELS = [
   'Helmet',
   'Chestplate',
@@ -36,6 +37,12 @@ const SLOT_LABELS = [
   'Necklace',
   'Weapon',
 ] as const
+
+// Compact display labels for the slot cards
+const SLOT_DISPLAY = ['Helm', 'Chest', 'Legs', 'Boots', 'Ring', 'Ring', 'Brace', 'Neck', 'Wpn'] as const
+
+// CSS grid-area names — see .equipment-grid template-areas below
+const SLOT_AREAS = ['helmet', 'chest', 'legs', 'boots', 'ring1', 'ring2', 'bracelet', 'necklace', 'weapon'] as const
 
 const POWDER_GLYPH: Record<string, string> = {
   e: '✤',
@@ -70,9 +77,6 @@ function itemName(slot: number): string {
   return !name || (item.id as number) >= 10000 ? 'Empty' : name
 }
 
-// Compute the CraftedItem for a slot holding a RawCraft. Returns null when
-// the slot isn't crafted, the craft context isn't loaded yet, or the recipe
-// id is unknown to the current snapshot.
 function slotCrafted(slot: number): CraftedItem | null {
   const entry = store.rawBuild?.equipment[slot]
   if (entry?.kind !== 'crafted')
@@ -89,9 +93,6 @@ function slotCrafted(slot: number): CraftedItem | null {
 }
 
 async function openPicker(slot: number) {
-  // Crafted slot: prefill the crafter with the slot's RawCraft and open the
-  // picker on the Crafted tab so the user lands directly on an editable
-  // version of the existing item.
   const entry = store.rawBuild?.equipment[slot]
   if (entry?.kind === 'crafted') {
     await craftStore.prefillFromRaw(entry.raw, useCdnClient())
@@ -155,55 +156,51 @@ const powderSlotMax = computed(() =>
           <HoverCardTrigger as-child>
             <div
               class="slot"
-              :class="{ 'slot--active': openSlot === idx, 'slot--powderable': maxPowders(idx) > 0 }"
+              :class="{ 'slot--active': openSlot === idx }"
+              :style="{ gridArea: SLOT_AREAS[idx] }"
               @click="openPicker(idx)"
             >
-              <div class="slot-top">
-                <span class="slot-label">{{ label }}</span>
-                <button
-                  v-if="maxPowders(idx) > 0"
-                  class="powder-chips"
-                  :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
-                  type="button"
-                  :aria-label="`Powders for ${label}`"
-                  @click="openPowders(idx, $event)"
-                >
-                  <template v-if="powdersFor(idx).length === 0">
-                    <span class="powder-cta-plus" aria-hidden="true">+</span>
-                    <span class="powder-cta-label">0/{{ maxPowders(idx) }} Powders</span>
-                  </template>
-                  <template v-else>
-                    <span
-                      v-for="(pid, i) in powdersFor(idx)"
-                      :key="i"
-                      class="powder-chip"
-                      :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
-                    >
-                      <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
-                    </span>
-                    <span
-                      v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
-                      :key="`e-${i}`"
-                      class="powder-pip"
-                      aria-hidden="true"
-                    />
-                  </template>
-                </button>
-              </div>
-              <div class="slot-body">
-                <img
-                  v-if="slotIcon(idx)"
-                  :src="slotIcon(idx)!"
-                  class="slot-icon"
-                  loading="lazy"
-                  draggable="false"
-                  aria-hidden="true"
-                  alt=""
-                >
-                <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-                  {{ itemName(idx) }}
-                </span>
-              </div>
+              <img
+                v-if="slotIcon(idx)"
+                :src="slotIcon(idx)!"
+                class="slot-icon"
+                loading="lazy"
+                draggable="false"
+                aria-hidden="true"
+                alt=""
+              >
+              <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
+              <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
+                {{ itemName(idx) }}
+              </span>
+              <button
+                v-if="maxPowders(idx) > 0"
+                class="powder-chips"
+                :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
+                type="button"
+                :aria-label="`Powders for ${label}`"
+                @click="openPowders(idx, $event)"
+              >
+                <template v-if="powdersFor(idx).length === 0">
+                  <span class="powder-cta-plus" aria-hidden="true">+</span>
+                </template>
+                <template v-else>
+                  <span
+                    v-for="(pid, i) in powdersFor(idx)"
+                    :key="i"
+                    class="powder-chip"
+                    :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
+                  >
+                    <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+                  </span>
+                  <span
+                    v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
+                    :key="`e-${i}`"
+                    class="powder-pip"
+                    aria-hidden="true"
+                  />
+                </template>
+              </button>
             </div>
           </HoverCardTrigger>
           <HoverCardPortal>
@@ -223,60 +220,55 @@ const powderSlotMax = computed(() =>
         <div
           v-else
           class="slot"
-          :class="{ 'slot--active': openSlot === idx, 'slot--powderable': maxPowders(idx) > 0 }"
+          :class="{ 'slot--active': openSlot === idx }"
+          :style="{ gridArea: SLOT_AREAS[idx] }"
           @click="openPicker(idx)"
         >
-          <div class="slot-top">
-            <span class="slot-label">{{ label }}</span>
-            <button
-              v-if="maxPowders(idx) > 0"
-              class="powder-chips"
-              :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
-              type="button"
-              :aria-label="`Powders for ${label}`"
-              @click="openPowders(idx, $event)"
-            >
-              <template v-if="powdersFor(idx).length === 0">
-                <span class="powder-cta-plus" aria-hidden="true">+</span>
-                <span class="powder-cta-label">0/{{ maxPowders(idx) }} Powders</span>
-              </template>
-              <template v-else>
-                <span
-                  v-for="(pid, i) in powdersFor(idx)"
-                  :key="i"
-                  class="powder-chip"
-                  :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
-                >
-                  <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
-                </span>
-                <span
-                  v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
-                  :key="`e-${i}`"
-                  class="powder-pip"
-                  aria-hidden="true"
-                />
-              </template>
-            </button>
-          </div>
-          <div class="slot-body">
-            <img
-              v-if="slotIcon(idx)"
-              :src="slotIcon(idx)!"
-              class="slot-icon"
-              loading="lazy"
-              draggable="false"
-              aria-hidden="true"
-              alt=""
-            >
-            <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
-              {{ itemName(idx) }}
-            </span>
-          </div>
+          <img
+            v-if="slotIcon(idx)"
+            :src="slotIcon(idx)!"
+            class="slot-icon"
+            loading="lazy"
+            draggable="false"
+            aria-hidden="true"
+            alt=""
+          >
+          <span class="slot-label">{{ SLOT_DISPLAY[idx] }}</span>
+          <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
+            {{ itemName(idx) }}
+          </span>
+          <button
+            v-if="maxPowders(idx) > 0"
+            class="powder-chips"
+            :class="{ 'powder-chips--empty': powdersFor(idx).length === 0 }"
+            type="button"
+            :aria-label="`Powders for ${label}`"
+            @click="openPowders(idx, $event)"
+          >
+            <template v-if="powdersFor(idx).length === 0">
+              <span class="powder-cta-plus" aria-hidden="true">+</span>
+            </template>
+            <template v-else>
+              <span
+                v-for="(pid, i) in powdersFor(idx)"
+                :key="i"
+                class="powder-chip"
+                :style="{ color: POWDER_COLOR[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }"
+              >
+                <span class="powder-glyph">{{ POWDER_GLYPH[POWDER_NAME_BY_ID.get(pid)?.[0] ?? ''] }}</span><span class="powder-tier">{{ POWDER_NAME_BY_ID.get(pid)?.slice(1) }}</span>
+              </span>
+              <span
+                v-for="i in Math.max(0, maxPowders(idx) - powdersFor(idx).length)"
+                :key="`e-${i}`"
+                class="powder-pip"
+                aria-hidden="true"
+              />
+            </template>
+          </button>
         </div>
       </template>
     </div>
 
-    <!-- Inline picker panel (no dialog dependency, robust) -->
     <div v-if="openSlot !== null" class="picker-overlay" @click.self="handleClose">
       <ItemPicker
         :slot-index="openSlot"
@@ -302,43 +294,30 @@ const powderSlotMax = computed(() =>
   position: relative;
 }
 
+/* 2-column paired layout:
+   Left:  Helmet / Chest / Legs / Boots
+   Right: Ring1 / Ring2 / Bracelet / Necklace
+   Full:  Weapon */
 .equipment-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 8px;
-}
-
-@media (max-width: 720px) {
-  .equipment-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-  }
-  .slot {
-    padding: 8px 10px;
-    gap: 4px;
-  }
-  .slot-name {
-    font-size: 11px;
-  }
-  .slot-icon {
-    width: 20px;
-    height: 20px;
-  }
-  .powder-cta-label {
-    display: none;
-  }
-  .powder-chips--empty {
-    padding: 2px 5px;
-  }
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'helmet   ring1'
+    'chest    ring2'
+    'legs     bracelet'
+    'boots    necklace'
+    'weapon   weapon';
+  gap: 4px;
 }
 
 .slot {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 4px 8px;
+  min-height: 34px;
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
   transition:
     border-color 0.12s,
@@ -347,43 +326,62 @@ const powderSlotMax = computed(() =>
 
 .slot:hover {
   border-color: var(--color-muted);
-  background: oklch(19% 0.008 30);
+  background: var(--color-surface);
 }
 
 .slot--active {
   border-color: var(--color-copper);
 }
 
-.slot-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 16px;
+.slot-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+  object-fit: contain;
 }
 
 .slot-label {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-faint);
+  flex-shrink: 0;
+  min-width: 28px;
 }
 
 .slot--active .slot-label {
   color: var(--color-copper);
 }
 
+.slot-name {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-name--empty {
+  color: var(--color-faint);
+  font-style: italic;
+}
+
 .powder-chips {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
   padding: 1px 4px;
   cursor: pointer;
+  flex-shrink: 0;
   transition:
     border-color 0.12s,
     background 0.12s,
@@ -396,29 +394,26 @@ const powderSlotMax = computed(() =>
 
 .powder-chip {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 9px;
   display: inline-flex;
   align-items: baseline;
   gap: 1px;
   letter-spacing: 0;
 }
 .powder-glyph {
-  font-size: 9px;
+  font-size: 8px;
 }
 .powder-tier {
   font-weight: 600;
 }
 
-/* Outlined placeholder for partially filled slot — reads as an empty container */
 .powder-pip {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border: 1px dashed var(--color-border);
   border-radius: 2px;
-  transition:
-    border-color 0.12s,
-    background 0.12s;
+  transition: border-color 0.12s;
 }
 .slot:hover .powder-pip {
   border-color: var(--color-muted);
@@ -428,12 +423,9 @@ const powderSlotMax = computed(() =>
   border-style: solid;
 }
 
-/* Empty-state CTA pill: "+ 0/N Powders" — explicit affordance */
 .powder-chips--empty {
-  gap: 5px;
-  padding: 2px 7px 2px 6px;
   border-color: var(--color-border);
-  color: var(--color-muted);
+  color: var(--color-faint);
 }
 .powder-chips--empty:hover {
   border-color: var(--color-copper);
@@ -447,45 +439,7 @@ const powderSlotMax = computed(() =>
   line-height: 1;
   color: inherit;
 }
-.powder-cta-label {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: inherit;
-}
 
-.slot-body {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-
-.slot-icon {
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  image-rendering: pixelated;
-  object-fit: contain;
-}
-
-.slot-name {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 12px;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.slot-name--empty {
-  color: var(--color-faint);
-  font-style: italic;
-}
-
-/* Overlay backdrop */
 .picker-overlay {
   position: fixed;
   inset: 0;
@@ -497,8 +451,6 @@ const powderSlotMax = computed(() =>
   backdrop-filter: blur(2px);
 }
 
-/* Phone: slide picker up from the bottom as a sheet — native mobile pattern,
-   easier reach, matches the floating-panel convention in the design system. */
 @media (max-width: 720px) {
   .picker-overlay {
     align-items: flex-end;
@@ -510,8 +462,6 @@ const powderSlotMax = computed(() =>
   z-index: 9999;
 }
 
-/* Hover quickview is a desktop affordance — hide on coarse/touch pointers
-   so a tap doesn't fire a stuck hover card behind the picker. */
 @media (hover: none), (pointer: coarse) {
   .quickview {
     display: none !important;
