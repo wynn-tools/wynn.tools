@@ -280,6 +280,14 @@ onMounted(async () => {
   allFeatures.value = [...featureData.places, ...featureData.content, ...featureData.services]
   await reseedMarkers()
   await renderPlayerMarkers(map, pixi.value!.layers.players, players.value)
+  // If activeIngredient was set before Pixi finished initializing (race: cached searchData
+  // resolves faster than mountPixiOverlay), the watch guard `if (!p)` would have exited early.
+  // Render now that Pixi is ready.
+  if (props.activeIngredient) {
+    const palette = await renderIngredientDrops(map, pixi.value!.layers.ingredientDrops, props.activeIngredient)
+    emit('ingredientPaletteUpdate', palette)
+    fitIngredientDrops(map, props.activeIngredient)
+  }
   pixi.value!.redraw()
 })
 
