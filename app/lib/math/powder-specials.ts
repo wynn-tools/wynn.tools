@@ -7,7 +7,10 @@
  * Element order is e, t, w, f, a (Earth, Thunder, Water, Fire, Air).
  */
 import type { StatMap } from './merge-stat'
+import type { DamagePartResult, SpellPartResult } from './spell-calc'
+import type { Spell } from './spells'
 import { mergeStat } from './merge-stat'
+import { computeSpellParts } from './spell-calc'
 
 export interface PowderSpecial {
   /** Weapon (active) special name, e.g. 'Quake'. */
@@ -120,6 +123,72 @@ export function deserializePowderActive(param: string | null): PowderActive {
       const n = Number.parseInt(parts[i] ?? '0', 10)
       out[i] = Number.isFinite(n) ? Math.min(7, Math.max(0, n)) : 0
     }
+  }
+  return out
+}
+
+// --- Direct-damage active attacks (Phase 2) ------------------------------
+
+/** [e,t,w,f,a] → conversion-multiplier index (index 0 is neutral). */
+const ELEMENT_CONV_INDEX = [1, 2, 3, 4, 5]
+
+export interface PowderSpecialAttack {
+  spell: Spell
+  parts: SpellPartResult[]
+}
+
+/** Per-element damage fields scaled in place when dividing out a self-boost. */
+const SCALABLE_KEYS = [
+  'normalMin',
+  'normalMax',
+  'normalTotal',
+  'critMin',
+  'critMax',
+  'critTotal',
+] as const
+
+/**
+ * Build one synthetic attack per active direct-damage special (Quake / Chain
+ * Lightning / Courage). Mirrors WynnBuilder displayPowderSpecials: the special's
+ * Damage% becomes an elemental conversion; Courage's own damage-boost is divided
+ * back out so it doesn't self-apply.
+ */
+export function collectPowderSpecialAttacks(
+  active: PowderActive,
+  stats: StatMap,
+  weapon: Map<string, unknown>,
+): PowderSpecialAttack[] {
+  const out: PowderSpecialAttack[] = []
+  for (let i = 0; i < POWDER_SPECIALS.length; i++) {
+    const tier = active[i] ?? 0
+    const ps = POWDER_SPECIALS[i]!
+    if (tier < 1 || !ps.damage)
+      continue
+    const multipliers = [0, 0, 0, 0, 0, 0]
+    multipliers[ELEMENT_CONV_INDEX[i]!] = ps.damage[tier - 1]!
+    const spell: Spell = {
+      name: `${ps.weaponName} (Powder Special)`,
+      baseSpell: 0,
+      parts: [{ name: ps.weaponName, multipliers }],
+    }
+    const parts = computeSpellParts(spell, stats, weapon)
+    // Courage carries its own damage-boost in damMult.Courage (applied to all
+    // damage by applyPowderSpecialBoosts); divide it back out so the special's
+    // own damage doesn't double-count the boost. Faithful to displayPowderSpecials.
+    if (ps.damageBoost) {
+      const factor = 1 + ps.damageBoost[tier - 1]! / 100
+      for (const part of parts) {
+        if (part.type !== 'damage')
+          continue
+        const dmg = part as DamagePartResult
+        for (const key of SCALABLE_KEYS) {
+          const arr = dmg[key] as number[]
+          for (let j = 0; j < arr.length; j++)
+            arr[j]! /= factor
+        }
+      }
+    }
+    out.push({ spell, parts })
   }
   return out
 }

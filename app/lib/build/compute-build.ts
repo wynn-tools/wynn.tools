@@ -37,7 +37,7 @@ import { SKP_ORDER } from '../math/constants'
 import { computeDefenseStats } from '../math/defense'
 import { computeMeleeDps, getSpellCost } from '../math/dps'
 import { mergeStat } from '../math/merge-stat'
-import { applyPowderSpecialBoosts } from '../math/powder-specials'
+import { applyPowderSpecialBoosts, collectPowderSpecialAttacks } from '../math/powder-specials'
 import { calculateSkillpoints } from '../math/skillpoint-calc'
 import { levelToSkillPoints } from '../math/skillpoints'
 import { computeSpWarning } from '../math/sp-warning'
@@ -292,6 +292,14 @@ export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: Bui
     const parts = computeSpellParts(spell, stats, weapon)
     const cost = spell.baseSpell === 0 ? null : getSpellCost(stats, spell)
     spellOutputs.push({ spell, parts, cost })
+  }
+
+  // Powder special direct-damage attacks (Quake/Chain Lightning/Courage) → own lines.
+  if (powderActive) {
+    for (const atk of collectPowderSpecialAttacks(powderActive, stats, weapon)) {
+      if (atk.parts.length > 0)
+        spellOutputs.push({ spell: atk.spell, parts: atk.parts, cost: null })
+    }
   }
 
   return { stats, defense, melee, skillpoints: skp, spells: spellOutputs, spWarning }

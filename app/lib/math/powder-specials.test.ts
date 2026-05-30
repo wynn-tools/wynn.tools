@@ -2,6 +2,7 @@ import type { StatMap } from './merge-stat'
 import { describe, expect, it } from 'vitest'
 import {
   applyPowderSpecialBoosts,
+  collectPowderSpecialAttacks,
   deserializePowderActive,
   emptyPowderActive,
   POWDER_SPECIALS,
@@ -98,5 +99,45 @@ describe('serialize/deserialize active tiers', () => {
   it('empty handling', () => {
     expect(serializePowderActive(emptyPowderActive())).toBeNull()
     expect(powderActiveIsEmpty(deserializePowderActive(null))).toBe(true)
+  })
+})
+
+describe('collectPowderSpecialAttacks', () => {
+  function weaponMap() {
+    return new Map<string, unknown>([
+      ['type', 'relik'],
+      ['atkSpd', 'NORMAL'],
+      ['nDam_', [0, 0]],
+      ['eDam_', [50, 70]],
+      ['tDam_', [0, 0]],
+      ['wDam_', [0, 0]],
+      ['fDam_', [0, 0]],
+      ['aDam_', [0, 0]],
+      ['damagePresent', [false, true, false, false, false, false]],
+    ])
+  }
+  function baseStats(): StatMap {
+    return new Map<string, unknown>([
+      ['str', 0],
+      ['dex', 0],
+      ['int', 0],
+      ['def', 0],
+      ['agi', 0],
+    ]) as StatMap
+  }
+  it('emits one synthetic attack per active direct-damage special', () => {
+    const attacks = collectPowderSpecialAttacks(
+      [6, 0, 0, 0, 0],
+      baseStats(),
+      weaponMap(),
+    )
+    expect(attacks).toHaveLength(1) // Quake only
+    expect(attacks[0]!.spell.name).toContain('Quake')
+    expect(attacks[0]!.parts.length).toBeGreaterThan(0)
+  })
+  it('skips boost-only specials and tier 0', () => {
+    expect(
+      collectPowderSpecialAttacks([0, 0, 7, 0, 6], baseStats(), weaponMap()),
+    ).toHaveLength(0)
   })
 })
