@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { ApiBuild } from '~/composables/useApi'
 import { useApi } from '~/composables/useApi'
-import { useCdnClient } from '~/composables/useBuildData'
+import { loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
+import { extractBuildMeta } from '~/lib/build/build-meta'
+import { computeBuild } from '~/lib/build/compute-build'
+import { decodeRawBuild } from '~/lib/codec/build-codec'
 import { useAuthStore } from '~/stores/auth'
 import { useBuildStore } from '~/stores/build'
 
@@ -31,9 +34,57 @@ const isOwner = computed(() =>
   !!auth.user && !!build.value?.owner && build.value.owner.id === auth.user.id,
 )
 
+const { data: buildMeta } = await useAsyncData(
+  () => `build-meta-${id.value}`,
+  async () => {
+    const hash = build.value?.buildString
+    if (!hash)
+      return null
+    try {
+      const client = useCdnClient()
+      const versionId = peekVersionId(hash)
+      const loaded = await loadBuildContext(client, versionId)
+      const recipes = loaded.ctx.craftContext?.recipes
+      const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
+      const raw = decodeRawBuild(hash, () => ({
+        enc: loaded.enc,
+        atreeData: loaded.ctx.atreeData,
+        weaponType: loaded.weaponType,
+        recipeIsWeapon: recipes
+          ? (rid: number) => {
+              const rec = recipes.get(rid)
+              return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
+            }
+          : () => false,
+      }))
+      const result = computeBuild(raw, loaded.ctx)
+      return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result)
+    }
+    catch {
+      return null
+    }
+  },
+  { watch: [id] },
+)
+
+const ogTitle = computed(() =>
+  build.value ? `${build.value.name} — wynn.tools` : 'Build — wynn.tools',
+)
+
+const itemDescription = computed(() =>
+  buildMeta.value?.items.filter(i => i.name !== '—').map(i => i.name).join(' · ') ?? '',
+)
+
 useSeoMeta({
-  title: computed(() => build.value ? `${build.value.name} — wynn.tools` : 'Build — wynn.tools'),
+  title: ogTitle,
+  ogTitle,
+  description: itemDescription,
+  ogDescription: itemDescription,
+  twitterCard: 'summary_large_image',
 })
+
+if (import.meta.server && buildMeta.value)
+  defineOgImage('BuildCard', buildMeta.value)
 
 function syncBuild(b: ApiBuild | null | undefined) {
   if (b?.buildString)
