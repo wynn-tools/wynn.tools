@@ -1,69 +1,78 @@
 <script setup lang="ts">
 import type { BuildResult } from '~/lib/build/compute-build'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { buildStatSummary } from '~/lib/math/stat-summary'
 
 const props = defineProps<{ result: BuildResult }>()
 
-interface ElementInfo {
-  name: string
-  glyph: string
-  color: string
+type View = 'summary' | 'detailed'
+const STORAGE_KEY = 'wynn.tools:stat-view'
+
+function initialView(): View {
+  if (typeof window === 'undefined')
+    return 'summary'
+  return window.localStorage.getItem(STORAGE_KEY) === 'detailed' ? 'detailed' : 'summary'
 }
 
-const ELEMENTS: ElementInfo[] = [
-  { name: 'Earth', glyph: '✤', color: 'oklch(72% 0.18 145)' },
-  { name: 'Thunder', glyph: '✦', color: 'oklch(82% 0.15 95)' },
-  { name: 'Water', glyph: '❉', color: 'oklch(75% 0.13 215)' },
-  { name: 'Fire', glyph: '✹', color: 'oklch(68% 0.18 35)' },
-  { name: 'Air', glyph: '❋', color: 'oklch(85% 0.04 250)' },
-]
+const view = ref<View>(initialView())
 
-const def = computed(() => props.result.defense)
+function setView(next: View) {
+  view.value = next
+  if (typeof window !== 'undefined')
+    window.localStorage.setItem(STORAGE_KEY, next)
+}
+
+const groups = computed(() => buildStatSummary(props.result, view.value))
+
+// Glyph + color per element index (0=neutral .. 5=air) — game-world semantic.
+const ELEM_COLORS = [
+  'oklch(80% 0.02 250)',
+  'oklch(72% 0.18 145)',
+  'oklch(82% 0.15 95)',
+  'oklch(75% 0.13 215)',
+  'oklch(68% 0.18 35)',
+  'oklch(85% 0.04 250)',
+]
+const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 </script>
 
 <template>
   <section class="stats">
-    <div class="ledger">
-      <div class="row row--headline">
-        <span class="label">Total HP</span>
-        <span class="value value--lg">{{ def.totalHp.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
-      </div>
-      <div class="row">
-        <span class="label">Effective HP</span>
-        <span class="value mono">{{ def.ehp.withAgi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
-      </div>
-      <div class="row">
-        <span class="label">EHP no agi</span>
-        <span class="value mono">{{ def.ehp.withoutAgi.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</span>
-      </div>
-      <div class="row">
-        <span class="label">HP Regen</span>
-        <span class="value mono">{{ def.totalHpr.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}<span class="value-unit">/s</span></span>
-      </div>
+    <div class="seg" role="tablist" aria-label="Stat detail level">
+      <button
+        v-for="v in (['summary', 'detailed'] as View[])"
+        :key="v"
+        type="button"
+        role="tab"
+        :aria-selected="view === v"
+        class="seg-btn"
+        :class="{ 'seg-btn--active': view === v }"
+        @click="setView(v)"
+      >
+        {{ v === 'summary' ? 'Summary' : 'Detailed' }}
+      </button>
     </div>
 
-    <div class="ledger ledger--elements">
+    <div
+      v-for="group in groups"
+      :key="group.id"
+      class="ledger"
+    >
       <div
-        v-for="(e, i) in ELEMENTS"
-        :key="e.name"
-        class="row row--el"
-        :style="{ '--el-color': e.color }"
+        v-for="(line, i) in group.lines"
+        :key="i"
+        class="row"
+        :class="{ 'row--sub': line.sub }"
       >
         <span class="label">
-          <span class="el-glyph">{{ e.glyph }}</span>{{ e.name }}
+          <span
+            v-if="line.element !== undefined"
+            class="el-glyph"
+            :style="{ color: ELEM_COLORS[line.element] }"
+          >{{ ELEM_GLYPHS[line.element] }}</span>
+          {{ line.label }}
         </span>
-        <span class="value mono">{{ def.elementalDefenses[i]?.toFixed(2) ?? '0.00' }}</span>
-      </div>
-    </div>
-
-    <div class="ledger ledger--util">
-      <div class="row row--inline">
-        <span class="label">Def</span>
-        <span class="value mono">{{ def.defPct.toFixed(1) }}%</span>
-      </div>
-      <div class="row row--inline">
-        <span class="label">Agi</span>
-        <span class="value mono">{{ def.agiPct.toFixed(1) }}%</span>
+        <span class="value mono">{{ line.value }}</span>
       </div>
     </div>
   </section>
@@ -73,89 +82,109 @@ const def = computed(() => props.result.defense)
 .stats {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 14px 16px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
 }
 
-.stats-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+/* Summary / Detailed segmented control */
+.seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.seg-btn {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 0;
+  cursor: pointer;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.seg-btn:hover {
+  color: var(--color-text);
+}
+
+.seg-btn--active {
+  color: var(--color-copper);
+  background: oklch(65% 0.15 48 / 0.08);
+}
+
+.seg-btn:focus-visible {
+  outline: 2px solid var(--color-copper);
+  outline-offset: 2px;
 }
 
 .ledger {
   display: flex;
   flex-direction: column;
-}
-
-.ledger--elements {
   padding-top: 10px;
   border-top: 1px solid var(--color-border);
 }
 
-.ledger--util {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border);
+/* First ledger sits flush under the toggle — no extra rule */
+.ledger:first-of-type {
+  padding-top: 0;
+  border-top: none;
 }
 
 .row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   padding: 3px 0;
 }
 
-.row--inline {
-  padding: 0;
+.row--sub {
+  padding: 1px 0 1px 10px;
 }
 
 .label {
   font-size: 12px;
   color: var(--color-muted);
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 6px;
+  min-width: 0;
+}
+
+.row--sub .label {
+  font-size: 11px;
+  color: var(--color-faint);
 }
 
 .value {
-  font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 13px;
   color: var(--color-text);
   text-align: right;
   letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.value-unit {
-  font-size: 10px;
-  color: var(--color-faint);
-  margin-left: 2px;
-  letter-spacing: 0.06em;
-}
-
-.value--lg {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--color-text);
-  letter-spacing: -0.01em;
-}
-
-.row--headline .label {
-  font-size: 11px;
-  color: var(--color-faint);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.row--sub .value {
+  font-size: 12px;
+  color: var(--color-muted);
 }
 
 .el-glyph {
   font-family: 'Geist Mono', 'Courier New', monospace;
-  color: var(--el-color);
+  flex-shrink: 0;
 }
 
 .mono {
@@ -164,15 +193,7 @@ const def = computed(() => props.result.defense)
 
 @media (max-width: 720px) {
   .stats {
-    padding: 14px 14px;
-    gap: 12px;
-  }
-  .value--lg {
-    font-size: 20px;
-  }
-  .ledger--util {
-    grid-template-columns: 1fr;
-    gap: 0;
+    padding: 12px 14px;
   }
 }
 </style>

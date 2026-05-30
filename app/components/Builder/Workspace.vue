@@ -144,7 +144,7 @@ const showAtree = ref(true)
 .zones {
   display: grid;
   gap: 14px;
-  grid-template-columns: minmax(280px, 1.2fr) minmax(200px, 0.7fr) minmax(240px, 0.9fr);
+  grid-template-columns: minmax(260px, 1.1fr) minmax(230px, 0.9fr) minmax(240px, 0.9fr);
   align-items: start;
 }
 
