@@ -30,7 +30,7 @@ export async function renderIngredientDrops(
   ingredient: SearchIngredient | null,
 ): Promise<Map<string, string>> {
   const { Graphics } = await import('pixi.js')
-  container.removeChildren()
+  container.removeChildren().forEach(c => c.destroy({ children: true }))
 
   if (!ingredient)
     return new Map()
