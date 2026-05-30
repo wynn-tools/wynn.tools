@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { FeatureDetail } from '~/composables/useFeatureDetails'
 import type { CaveJsonEntry } from '~/composables/useMapData'
+import type { SearchIngredient } from '~/lib/items-search/types'
 import type { MapFeature, TerritoryEntry } from '~/types/map'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import CategoryFilters from '~/components/map/CategoryFilters.vue'
 import CoordReadout from '~/components/map/CoordReadout.vue'
 import ExploreList from '~/components/map/ExploreList.vue'
 import FocusPanel from '~/components/map/FocusPanel.vue'
+import IngredientDropPanel from '~/components/map/IngredientDropPanel.vue'
 import KeyboardShortcuts from '~/components/map/KeyboardShortcuts.vue'
 import LootrunPanel from '~/components/map/LootrunPanel.vue'
 import MapCanvas from '~/components/map/MapCanvas.vue'
@@ -51,6 +53,9 @@ useSeoMeta({
 const route = useRoute()
 const router = useRouter()
 const store = useMapStore()
+
+const { data: searchData } = useItemSearchData()
+const ingredientPalette = ref(new Map<string, string>())
 
 const loading = ref(true)
 
@@ -183,13 +188,19 @@ const focusDetail = computed<FeatureDetail | null>(() => {
   return detailFromFeature(f, caves.value)
 })
 
+const activeIngredient = computed<SearchIngredient | null>(() => {
+  if (!store.ingredientDrop || !searchData.value)
+    return null
+  return searchData.value.ingredients.find(i => i.name === store.ingredientDrop) ?? null
+})
+
 onMounted(() => {
   if (route.query.s) {
     // Share code path — Task 27.
     return
   }
   const hasUrlParams = Object.keys(route.query).some(k =>
-    ['world', 'x', 'z', 'zoom', 'cats', 'focus', 'fs'].includes(k),
+    ['world', 'x', 'z', 'zoom', 'cats', 'focus', 'fs', 'ing'].includes(k),
   )
   if (hasUrlParams) {
     store.hydrate(decodeQueryToView(route.query))
@@ -228,6 +239,7 @@ watch(
     cats: store.enabledCategories.join(','),
     focus: store.focus,
     fs: store.fs,
+    ing: store.ingredientDrop,
   }),
   (curr, prev) => {
     const panMoved = !prev || curr.cx !== prev.cx || curr.cz !== prev.cz || curr.zoom !== prev.zoom
@@ -239,9 +251,10 @@ watch(
         cats: store.enabledCategories,
         focus: store.focus,
         fs: store.fs,
+        ing: store.ingredientDrop,
       }
       router.replace({ query: encodeViewToQuery(view) })
-      saveToLocalStorage(view)
+      saveToLocalStorage({ ...view, ing: null })
     }
     if (panMoved) {
       if (panTimer)
@@ -418,10 +431,12 @@ function onCursorMove(p: { x: number, z: number }) {
       <MapSkeleton v-if="loading" :steps="loadSteps" />
       <Toast />
       <MapCanvas
+        :active-ingredient="activeIngredient"
         @feature-click="onFeatureClick"
         @territory-click="onTerritoryClick"
         @cursor-move="onCursorMove"
         @map-click="onMapClick"
+        @ingredient-palette-update="ingredientPalette = $event"
       />
       <div class="pointer-events-none absolute inset-0 z-[400]">
         <CategoryFilters
@@ -438,6 +453,10 @@ function onCursorMove(p: { x: number, z: number }) {
         />
         <MobileControls @open-filters="mobileFiltersOpen = true" />
         <FocusPanel :detail="focusDetail" />
+        <IngredientDropPanel
+          :ingredient="activeIngredient"
+          :palette="ingredientPalette"
+        />
         <ServicePopup
           :feature="servicePopup?.feature ?? null"
           :screen-pos="servicePopup?.screenPos ?? null"
