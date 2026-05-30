@@ -5,6 +5,7 @@ import type { EncodingConstants } from '~/lib/codec/encoding-constants'
 import type { RawCraft } from '~/lib/crafter/types'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
+import type { BoostId, BuildBoosts } from '~/lib/math/boosts'
 import type { Aspect } from '~/lib/types/aspect'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
@@ -17,6 +18,7 @@ import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
 import { decodeRawBuild, encodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { num } from '~/lib/codec/codec-util'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
+import { emptyBoosts } from '~/lib/math/boosts'
 import { SKP_ORDER } from '~/lib/math/constants'
 
 const DEFAULT_LEVEL = 106
@@ -54,6 +56,7 @@ export const TOME_SLOT_TYPES: Record<number, string> = {
 
 export const useBuildStore = defineStore('build', () => {
   const rawBuild = shallowRef<RawBuild | null>(null)
+  const boosts = ref<BuildBoosts>(emptyBoosts())
   const atreeMessage = ref<string | null>(null)
   const ctx = shallowRef<BuildContext | null>(null)
   const enc = shallowRef<EncodingConstants | null>(null)
@@ -272,10 +275,33 @@ export const useBuildStore = defineStore('build', () => {
     return searchItemById.value.get(id) ?? null
   }
 
+  function toggleBoost(id: BoostId) {
+    const toggles = new Set(boosts.value.toggles)
+    if (toggles.has(id))
+      toggles.delete(id)
+    else
+      toggles.add(id)
+    boosts.value = { ...boosts.value, toggles }
+  }
+
+  function setElemDmg(index: number, value: number) {
+    const elemDmg = [...boosts.value.elemDmg] as BuildBoosts['elemDmg']
+    elemDmg[index] = value
+    boosts.value = { ...boosts.value, elemDmg }
+  }
+
+  function setBoosts(next: BuildBoosts) {
+    boosts.value = next
+  }
+
+  function resetBoosts() {
+    boosts.value = emptyBoosts()
+  }
+
   const result = computed<BuildResult | null>(() => {
     if (!rawBuild.value || !ctx.value)
       return null
-    return computeBuild(rawBuild.value, ctx.value)
+    return computeBuild(rawBuild.value, ctx.value, boosts.value)
   })
 
   const skillpoints = computed<number[]>(() => {
@@ -444,5 +470,5 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, classAspects, currentAspect, setAspect, setAspectTier, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
+  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, boosts, toggleBoost, setElemDmg, setBoosts, resetBoosts, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, classAspects, currentAspect, setAspect, setAspectTier, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
 })
