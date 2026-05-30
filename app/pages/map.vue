@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Map as LMap } from 'leaflet'
 import type { FeatureDetail } from '~/composables/useFeatureDetails'
 import type { CaveJsonEntry } from '~/composables/useMapData'
 import type { SearchIngredient } from '~/lib/items-search/types'
@@ -26,6 +27,7 @@ import WorldEventsStrip from '~/components/map/WorldEventsStrip.vue'
 import WorldPicker from '~/components/map/WorldPicker.vue'
 import ZoomControls from '~/components/map/ZoomControls.vue'
 import { detailFromFeature } from '~/composables/useFeatureDetails'
+import { fitMobDrops } from '~/composables/useIngredientDropLayer'
 import { buildLevelIndex } from '~/composables/useLevelIndex'
 import { loadAllFeatures } from '~/composables/useMapData'
 import {
@@ -59,6 +61,7 @@ const store = useMapStore()
 
 const { data: searchData } = useItemSearchData()
 const ingredientPalette = ref(new Map<string, string>())
+const mapRef = shallowRef<LMap | null>(null)
 
 const loading = ref(true)
 
@@ -490,6 +493,7 @@ function onCursorMove(p: { x: number, z: number }) {
       <Toast />
       <MapCanvas
         :active-ingredient="activeIngredient"
+        @ready="mapRef = $event"
         @feature-click="onFeatureClick"
         @territory-click="onTerritoryClick"
         @cursor-move="onCursorMove"
@@ -524,6 +528,7 @@ function onCursorMove(p: { x: number, z: number }) {
         <IngredientDropPanel
           :ingredient="activeIngredient"
           :palette="ingredientPalette"
+          @fly-to-mob="mapRef && fitMobDrops(mapRef, $event)"
         />
         <ServicePopup
           :feature="servicePopup?.feature ?? null"

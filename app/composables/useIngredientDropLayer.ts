@@ -101,3 +101,26 @@ export function fitIngredientDrops(map: LMap, ingredient: SearchIngredient) {
     { padding: [80, 80], duration: 0.6 },
   )
 }
+
+export function fitMobDrops(map: LMap, coords: [number, number, number, number][]) {
+  if (!coords.length)
+    return
+
+  if (coords.length === 1) {
+    const [x, , z] = coords[0]!
+    map.flyTo([-z, x], 3, { duration: 0.6 })
+    return
+  }
+
+  const xs = coords.map(c => c[0])
+  const zs = coords.map(c => c[2])
+  const minX = Math.min(...xs)
+  const maxX = Math.max(...xs)
+  const minZ = Math.min(...zs)
+  const maxZ = Math.max(...zs)
+
+  map.flyToBounds(
+    [[-maxZ, minX], [-minZ, maxX]],
+    { padding: [80, 80], duration: 0.6 },
+  )
+}

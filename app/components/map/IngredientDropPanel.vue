@@ -8,6 +8,10 @@ defineProps<{
   palette: Map<string, string>
 }>()
 
+const emit = defineEmits<{
+  flyToMob: [coords: [number, number, number, number][]]
+}>()
+
 const store = useMapStore()
 
 const TIER_COLOR: Record<number, string> = {
@@ -77,6 +81,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
         <li
           v-for="d in ingredient.droppedBy" :key="d.name"
           class="flex items-center gap-2 text-sm"
+          :class="d.coords ? 'cursor-pointer rounded px-1 -mx-1 hover:bg-white/5' : ''"
+          @click="d.coords && emit('flyToMob', d.coords)"
         >
           <span
             class="size-3 shrink-0 rounded-full border border-white/20"
