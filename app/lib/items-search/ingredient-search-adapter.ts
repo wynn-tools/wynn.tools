@@ -32,7 +32,7 @@ function toList(file: RawIngredientFile): RawIngredient[] {
 function normalizeCoords(
   raw: RawDropEntry['coords'],
 ): [number, number, number, number][] | null {
-  if (raw === null || raw === undefined)
+  if (raw === null || raw === undefined || raw.length === 0)
     return null
   if (typeof raw[0] === 'number')
     return [raw as [number, number, number, number]]

@@ -53,4 +53,11 @@ describe('adaptIngredients', () => {
     const list = adaptIngredients({ ingredients: [{ id: 1, displayName: 'X', tier: 0 }] } as never)
     expect(list[0]!.droppedBy).toEqual([])
   })
+
+  it('normalizes empty coords array to null', () => {
+    const list = adaptIngredients({
+      ingredients: [{ id: 0, displayName: 'X', tier: 0, droppedBy: [{ name: 'Mob A', coords: [] }] }],
+    } as never)
+    expect(list[0]!.droppedBy[0]!.coords).toBeNull()
+  })
 })
