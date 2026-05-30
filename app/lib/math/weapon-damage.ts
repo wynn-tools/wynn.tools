@@ -57,7 +57,9 @@ export function calcWeaponPowder(weapon: WeaponMap): WeaponPowderResult {
     damages[element + 1]![1] += info.max
   }
 
-  damages[0] = neutralRemaining
+  // Neutral damage is NOT reduced by powder conversion — port of WynnBuilder's
+  // calc_weapon_powder which tracks neutralRemainingRaw but never writes it back
+  // to damages[0]. The conversion adds to elemental without subtracting from neutral.
   const present = damages.map(d => d[1] > 0)
   return { damages, present }
 }
