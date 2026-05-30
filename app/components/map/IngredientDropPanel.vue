@@ -56,8 +56,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
           <h2 class="text-lg font-semibold" :style="{ color: nameColor(ingredient.tier) }">
             {{ ingredient.displayName }}
           </h2>
-          <div class="text-xs uppercase tracking-wider text-muted">
-            Tier {{ ingredient.tier }} · Lv {{ ingredient.level }}
+          <div class="mt-1 flex items-center gap-2">
+            <span
+              class="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset"
+              :style="{ color: nameColor(ingredient.tier), ringColor: nameColor(ingredient.tier) }"
+            >
+              Tier {{ ingredient.tier }}
+            </span>
+            <span class="text-xs uppercase tracking-wider text-muted">Lv {{ ingredient.level }}</span>
           </div>
         </div>
         <MapCloseBtn aria-label="Close drop locations" @click="store.setIngredientDrop(null)" />
