@@ -489,6 +489,7 @@ function onCursorMove(p: { x: number, z: number }) {
         @territory-click="onTerritoryClick"
         @cursor-move="onCursorMove"
         @map-click="onMapClick"
+        @event-marker-click="selectedEvent = $event; eventsListMode = false"
         @ingredient-palette-update="ingredientPalette = $event"
       />
       <div class="pointer-events-none absolute inset-0 z-[400]">

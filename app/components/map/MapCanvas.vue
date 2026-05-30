@@ -4,7 +4,7 @@ import type { Sprite } from 'pixi.js'
 import type { PixiHandle } from '~/composables/usePixiOverlay'
 import type { TerritoryLayerHandle } from '~/composables/useTerritoryLayer'
 import type { SearchIngredient } from '~/lib/items-search/types'
-import type { MapFeature, TerritoryEntry } from '~/types/map'
+import type { MapFeature, TerritoryEntry, WorldEvent } from '~/types/map'
 import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { renderCoordPin, repositionCoordPin } from '~/composables/useCoordPinLayer'
 import {
@@ -37,6 +37,8 @@ import {
   entriesForWorld,
   tileToLatLngBounds,
 } from '~/composables/useTileLayer'
+import { useWorldEventLayer } from '~/composables/useWorldEventLayer'
+import { useWorldEvents } from '~/composables/useWorldEvents'
 import { getWorld } from '~/config/worlds'
 import { useMapStore } from '~/stores/map'
 
@@ -52,6 +54,7 @@ const emit = defineEmits<{
   territoryClick: [territory: TerritoryEntry, screenPos: { x: number, y: number }]
   mapClick: []
   cursorMove: [pos: { x: number, z: number }]
+  eventMarkerClick: [event: WorldEvent]
   ingredientPaletteUpdate: [palette: Map<string, string>]
 }>()
 const containerRef = ref<HTMLDivElement | null>(null)
@@ -67,6 +70,8 @@ let territoryClickPending = false
 let pixiHandledClick = false
 const store = useMapStore()
 const { players } = usePlayerLocations()
+const { events: worldEvents } = useWorldEvents()
+useWorldEventLayer(lmap, worldEvents, event => emit('eventMarkerClick', event))
 let zoomSyncing = false
 let centerSyncing = false
 let playerRenderInFlight = false
