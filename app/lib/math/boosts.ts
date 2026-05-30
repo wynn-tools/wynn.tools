@@ -156,7 +156,7 @@ export function serializeBoosts(b: BuildBoosts): { boosts: string | null, edmg: 
   const hasElem = b.elemDmg.some(v => v !== 0)
   return {
     boosts: toggles.length ? toggles.join(',') : null,
-    edmg: hasElem ? b.elemDmg.join('.') : null,
+    edmg: hasElem ? b.elemDmg.join(',') : null,
   }
 }
 
@@ -170,7 +170,7 @@ export function deserializeBoosts(boostsParam: string | null, edmgParam: string 
     }
   }
   if (edmgParam) {
-    const parts = edmgParam.split('.')
+    const parts = edmgParam.split(',')
     for (let i = 0; i < 5; i++) {
       const n = Number.parseFloat(parts[i] ?? '0')
       out.elemDmg[i] = Number.isFinite(n) ? n : 0

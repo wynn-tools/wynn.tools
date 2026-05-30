@@ -24,6 +24,9 @@ describe('radianceMultiplier', () => {
   it('judgement forces 1.4 regardless of others', () => {
     expect(radianceMultiplier(mk(['radiance', 'judgement']))).toBe(1.4)
   })
+  it('radiance alone is 1.15', () => {
+    expect(radianceMultiplier(mk(['radiance']))).toBeCloseTo(1.15)
+  })
 })
 
 describe('applyRadiance', () => {
@@ -84,6 +87,16 @@ describe('applyBoostMultipliers', () => {
     expect(stats.get('eDamPct')).toBe(10)
     expect(stats.get('fDamPct')).toBe(5)
     expect(stats.get('tDamPct')).toBeUndefined()
+  })
+  it('vengeful alone gives damage Potion 20', () => {
+    const stats: StatMap = new Map()
+    applyBoostMultipliers(stats, mk(['vengeful']))
+    expect(dm(stats, 'Potion')).toBe(20)
+  })
+  it('warscream alone gives defense Potion 20', () => {
+    const stats: StatMap = new Map()
+    applyBoostMultipliers(stats, mk(['warscream']))
+    expect(df(stats, 'Potion')).toBe(20)
   })
 })
 
