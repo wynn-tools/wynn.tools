@@ -58,8 +58,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
           </h2>
           <div class="mt-1 flex items-center gap-2">
             <span
-              class="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset"
-              :style="{ color: nameColor(ingredient.tier), ringColor: nameColor(ingredient.tier) }"
+              class="inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-semibold"
+              :style="{ color: nameColor(ingredient.tier), borderColor: nameColor(ingredient.tier) }"
             >
               Tier {{ ingredient.tier }}
             </span>
