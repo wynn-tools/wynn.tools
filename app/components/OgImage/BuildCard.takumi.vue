@@ -10,21 +10,11 @@ const props = withDefaults(
     ehp?: number
   }>(),
   {
-    level: 106,
-    className: 'Mage',
-    items: () => [
-      { slot: 'Weapon', name: 'Fatal', tier: 'Mythic', icon: 'https://cdn.wynn.tools/nextgen/itemguide/3.3/fatal.png', powders: 'TTT' },
-      { slot: 'Helmet', name: 'Morph-Stardust', tier: 'Fabled', icon: null },
-      { slot: 'Chestplate', name: 'Aphotic', tier: 'Legendary', icon: null, powders: 'WWW' },
-      { slot: 'Leggings', name: 'Boreal', tier: 'Rare', icon: null },
-      { slot: 'Boots', name: 'Resurgence', tier: 'Mythic', icon: null },
-      { slot: 'Ring 1', name: 'Diamond Hydro Ring', tier: 'Unique', icon: null },
-      { slot: 'Ring 2', name: 'Moon Pool Circlet', tier: 'Legendary', icon: null },
-      { slot: 'Bracelet', name: 'Prowess', tier: 'Rare', icon: null },
-      { slot: 'Necklace', name: 'Aquamarine', tier: 'Set', icon: null },
-    ],
-    dps: 1840,
-    ehp: 38210,
+    level: 0,
+    className: 'Build',
+    items: () => [],
+    dps: 0,
+    ehp: 0,
   },
 )
 
