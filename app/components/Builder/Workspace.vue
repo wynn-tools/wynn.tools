@@ -189,10 +189,14 @@ const showAtree = ref(true)
   border-color: var(--color-copper);
 }
 
+/* The ability tree is at most 9 tiles (~396px) wide, so the canvas hugs its
+   content rather than filling a greedy column. The canvas + active panel
+   cluster centers in the section instead of stranding the tree in empty space. */
 .atree-split {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-  gap: 14px;
+  grid-template-columns: auto minmax(280px, 360px);
+  justify-content: center;
+  gap: 18px;
   align-items: start;
 }
 

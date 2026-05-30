@@ -267,10 +267,16 @@ function onMiniPointerUp(e: PointerEvent) {
 // discrete zoom levels. Default is 1; on small viewports we drop to 0.85 so
 // the tree fits with one finger-pan rather than two.
 const ZOOM_LEVELS = [0.6, 0.75, 0.9, 1, 1.15, 1.3]
-const zoomIdx = ref(2)
+// Desktop defaults to 1.0 — pixel art is crispest at integer scale, and a
+// ≤9-tile tree has the width to spare. Mobile drops to 0.9 (set on mount).
+const zoomIdx = ref(3)
 const zoom = computed(() => ZOOM_LEVELS[zoomIdx.value] ?? 1)
 const scaledWidth = computed(() => gridWidth.value * zoom.value)
 const scaledHeight = computed(() => gridHeight.value * zoom.value)
+
+// The canvas hugs the tree's width (+ scrollbar gutter) so it stops sprawling
+// across the section. The minimap sits beside it as a flex sibling, not over it.
+const canvasMaxWidth = computed(() => scaledWidth.value + 18)
 
 function zoomIn() {
   if (zoomIdx.value < ZOOM_LEVELS.length - 1)
@@ -338,10 +344,11 @@ onMounted(() => {
       </div>
 
       <!-- Scrollable canvas + minimap shell -->
-      <div class="atree-shell relative">
+      <div class="atree-shell">
         <div
           ref="canvasEl"
           class="atree-canvas max-h-[60vh] overflow-auto rounded border border-border"
+          :style="{ maxWidth: `${canvasMaxWidth}px` }"
           @scroll.passive="syncViewport"
         >
           <div
@@ -518,16 +525,27 @@ onMounted(() => {
    the tree so empty regions still feel like coordinate space. */
 .atree-canvas {
   background-color: var(--color-surface);
-  /* Center the grid horizontally; `safe` falls back to flex-start when the
-     grid is wider than the viewport so the left edge stays reachable. */
+  /* Tree hugs the left; the reserved right strip (see canvasMaxWidth) holds the
+     floating minimap so it never overlaps nodes. */
   display: flex;
-  justify-content: safe center;
+  justify-content: flex-start;
   align-items: flex-start;
+  /* Reserve the scrollbar gutter so the tall tree's scrollbar doesn't shift the
+     grid or trigger a phantom horizontal scroll at the width cap. */
+  scrollbar-gutter: stable;
 }
 
 .atree-grid {
   background-image: radial-gradient(circle at 22px 22px, oklch(65% 0.15 48 / 0.05) 1px, transparent 1.5px);
   background-size: 44px 44px;
+}
+
+/* Canvas + minimap sit side by side; the minimap is a sibling, never an
+   overlay, so it can't cover the tree's rightmost nodes. */
+.atree-shell {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 /* The CDN ships purpose-built art per state (base / pulse / active), so no
@@ -545,15 +563,14 @@ onMounted(() => {
   transform-origin: center;
 }
 
-/* Minimap — sits in the top-right corner of the canvas shell, floats over
-   the scrollable area. Click or drag to scrub. */
+/* Minimap — docks beside the canvas (flex sibling). Stays put while the canvas
+   scrolls internally since it lives outside the scroll container. Click or drag
+   to scrub. */
 .atree-minimap {
-  position: absolute;
+  position: sticky;
   top: 10px;
-  right: 10px;
-  z-index: 5;
+  flex-shrink: 0;
   background: oklch(14% 0.006 30 / 0.92);
-  backdrop-filter: blur(6px);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 6px;
