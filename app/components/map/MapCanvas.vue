@@ -3,9 +3,15 @@ import type { ImageOverlay, Map as LMap } from 'leaflet'
 import type { Sprite } from 'pixi.js'
 import type { PixiHandle } from '~/composables/usePixiOverlay'
 import type { TerritoryLayerHandle } from '~/composables/useTerritoryLayer'
+import type { SearchIngredient } from '~/lib/items-search/types'
 import type { MapFeature, TerritoryEntry } from '~/types/map'
 import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { renderCoordPin, repositionCoordPin } from '~/composables/useCoordPinLayer'
+import {
+  fitIngredientDrops,
+  renderIngredientDrops,
+  repositionIngredientDrops,
+} from '~/composables/useIngredientDropLayer'
 import { fitToLootrun, renderLootrun } from '~/composables/useLootrunLayer'
 import { loadAllFeatures, loadMapsJson } from '~/composables/useMapData'
 import { renderClusters, renderMarkers, rerenderPositions } from '~/composables/useMarkerLayer'
@@ -34,12 +40,19 @@ import {
 import { getWorld } from '~/config/worlds'
 import { useMapStore } from '~/stores/map'
 
+const props = withDefaults(defineProps<{
+  activeIngredient?: SearchIngredient | null
+}>(), {
+  activeIngredient: null,
+})
+
 const emit = defineEmits<{
   ready: [map: LMap]
   featureClick: [featureId: string, screenPos: { x: number, y: number }]
   territoryClick: [territory: TerritoryEntry, screenPos: { x: number, y: number }]
   mapClick: []
   cursorMove: [pos: { x: number, z: number }]
+  ingredientPaletteUpdate: [palette: Map<string, string>]
 }>()
 const containerRef = ref<HTMLDivElement | null>(null)
 const lmap = shallowRef<LMap | null>(null)
@@ -206,6 +219,7 @@ onMounted(async () => {
         repositionTerritoryLayer(lmap.value!, territoryHandle.value)
       }
       repositionCoordPin(lmap.value!, pixi.value.layers.coordPin, store.coordPin)
+      repositionIngredientDrops(lmap.value!, pixi.value.layers.ingredientDrops)
       pixi.value.redraw()
     }
   })
@@ -360,6 +374,21 @@ watch(
     p.redraw()
     if (lr && !prev)
       fitToLootrun(map, lr)
+  },
+)
+
+watch(
+  () => props.activeIngredient,
+  async (ingredient) => {
+    const map = lmap.value
+    const p = pixi.value
+    if (!map || !p)
+      return
+    const palette = await renderIngredientDrops(map, p.layers.ingredientDrops, ingredient ?? null)
+    emit('ingredientPaletteUpdate', palette)
+    if (ingredient)
+      fitIngredientDrops(map, ingredient)
+    p.redraw()
   },
 )
 

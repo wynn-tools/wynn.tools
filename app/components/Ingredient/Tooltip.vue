@@ -167,7 +167,7 @@ function effectivenessBg() {
             >
               {{ d.name }}
             </RouterLink>
-            <span v-else class="tt-drop-plain">{{ d.name }}</span>
+            <span v-else class="tt-muted">{{ d.name }}</span>
           </li>
         </ul>
       </template>
@@ -466,9 +466,6 @@ function effectivenessBg() {
 }
 .tt-drop-link:hover {
   text-decoration: underline;
-}
-.tt-drop-plain {
-  color: #aeaeae;
 }
 
 /* Effectiveness grid */
