@@ -622,3 +622,32 @@
     }
   }
 }
+
+/* World event map markers — Leaflet divIcon */
+.world-event-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: oklch(62% 0.11 48);
+  cursor: pointer;
+  animation: world-event-pulse 2s ease-out infinite;
+}
+
+@keyframes world-event-pulse {
+  0% {
+    box-shadow: 0 0 0 0 oklch(62% 0.11 48 / 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px oklch(62% 0.11 48 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 oklch(62% 0.11 48 / 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-event-marker {
+    animation: none;
+    box-shadow: 0 0 0 2px oklch(62% 0.11 48 / 0.4);
+  }
+}
