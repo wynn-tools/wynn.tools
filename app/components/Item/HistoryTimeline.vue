@@ -17,9 +17,8 @@ function fmt(v: number | null, unit: string): string {
 <template>
   <section class="history">
     <header class="head">
-      <span class="kicker">Item History</span>
-      <h2 class="title">
-        Changes
+      <h2 class="kicker">
+        Item History
       </h2>
       <span class="count">{{ entries.length }} {{ entries.length === 1 ? 'entry' : 'entries' }}</span>
     </header>
@@ -70,15 +69,8 @@ function fmt(v: number | null, unit: string): string {
   margin-bottom: 18px;
 }
 .kicker {
-  font-size: 11px;
-  line-height: 1;
-  color: var(--color-muted);
-}
-.title {
-  font: 700 20px/1.1 var(--font-display, var(--font-body));
-  letter-spacing: -0.01em;
-  color: var(--color-text);
   margin: 0;
+  line-height: 1;
 }
 .count {
   margin-left: auto;
@@ -218,9 +210,6 @@ function fmt(v: number | null, unit: string): string {
 @media (max-width: 720px) {
   .history {
     padding: 14px 14px 16px;
-  }
-  .title {
-    font-size: 18px;
   }
   .entry {
     padding: 12px 0;

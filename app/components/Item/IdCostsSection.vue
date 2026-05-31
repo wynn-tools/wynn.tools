@@ -79,8 +79,7 @@ const theme = computed(() => tierTheme(props.item.tier))
 <template>
   <section v-if="!isFixed && rerolls.length" class="costs">
     <header class="head">
-      <span class="kicker">Emerald cost</span>
-      <h2 class="title">
+      <h2 class="kicker">
         Identification Costs
       </h2>
     </header>
@@ -127,15 +126,8 @@ const theme = computed(() => tierTheme(props.item.tier))
   margin-bottom: 14px;
 }
 .kicker {
-  font-size: 11px;
-  line-height: 1;
-  color: var(--color-muted);
-}
-.title {
-  font: 700 20px/1.1 var(--font-display, var(--font-body));
-  letter-spacing: -0.01em;
-  color: var(--color-text);
   margin: 0;
+  line-height: 1;
 }
 
 .grid {
@@ -213,9 +205,6 @@ const theme = computed(() => tierTheme(props.item.tier))
 @media (max-width: 720px) {
   .costs {
     padding: 14px 14px 16px;
-  }
-  .title {
-    font-size: 18px;
   }
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));

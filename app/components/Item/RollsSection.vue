@@ -91,9 +91,8 @@ const displayQuality = computed(() => `${quality.value}%`)
 <template>
   <section v-if="rows.length" class="rolls">
     <header class="head">
-      <span class="kicker">Identification</span>
-      <h2 class="title">
-        Roll Range
+      <h2 class="kicker">
+        Identification
       </h2>
     </header>
 
@@ -168,15 +167,8 @@ const displayQuality = computed(() => `${quality.value}%`)
   margin-bottom: 14px;
 }
 .kicker {
-  font-size: 11px;
-  line-height: 1;
-  color: var(--color-muted);
-}
-.title {
-  font: 700 20px/1.1 var(--font-display, var(--font-body));
-  letter-spacing: -0.01em;
-  color: var(--color-text);
   margin: 0;
+  line-height: 1;
 }
 
 .meta-row {
@@ -363,9 +355,6 @@ const displayQuality = computed(() => `${quality.value}%`)
 @media (max-width: 720px) {
   .rolls {
     padding: 14px 14px 16px;
-  }
-  .title {
-    font-size: 18px;
   }
   .sim-panel {
     padding: 12px 12px;

@@ -25,9 +25,8 @@ const KIND_TAG: Record<ObtainKind, string> = {
 <template>
   <section class="obtain">
     <header class="head">
-      <span class="kicker">Acquisition</span>
-      <h2 class="title">
-        How to obtain
+      <h2 class="kicker">
+        Acquisition
       </h2>
     </header>
     <ul class="methods">
@@ -57,15 +56,8 @@ const KIND_TAG: Record<ObtainKind, string> = {
   margin-bottom: 14px;
 }
 .kicker {
-  font-size: 11px;
-  line-height: 1;
-  color: var(--color-muted);
-}
-.title {
-  font: 700 20px/1.1 var(--font-display, var(--font-body));
-  letter-spacing: -0.01em;
-  color: var(--color-text);
   margin: 0;
+  line-height: 1;
 }
 .methods {
   list-style: none;
@@ -135,9 +127,6 @@ const KIND_TAG: Record<ObtainKind, string> = {
 @media (max-width: 720px) {
   .obtain {
     padding: 14px 14px 16px;
-  }
-  .title {
-    font-size: 18px;
   }
   .method {
     padding: 10px 12px;

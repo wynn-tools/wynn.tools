@@ -170,9 +170,8 @@ function fmt(v: number | null) {
   <section class="market">
     <header class="head">
       <div class="head-left">
-        <span class="kicker">Trade Market</span>
-        <h2 class="title">
-          Market
+        <h2 class="kicker">
+          Trade Market
         </h2>
       </div>
       <MarketAttribution />
@@ -316,16 +315,8 @@ function fmt(v: number | null) {
 }
 
 .kicker {
-  font-size: 11px;
-  line-height: 1;
-  color: var(--color-muted);
-}
-
-.title {
-  font: 700 20px/1.1 var(--font-display, var(--font-body));
-  letter-spacing: -0.01em;
-  color: var(--color-text);
   margin: 0;
+  line-height: 1;
 }
 
 /* ── Readout ── */
@@ -544,9 +535,6 @@ function fmt(v: number | null) {
 @media (max-width: 720px) {
   .market {
     padding: 14px 14px 14px;
-  }
-  .title {
-    font-size: 18px;
   }
   .readout {
     gap: 20px;

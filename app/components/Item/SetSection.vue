@@ -44,8 +44,7 @@ const bonuses = computed<BonusRow[]>(() => {
 <template>
   <section class="set">
     <header class="head">
-      <span class="kicker">Set</span>
-      <h2 class="title">
+      <h2 class="kicker">
         {{ setName }}
       </h2>
       <span class="count">{{ pieces.length }} pieces</span>
@@ -98,15 +97,8 @@ const bonuses = computed<BonusRow[]>(() => {
   margin-bottom: 14px;
 }
 .kicker {
-  font-size: 11px;
-  line-height: 1;
-  color: var(--color-muted);
-}
-.title {
-  font: 700 20px/1.1 var(--font-display, var(--font-body));
-  letter-spacing: -0.01em;
-  color: var(--color-text);
   margin: 0;
+  line-height: 1;
 }
 .count {
   margin-left: auto;
@@ -235,9 +227,6 @@ const bonuses = computed<BonusRow[]>(() => {
 @media (max-width: 720px) {
   .set {
     padding: 14px 14px 16px;
-  }
-  .title {
-    font-size: 18px;
   }
   .piece {
     padding: 9px 10px;
