@@ -14,6 +14,10 @@ interface VersionEntry {
   contentHash: string
 }
 
+interface CdnItem {
+  displayName: string
+}
+
 async function main() {
   const force = process.argv.includes('--force')
   const e = env()
@@ -26,7 +30,7 @@ async function main() {
     throw new Error('versions.json is empty')
   const { gameVersion } = latest
 
-  const items = await cdn.fetchJson<any[]>(`data/${gameVersion}/items.json`)
+  const items = await cdn.fetchJson<CdnItem[]>(`data/${gameVersion}/items.json`)
   console.log(`Warming ${items.length} items (game version ${gameVersion})${force ? ' [--force]' : ''}`)
 
   const cachedKeys = force
@@ -43,7 +47,7 @@ async function main() {
   let failed = 0
   let skipped = 0
 
-  async function processItem(item: any, index: number) {
+  async function processItem(item: CdnItem, index: number) {
     const slug = slugify(item.displayName)
     const key = `item:${slug}`
     if (cachedKeys.has(key)) {

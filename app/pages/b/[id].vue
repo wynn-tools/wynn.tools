@@ -82,7 +82,7 @@ useSeoMeta({
   description: itemDescription,
   ogDescription: itemDescription,
   twitterCard: 'summary_large_image',
-  ogImage: `${config.public.apiBaseUrl}/v1/og/build/${id.value}`,
+  ogImage: computed(() => `${config.public.apiBaseUrl}/v1/og/build/${id.value}`),
 })
 
 function syncBuild(b: ApiBuild | null | undefined) {

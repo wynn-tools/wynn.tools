@@ -41,7 +41,7 @@ useSeoMeta({
   description: pageDesc,
   ogDescription: pageDesc,
   twitterCard: 'summary_large_image',
-  ogImage: `${config.public.apiBaseUrl}/v1/og/item/${slug.value}`,
+  ogImage: computed(() => `${config.public.apiBaseUrl}/v1/og/item/${slug.value}`),
 })
 
 const itemSets = computed<ResolvedSet[]>(() => {
