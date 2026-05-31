@@ -18,6 +18,7 @@ const auth = useAuthStore()
 const store = useBuildStore()
 
 const id = computed(() => String(route.params.id))
+const config = useRuntimeConfig()
 
 const { data: build, error } = await useAsyncData<ApiBuild>(
   () => `build-${id.value}`,
@@ -81,10 +82,8 @@ useSeoMeta({
   description: itemDescription,
   ogDescription: itemDescription,
   twitterCard: 'summary_large_image',
+  ogImage: `${config.public.apiBaseUrl}/v1/og/build/${id.value}`,
 })
-
-if (import.meta.server && buildMeta.value)
-  defineOgImage('BuildCard', buildMeta.value)
 
 function syncBuild(b: ApiBuild | null | undefined) {
   if (b?.buildString)
