@@ -31,16 +31,6 @@ export default defineNuxtConfig({
     },
   },
   modules: ['@nuxt/eslint', 'reka-ui/nuxt', '@pinia/nuxt', '@nuxt/fonts', 'nuxt-og-image', '@nuxt/icon'],
-  nitro: {
-    // Generate wrangler.toml in the output so the Cloudflare Worker gets an
-    // ASSETS binding — required for nuxt-og-image to load local font files
-    // (wynncraftog-400.ttf, wynnfive-400.ttf) at runtime on Cloudflare Pages.
-    // Without this, event.$fetch to /fonts/* routes through Nitro's internal
-    // router (which has no static-asset handler) and font loading silently fails.
-    cloudflare: {
-      deployConfig: true,
-    },
-  },
   ogImage: {
     defaults: {
       cacheMaxAgeSeconds: 60 * 60 * 24 * 365, // 1 year — OG images are immutable once generated
