@@ -85,6 +85,7 @@ const itemSets = computed<ResolvedSet[]>(() => {
             :piece-lookup="pieceLookup"
           />
           <ItemRollsSection :item="item" />
+          <ItemMarketSection :name="item.name" />
           <ItemIdCostsSection :item="item" />
           <ItemObtainSection :item="item" />
           <ItemHistoryTimeline :entries="history" />
