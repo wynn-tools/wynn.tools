@@ -9,7 +9,6 @@ const schema = z.object({
   FRONTEND_URL: z.string().url(),
   COOKIE_DOMAIN: z.string().min(1),
   CDN_BASE_URL: z.string().url(),
-  NUXT_URL: z.string().url(),
   WYNNVENTORY_API_KEY: z.string().min(1),
   WYNNVENTORY_BASE_URL: z.string().url().default('https://wynnventory.com'),
   PORT: z.coerce.number().int().positive().default(8080),

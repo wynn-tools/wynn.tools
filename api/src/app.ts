@@ -34,7 +34,7 @@ export function createApp(ogFetcher?: OgFetcher): Hono {
   app.route('/v1/users', userProfile)
   app.route('/v1/items', items)
   app.route('/v1/market', market)
-  const fetcher = ogFetcher ?? createOgFetcher(env().NUXT_URL)
+  const fetcher = ogFetcher ?? createOgFetcher(env().FRONTEND_URL)
   app.route('/v1/og', createOgRoute(fetcher))
   return app
 }

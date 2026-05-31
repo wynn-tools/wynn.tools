@@ -20,7 +20,7 @@ import { getSessionUser } from '../services/sessions'
 function prewarmBuildOg(id: string): void {
   void (async () => {
     try {
-      const fetcher = createOgFetcher(env().NUXT_URL)
+      const fetcher = createOgFetcher(env().FRONTEND_URL)
       const { data, contentType } = await fetcher.fetchOgImage(`/b/${id}`)
       await setOgCache(`build:${id}`, data, contentType)
     }

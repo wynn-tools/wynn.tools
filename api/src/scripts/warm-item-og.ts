@@ -21,7 +21,7 @@ interface CdnItem {
 async function main() {
   const force = process.argv.includes('--force')
   const e = env()
-  const fetcher = createOgFetcher(e.NUXT_URL)
+  const fetcher = createOgFetcher(e.FRONTEND_URL)
   const cdn = createCdnClient(e.CDN_BASE_URL)
 
   const versions = await cdn.fetchJson<VersionEntry[]>('versions.json')
