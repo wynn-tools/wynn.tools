@@ -9,6 +9,7 @@ const base = {
   FRONTEND_URL: 'https://wynn.tools',
   COOKIE_DOMAIN: '.wynn.tools',
   CDN_BASE_URL: 'https://cdn.wynn.tools/',
+  WYNNVENTORY_API_KEY: 'test-key',
   PORT: '8080',
 }
 
