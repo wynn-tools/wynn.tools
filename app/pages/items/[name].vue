@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useCdnClient } from '~/composables/useBuildData'
 import { itemHistory } from '~/lib/items-search/history'
+import { loadSearchData } from '~/lib/items-search/load-search-data'
 import { buildSlugIndex, resolveSlug } from '~/lib/items-search/slug'
+import { extractItemMeta } from '~/lib/items/item-meta'
 
 const route = useRoute()
 const slug = computed(() => String(route.params.name))
@@ -41,6 +44,22 @@ useSeoMeta({
   ogDescription: pageDesc,
   twitterCard: 'summary_large_image',
 })
+
+const { data: ogMeta } = await useAsyncData(
+  // nameHint is part of the identity: two items can share a slug and are
+  // disambiguated by ?name=, so it must key the cache and trigger refetch.
+  () => `item-og-${slug.value}${nameHint.value ? `-${nameHint.value}` : ''}`,
+  async () => {
+    const data = await loadSearchData(useCdnClient())
+    const index = buildSlugIndex(data.items)
+    const resolved = resolveSlug(index, slug.value, nameHint.value)
+    return resolved ? extractItemMeta(resolved) : null
+  },
+  { watch: [slug, nameHint] },
+)
+
+if (import.meta.server && ogMeta.value)
+  defineOgImage('ItemCard', ogMeta.value)
 
 const itemSets = computed<ResolvedSet[]>(() => {
   if (!item.value)

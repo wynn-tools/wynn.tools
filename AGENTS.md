@@ -34,7 +34,7 @@ Husky runs `pnpm lint:fix` on commit automatically. All commits must include a D
 
 ### Stack
 
-Nuxt 4 + Vue 3 + Pinia + Tailwind CSS v4 + Reka UI. Tests with Vitest (node environment). No SSR — purely client-side rendering. OG images generated server-side via Satori + resvg. The backend (`api/`) is a separate Hono + Drizzle + Postgres service — see "Accounts, sharing & prices" below.
+Nuxt 4 + Vue 3 + Pinia + Tailwind CSS v4 + Reka UI. Tests with Vitest (node environment). No SSR — purely client-side rendering. OG images generated server-side via `nuxt-og-image` with the **Takumi** renderer (satori + resvg are uninstalled; OG components use the `*.takumi.vue` suffix). The backend (`api/`) is a separate Hono + Drizzle + Postgres service — see "Accounts, sharing & prices" below.
 
 ### Directory layout
 

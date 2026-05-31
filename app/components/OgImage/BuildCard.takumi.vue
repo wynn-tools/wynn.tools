@@ -66,9 +66,19 @@ const CLASS_COLOR: Record<string, string> = {
 
 const headColor = computed(() => CLASS_COLOR[props.className] ?? C.accent)
 
-// Pixel font first (registered via @nuxt/fonts as WynncraftOg), display fallback.
-const PIXEL = '\'WynncraftOg\', \'Barlow Semi Condensed\', sans-serif'
-const SANS = '\'Geist Mono\', monospace'
+// nuxt-og-image's build-time font scanner only registers a family it sees as a
+// literal fontFamily string value (og-image's RE_JS_FONT_FAMILY) — it cannot
+// follow a variable. Declaring the stacks as object literals keeps that literal
+// in <script setup> so the OG renderer actually loads WynncraftOg + Geist Mono —
+// which must ALSO be declared `global: true` in nuxt.config. Double quotes are
+// required: the value itself contains single quotes.
+/* eslint-disable style/quotes -- double quotes are load-bearing: single-quoting
+   would escape the inner family quotes and break og-image's RE_JS_FONT_FAMILY. */
+const PIXEL_STYLE = { fontFamily: "'WynncraftOg', 'Barlow Semi Condensed', sans-serif" }
+const SANS_STYLE = { fontFamily: "'Geist Mono', monospace" }
+/* eslint-enable style/quotes */
+const PIXEL = PIXEL_STYLE.fontFamily
+const SANS = SANS_STYLE.fontFamily
 
 function rarityColor(tier?: string | null): string {
   if (!tier)

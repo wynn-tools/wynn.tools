@@ -35,6 +35,16 @@ export default defineNuxtConfig({
     defaults: {
       cacheMaxAgeSeconds: 60 * 60 * 24 * 365, // 1 year — OG images are immutable once generated
     },
+    // Takumi is the only renderer (satori + @resvg/* are uninstalled). Our OG
+    // components are *.takumi.vue; this flag is an explicit guard so the satori
+    // binding stays off even if the package is ever re-added as a transitive dep.
+    // Takumi renders pixel art crisply (nearest-neighbour) and decodes the webp
+    // item icons natively — both of which the satori + resvg path could not do.
+    compatibility: {
+      dev: { satori: false },
+      runtime: { satori: false },
+      prerender: { satori: false },
+    },
   },
   eslint: {
     config: {
@@ -49,12 +59,16 @@ export default defineNuxtConfig({
       { name: 'Barlow Semi Condensed', weights: [400, 500, 600, 700, 800], global: true },
       { name: 'Figtree', weights: [300, 400, 500, 600, 700], global: true },
       { name: 'Geist Mono', weights: [400, 500], global: true },
-      // Wynncraft pixel font for the OG image (Takumi) renderer. Fresh family
-      // name + matching public/fonts/wynncraftog.otf so @nuxt/fonts' local
-      // provider resolves it (the 'wynncraft' family is skipped because
-      // global.css already declares its @font-face). global:false — web keeps
-      // using the woff @font-face.
-      { name: 'WynncraftOg', provider: 'local', weights: [400], global: false },
+      // Wynncraft pixel font for the OG image (Satori) renderer. Fresh family
+      // name; the file is public/fonts/wynncraftog-400.ttf — the `-400` weight
+      // token is required for @nuxt/fonts + og-image to resolve the local file,
+      // and it MUST be TrueType (glyf) outlines: Satori silently fails to render
+      // CFF/OTTO OpenType fonts, so the source .otf was converted to .ttf.
+      // global:true is REQUIRED — nuxt-og-image only ingests @nuxt/fonts
+      // families that emit a global @font-face. Harmless on the web: no UI CSS
+      // references 'WynncraftOg' (the chrome uses the 'wynncraft' woff face), so
+      // browsers never fetch the .ttf; it only feeds the OG image renderer.
+      { name: 'WynncraftOg', provider: 'local', weights: [400], global: true },
     ],
   },
 })
