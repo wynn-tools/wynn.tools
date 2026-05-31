@@ -26,16 +26,21 @@ describe('market routes', () => {
     expect(await res.json()).toMatchObject({ name: 'Divzer' })
   })
 
-  it('pOST /v1/market/prices returns results aligned by index', async () => {
-    stubUpstream({ name: 'X', average_p50_ema_price: 1 })
+  it('pOST /v1/market/prices aligns results to request order (null for no-data)', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      const found = url.includes('/Found/')
+      return new Response(found ? JSON.stringify({ name: 'Found' }) : '{}', { status: found ? 200 : 404 })
+    }))
     const res = await app()('/v1/market/prices', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ items: [{ name: 'A' }, { name: 'B', tier: 6 }] }),
+      body: JSON.stringify({ items: [{ name: 'Missing' }, { name: 'Found' }] }),
     })
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.results).toHaveLength(2)
+    expect(body.results[0]).toBeNull() // Missing → no data
+    expect(body.results[1]).toMatchObject({ name: 'Found' }) // aligned by index
   })
 
   it('rate-limits a flood of requests from one IP', async () => {

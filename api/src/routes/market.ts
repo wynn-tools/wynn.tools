@@ -16,6 +16,8 @@ const priceQuery = z.object({
   shiny: z.coerce.boolean().optional(),
 })
 
+// Per-item schema is {name, tier?} only — shiny is intentionally omitted because
+// build-cost pricing is always non-shiny (the single /price/:name route still supports ?shiny=).
 const batchBody = z.object({
   items: z.array(z.object({
     name: z.string().min(1),
