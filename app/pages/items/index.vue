@@ -248,6 +248,9 @@ const setOptions = computed(() =>
   --rail-w: 124px;
   grid-template-columns: 248px minmax(0, 1fr) var(--rail-w);
   gap: 28px;
+  /* Give the row near-viewport height so the vertically-centred build rail sits
+     in the middle of the section even when the results are short. */
+  min-height: calc(100dvh - 200px);
 }
 .layout--full {
   grid-template-columns: minmax(0, 1fr) var(--rail-w);
@@ -401,6 +404,7 @@ const setOptions = computed(() =>
   .layout--full {
     grid-template-columns: 1fr;
     gap: 20px;
+    min-height: 0;
   }
   .rail-col {
     display: none;

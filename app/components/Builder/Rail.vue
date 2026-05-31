@@ -2,7 +2,7 @@
 import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { useBuilderRail } from '~/composables/useBuilderRail'
-import { SLOT_LABELS } from '~/lib/builder-draft/routing'
+import { EQUIP_SLOT_COUNT, SLOT_LABELS } from '~/lib/builder-draft/routing'
 import { itemIconUrl } from '~/lib/items/icon'
 import { TIER_COLORS } from '~/lib/items/tooltip'
 
@@ -12,8 +12,8 @@ const rail = useBuilderRail()
 
 // CSS grid-area names, matching the builder's EquipmentGrid template.
 const SLOT_AREAS = ['helmet', 'chest', 'legs', 'boots', 'ring1', 'ring2', 'bracelet', 'necklace', 'weapon'] as const
-// Short captions so empty slots read by role, not just position.
-const SLOT_CAPTIONS = ['Helmet', 'Chest', 'Legs', 'Boots', 'Ring', 'Ring', 'Brace', 'Neck', 'Weapon'] as const
+// First-letter glyph for empty slots; position in the grid carries the role.
+const SLOT_CAPTIONS = ['H', 'C', 'L', 'B', 'R', 'R', 'B', 'N', 'W'] as const
 
 const slots = computed(() =>
   SLOT_LABELS.map((label, i) => {
@@ -33,17 +33,61 @@ const slots = computed(() =>
 
 <template>
   <section class="rail" aria-label="Build preview">
-    <header class="rail-head">
+    <div class="rail-main">
       <button
         type="button"
-        class="rail-toggle"
+        class="rail-open"
         :aria-expanded="rail.open.value"
+        :aria-label="`Open full builder, ${rail.count.value} of ${EQUIP_SLOT_COUNT} equipped`"
         @click="$emit('expand')"
       >
-        <span class="kicker">Build</span>
-        <span class="rail-count">{{ rail.count.value }}/9</span>
-        <span class="rail-chevron" aria-hidden="true">⌄</span>
+        <span class="rail-open-chevron" aria-hidden="true">‹</span>
       </button>
+
+      <div class="rail-grid">
+        <template v-for="s in slots" :key="s.i">
+          <HoverCardRoot v-if="s.item" :open-delay="200" :close-delay="0">
+            <HoverCardTrigger as-child>
+              <button
+                type="button"
+                class="cell cell--filled"
+                :class="{ 'cell--wide': s.area === 'weapon' }"
+                :style="{ 'gridArea': s.area, '--tier': s.tier ?? 'var(--color-border)' }"
+                :aria-label="`Remove ${s.item.displayName} from ${s.label}`"
+                @click="rail.removeSlot(s.i)"
+              >
+                <img v-if="s.icon" :src="s.icon" class="cell-icon" alt="" aria-hidden="true">
+                <span v-else class="cell-glyph" aria-hidden="true">{{ s.caption }}</span>
+                <span class="cell-remove" aria-hidden="true">×</span>
+              </button>
+            </HoverCardTrigger>
+            <HoverCardPortal>
+              <HoverCardContent side="left" align="center" :side-offset="10" class="rail-quickview">
+                <div class="rail-quickview-scale">
+                  <ItemTooltip :item="s.item" />
+                </div>
+              </HoverCardContent>
+            </HoverCardPortal>
+          </HoverCardRoot>
+
+          <div
+            v-else
+            class="cell cell--empty"
+            :class="{ 'cell--wide': s.area === 'weapon' }"
+            :style="{ gridArea: s.area }"
+            aria-hidden="true"
+          >
+            <span class="cell-caption">{{ s.caption }}</span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div class="rail-foot">
+      <span class="rail-meta">
+        <span class="kicker">Build</span>
+        <span class="rail-count">{{ rail.count.value }}/{{ EQUIP_SLOT_COUNT }}</span>
+      </span>
       <button
         v-if="!rail.isEmpty.value"
         type="button"
@@ -52,48 +96,10 @@ const slots = computed(() =>
       >
         Clear
       </button>
-    </header>
-
-    <div class="rail-grid">
-      <template v-for="s in slots" :key="s.i">
-        <HoverCardRoot v-if="s.item" :open-delay="200" :close-delay="0">
-          <HoverCardTrigger as-child>
-            <button
-              type="button"
-              class="cell cell--filled"
-              :class="{ 'cell--wide': s.area === 'weapon' }"
-              :style="{ 'gridArea': s.area, '--tier': s.tier ?? 'var(--color-border)' }"
-              :aria-label="`Remove ${s.item.displayName} from ${s.label}`"
-              @click="rail.removeSlot(s.i)"
-            >
-              <img v-if="s.icon" :src="s.icon" class="cell-icon" alt="" aria-hidden="true">
-              <span v-else class="cell-glyph" aria-hidden="true">{{ s.caption.charAt(0) }}</span>
-              <span class="cell-remove" aria-hidden="true">×</span>
-            </button>
-          </HoverCardTrigger>
-          <HoverCardPortal>
-            <HoverCardContent side="left" align="start" :side-offset="8" class="rail-quickview">
-              <div class="rail-quickview-scale">
-                <ItemTooltip :item="s.item" />
-              </div>
-            </HoverCardContent>
-          </HoverCardPortal>
-        </HoverCardRoot>
-
-        <div
-          v-else
-          class="cell cell--empty"
-          :class="{ 'cell--wide': s.area === 'weapon' }"
-          :style="{ gridArea: s.area }"
-          aria-hidden="true"
-        >
-          <span class="cell-caption">{{ s.caption.charAt(0) }}</span>
-        </div>
-      </template>
     </div>
 
     <p v-if="rail.isEmpty.value" class="rail-hint">
-      Equip items from search to start a build.
+      Equip from search to build.
     </p>
   </section>
 </template>
@@ -102,75 +108,54 @@ const slots = computed(() =>
 .rail {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: flex-end;
+  gap: 8px;
+  /* Float in the vertical middle of the section, hugging the right. */
   position: sticky;
   top: 76px;
-  align-self: start;
+  align-self: center;
 }
 
-.rail-head {
+.rail-main {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* The primary affordance: a tall chevron left of the slots that opens the
+   builder panel (which slides in from the right). */
+.rail-open {
+  flex-shrink: 0;
+  width: 30px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.rail-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  margin: -5px -8px;
+  justify-content: center;
   background: transparent;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
   color: var(--color-muted);
+  cursor: pointer;
   transition:
     color 0.12s ease-out,
+    border-color 0.12s ease-out,
     background 0.12s ease-out;
 }
-.rail-toggle:hover {
+.rail-open:hover {
   color: var(--color-accent);
+  border-color: var(--color-accent);
   background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
-.rail-toggle:focus-visible {
+.rail-open:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
-.rail-count {
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: 0.08em;
-  color: var(--color-text);
-}
-.rail-chevron {
-  font-size: 13px;
-  line-height: 1;
-  transform: rotate(-90deg);
+.rail-open-chevron {
+  font-size: 28px;
+  line-height: 0;
   transition: transform 0.15s ease-out;
 }
-.rail-toggle:hover .rail-chevron {
-  transform: rotate(-90deg) translateX(2px);
-}
-
-.rail-clear {
-  font: 500 10px/1 var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 6px;
-  cursor: pointer;
-  transition: color 0.12s ease-out;
-}
-.rail-clear:hover {
-  color: var(--color-muted);
-}
-.rail-clear:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+.rail-open:hover .rail-open-chevron {
+  transform: translateX(-3px);
 }
 
 .rail-grid {
@@ -184,7 +169,7 @@ const slots = computed(() =>
     'boots    necklace'
     'weapon   weapon';
   gap: 4px;
-  justify-content: start;
+  justify-content: end;
 }
 
 .cell {
@@ -235,32 +220,80 @@ const slots = computed(() =>
   width: 28px;
   height: 28px;
   image-rendering: pixelated;
+  transition: opacity 0.12s ease-out;
 }
 .cell-glyph {
   font: 600 14px/1 var(--font-display);
   color: color-mix(in oklch, var(--tier) 80%, var(--color-text));
+  transition: opacity 0.12s ease-out;
+}
+/* Hover/focus a filled cell reads as "click to remove": the icon recedes and a
+   centred × takes over. */
+.cell--filled:hover .cell-icon,
+.cell--filled:hover .cell-glyph,
+.cell--filled:focus-visible .cell-icon,
+.cell--filled:focus-visible .cell-glyph {
+  opacity: 0.2;
 }
 .cell-remove {
   position: absolute;
-  top: 2px;
-  right: 4px;
-  font-size: 13px;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
   line-height: 1;
-  color: var(--color-faint);
+  color: var(--color-text);
   opacity: 0;
   transition: opacity 0.12s ease-out;
 }
 .cell--filled:hover .cell-remove,
 .cell--filled:focus-visible .cell-remove {
   opacity: 1;
+}
+
+.rail-foot {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.rail-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.rail-count {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
   color: var(--color-text);
+}
+.rail-clear {
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  cursor: pointer;
+  transition: color 0.12s ease-out;
+}
+.rail-clear:hover {
+  color: var(--color-muted);
+}
+.rail-clear:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .rail-hint {
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.4;
-  color: var(--color-faint);
-  max-width: 22ch;
+  text-align: right;
+  color: var(--color-muted);
+  max-width: 17ch;
 }
 
 .rail-quickview {
@@ -270,9 +303,24 @@ const slots = computed(() =>
   zoom: 0.7;
 }
 
+/* Touch: the rail renders inside the mobile bottom sheet, where the cells are
+   real tap targets. Grow them past the 44px minimum. */
+@media (pointer: coarse) {
+  .rail-grid {
+    --cell: 46px;
+    gap: 6px;
+  }
+  .cell-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .rail-chevron,
+  .rail-open-chevron,
   .cell--filled,
+  .cell-icon,
+  .cell-glyph,
   .cell-remove {
     transition: none;
   }

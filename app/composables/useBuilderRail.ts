@@ -147,11 +147,25 @@ export function useBuilderRail() {
   }
 
   function clear() {
+    const prevSlots = draft.slots.slice()
+    const prevHash = loadPersistedHash()
+    if (prevSlots.every(id => id == null) && !prevHash)
+      return
     if (usingBuild.value) {
       for (let i = 0; i < SLOT_LABELS.length; i++) build.setItem(i, null)
     }
     draft.clear()
     persistHash(null)
+    pushAction('info', 'Cleared build', {
+      label: 'Undo',
+      run: () => {
+        draft.setSlots(prevSlots)
+        if (prevHash)
+          persistHash(prevHash)
+        if (usingBuild.value)
+          prevSlots.forEach((id, slot) => build.setItem(slot, id))
+      },
+    })
   }
 
   /** Drop ids that no longer resolve against current data (version drift). */
@@ -207,6 +221,17 @@ export function useBuilderRail() {
   /** Desktop: expand the inline full builder. */
   async function openBuilder() {
     open.value = true
+    // Show the loading state immediately and let the panel paint + start its
+    // slide before promotion runs, so the open feels instant rather than waiting
+    // on the (first-time networked) build-context load.
+    if (!build.rawBuild)
+      promoting.value = true
+    await new Promise<void>((resolve) => {
+      if (typeof requestAnimationFrame === 'undefined')
+        resolve()
+      else
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    })
     await ensurePromoted()
   }
 
