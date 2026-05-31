@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
+  entry: ['src/index.ts', 'src/scripts/warm-item-og.ts'],
   format: ['esm'],
   platform: 'node',
   target: 'node22',
