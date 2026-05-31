@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { IngredientCriteria, MaterialCriteria, TomeCriteria } from '~/lib/items-search/types'
+import { useBuilderRail } from '~/composables/useBuilderRail'
 import { defaultIngredientCriteria, defaultMaterialCriteria, defaultTomeCriteria } from '~/lib/items-search/criteria-url'
 import { filterIngredients } from '~/lib/items-search/filter-ingredients'
 import { filterItems } from '~/lib/items-search/filter-items'
 import { filterMaterials } from '~/lib/items-search/filter-materials'
 import { filterTomes } from '~/lib/items-search/filter-tomes'
+import { useBuildStore } from '~/stores/build'
 
 useSeoMeta({
   title: 'Item Search — wynn.tools',
@@ -26,6 +28,49 @@ type Tab = 'items' | 'ingredients' | 'tomes' | 'charms' | 'materials'
 const tab = ref<Tab>('items')
 
 const showSidebar = computed(() => tab.value !== 'charms')
+
+// Items-page builder rail. Reconcile the persisted draft once data lands so ids
+// that no longer resolve (game-data drift) are dropped. The layout reflows when
+// the inline full builder is expanded.
+const rail = useBuilderRail()
+const railOpen = rail.open
+
+watch(data, (d) => {
+  if (d)
+    rail.reconcile()
+}, { immediate: true })
+
+// While the panel is open, every edit (ability tree, skillpoints, powders, item
+// swaps) changes the build hash. On each change: mirror equipment back into the
+// draft (so the collapsed rail and reload restore never go stale) and persist
+// the full build hash so the in-progress build survives reload.
+const buildStore = useBuildStore()
+watch(() => buildStore.currentHash, (hash) => {
+  // Skip during promotion: loading the saved hash mutates the build before the
+  // draft is applied, and syncing then would overwrite the draft with the stale
+  // stored equipment (see ensurePromoted).
+  if (railOpen.value && hash && !rail.promoting.value) {
+    rail.syncDraftFromBuild()
+    rail.persistBuildHash(hash)
+  }
+})
+
+const layoutMode = computed(() => (showSidebar.value ? '' : 'layout--full'))
+
+// Esc minimises the overlay panel.
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && railOpen.value)
+    rail.closeBuilder()
+}
+onMounted(() => {
+  // Read the persisted draft on the client, after Pinia's SSR hydration, so it
+  // isn't clobbered by the empty server state. Then validate against data.
+  rail.hydrateDraft()
+  if (data.value)
+    rail.reconcile()
+  window.addEventListener('keydown', onKeydown)
+})
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 const itemResults = computed(() => data.value ? filterItems(data.value.items, criteria.value) : [])
 const ingredientResults = computed(() => data.value ? filterIngredients(data.value.ingredients, ingredientCriteria.value) : [])
@@ -75,7 +120,7 @@ const setOptions = computed(() =>
       </button>
     </div>
 
-    <div v-else class="layout" :class="{ 'layout--full': !showSidebar }">
+    <div v-else class="layout" :class="layoutMode">
       <FiltersSidebar v-if="showSidebar" panel-id="search-filters-panel">
         <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" :set-options="setOptions" />
         <IngredientSearchFilters v-else-if="tab === 'ingredients'" v-model="ingredientCriteria" />
@@ -148,7 +193,39 @@ const setOptions = computed(() =>
           </p>
         </template>
       </section>
+
+      <!-- Slim build preview rail (desktop only; mobile uses the FAB). Stays
+           put when the panel expands — the panel slides over it. -->
+      <BuilderRail class="rail-col" @expand="rail.openBuilder()" />
     </div>
+
+    <!-- Expanded: the full builder slides in from the right, overlaying the
+         results. Results stay put; the user expands and minimises the panel. -->
+    <Teleport to="body">
+      <Transition name="build-panel">
+        <div v-if="railOpen" class="build-overlay">
+          <div class="build-scrim" @click="rail.closeBuilder()" />
+          <section class="build-panel" aria-label="Build workspace">
+            <header class="build-panel-head">
+              <span class="kicker">Build</span>
+              <span class="build-panel-count">{{ rail.count.value }}/9</span>
+              <button type="button" class="build-min" @click="rail.closeBuilder()">
+                Minimise <span class="build-min-arrow" aria-hidden="true">›</span>
+              </button>
+            </header>
+            <div class="build-panel-body">
+              <p v-if="rail.promoting.value" class="build-panel-loading">
+                Loading builder…
+              </p>
+              <BuilderWorkspace v-else embedded />
+            </div>
+          </section>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <BuilderFab v-if="!railOpen" />
+    <AppToasts />
   </div>
 </template>
 
@@ -165,8 +242,15 @@ const setOptions = computed(() =>
   margin-bottom: 24px;
   border-bottom: 1px solid var(--color-border);
 }
+/* Add the build rail as a third column. Scoped specificity beats the global
+   `.layout` rule, so these widths win at desktop sizes. */
+.layout {
+  --rail-w: 124px;
+  grid-template-columns: 248px minmax(0, 1fr) var(--rail-w);
+  gap: 28px;
+}
 .layout--full {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) var(--rail-w);
 }
 .sidebar {
   padding-right: 4px;
@@ -196,6 +280,133 @@ const setOptions = computed(() =>
 .grid--charms {
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
+/* ── Slide-out full-builder panel (overlays the results) ─────────── */
+.build-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+.build-scrim {
+  position: absolute;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.42);
+  backdrop-filter: blur(1.5px);
+}
+.build-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(1480px, 97vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border-left: 1px solid color-mix(in oklch, var(--color-accent) 20%, var(--color-border));
+  box-shadow: -12px 0 48px oklch(0% 0 0 / 0.4);
+}
+.build-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in oklch, var(--color-surface) 60%, var(--color-bg));
+}
+.build-panel-count {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--color-text);
+}
+.build-min {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out;
+}
+.build-min:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.build-min:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.build-min-arrow {
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.15s ease-out;
+}
+.build-min:hover .build-min-arrow {
+  transform: translateX(2px);
+}
+.build-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px clamp(16px, 2vw, 28px) 40px;
+}
+.build-panel-loading {
+  font: 400 13px/1.4 var(--font-mono);
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  padding: 40px 4px;
+}
+
+.build-panel-enter-active,
+.build-panel-leave-active {
+  transition: opacity 0.2s ease-out;
+}
+.build-panel-enter-active .build-panel,
+.build-panel-leave-active .build-panel {
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.build-panel-enter-from,
+.build-panel-leave-to {
+  opacity: 0;
+}
+.build-panel-enter-from .build-panel,
+.build-panel-leave-to .build-panel {
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .build-min-arrow {
+    transition: none;
+  }
+  .build-panel-enter-active,
+  .build-panel-leave-active,
+  .build-panel-enter-active .build-panel,
+  .build-panel-leave-active .build-panel {
+    transition: none;
+  }
+}
+
+/* Below the side-rail breakpoint, the rail collapses to the floating FAB and
+   the search returns to a single stacked column. */
+@media (max-width: 900px) {
+  .layout,
+  .layout--full {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .rail-col {
+    display: none;
+  }
+}
+
 @media (max-width: 720px) {
   .page {
     padding: 12px 0 48px;

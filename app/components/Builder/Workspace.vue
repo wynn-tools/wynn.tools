@@ -5,21 +5,25 @@ const props = withDefaults(defineProps<{
   savedId?: string
   isOwner?: boolean
   visibility?: 'public' | 'unlisted' | 'private'
+  /** Rendered inside the items-page drawer: collapse the ability tree by
+   *  default and drop the external "Browse builds" link. */
+  embedded?: boolean
 }>(), {
   savedId: undefined,
   isOwner: false,
   visibility: undefined,
+  embedded: false,
 })
 
 const store = useBuildStore()
-const showAtree = ref(true)
+const showAtree = ref(!props.embedded)
 </script>
 
 <template>
-  <main class="builder">
+  <main class="builder" :class="{ 'builder--embedded': props.embedded }">
     <div class="builder-toolbar">
       <BuilderImportBar />
-      <NuxtLink to="/builds" class="toolbar-browse">
+      <NuxtLink v-if="!props.embedded" to="/builds" class="toolbar-browse">
         Browse builds <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
       </NuxtLink>
       <BuilderSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" :visibility="props.visibility" />
@@ -85,6 +89,14 @@ const showAtree = ref(true)
   max-width: var(--shell-max);
   width: 100%;
   margin: 0 auto;
+}
+
+/* Inside the items-page drawer the workspace fills its column: no shell gutter,
+   no centering, tighter top padding since the drawer header sits above it. */
+.builder--embedded {
+  padding: 0;
+  max-width: none;
+  margin: 0;
 }
 
 @media (max-width: 720px) {
