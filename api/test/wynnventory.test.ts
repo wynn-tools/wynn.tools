@@ -28,9 +28,15 @@ describe('wynnventory client', () => {
     expect(url).toBe('https://wynnventory.com/api/trademarket/item/Thunder%20Powder/price?tier=6&shiny=true')
   })
 
-  it('returns null on 404', async () => {
+  it('returns null on 404 (no data for item)', async () => {
     const fetchImpl = vi.fn(async () => new Response('{}', { status: 404 })) as unknown as typeof fetch
     const c = clientWith(fetchImpl)
     expect(await c.fetchPrice('Nonexistent')).toBeNull()
+  })
+
+  it('rejects on 500 (upstream outage)', async () => {
+    const fetchImpl = vi.fn(async () => new Response('', { status: 500 })) as unknown as typeof fetch
+    const c = clientWith(fetchImpl)
+    await expect(c.fetchPrice('X')).rejects.toThrow()
   })
 })

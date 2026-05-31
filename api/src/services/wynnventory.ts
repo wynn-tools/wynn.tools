@@ -8,17 +8,19 @@ export interface FetchPriceOpts {
   shiny?: boolean
 }
 
+type FetchImpl = typeof fetch
+
 export interface WynnventoryClient {
-  fetchPrice: (name: string, opts?: FetchPriceOpts) => Promise<unknown | null>
+  fetchPrice: (name: string, opts?: FetchPriceOpts) => Promise<Record<string, unknown> | null>
 }
 
 export function createWynnventoryClient(
   cfg: WynnventoryConfig,
-  fetchImpl: typeof fetch = fetch,
+  fetchImpl: FetchImpl = fetch,
 ): WynnventoryClient {
   const base = cfg.baseUrl.replace(/\/$/, '')
 
-  async function fetchPrice(name: string, opts: FetchPriceOpts = {}): Promise<unknown | null> {
+  async function fetchPrice(name: string, opts: FetchPriceOpts = {}): Promise<Record<string, unknown> | null> {
     const params = new URLSearchParams()
     if (opts.tier != null)
       params.set('tier', String(opts.tier))
@@ -28,9 +30,11 @@ export function createWynnventoryClient(
     const url = `${base}/api/trademarket/item/${encodeURIComponent(name)}/price${qs ? `?${qs}` : ''}`
 
     const res = await fetchImpl(url, { headers: { Authorization: `Api-Key ${cfg.apiKey}` } })
-    if (!res.ok)
+    if (res.ok)
+      return await res.json().catch(() => null)
+    if (res.status === 404)
       return null
-    return await res.json().catch(() => null)
+    throw new Error(`WynnVentory request failed: ${res.status}`)
   }
 
   return { fetchPrice }

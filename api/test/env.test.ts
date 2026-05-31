@@ -19,4 +19,10 @@ describe('parseEnv', () => {
     expect(env.PORT).toBe(8080)
     expect(env.FRONTEND_URL).toBe('https://wynn.tools')
   })
+
+  it('defaults WYNNVENTORY_BASE_URL when not set', () => {
+    const { WYNNVENTORY_BASE_URL: _omit, ...withoutBaseUrl } = { ...base, WYNNVENTORY_BASE_URL: undefined }
+    const env = parseEnv(withoutBaseUrl)
+    expect(env.WYNNVENTORY_BASE_URL).toBe('https://wynnventory.com')
+  })
 })
