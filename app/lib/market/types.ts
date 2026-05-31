@@ -8,11 +8,13 @@ export interface RawMarketPrice {
   average_mid_80_percent_price: number | null
   p50_price?: number | null
   average_p50_ema_price: number | null
+  // defaulted with ?? 0 in summarize — a malformed upstream payload could omit these despite the typed contract
   total_count: number
   unidentified_lowest_price?: number | null
   unidentified_highest_price?: number | null
   unidentified_average_mid_80_percent_price: number | null
   unidentified_average_p50_ema_price: number | null
+  // defaulted with ?? 0 in summarize — a malformed upstream payload could omit these despite the typed contract
   unidentified_count: number
   icon?: string | null
   item_type?: string | null

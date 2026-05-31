@@ -25,8 +25,8 @@ export function summarizePrice(payload: RawMarketPrice | null): PriceCardModel {
     hasData: true,
     identified: { headline: pickIdHeadline(payload), count: payload.total_count ?? 0 },
     unidentified: { headline: pickUnidHeadline(payload), count: payload.unidentified_count ?? 0 },
-    lowestPrice: payload.lowest_price ?? null,
-    highestPrice: payload.highest_price ?? null,
+    lowestPrice: payload.lowest_price,
+    highestPrice: payload.highest_price,
     timestamp: payload.timestamp ?? null,
   }
 }

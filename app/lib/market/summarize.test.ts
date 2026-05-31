@@ -33,4 +33,9 @@ describe('summarizePrice', () => {
   it('flags missing data for a null payload', () => {
     expect(summarizePrice(null).hasData).toBe(false)
   })
+  it('returns a null headline when both EMA and mid-80 are absent', () => {
+    const m = summarizePrice({ ...full, average_p50_ema_price: null, average_mid_80_percent_price: null })
+    expect(m.identified.headline).toBeNull()
+    expect(m.hasData).toBe(true)
+  })
 })
