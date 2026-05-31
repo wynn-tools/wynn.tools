@@ -28,7 +28,7 @@ export function createOgRoute(fetcher: OgFetcher) {
 
       let result: { data: Buffer, contentType: string }
       try {
-        result = await fetcher.fetchOgImage(`/b/${id}`)
+        result = await fetcher.fetchOgImage(`/api/_og/build/${id}`)
       }
       catch (err) {
         throw new AppError(502, 'og_fetch_failed', (err as Error).message)
@@ -52,7 +52,7 @@ export function createOgRoute(fetcher: OgFetcher) {
 
       let result: { data: Buffer, contentType: string }
       try {
-        result = await fetcher.fetchOgImage(`/items/${slug}`)
+        result = await fetcher.fetchOgImage(`/api/_og/item/${slug}`)
       }
       catch (err) {
         throw new AppError(502, 'og_fetch_failed', (err as Error).message)

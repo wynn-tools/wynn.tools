@@ -7,7 +7,7 @@ export interface OgFetcher {
 export function createOgFetcher(nuxtUrl: string): OgFetcher {
   return {
     async fetchOgImage(path) {
-      const url = `${nuxtUrl.replace(/\/$/, '')}/__og-image__/image.png?url=${encodeURIComponent(path)}`
+      const url = `${nuxtUrl.replace(/\/$/, '')}${path}`
       const res = await fetch(url)
       if (!res.ok)
         throw new Error(`OG image fetch failed for ${path}: HTTP ${res.status}`)
