@@ -1,0 +1,10 @@
+[
+  {
+    "title": "💎 Live market prices",
+    "description": "wynn.tools now shows live item market prices, powered by the WynnVentory API. See what gear is going for as you browse and plan builds around what you can actually afford.\n\n_Pricing data powered by WynnVentory._"
+  },
+  {
+    "title": "🛠️ Build straight from item search",
+    "description": "The items page now has an equip system — found a piece you like? Equip it right from the search results and jump straight into the builder, no copy-pasting required."
+  }
+]
