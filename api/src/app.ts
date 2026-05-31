@@ -8,6 +8,7 @@ import { builds, userBuilds } from './routes/builds'
 import { health } from './routes/health'
 import { items, userItems } from './routes/items'
 import { keys } from './routes/keys'
+import { market } from './routes/market'
 import { meProfile, userProfile } from './routes/profile'
 
 export function createApp(): Hono {
@@ -29,5 +30,6 @@ export function createApp(): Hono {
   app.route('/v1/users', userItems)
   app.route('/v1/users', userProfile)
   app.route('/v1/items', items)
+  app.route('/v1/market', market)
   return app
 }

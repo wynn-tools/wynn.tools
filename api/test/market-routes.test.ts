@@ -1,0 +1,51 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createApp } from '../src/app'
+import { resetDb } from './helpers/db'
+
+function app() {
+  const a = createApp()
+  return (p: string, init?: RequestInit) => a.request(`http://test${p}`, init)
+}
+
+function stubUpstream(payload: unknown) {
+  vi.stubGlobal('fetch', vi.fn(async () =>
+    new Response(JSON.stringify(payload), { status: payload == null ? 404 : 200 }),
+  ))
+}
+
+describe('market routes', () => {
+  beforeEach(async () => {
+    await resetDb()
+    vi.unstubAllGlobals()
+  })
+
+  it('gET /v1/market/price/:name returns the payload', async () => {
+    stubUpstream({ name: 'Divzer', average_p50_ema_price: 13650 })
+    const res = await app()('/v1/market/price/Divzer')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toMatchObject({ name: 'Divzer' })
+  })
+
+  it('pOST /v1/market/prices returns results aligned by index', async () => {
+    stubUpstream({ name: 'X', average_p50_ema_price: 1 })
+    const res = await app()('/v1/market/prices', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ items: [{ name: 'A' }, { name: 'B', tier: 6 }] }),
+    })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.results).toHaveLength(2)
+  })
+
+  it('rate-limits a flood of requests from one IP', async () => {
+    stubUpstream({ name: 'Divzer' })
+    const call = app()
+    let last = 200
+    for (let i = 0; i < 40; i++) {
+      const r = await call('/v1/market/price/Divzer', { headers: { 'x-forwarded-for': '9.9.9.9' } })
+      last = r.status
+    }
+    expect(last).toBe(429)
+  })
+})
