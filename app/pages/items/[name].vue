@@ -86,6 +86,7 @@ const itemSets = computed<ResolvedSet[]>(() => {
           />
           <ItemRollsSection :item="item" />
           <ItemMarketSection :name="item.name" />
+          <ItemPriceHistory :name="item.name" />
           <ItemIdCostsSection :item="item" />
           <ItemObtainSection :item="item" />
           <ItemHistoryTimeline :entries="history" />

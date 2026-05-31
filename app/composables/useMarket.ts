@@ -22,12 +22,10 @@ export function useMarket() {
     return results
   }
 
-  /**
-   * Daily price history. Tries WynnVentory's PUBLIC endpoint directly; if CORS
-   * blocks the browser call, Task 9 swaps this to the backend forwarder.
-   */
+  /** Daily price history (proxied via backend — WynnVentory public endpoint has no CORS headers). */
   async function history(name: string): Promise<MarketHistoryPoint[]> {
-    const res = await fetch(`https://wynnventory.com/api/trademarket/history/${encodeURIComponent(name)}`)
+    const config = useRuntimeConfig()
+    const res = await fetch(`${config.public.apiBaseUrl}/v1/market/history/${encodeURIComponent(name)}`, { credentials: 'include' })
     if (!res.ok)
       return []
     return await res.json().catch(() => [])

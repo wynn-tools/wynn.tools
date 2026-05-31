@@ -45,3 +45,11 @@ export const market = new Hono()
       return c.json({ results })
     },
   )
+  .get('/history/:name', async (c) => {
+    const { WYNNVENTORY_BASE_URL } = env()
+    const base = WYNNVENTORY_BASE_URL.replace(/\/$/, '')
+    const res = await fetch(`${base}/api/trademarket/history/${encodeURIComponent(c.req.param('name'))}`)
+    if (!res.ok)
+      return c.json([])
+    return c.json(await res.json().catch(() => []))
+  })
