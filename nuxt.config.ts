@@ -69,6 +69,11 @@ export default defineNuxtConfig({
       // references 'WynncraftOg' (the chrome uses the 'wynncraft' woff face), so
       // browsers never fetch the .ttf; it only feeds the OG image renderer.
       { name: 'WynncraftOg', provider: 'local', weights: [400], global: true },
+      // Wynncraft "five" pixel font for OG image tags. Same constraints as
+      // WynncraftOg: global:true required, TrueType (glyf) outlines required.
+      // five.woff is CFF-based so it was converted to wynnfive-400.ttf via
+      // fontTools + cu2qu (same process as wynncraftog-400.ttf).
+      { name: 'WynnFive', provider: 'local', weights: [400], global: true },
     ],
   },
 })

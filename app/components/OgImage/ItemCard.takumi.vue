@@ -104,9 +104,11 @@ const C = {
    would escape the inner family quotes and break og-image's RE_JS_FONT_FAMILY. */
 const PIXEL_STYLE = { fontFamily: "'WynncraftOg', 'Barlow Semi Condensed', sans-serif" }
 const SANS_STYLE = { fontFamily: "'Geist Mono', monospace" }
+const FIVE_STYLE = { fontFamily: "'WynnFive', 'WynncraftOg', sans-serif" }
 /* eslint-enable style/quotes */
 const PIXEL = PIXEL_STYLE.fontFamily
 const SANS = SANS_STYLE.fontFamily
+const FIVE = FIVE_STYLE.fontFamily
 
 // Takumi can't measure text height, so we budget the right column by hand.
 const MAX_IDS = 12
@@ -185,14 +187,39 @@ const panelStyle = computed(() => ({
         style="display: flex; align-items: center; justify-content: space-between;"
       >
         <div style="display: flex; align-items: center;">
-          <img
-            v-if="icon"
-            :src="icon"
-            width="64"
-            height="64"
-            :style="{ marginRight: '20px', objectFit: 'contain' }"
-            alt=""
+          <div
+            :style="{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '80px',
+              height: '80px',
+              marginRight: '20px',
+            }"
           >
+            <img
+              v-if="emblem"
+              :src="emblem"
+              :style="{
+                position: 'absolute',
+                top: '-8px',
+                left: '-8px',
+                width: '96px',
+                height: '96px',
+                imageRendering: 'pixelated',
+              }"
+              alt=""
+            >
+            <img
+              v-if="icon"
+              :src="icon"
+              width="44"
+              height="44"
+              :style="{ position: 'relative', objectFit: 'contain', imageRendering: 'pixelated' }"
+              alt=""
+            >
+          </div>
           <div style="display: flex; flex-direction: column;">
             <span
               :style="{
@@ -210,7 +237,7 @@ const panelStyle = computed(() => ({
               <span
                 :style="{
                   display: 'flex',
-                  fontFamily: PIXEL,
+                  fontFamily: FIVE,
                   fontSize: '20px',
                   lineHeight: 1,
                   color: '#0c0e12',
@@ -222,7 +249,7 @@ const panelStyle = computed(() => ({
               <span
                 :style="{
                   display: 'flex',
-                  fontFamily: PIXEL,
+                  fontFamily: FIVE,
                   fontSize: '20px',
                   lineHeight: 1,
                   color: '#0c0e12',
@@ -237,34 +264,24 @@ const panelStyle = computed(() => ({
                 :src="el"
                 width="24"
                 height="24"
-                :style="{ objectFit: 'contain' }"
+                :style="{ objectFit: 'contain', imageRendering: 'pixelated' }"
                 alt=""
               >
             </div>
           </div>
         </div>
-        <div
-          :style="{
-            display: 'flex',
-            alignItems: 'center',
-            fontFamily: SANS,
-            fontSize: '15px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: C.text,
-          }"
-        >
-          <div
-            :style="{
-              display: 'flex',
-              width: '9px',
-              height: '9px',
-              background: C.brand,
-              borderRadius: '9999px',
-              marginRight: '11px',
-            }"
-          />
-          <span>wynn.tools</span>
+        <div :style="{ display: 'flex', alignItems: 'center', gap: '10px' }">
+          <img
+            src="/favicon.svg"
+            width="22"
+            height="22"
+            alt=""
+          >
+          <div :style="{ display: 'flex', fontFamily: SANS, fontSize: '15px', letterSpacing: '-0.02em', color: C.text }">
+            <span :style="{ display: 'flex' }">wynn</span>
+            <span :style="{ display: 'flex', color: C.brand }">.</span>
+            <span :style="{ display: 'flex' }">tools</span>
+          </div>
         </div>
       </div>
 
@@ -338,7 +355,7 @@ const panelStyle = computed(() => ({
                   :src="d.iconUrl"
                   width="22"
                   height="22"
-                  :style="{ marginRight: '7px', objectFit: 'contain' }"
+                  :style="{ marginRight: '7px', objectFit: 'contain', imageRendering: 'pixelated' }"
                   alt=""
                 >
                 <span
@@ -390,7 +407,7 @@ const panelStyle = computed(() => ({
                   :src="d.iconUrl"
                   width="22"
                   height="22"
-                  :style="{ marginRight: '7px', objectFit: 'contain' }"
+                  :style="{ marginRight: '7px', objectFit: 'contain', imageRendering: 'pixelated' }"
                   alt=""
                 >
                 <span
@@ -423,6 +440,7 @@ const panelStyle = computed(() => ({
                     left: '0',
                     width: '50px',
                     height: '50px',
+                    imageRendering: 'pixelated',
                   }"
                   alt=""
                 >
@@ -430,7 +448,7 @@ const panelStyle = computed(() => ({
                   :src="c.iconUrl"
                   width="28"
                   height="28"
-                  :style="{ position: 'relative', objectFit: 'contain' }"
+                  :style="{ position: 'relative', objectFit: 'contain', imageRendering: 'pixelated' }"
                   :alt="c.skill"
                 >
               </div>

@@ -116,9 +116,11 @@ const PIXEL_STYLE = {
   fontFamily: "'WynncraftOg', 'Barlow Semi Condensed', sans-serif",
 }
 const SANS_STYLE = { fontFamily: "'Geist Mono', monospace" }
+const FIVE_STYLE = { fontFamily: "'WynnFive', sans-serif" }
 /* eslint-enable style/quotes */
 const PIXEL = PIXEL_STYLE.fontFamily
 const SANS = SANS_STYLE.fontFamily
+const FIVE = FIVE_STYLE.fontFamily
 
 function rarityColor(tier?: string | null): string {
   if (!tier)
@@ -187,7 +189,7 @@ const panelStyle = computed(() => ({
               <span
                 :style="{
                   display: 'flex',
-                  fontFamily: PIXEL,
+                  fontFamily: FIVE,
                   fontSize: '20px',
                   lineHeight: 1,
                   color: '#0c0e12',
@@ -199,7 +201,7 @@ const panelStyle = computed(() => ({
               <span
                 :style="{
                   display: 'flex',
-                  fontFamily: PIXEL,
+                  fontFamily: FIVE,
                   fontSize: '20px',
                   lineHeight: 1,
                   color: '#0c0e12',
@@ -211,28 +213,18 @@ const panelStyle = computed(() => ({
             </div>
           </div>
         </div>
-        <div
-          :style="{
-            display: 'flex',
-            alignItems: 'center',
-            fontFamily: SANS,
-            fontSize: '15px',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            color: C.text,
-          }"
-        >
-          <div
-            :style="{
-              display: 'flex',
-              width: '9px',
-              height: '9px',
-              background: C.brand,
-              borderRadius: '9999px',
-              marginRight: '11px',
-            }"
-          />
-          <span>wynn.tools</span>
+        <div :style="{ display: 'flex', alignItems: 'center', gap: '10px' }">
+          <img
+            src="/favicon.svg"
+            width="22"
+            height="22"
+            alt=""
+          >
+          <div :style="{ display: 'flex', fontFamily: SANS, fontSize: '15px', letterSpacing: '-0.02em', color: C.text }">
+            <span :style="{ display: 'flex' }">wynn</span>
+            <span :style="{ display: 'flex', color: C.brand }">.</span>
+            <span :style="{ display: 'flex' }">tools</span>
+          </div>
         </div>
       </div>
 
