@@ -169,7 +169,7 @@ const panelStyle = computed(() => ({
             :src="weaponIconUrl"
             width="56"
             height="56"
-            :style="{ marginRight: '18px', objectFit: 'contain' }"
+            :style="{ marginRight: '18px', objectFit: 'contain', imageRendering: 'pixelated' }"
             alt=""
           >
           <div style="display: flex; flex-direction: column;">
@@ -268,14 +268,14 @@ const panelStyle = computed(() => ({
               >
                 <img
                   :src="c.discUrl"
-                  :style="{ position: 'absolute', top: '0', left: '0', width: '48px', height: '48px' }"
+                  :style="{ position: 'absolute', top: '0', left: '0', width: '48px', height: '48px', imageRendering: 'pixelated' }"
                   alt=""
                 >
                 <img
                   :src="c.iconUrl"
                   width="26"
                   height="26"
-                  :style="{ position: 'relative', objectFit: 'contain' }"
+                  :style="{ position: 'relative', objectFit: 'contain', imageRendering: 'pixelated' }"
                   :alt="c.skill"
                 >
               </div>
@@ -314,7 +314,7 @@ const panelStyle = computed(() => ({
                     :src="item.icon"
                     width="26"
                     height="26"
-                    :style="{ marginRight: '9px', objectFit: 'contain' }"
+                    :style="{ marginRight: '9px', objectFit: 'contain', imageRendering: 'pixelated' }"
                     alt=""
                   >
                   <span
@@ -373,7 +373,7 @@ const panelStyle = computed(() => ({
                 :src="weapon.icon"
                 width="26"
                 height="26"
-                :style="{ marginRight: '9px', objectFit: 'contain' }"
+                :style="{ marginRight: '9px', objectFit: 'contain', imageRendering: 'pixelated' }"
                 alt=""
               >
               <span
@@ -456,7 +456,7 @@ const panelStyle = computed(() => ({
                 :src="d.iconUrl"
                 width="20"
                 height="20"
-                :style="{ marginRight: '5px', objectFit: 'contain' }"
+                :style="{ marginRight: '5px', objectFit: 'contain', imageRendering: 'pixelated' }"
                 alt=""
               >
               <span
