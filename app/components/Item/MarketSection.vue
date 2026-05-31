@@ -10,11 +10,28 @@ const props = defineProps<{ name: string }>()
 const market = useMarket()
 const raw = ref<RawMarketPrice | null>(null)
 const loading = ref(true)
+const error = ref(false)
+let gen = 0
 
 watch(() => props.name, async (name) => {
+  const myGen = ++gen
   loading.value = true
-  raw.value = name ? await market.price(name) : null
-  loading.value = false
+  error.value = false
+  try {
+    const result = name ? await market.price(name) : null
+    if (myGen === gen)
+      raw.value = result
+  }
+  catch {
+    if (myGen === gen) {
+      raw.value = null
+      error.value = true
+    }
+  }
+  finally {
+    if (myGen === gen)
+      loading.value = false
+  }
 }, { immediate: true })
 
 const model = computed(() => summarizePrice(raw.value))
@@ -38,6 +55,9 @@ function fmt(v: number | null) {
 
     <p v-if="loading" class="state">
       Loading prices…
+    </p>
+    <p v-else-if="error" class="state">
+      Couldn't load market prices.
     </p>
     <p v-else-if="!model.hasData" class="state">
       No market listings found.
