@@ -38,7 +38,9 @@ const collected = computed(() => {
   return collectBuildItems({ gear, powders })
 })
 
+let fetchGen = 0
 watch(collected, async (items) => {
+  const gen = ++fetchGen
   const tradeable = items.filter(i => i.tradeable)
   if (tradeable.length === 0) {
     priceMap.value = new Map()
@@ -46,12 +48,15 @@ watch(collected, async (items) => {
   }
   try {
     const results = await market.prices(tradeable.map(i => ({ name: i.name, tier: i.tier ?? undefined })))
+    if (gen !== fetchGen)
+      return
     const map = new Map<string, RawMarketPrice | null>()
     tradeable.forEach((i, idx) => map.set(`${i.name}|${i.tier ?? ''}`, results[idx] ?? null))
     priceMap.value = map
   }
   catch {
-    priceMap.value = new Map()
+    if (gen === fetchGen)
+      priceMap.value = new Map()
   }
 }, { immediate: true })
 
@@ -66,10 +71,6 @@ const cost = computed(() => {
   }))
   return buildCost(entries)
 })
-
-function fmt(v: number) {
-  return formatEmeralds(v)
-}
 </script>
 
 <template>
@@ -83,11 +84,11 @@ function fmt(v: number) {
     <div class="totals">
       <div class="total">
         <span class="total-label">Identified</span>
-        <span class="total-value">{{ fmt(cost.identifiedTotal) }}</span>
+        <span class="total-value">{{ formatEmeralds(cost.identifiedTotal) }}</span>
       </div>
       <div class="total">
         <span class="total-label">Unidentified</span>
-        <span class="total-value">{{ fmt(cost.unidentifiedTotal) }}</span>
+        <span class="total-value">{{ formatEmeralds(cost.unidentifiedTotal) }}</span>
       </div>
     </div>
     <p class="coverage">

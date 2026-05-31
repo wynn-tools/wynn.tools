@@ -7,7 +7,7 @@ import {
   HoverCardRoot,
   HoverCardTrigger,
 } from 'reka-ui'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
 import { useMarket } from '~/composables/useMarket'
 import { slotItemId } from '~/lib/codec/build-codec'
@@ -26,7 +26,9 @@ const market = useMarket()
 const slotPrices = ref<Map<number, RawMarketPrice | null>>(new Map())
 
 // Fetch a headline price per occupied, non-crafted gear slot.
+let priceGen = 0
 async function refreshPrices() {
+  const gen = ++priceGen
   const names: { slot: number, name: string }[] = []
   for (let slot = 0; slot <= 8; slot++) {
     const entry = store.rawBuild?.equipment[slot]
@@ -46,12 +48,15 @@ async function refreshPrices() {
   }
   try {
     const results = await market.prices(names.map(n => ({ name: n.name })))
+    if (gen !== priceGen)
+      return
     const map = new Map<number, RawMarketPrice | null>()
     names.forEach((n, idx) => map.set(n.slot, results[idx] ?? null))
     slotPrices.value = map
   }
   catch {
-    slotPrices.value = new Map()
+    if (gen === priceGen)
+      slotPrices.value = new Map()
   }
 }
 
