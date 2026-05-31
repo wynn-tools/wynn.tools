@@ -1,3 +1,4 @@
+import type { OgFetcher } from './services/og-fetcher'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { env } from './env'
@@ -9,9 +10,11 @@ import { health } from './routes/health'
 import { items, userItems } from './routes/items'
 import { keys } from './routes/keys'
 import { market } from './routes/market'
+import { createOgRoute } from './routes/og'
 import { meProfile, userProfile } from './routes/profile'
+import { createOgFetcher } from './services/og-fetcher'
 
-export function createApp(): Hono {
+export function createApp(ogFetcher?: OgFetcher): Hono {
   const app = new Hono()
   app.onError(onError)
   app.use('/v1/*', cors({
@@ -31,5 +34,7 @@ export function createApp(): Hono {
   app.route('/v1/users', userProfile)
   app.route('/v1/items', items)
   app.route('/v1/market', market)
+  const fetcher = ogFetcher ?? createOgFetcher(env().NUXT_URL)
+  app.route('/v1/og', createOgRoute(fetcher))
   return app
 }

@@ -20,6 +20,7 @@ export default defineConfig({
       FRONTEND_URL: 'https://wynn.tools',
       COOKIE_DOMAIN: '.wynn.tools',
       CDN_BASE_URL: 'https://cdn.wynn.tools/',
+      NUXT_URL: 'http://localhost:3000',
       WYNNVENTORY_API_KEY: 'test-key',
     },
   },
