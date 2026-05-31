@@ -69,6 +69,16 @@ describe('og build routes', () => {
     expect(cached!.data).toEqual(FAKE_PNG)
     expect(res.headers.get('cache-control')).toBe('public, max-age=31536000, immutable')
   })
+
+  it('returns 502 when fetcher throws', async () => {
+    const build = await insertBuild('public')
+    const fetchOgImage = vi.fn(async () => {
+      throw new Error('nuxt down')
+    })
+    const fetcher: OgFetcher = { fetchOgImage }
+    const res = await app(fetcher)(`/v1/og/build/${build.id}`)
+    expect(res.status).toBe(502)
+  })
 })
 
 describe('og item routes', () => {
