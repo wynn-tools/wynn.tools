@@ -12,6 +12,9 @@ export function powderMarket(powderId: number): PowderMarket | null {
   const short = POWDER_NAME_BY_ID.get(powderId) // e.g. "t6"
   if (!short)
     return null
+  // Safe cast: POWDER_NAME_BY_ID is built exclusively from SKP_ELEMENTS keys, so
+  // short[0] is always a valid PowderElement; the meta null-guard below catches any
+  // unexpected value anyway.
   const el = short[0] as PowderElement
   const tier = Number(short.slice(1))
   const meta = POWDER_ELEMENT_META[el]

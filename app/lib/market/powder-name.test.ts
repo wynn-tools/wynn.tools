@@ -17,6 +17,9 @@ describe('powderMarket', () => {
     for (const [short, name] of Object.entries(cases))
       expect(powderMarket(POWDER_ID_BY_NAME.get(short)!)).toEqual({ name, tier: 1 })
   })
+  it('maps the max tier (7)', () => {
+    expect(powderMarket(POWDER_ID_BY_NAME.get('e7')!)).toEqual({ name: 'Earth Powder', tier: 7 })
+  })
   it('returns null for an unknown id', () => {
     expect(powderMarket(99999)).toBeNull()
   })
