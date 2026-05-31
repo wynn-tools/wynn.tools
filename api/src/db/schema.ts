@@ -82,3 +82,9 @@ export const apiKeys = pgTable('api_keys', {
   uniqueIndex('api_keys_key_hash_idx').on(t.keyHash),
   index('api_keys_user_id_idx').on(t.userId),
 ])
+
+export const marketPriceCache = pgTable('market_price_cache', {
+  key: text('key').primaryKey(), // `${name}|${tier ?? ''}|${shiny ? 1 : 0}`
+  payload: jsonb('payload'), // upstream /price JSON, or null = no listings
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+})
