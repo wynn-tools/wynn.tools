@@ -1,9 +1,23 @@
+import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   css: ['./app/assets/css/global.css'],
+  nitro: {
+    // Bundle the OG-image pixel fonts INTO the worker so nuxt-og-image can
+    // load them even on Cloudflare Pages, where the ASSETS binding can't be
+    // reached from a Nitro sub-fetch and the /fonts/* paths are excluded from
+    // the worker by _routes.json. The matching internal-only route at
+    // server/routes/fonts/[file].get.ts reads them out of this assets bag.
+    serverAssets: [
+      {
+        baseName: 'og-fonts',
+        dir: fileURLToPath(new URL('./public/fonts', import.meta.url)),
+      },
+    ],
+  },
   runtimeConfig: {
     public: {
       // Override at runtime with NUXT_PUBLIC_CDN_BASE_URL.
