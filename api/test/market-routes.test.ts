@@ -53,4 +53,21 @@ describe('market routes', () => {
     }
     expect(last).toBe(429)
   })
+
+  it('gET /v1/market/history/:name forwards upstream history', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () =>
+      new Response(JSON.stringify([{ name: 'Divzer', timestamp: '2026-03-13T00:00:00Z' }]), { status: 200 })))
+    const res = await app()('/v1/market/history/Divzer')
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(Array.isArray(body)).toBe(true)
+    expect(body).toHaveLength(1)
+  })
+
+  it('gET /v1/market/history/:name returns [] on upstream error', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('nope', { status: 500 })))
+    const res = await app()('/v1/market/history/Divzer')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual([])
+  })
 })

@@ -10,6 +10,7 @@ export interface MarketHistoryPoint {
 
 export function useMarket() {
   const api = useApi()
+  const config = useRuntimeConfig()
 
   /** Single item price (proxied — needs the site key). */
   async function price(name: string, opts?: { tier?: number, shiny?: boolean }): Promise<RawMarketPrice | null> {
@@ -24,7 +25,6 @@ export function useMarket() {
 
   /** Daily price history (proxied via backend — WynnVentory public endpoint has no CORS headers). */
   async function history(name: string): Promise<MarketHistoryPoint[]> {
-    const config = useRuntimeConfig()
     const res = await fetch(`${config.public.apiBaseUrl}/v1/market/history/${encodeURIComponent(name)}`, { credentials: 'include' })
     if (!res.ok)
       return []
