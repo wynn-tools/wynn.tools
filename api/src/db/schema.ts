@@ -1,5 +1,7 @@
+import type { Buffer } from 'node:buffer'
 import { relations } from 'drizzle-orm'
 import {
+  customType,
   index,
   integer,
   jsonb,
@@ -9,6 +11,12 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core'
+
+const bytea = customType<{ data: Buffer, driverData: Buffer }>({
+  dataType() {
+    return 'bytea'
+  },
+})
 
 export const visibility = ['public', 'unlisted', 'private'] as const
 export type Visibility = (typeof visibility)[number]
@@ -87,4 +95,11 @@ export const marketPriceCache = pgTable('market_price_cache', {
   key: text('key').primaryKey(), // `${name}|${tier ?? ''}|${shiny ? 1 : 0}`
   payload: jsonb('payload'), // upstream /price JSON, or null = no listings
   fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const ogImageCache = pgTable('og_image_cache', {
+  key: text('key').primaryKey(),
+  data: bytea('data').notNull(),
+  contentType: text('content_type').notNull().default('image/png'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
