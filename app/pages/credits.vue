@@ -31,6 +31,11 @@ const tools = [
     description: 'Map data source — map tiles, places, combat locations, caves, services, map icons, territory list, and live player locations are all served from Wynntils\' Static-Storage, Athena, and Hades APIs.',
     url: 'https://wynntils.com',
   },
+  {
+    name: 'WynnVentory',
+    description: 'Trade market price data — item market prices, history, and whole-build cost estimates are powered by the WynnVentory API.',
+    url: 'https://wynnventory.com',
+  },
 ]
 
 const assets = [
