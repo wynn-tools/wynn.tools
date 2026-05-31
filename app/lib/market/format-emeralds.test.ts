@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatEmeralds } from './format-emeralds'
+import { formatEmeralds, formatEmeraldsCompact } from './format-emeralds'
 
 describe('formatEmeralds', () => {
   it('splits into le / eb / e (3le 52eb 7e = 15623)', () => {
@@ -15,5 +15,20 @@ describe('formatEmeralds', () => {
   })
   it('rounds fractional emeralds', () => {
     expect(formatEmeralds(63.6)).toBe('1eb')
+  })
+})
+
+describe('formatEmeraldsCompact', () => {
+  it('keeps the two most-significant units by default', () => {
+    expect(formatEmeraldsCompact(1847282)).toBe('450le 63eb')
+  })
+  it('honours a custom unit cap', () => {
+    expect(formatEmeraldsCompact(1847282, 1)).toBe('450le')
+  })
+  it('skips zero units when picking the top ones', () => {
+    expect(formatEmeraldsCompact(4096 * 12 + 5)).toBe('12le 5e') // no eb → le + e
+  })
+  it('renders zero as 0e', () => {
+    expect(formatEmeraldsCompact(0)).toBe('0e')
   })
 })

@@ -6,6 +6,8 @@ export interface MarketHistoryPoint {
   timestamp: string
   average_mid_80_percent_price: number | null
   average_price: number | null
+  p50_price?: number | null
+  total_count?: number | null
 }
 
 export function useMarket() {
