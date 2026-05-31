@@ -5,6 +5,7 @@ import { and, asc, desc, eq, ilike, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
+import { env } from '../env'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
 import { resolveOwner } from '../lib/owner'
@@ -12,7 +13,22 @@ import { decodeCursor, DEFAULT_PAGE_SIZE, encodeCursor, MAX_PAGE_SIZE } from '..
 import { hasScope, requireAuth } from '../middleware/auth'
 import { verifyApiKey } from '../services/api-keys'
 import { decodeBuild } from '../services/build-decode'
+import { setOgCache } from '../services/og-cache'
+import { createOgFetcher } from '../services/og-fetcher'
 import { getSessionUser } from '../services/sessions'
+
+function prewarmBuildOg(id: string): void {
+  void (async () => {
+    try {
+      const fetcher = createOgFetcher(env().NUXT_URL)
+      const { data, contentType } = await fetcher.fetchOgImage(`/b/${id}`)
+      await setOgCache(`build:${id}`, data, contentType)
+    }
+    catch {
+      // non-fatal — /v1/og/build/:id will generate on first request
+    }
+  })()
+}
 
 const visibilityEnum = z.enum(schema.visibility)
 const createBody = z.object({
@@ -140,6 +156,8 @@ export const builds = new Hono()
       itemIds,
       visibility: visibility ?? 'private',
     }).returning()
+    if (row.visibility !== 'private')
+      prewarmBuildOg(row.id)
     return c.json({ id: row.id }, 201)
   })
   .get('/mine', requireAuth, zValidator('query', mineListQuery), async (c) => {
@@ -206,6 +224,8 @@ export const builds = new Hono()
       itemIds = decoded.itemIds
     }
     const [row] = await getDb().update(schema.builds).set({ ...patch, gameVersion, playerClass, itemIds, updatedAt: new Date() }).where(eq(schema.builds.id, existing.id)).returning()
+    if (row.visibility !== 'private')
+      prewarmBuildOg(row.id)
     return c.json({ id: row.id, name: row.name, visibility: row.visibility })
   })
   .delete('/:id', requireAuth, async (c) => {
