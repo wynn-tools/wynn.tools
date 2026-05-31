@@ -1,0 +1,11 @@
+name = "wynn-tools"
+compatibility_date = "2025-05-31"
+compatibility_flags = ["nodejs_compat"]
+
+# Bind the static-asset store to ASSETS so the Cloudflare Worker (which handles
+# OG image generation) can read font files at runtime via nuxt-og-image's
+# Cloudflare binding. Without this, WynncraftOg and WynnFive fonts fail to load
+# and OG cards fall back to system fonts.
+[assets]
+directory = ".output/public"
+binding = "ASSETS"
