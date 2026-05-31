@@ -1,23 +1,69 @@
 <script setup lang="ts">
 import type { CraftedItem } from '~/lib/crafter/types'
+import type { RawMarketPrice } from '~/lib/market/types'
 import {
   HoverCardContent,
   HoverCardPortal,
   HoverCardRoot,
   HoverCardTrigger,
 } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
+import { useMarket } from '~/composables/useMarket'
 import { slotItemId } from '~/lib/codec/build-codec'
 import { computeCraft } from '~/lib/crafter/compute-craft'
 import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
 import { powderElementMeta } from '~/lib/data/powder-elements'
 import { itemIconUrl } from '~/lib/items/icon'
+import { formatEmeralds } from '~/lib/market/format-emeralds'
+import { pickIdHeadline } from '~/lib/market/summarize'
 import { useBuildStore } from '~/stores/build'
 import { useCraftStore } from '~/stores/craft'
 
 const store = useBuildStore()
 const craftStore = useCraftStore()
+const market = useMarket()
+const slotPrices = ref<Map<number, RawMarketPrice | null>>(new Map())
+
+// Fetch a headline price per occupied, non-crafted gear slot.
+async function refreshPrices() {
+  const names: { slot: number, name: string }[] = []
+  for (let slot = 0; slot <= 8; slot++) {
+    const entry = store.rawBuild?.equipment[slot]
+    if (entry?.kind === 'crafted')
+      continue
+    const id = slotItemId(entry)
+    if (id == null || id >= 10000)
+      continue
+    const item = store.ctx?.rawItemIndex.resolveId(id)
+    const name = item?.name as string | undefined
+    if (name)
+      names.push({ slot, name })
+  }
+  if (names.length === 0) {
+    slotPrices.value = new Map()
+    return
+  }
+  try {
+    const results = await market.prices(names.map(n => ({ name: n.name })))
+    const map = new Map<number, RawMarketPrice | null>()
+    names.forEach((n, idx) => map.set(n.slot, results[idx] ?? null))
+    slotPrices.value = map
+  }
+  catch {
+    slotPrices.value = new Map()
+  }
+}
+
+watch(() => store.rawBuild?.equipment, refreshPrices, { immediate: true, deep: true })
+
+function slotPrice(slot: number): string | null {
+  const p = slotPrices.value.get(slot)
+  if (!p)
+    return null
+  const h = pickIdHeadline(p)
+  return h == null ? null : formatEmeralds(h)
+}
 
 function slotIcon(slot: number): string | null {
   const id = slotItemId(store.rawBuild?.equipment[slot])
@@ -165,6 +211,7 @@ const powderSlotMax = computed(() =>
                   <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
                     {{ itemName(idx) === 'Empty' ? label : itemName(idx) }}
                   </span>
+                  <span v-if="slotPrice(idx)" class="slot-price">{{ slotPrice(idx) }}</span>
                 </div>
                 <button
                   v-if="maxPowders(idx) > 0"
@@ -235,6 +282,7 @@ const powderSlotMax = computed(() =>
               <span class="slot-name" :class="{ 'slot-name--empty': itemName(idx) === 'Empty' }">
                 {{ itemName(idx) === 'Empty' ? label : itemName(idx) }}
               </span>
+              <span v-if="slotPrice(idx)" class="slot-price">{{ slotPrice(idx) }}</span>
             </div>
             <button
               v-if="maxPowders(idx) > 0"
@@ -389,6 +437,11 @@ const powderSlotMax = computed(() =>
 }
 
 .slot-name--empty {
+  color: var(--color-muted);
+}
+
+.slot-price {
+  font-size: 0.65rem;
   color: var(--color-muted);
 }
 

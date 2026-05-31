@@ -103,6 +103,7 @@ const activeSetBonuses = computed<Array<{ name: string, count: number }>>(() => 
       </ul>
     </section>
   </div>
+  <BuildMarketCost />
 </template>
 
 <style scoped>
