@@ -110,10 +110,15 @@ const slots = computed(() =>
   flex-direction: column;
   align-items: flex-end;
   gap: 8px;
-  /* Float in the vertical middle of the section, hugging the right. */
-  position: sticky;
-  top: 76px;
-  align-self: center;
+  /* Pinned to the vertical middle of the viewport, in the right-hand gutter the
+     grid still reserves (var(--rail-w)). The right offset matches the page
+     shell: a centred max-width container with 40px side padding. */
+  position: fixed;
+  z-index: 30;
+  top: 50dvh;
+  right: max(40px, calc((100vw - min(100vw, var(--shell-max))) / 2 + 40px));
+  transform: translateY(-50%);
+  width: var(--rail-w, 124px);
 }
 
 .rail-main {

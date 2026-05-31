@@ -70,7 +70,27 @@ onMounted(() => {
     rail.reconcile()
   window.addEventListener('keydown', onKeydown)
 })
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
+const copied = ref(false)
+let copyTimer: ReturnType<typeof setTimeout> | null = null
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+  if (copyTimer)
+    clearTimeout(copyTimer)
+})
+
+function copyBuildLink() {
+  const hash = buildStore.currentHash
+  if (!hash)
+    return
+  navigator.clipboard.writeText(`${window.location.origin}/builder/${hash}`)
+  copied.value = true
+  if (copyTimer)
+    clearTimeout(copyTimer)
+  copyTimer = setTimeout(() => {
+    copied.value = false
+  }, 1500)
+}
 
 const itemResults = computed(() => data.value ? filterItems(data.value.items, criteria.value) : [])
 const ingredientResults = computed(() => data.value ? filterIngredients(data.value.ingredients, ingredientCriteria.value) : [])
@@ -209,6 +229,16 @@ const setOptions = computed(() =>
             <header class="build-panel-head">
               <span class="kicker">Build</span>
               <span class="build-panel-count">{{ rail.count.value }}/9</span>
+              <button
+                type="button"
+                class="build-copy"
+                :class="{ 'build-copy--copied': copied }"
+                :disabled="!buildStore.currentHash || rail.promoting.value"
+                :aria-label="copied ? 'Copied to clipboard' : (buildStore.currentHash ? 'Copy build link' : 'No build to copy')"
+                @click="copyBuildLink"
+              >
+                {{ copied ? 'Copied' : 'Copy link' }}
+              </button>
               <button type="button" class="build-min" @click="rail.closeBuilder()">
                 Minimise <span class="build-min-arrow" aria-hidden="true">›</span>
               </button>
@@ -246,11 +276,10 @@ const setOptions = computed(() =>
    `.layout` rule, so these widths win at desktop sizes. */
 .layout {
   --rail-w: 124px;
+  /* The third track stays reserved (124px) for the build rail, which is
+     position: fixed and viewport-centred, so results never run under it. */
   grid-template-columns: 248px minmax(0, 1fr) var(--rail-w);
   gap: 28px;
-  /* Give the row near-viewport height so the vertically-centred build rail sits
-     in the middle of the section even when the results are short. */
-  min-height: calc(100dvh - 200px);
 }
 .layout--full {
   grid-template-columns: minmax(0, 1fr) var(--rail-w);
@@ -321,11 +350,47 @@ const setOptions = computed(() =>
   letter-spacing: 0.08em;
   color: var(--color-text);
 }
+.build-copy {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+.build-copy:hover:not(:disabled) {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.build-copy:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.build-copy:disabled {
+  color: var(--color-faint);
+  cursor: not-allowed;
+}
+.build-copy--copied {
+  color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
+  border-color: var(--color-accent);
+  pointer-events: none;
+}
+
 .build-min {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-left: auto;
   font: 500 11px/1 var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -386,6 +451,7 @@ const setOptions = computed(() =>
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .build-copy,
   .build-min-arrow {
     transition: none;
   }
@@ -404,7 +470,6 @@ const setOptions = computed(() =>
   .layout--full {
     grid-template-columns: 1fr;
     gap: 20px;
-    min-height: 0;
   }
   .rail-col {
     display: none;
