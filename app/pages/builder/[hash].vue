@@ -43,7 +43,7 @@ const { data: buildMeta } = await useAsyncData(
           : () => false,
       }))
       const result = computeBuild(raw, loaded.ctx)
-      return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result)
+      return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, null)
     }
     catch {
       return null

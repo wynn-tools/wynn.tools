@@ -43,9 +43,17 @@ const innerStyle = computed(() => ({
   background: `linear-gradient(#0d0d0df7, ${theme.value.bg}f7)`,
 }))
 
-const items = computed(() =>
-  props.equipNames.filter((e): e is { name: string, tier: string } => e !== null),
-)
+const SLOT_AREAS = [
+  'helmet',
+  'chest',
+  'legs',
+  'boots',
+  'ring1',
+  'ring2',
+  'bracelet',
+  'necklace',
+  'weapon',
+] as const
 
 const dps = computed(() => {
   const d = data.value?.melee?.averageDps
@@ -101,19 +109,25 @@ function sepStyle() {
 
       <div class="bt-sep" :style="sepStyle()" />
 
-      <!-- Equipment -->
-      <ul class="bt-items">
-        <li v-for="(item, i) in items" :key="i" class="bt-item" :style="{ color: TIER_COLORS[item.tier] ?? '#aeaeae' }">
-          <img
-            v-if="iconMap.get(item.name)"
-            :src="iconMap.get(item.name)"
-            class="bt-item-icon"
-            alt=""
-            aria-hidden="true"
+      <!-- Equipment — mirrors the builder's grid arrangement -->
+      <div class="bt-items">
+        <template v-for="(item, i) in equipNames" :key="i">
+          <span
+            v-if="item"
+            class="bt-item"
+            :style="{ gridArea: SLOT_AREAS[i], color: TIER_COLORS[item.tier] ?? '#aeaeae' }"
           >
-          {{ item.name }}
-        </li>
-      </ul>
+            <img
+              v-if="iconMap.get(item.name)"
+              :src="iconMap.get(item.name)"
+              class="bt-item-icon"
+              alt=""
+              aria-hidden="true"
+            >
+            {{ item.name }}
+          </span>
+        </template>
+      </div>
 
       <div v-if="dps != null || hp != null || elementalRows.length" class="bt-sep" :style="sepStyle()" />
 
@@ -218,9 +232,14 @@ function sepStyle() {
 
 /* Equipment */
 .bt-items {
-  list-style: none;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'helmet   ring1'
+    'chest    ring2'
+    'legs     bracelet'
+    'boots    necklace'
+    'weapon   weapon';
   gap: 1px 12px;
   margin-top: 2px;
   padding: 0;
