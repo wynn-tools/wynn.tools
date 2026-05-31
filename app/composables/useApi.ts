@@ -1,3 +1,5 @@
+import type { RawMarketPrice } from '~/lib/market/types'
+
 export interface ApiUser {
   id: string
   discordId: string
@@ -177,6 +179,19 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     createKey: (body: { label: string, scopes: string[] }) =>
       request<{ id: string, plaintext: string, prefix: string, scopes: string[] }>('/v1/me/keys', jsonInit('POST', body)),
     revokeKey: (id: string) => request<{ ok: boolean }>(`/v1/me/keys/${id}`, { method: 'DELETE' }),
+
+    // Market (same-origin proxy; never exposes the WynnVentory key)
+    getPrice: (name: string, opts?: { tier?: number, shiny?: boolean }) => {
+      const params = new URLSearchParams()
+      if (opts?.tier != null)
+        params.set('tier', String(opts.tier))
+      if (opts?.shiny != null)
+        params.set('shiny', String(opts.shiny))
+      const qs = params.toString()
+      return request<RawMarketPrice | null>(`/v1/market/price/${encodeURIComponent(name)}${qs ? `?${qs}` : ''}`)
+    },
+    getBuildPrices: (items: { name: string, tier?: number }[]) =>
+      request<{ results: (RawMarketPrice | null)[] }>('/v1/market/prices', jsonInit('POST', { items })),
   }
 }
 
