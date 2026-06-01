@@ -72,16 +72,16 @@ export const useBuildStore = defineStore('build', () => {
   // --- Roll controls ---------------------------------------------------------
   // useRouter / useRoute are Nuxt auto-imports; they throw in the Vitest node
   // environment (no Vue app). Guard with try/catch so unit tests still work.
+  // useToast is a plain Vue composable (ref + setTimeout) — safe everywhere.
+  const { push: _pushToast } = useToast()
   let _router: ReturnType<typeof useRouter> | null = null
   let _route: ReturnType<typeof useRoute> | null = null
-  let _pushToast: ((kind: 'info' | 'error', msg: string) => void) = () => {}
   try {
     _router = useRouter()
     _route = useRoute()
-    _pushToast = useToast().push
   }
   catch {
-    // Running outside Nuxt app (tests) — URL sync and toast are no-ops.
+    // Vitest node env has no Nuxt app context — URL sync becomes a no-op there.
   }
 
   const rollPreset = ref<RollPreset>(loadPresetFromStorage())
@@ -94,42 +94,39 @@ export const useBuildStore = defineStore('build', () => {
       localStorage.setItem(ROLL_PRESET_KEY, p)
   }
 
+  // Write current override state back to the URL ?rolls= param.
+  // Uses value comparison (_lastWritten) as a loop guard instead of a boolean
+  // flag, which would deadlock when router.replace is a no-op (identical query).
+  let _lastWritten: string | null = null
+
   function readOverridesFromQuery() {
     if (!_route)
       return
     const raw = _route.query.rolls
     const str = typeof raw === 'string' ? raw : ''
+    if (str === (_lastWritten ?? ''))
+      return // ignore our own writes
     const { itemOverrides, tomeOverrides } = decodeRollOverrides(str)
     itemRollOverrides.value = itemOverrides
     tomeRollOverrides.value = tomeOverrides
   }
-
-  // Write current override state back to the URL ?rolls= param.
-  // Uses a writing flag to suppress the next watch reaction (loop guard).
-  let _writingQuery = false
   function writeOverridesToQuery() {
     if (!_router || !_route)
       return
     const encoded = encodeRollOverrides(itemRollOverrides.value, tomeRollOverrides.value)
+    _lastWritten = encoded || null
     const query = { ..._route.query }
     if (encoded)
       query.rolls = encoded
     else
       delete query.rolls
-    _writingQuery = true
     _router.replace({ query })
   }
 
   // Sync overrides from URL on init and on external navigation.
   readOverridesFromQuery()
   if (_route) {
-    watch(() => _route!.query.rolls, () => {
-      if (_writingQuery) {
-        _writingQuery = false
-        return
-      }
-      readOverridesFromQuery()
-    })
+    watch(() => _route!.query.rolls, readOverridesFromQuery)
   }
 
   // --- Override mutations ----------------------------------------------------
