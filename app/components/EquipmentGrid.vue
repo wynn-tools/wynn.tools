@@ -91,6 +91,20 @@ function ptier(pid: number) {
 const openSlot = ref<number | null>(null)
 const openSlotInitialTab = ref<'items' | 'crafted'>('items')
 const powderSlot = ref<number | null>(null)
+const openPanelSlot = ref<number | null>(null)
+
+function hasRollableIds(slot: number): boolean {
+  const expanded = store.expandedAtSlot(slot)
+  if (!expanded)
+    return false
+  if (expanded.get('fixID'))
+    return false
+  const minR = expanded.get('minRolls') as Map<string, number> | undefined
+  const maxR = expanded.get('maxRolls') as Map<string, number> | undefined
+  if (!minR || !maxR)
+    return false
+  return [...maxR.keys()].some(id => (minR.get(id) ?? 0) !== (maxR.get(id) ?? 0))
+}
 
 function itemName(slot: number): string {
   const entry = store.rawBuild?.equipment[slot]
@@ -237,6 +251,15 @@ const powderSlotMax = computed(() =>
                   </template>
                 </button>
               </div>
+              <button
+                v-if="hasRollableIds(idx)"
+                class="rolls-btn"
+                type="button"
+                :aria-label="`Edit rolls on ${SLOT_LABELS[idx]}`"
+                @click.stop="openPanelSlot = idx"
+              >
+                ✎
+              </button>
             </div>
           </HoverCardTrigger>
           <HoverCardPortal>
@@ -329,6 +352,16 @@ const powderSlotMax = computed(() =>
       @update="onPowderUpdate"
       @close="powderSlot = null"
     />
+
+    <RollOverridePanel
+      v-if="openPanelSlot !== null && store.expandedAtSlot(openPanelSlot)"
+      kind="item"
+      :open="openPanelSlot !== null"
+      :slot-idx="openPanelSlot"
+      :item="store.expandedAtSlot(openPanelSlot)!"
+      :item-name="slotSearchItem(openPanelSlot)?.name ?? SLOT_LABELS[openPanelSlot] ?? ''"
+      @update:open="(v) => { if (!v) openPanelSlot = null }"
+    />
   </div>
 </template>
 
@@ -362,6 +395,7 @@ const powderSlotMax = computed(() =>
   /* Grid items default to min-width:auto, which a nowrap name resists shrinking
      below — pinning it to 0 lets long names ellipsis instead of forcing overflow. */
   min-width: 0;
+  position: relative;
   border: 1px solid var(--color-border);
   border-radius: 5px;
   cursor: pointer;
@@ -394,6 +428,35 @@ const powderSlotMax = computed(() =>
 
 .slot--active {
   border-color: var(--color-copper);
+}
+
+.rolls-btn {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  background: var(--color-surface-hi);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  color: var(--color-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition:
+    opacity 0.12s,
+    color 0.12s,
+    border-color 0.12s;
+}
+.slot:hover .rolls-btn {
+  opacity: 1;
+}
+.rolls-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .slot-icon {

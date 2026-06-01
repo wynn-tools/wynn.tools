@@ -6,6 +6,7 @@ import type { RawCraft } from '~/lib/crafter/types'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
 import type { BoostId, BuildBoosts } from '~/lib/math/boosts'
+import type { ExpandedItem } from '~/lib/math/expand-item'
 import type { PowderActive } from '~/lib/math/powder-specials'
 import type { Aspect } from '~/lib/types/aspect'
 import { defineStore } from 'pinia'
@@ -16,7 +17,7 @@ import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { unlockPathTo } from '~/lib/atree/pathfind'
 import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
-import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
+import { POWDER_INDEX_BY_SLOT, resolveBuildItems, resolveTomes } from '~/lib/build/resolve'
 import { SLOT_LABELS } from '~/lib/build/slot-labels'
 import { decodeRawBuild, encodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { num } from '~/lib/codec/codec-util'
@@ -486,6 +487,48 @@ export const useBuildStore = defineStore('build', () => {
     tomeOverrides: tomeRollOverrides.value,
   }))
 
+  // TODO memoize: duplicates resolve work done inside computeBuild, acceptable for v1
+  const resolvedEquipmentComputed = computed(() => {
+    if (!rawBuild.value || !ctx.value)
+      return null
+    return resolveBuildItems(rawBuild.value, ctx.value.rawItemIndex, ctx.value.craftContext, rollContext.value)
+  })
+
+  function expandedAtSlot(slot: number): ExpandedItem | null {
+    return resolvedEquipmentComputed.value?.allItems[slot] ?? null
+  }
+
+  // TODO memoize: duplicates resolve work done inside computeBuild, acceptable for v1
+  const resolvedTomesComputed = computed(() => {
+    if (!rawBuild.value || !ctx.value)
+      return null
+    // Build a Map<tomeSlot, ExpandedItem> keyed by the original slot index (not dense array offset).
+    // resolveTomes returns a dense array of non-null tomes; we re-walk tomeIds to correlate
+    // each dense element back to the slot it came from.
+    const tomeIds = rawBuild.value.tomeIds
+    const tomeIndex = ctx.value.tomeIndex
+    const { tomes } = resolveTomes(tomeIds, tomeIndex, rollContext.value)
+    const bySlot = new Map<number, ExpandedItem>()
+    let denseIdx = 0
+    for (let i = 0; i < tomeIds.length; i++) {
+      const id = tomeIds[i]
+      if (id === null || id === undefined)
+        continue
+      const cleaned = tomeIndex.resolveId(id)
+      if (cleaned === null)
+        continue
+      const expanded = tomes[denseIdx]
+      if (expanded)
+        bySlot.set(i, expanded)
+      denseIdx++
+    }
+    return bySlot
+  })
+
+  function expandedAtTomeSlot(slot: number): ExpandedItem | null {
+    return resolvedTomesComputed.value?.get(slot) ?? null
+  }
+
   const result = computed<BuildResult | null>(() => {
     if (!rawBuild.value || !ctx.value)
       return null
@@ -722,5 +765,7 @@ export const useBuildStore = defineStore('build', () => {
     clearAllOverrides,
     totalOverrideCount,
     itemsWithOverridesCount,
+    expandedAtSlot,
+    expandedAtTomeSlot,
   }
 })
