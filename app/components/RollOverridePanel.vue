@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from 'reka-ui'
 import { computed } from 'vue'
-import { humanizeField } from '~/lib/data/identifications'
+import { humanizeShortId } from '~/lib/data/identifications'
 import { idRound } from '~/lib/math/expand-item'
 import { useBuildStore } from '~/stores/build'
 
@@ -55,7 +55,7 @@ const rows = computed<Row[]>(() => {
     const min = minRolls.get(id) ?? 0
     if (min === max)
       continue
-    const { label, unit } = humanizeField(id)
+    const { label, unit } = humanizeShortId(id)
     out.push({
       id,
       label,

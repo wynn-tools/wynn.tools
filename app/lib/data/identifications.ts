@@ -1,5 +1,7 @@
 // app/lib/data/identifications.ts
 
+import { IDENTIFICATION_MAP as _V3_TO_SHORT } from './cdn-adapter/key-maps'
+
 export interface FieldLabel {
   label: string
   unit: string
@@ -170,6 +172,25 @@ export function fieldKey(path: string): string {
 export function humanizeField(path: string): FieldLabel {
   const key = fieldKey(path)
   return IDENTIFICATION_MAP[key] ?? { label: camelToTitle(key), unit: '' }
+}
+
+// Reverse of cdn-adapter/key-maps.ts IDENTIFICATION_MAP: legacy shorthand
+// (e.g. `sdPct`, `tDamRaw`) → v3 API name (e.g. `spellDamage`, `rawThunderDamage`).
+// The builder math uses shorthand internally; this lets us reach the curated
+// label/unit table without changing every caller.
+const _SHORT_TO_V3: Record<string, string> = (() => {
+  const reverse: Record<string, string> = {}
+  for (const [v3, short] of Object.entries(_V3_TO_SHORT))
+    reverse[short] = v3
+  return reverse
+})()
+
+/** Friendly label + unit for a legacy-shorthand rolled id (e.g. `sdPct` → "Spell Damage", "%"). */
+export function humanizeShortId(shorthand: string): FieldLabel {
+  const v3 = _SHORT_TO_V3[shorthand]
+  if (v3 && IDENTIFICATION_MAP[v3])
+    return IDENTIFICATION_MAP[v3]!
+  return IDENTIFICATION_MAP[shorthand] ?? { label: camelToTitle(shorthand), unit: '' }
 }
 
 /** Cost-type ids invert good/bad direction (lower cost is better). */
