@@ -12,6 +12,9 @@ import {
 import { computed, onMounted, ref, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { itemIconUrl } from '~/lib/items/icon'
+import { parseIdString } from '~/lib/wynntils/decode'
+import { getIdKeys } from '~/lib/wynntils/id-keys'
+import { resolveImport } from '~/lib/wynntils/import'
 import { useAuthStore } from '~/stores/auth'
 import { useBuildStore } from '~/stores/build'
 import { useCraftStore } from '~/stores/craft'
@@ -34,6 +37,9 @@ const api = useApi()
 const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 const tab = ref<'items' | 'crafted' | 'saved'>(props.initialTab)
+
+const pasteValue = ref('')
+const pasteError = ref<string | null>(null)
 
 onMounted(() => searchInput.value?.focus())
 
@@ -86,6 +92,53 @@ const SLOT_LABEL: Readonly<Record<number, string>> = {
   6: 'bracelet',
   7: 'necklace',
   8: 'weapon',
+}
+
+async function onPaste(ev: ClipboardEvent) {
+  const text = (ev.clipboardData?.getData('text') ?? '').trim()
+  if (!text)
+    return
+  ev.preventDefault()
+  pasteValue.value = text
+  pasteError.value = null
+  if (!store.ctx)
+    return
+
+  let blocks
+  try {
+    blocks = parseIdString(text)
+  }
+  catch {
+    pasteError.value = 'Invalid Wynntils item string.'
+    return
+  }
+
+  let idKeys
+  try {
+    idKeys = await getIdKeys()
+  }
+  catch {
+    pasteError.value = 'Wynntils ID list unavailable, try again later.'
+    return
+  }
+
+  const result = resolveImport(blocks, store.ctx, idKeys, new Set())
+  if (!result.ok) {
+    pasteError.value = result.error.message
+    return
+  }
+
+  const expected = SLOT_LABEL[props.slotIndex]
+  const actual = SLOT_LABEL[result.row.slot]
+  const ringPair = (props.slotIndex === 4 && result.row.slot === 5) || (props.slotIndex === 5 && result.row.slot === 4)
+  if (props.slotIndex !== result.row.slot && !ringPair) {
+    pasteError.value = `Pasted item is a ${actual}, this slot expects ${expected}.`
+    return
+  }
+
+  store.applyImport([{ ...result.row, slot: props.slotIndex }])
+  pasteValue.value = ''
+  emit('close')
 }
 
 // Single allowed type for non-weapon slots; null for weapon slot (multiple types).
@@ -234,6 +287,18 @@ async function selectSavedItem(item: ApiItemSummary) {
     </div>
 
     <template v-if="tab === 'items'">
+      <div class="wynntils-paste">
+        <input
+          v-model="pasteValue"
+          type="text"
+          placeholder="Paste Wynntils item string"
+          class="paste-input"
+          @paste="onPaste"
+        >
+        <p v-if="pasteError" class="paste-error">
+          {{ pasteError }}
+        </p>
+      </div>
       <div class="picker-header">
         <input
           ref="searchInput"
@@ -659,5 +724,26 @@ async function selectSavedItem(item: ApiItemSummary) {
   font-size: 12px;
   color: var(--color-muted);
   padding: 16px;
+}
+
+.wynntils-paste {
+  padding: 0 0 0.5rem;
+}
+.paste-input {
+  width: 100%;
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 6px;
+}
+.paste-input::placeholder {
+  color: var(--color-muted);
+}
+.paste-error {
+  color: var(--color-error, oklch(60% 0.18 25));
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
 }
 </style>
