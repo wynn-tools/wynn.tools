@@ -175,18 +175,21 @@ function clearAll() {
             ×
           </DialogClose>
         </header>
-        <div v-if="props.kind === 'item'" class="wynntils-paste">
+        <label v-if="props.kind === 'item'" class="wynntils-paste">
+          <span class="kicker">Paste from Wynntils</span>
           <input
             v-model="pasteValue"
             type="text"
-            placeholder="Paste Wynntils item string"
-            class="paste-input"
+            placeholder="In-game item code"
+            class="paste-input f-input"
+            spellcheck="false"
+            autocomplete="off"
             @paste="onPaste"
           >
-          <p v-if="pasteError" class="paste-error">
+          <p v-if="pasteError" class="paste-error" role="alert">
             {{ pasteError }}
           </p>
-        </div>
+        </label>
         <div class="bulk">
           <span class="kicker">Set all to</span>
           <button type="button" @click="setAllTo('min')">
@@ -373,23 +376,21 @@ function clearAll() {
   width: 20px;
 }
 .wynntils-paste {
-  padding: 0 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .paste-input {
   width: 100%;
-  font: inherit;
-  padding: 0.4rem 0.6rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  border-radius: 6px;
-}
-.paste-input::placeholder {
-  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
 .paste-error {
-  color: var(--color-error, oklch(60% 0.18 25));
-  font-size: 0.85rem;
-  margin: 0.25rem 0 0;
+  color: oklch(62% 0.15 20);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  margin: 0;
 }
 </style>

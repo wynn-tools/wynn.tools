@@ -38,8 +38,15 @@ const query = ref('')
 const searchInput = ref<HTMLInputElement | null>(null)
 const tab = ref<'items' | 'crafted' | 'saved'>(props.initialTab)
 
-const pasteValue = ref('')
 const pasteError = ref<string | null>(null)
+
+// Wynntils encodes items in supplementary Private-Use-Area codepoints
+// (U+F0000..U+10FFFE). A pasted string starting in that range is a Wynntils
+// item code, not a search query — sniff and route to the importer.
+const PUA_START = 0xF0000
+function isWynntilsCode(text: string): boolean {
+  return (text.codePointAt(0) ?? 0) >= PUA_START
+}
 
 onMounted(() => searchInput.value?.focus())
 
@@ -94,12 +101,11 @@ const SLOT_LABEL: Readonly<Record<number, string>> = {
   8: 'weapon',
 }
 
-async function onPaste(ev: ClipboardEvent) {
+async function onSearchPaste(ev: ClipboardEvent) {
   const text = (ev.clipboardData?.getData('text') ?? '').trim()
-  if (!text)
-    return
+  if (!text || !isWynntilsCode(text))
+    return // not a Wynntils code — fall through to default paste/search
   ev.preventDefault()
-  pasteValue.value = text
   pasteError.value = null
   if (!store.ctx)
     return
@@ -109,7 +115,7 @@ async function onPaste(ev: ClipboardEvent) {
     blocks = parseIdString(text)
   }
   catch {
-    pasteError.value = 'Invalid Wynntils item string.'
+    pasteError.value = 'Invalid Wynntils item code.'
     return
   }
 
@@ -137,9 +143,14 @@ async function onPaste(ev: ClipboardEvent) {
   }
 
   store.applyImport([{ ...result.row, slot: props.slotIndex }])
-  pasteValue.value = ''
   emit('close')
 }
+
+// Clear any lingering paste error once the user starts typing a search query.
+watch(query, () => {
+  if (pasteError.value)
+    pasteError.value = null
+})
 
 // Single allowed type for non-weapon slots; null for weapon slot (multiple types).
 const lockedRecipeType = computed<string | null>(() => {
@@ -287,26 +298,20 @@ async function selectSavedItem(item: ApiItemSummary) {
     </div>
 
     <template v-if="tab === 'items'">
-      <div class="wynntils-paste">
-        <input
-          v-model="pasteValue"
-          type="text"
-          placeholder="Paste Wynntils item string"
-          class="paste-input"
-          @paste="onPaste"
-        >
-        <p v-if="pasteError" class="paste-error">
-          {{ pasteError }}
-        </p>
-      </div>
       <div class="picker-header">
         <input
           ref="searchInput"
           v-model="query"
           class="picker-search"
           type="text"
-          placeholder="Search items…"
+          placeholder="Search items, or paste a Wynntils item code…"
+          spellcheck="false"
+          autocomplete="off"
+          @paste="onSearchPaste"
         >
+        <p v-if="pasteError" class="paste-error" role="alert">
+          {{ pasteError }}
+        </p>
       </div>
       <ul class="picker-list">
         <li class="picker-item picker-item--none" @click="selectItem(null)">
@@ -726,24 +731,11 @@ async function selectSavedItem(item: ApiItemSummary) {
   padding: 16px;
 }
 
-.wynntils-paste {
-  padding: 0 0 0.5rem;
-}
-.paste-input {
-  width: 100%;
-  font: inherit;
-  padding: 0.4rem 0.6rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  border-radius: 6px;
-}
-.paste-input::placeholder {
-  color: var(--color-muted);
-}
 .paste-error {
-  color: var(--color-error, oklch(60% 0.18 25));
-  font-size: 0.85rem;
-  margin: 0.25rem 0 0;
+  color: oklch(62% 0.15 20);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  margin: 6px 0 0;
 }
 </style>
