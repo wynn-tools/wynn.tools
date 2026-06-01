@@ -1,22 +1,32 @@
 import type { Interaction, InteractionResponse } from './types'
 import { EPHEMERAL_FLAG } from './embed'
+import { autocompleteItem, handleItem } from './handlers/item'
+import { handlePrice } from './handlers/price'
+import { getItemIndex } from './item-index'
 import { InteractionType, ResponseType } from './types'
 
 export async function dispatch(interaction: Interaction): Promise<InteractionResponse> {
   if (interaction.type === InteractionType.PING)
     return { type: ResponseType.PONG }
 
-  if (interaction.type === InteractionType.APPLICATION_COMMAND
-    || interaction.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
-    const name = interaction.data?.name
-    // Stubs replaced in later tasks.
-    return ephemeral(`Unhandled command: ${name}`)
+  if (interaction.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
+    const index = getItemIndex()
+    // Every autocompleted option across our commands is an item-name lookup.
+    return autocompleteItem(interaction, index)
   }
 
-  if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
-    // Component handling lives in Task 4 (builds pagination).
-    return ephemeral('Unhandled component')
+  if (interaction.type === InteractionType.APPLICATION_COMMAND) {
+    const index = getItemIndex()
+    switch (interaction.data?.name) {
+      case 'item': return handleItem(interaction, index, 'name')
+      case 'price': return await handlePrice(interaction, index)
+      case 'builds': return ephemeral('Not yet implemented') // Task 4
+      default: return ephemeral(`Unknown command: ${interaction.data?.name}`)
+    }
   }
+
+  if (interaction.type === InteractionType.MESSAGE_COMPONENT)
+    return ephemeral('Unhandled component')
 
   return ephemeral('Unknown interaction type')
 }
