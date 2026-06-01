@@ -75,6 +75,7 @@ const territoryData = shallowRef<TerritoryEntry[]>([])
 let territoryRefreshInterval: ReturnType<typeof setInterval> | null = null
 let territoryClickPending = false
 let pixiHandledClick = false
+let resizeObserver: ResizeObserver | null = null
 const store = useMapStore()
 const { players } = usePlayerLocations()
 const { events: worldEvents } = useWorldEvents()
@@ -299,6 +300,12 @@ onMounted(async () => {
     }
   })
   lmap.value = map
+  // Sibling layout changes (e.g. toggling the world-events strip) shrink/grow
+  // the map container without firing a window resize. Watch the container and
+  // let Leaflet recompute size — that in turn fires `resize` so the pixi
+  // overlay canvas matches the new viewport.
+  resizeObserver = new ResizeObserver(() => map.invalidateSize())
+  resizeObserver.observe(container)
   const ib = map.getBounds()
   store.setViewBounds({
     x1: ib.getWest(),
@@ -525,6 +532,8 @@ watch(
 onBeforeUnmount(() => {
   if (territoryRefreshInterval !== null)
     clearInterval(territoryRefreshInterval)
+  resizeObserver?.disconnect()
+  resizeObserver = null
   pixi.value?.destroy()
   pixi.value = null
   lmap.value?.remove()
