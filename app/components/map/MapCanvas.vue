@@ -14,7 +14,12 @@ import {
 } from '~/composables/useIngredientDropLayer'
 import { fitToLootrun, renderLootrun } from '~/composables/useLootrunLayer'
 import { loadAllFeatures, loadMapsJson } from '~/composables/useMapData'
-import { renderClusters, renderMarkers, rerenderPositions } from '~/composables/useMarkerLayer'
+import {
+  renderClusters,
+  renderMarkers,
+  repositionClusters,
+  rerenderPositions,
+} from '~/composables/useMarkerLayer'
 import { mountPixiOverlay } from '~/composables/usePixiOverlay'
 import { loadCategoryTextures } from '~/composables/usePixiTextures'
 import {
@@ -29,7 +34,7 @@ import {
   attachTerritoryLayer,
   detachTerritoryLayer,
   repositionTerritoryLayer,
-
+  setTerritoryHighlight,
 } from '~/composables/useTerritoryLayer'
 import {
   attach2DTiles,
@@ -44,8 +49,10 @@ import { useMapStore } from '~/stores/map'
 
 const props = withDefaults(defineProps<{
   activeIngredient?: SearchIngredient | null
+  selectedTerritory?: string | null
 }>(), {
   activeIngredient: null,
+  selectedTerritory: null,
 })
 
 const emit = defineEmits<{
@@ -186,6 +193,7 @@ onMounted(async () => {
     zoomControl: false,
     attributionControl: false,
     preferCanvas: true,
+    doubleClickZoom: false,
     maxBounds: [
       [b.southWest.lat, b.southWest.lng],
       [b.northEast.lat, b.northEast.lng],
@@ -214,12 +222,11 @@ onMounted(async () => {
     }
     if (pixi.value) {
       rerenderPositions(lmap.value!, sprites.value, allFeatures.value)
+      repositionClusters(lmap.value!, pixi.value.layers.clusters)
       repositionPlaceLabels(lmap.value!, pixi.value.layers.focus, allFeatures.value)
       repositionPlayerMarkers(lmap.value!, pixi.value.layers.players)
       if (store.lootrun)
         renderLootrun(lmap.value!, pixi.value.layers.lootrun, store.lootrun)
-      // Hide cluster bubbles during pan — they'll be rebuilt correctly on moveend
-      pixi.value.layers.clusters.visible = false
       if (store.showTerritories && territoryHandle.value) {
         repositionTerritoryLayer(lmap.value!, territoryHandle.value)
       }
@@ -260,6 +267,10 @@ onMounted(async () => {
         if (!pixi.value)
           return
         territoryHandle.value = handle
+        setTerritoryHighlight(m, handle, {
+          selected: props.selectedTerritory,
+          hoveredLink: null,
+        })
         p.redraw()
       })
     }
@@ -430,6 +441,10 @@ watch(
         const data = await ensureTerritoryData()
         territoryData.value = data
         territoryHandle.value = await attachTerritoryLayer(map, p.layers.territories, data, cb)
+        setTerritoryHighlight(map, territoryHandle.value, {
+          selected: props.selectedTerritory,
+          hoveredLink: null,
+        })
         p.redraw()
         territoryRefreshInterval = setInterval(
           async () => {
@@ -447,6 +462,10 @@ watch(
                 fresh,
                 cb,
               )
+              setTerritoryHighlight(lmap.value, territoryHandle.value, {
+                selected: props.selectedTerritory,
+                hoveredLink: null,
+              })
               pixi.value.redraw()
             }
             catch {
@@ -487,6 +506,18 @@ onBeforeUnmount(() => {
   lmap.value?.remove()
   lmap.value = null
 })
+
+watch(
+  () => props.selectedTerritory,
+  (sel) => {
+    const map = lmap.value
+    const handle = territoryHandle.value
+    if (!map || !handle)
+      return
+    setTerritoryHighlight(map, handle, { selected: sel, hoveredLink: null })
+    pixi.value?.redraw()
+  },
+)
 
 defineExpose({ map: lmap, pixi })
 </script>

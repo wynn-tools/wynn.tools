@@ -1,19 +1,45 @@
-import type { TerritoryEntry } from '~/types/map'
+import type {
+  TerritoryEntry,
+  TerritoryRating,
+  TerritoryResource,
+  TerritoryResourceType,
+} from '~/types/map'
 
-const TERRITORY_PATH = '/cache/get/territoryList'
+const TERRITORY_PATH
+  = '/cache/get/territoryList?show=links,treasury,defences,resources'
 const CACHE_TTL = 5 * 60 * 1000
 
+interface RawResource {
+  type: TerritoryResourceType
+  generation: number
+  baseGeneration: number
+  stored: number
+  limit: number
+}
+
 interface RawTerritory {
-  guild: { name: string, prefix: string, color: string, uuid: string } | null
+  guild: {
+    name: string
+    prefix: string
+    color: string
+    uuid: string
+    hq?: string | null
+  } | null
   acquired: string | null
   location: { start: [number, number], end: [number, number] }
+  hq?: boolean
+  resources?: RawResource[]
+  links?: string[]
+  treasury?: TerritoryRating
+  defences?: TerritoryRating
 }
 
 const cache: {
   data: TerritoryEntry[] | null
+  byName: Map<string, TerritoryEntry>
   fetchedAt: number
   pending: Promise<TerritoryEntry[]> | null
-} = { data: null, fetchedAt: 0, pending: null }
+} = { data: null, byName: new Map(), fetchedAt: 0, pending: null }
 
 function parseResponse(json: Record<string, RawTerritory>): TerritoryEntry[] {
   return Object.entries(json).map(([name, raw]) => {
@@ -25,16 +51,33 @@ function parseResponse(json: Record<string, RawTerritory>): TerritoryEntry[] {
       [startX, endX] = [endX, startX]
     if (startZ > endZ)
       [startZ, endZ] = [endZ, startZ]
+    const resources: TerritoryResource[] | undefined = raw.resources?.map(r => ({
+      type: r.type,
+      generation: r.generation,
+      baseGeneration: r.baseGeneration,
+      stored: r.stored,
+      limit: r.limit,
+    }))
     return {
       name,
       guild: raw.guild
-        ? { name: raw.guild.name, prefix: raw.guild.prefix, color: raw.guild.color }
+        ? {
+            name: raw.guild.name,
+            prefix: raw.guild.prefix,
+            color: raw.guild.color,
+            hq: raw.guild.hq ?? null,
+          }
         : null,
       acquired: raw.acquired,
       startX,
       startZ,
       endX,
       endZ,
+      hq: raw.hq,
+      resources,
+      links: raw.links,
+      treasury: raw.treasury,
+      defences: raw.defences,
     }
   })
 }
@@ -48,6 +91,7 @@ async function fetchTerritories(): Promise<TerritoryEntry[]> {
     const json = (await res.json()) as Record<string, RawTerritory>
     const data = parseResponse(json)
     cache.data = data
+    cache.byName = new Map(data.map(t => [t.name, t]))
     cache.fetchedAt = Date.now()
     return data
   }
@@ -58,6 +102,10 @@ async function fetchTerritories(): Promise<TerritoryEntry[]> {
 
 export function getGuildTerritoryCount(guildName: string): number {
   return cache.data?.filter(t => t.guild?.name === guildName).length ?? 0
+}
+
+export function getTerritoryByName(name: string): TerritoryEntry | null {
+  return cache.byName.get(name) ?? null
 }
 
 export async function ensureTerritoryData(): Promise<TerritoryEntry[]> {

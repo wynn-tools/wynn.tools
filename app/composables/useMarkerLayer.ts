@@ -160,6 +160,7 @@ export async function renderClusters(
           onFeatureClick(f.featureId, { x: e.global.x, y: e.global.y })
         })
       }
+      ;(s as any).__world = { x: f.location.x, z: f.location.z }
       container.addChild(s)
       continue
     }
@@ -205,6 +206,18 @@ export async function renderClusters(
         onClusterClick(avgX, avgZ)
       })
     }
+    ;(group as any).__world = { x: avgX, z: avgZ }
     container.addChild(group)
+  }
+}
+
+export function repositionClusters(map: LMap, container: Container) {
+  for (const child of container.children) {
+    const w = (child as any).__world as { x: number, z: number } | undefined
+    if (!w)
+      continue
+    const ll = worldToLatLng({ x: w.x, y: 0, z: w.z })
+    const pt = map.latLngToContainerPoint([ll.lat, ll.lng])
+    child.position.set(pt.x, pt.y)
   }
 }

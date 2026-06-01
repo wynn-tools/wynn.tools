@@ -79,14 +79,31 @@ export interface ShareView {
   ing?: string | null
 }
 
+export type TerritoryResourceType = 'EMERALD' | 'ORE' | 'WOOD' | 'FISH' | 'CROP'
+
+export interface TerritoryResource {
+  type: TerritoryResourceType
+  generation: number
+  baseGeneration: number
+  stored: number
+  limit: number
+}
+
+export type TerritoryRating = 'VERY_LOW' | 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH'
+
 export interface TerritoryEntry {
   name: string
-  guild: { name: string, prefix: string, color: string } | null
+  guild: { name: string, prefix: string, color: string, hq?: string | null } | null
   acquired: string | null
   startX: number
   startZ: number
   endX: number
   endZ: number
+  hq?: boolean
+  resources?: TerritoryResource[]
+  links?: string[]
+  treasury?: TerritoryRating
+  defences?: TerritoryRating
 }
 
 export interface WorldEventLocation {

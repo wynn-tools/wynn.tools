@@ -18,8 +18,8 @@ import MapSources from '~/components/map/MapSources.vue'
 import MobileControls from '~/components/map/MobileControls.vue'
 import SearchBar from '~/components/map/SearchBar.vue'
 import ServicePopup from '~/components/map/ServicePopup.vue'
+import TerritoryDetailPanel from '~/components/map/TerritoryDetailPanel.vue'
 import TerritoryLeaderboard from '~/components/map/TerritoryLeaderboard.vue'
-import TerritoryPopup from '~/components/map/TerritoryPopup.vue'
 import TerritoryToggle from '~/components/map/TerritoryToggle.vue'
 import Toast from '~/components/map/Toast.vue'
 import WorldEventPanel from '~/components/map/WorldEventPanel.vue'
@@ -91,10 +91,7 @@ const shortcutsOpen = ref(false)
 const allFeatures = ref<MapFeature[]>([])
 const caves = ref<CaveJsonEntry[]>([])
 const servicePopup = ref<{ feature: MapFeature, screenPos: { x: number, y: number } } | null>(null)
-const territoryPopup = ref<{
-  territory: TerritoryEntry
-  screenPos: { x: number, y: number }
-} | null>(null)
+const selectedTerritory = ref<TerritoryEntry | null>(null)
 
 const inViewCount = computed(() => {
   const bounds = store.viewBounds
@@ -170,7 +167,7 @@ function onGlobalKey(e: KeyboardEvent) {
     return
   }
   if (e.key === 'Escape') {
-    if (!store.focus && !servicePopup.value && !territoryPopup.value && !shortcutsOpen.value && !store.ingredientDrop) {
+    if (!store.focus && !servicePopup.value && !selectedTerritory.value && !shortcutsOpen.value && !store.ingredientDrop) {
       store.setCoordPin(null)
     }
   }
@@ -282,7 +279,7 @@ function onFeatureClick(featureId: string, screenPos: { x: number, y: number }) 
   const f = allFeatures.value.find(x => x.featureId === featureId)
   if (!f)
     return
-  territoryPopup.value = null
+  selectedTerritory.value = null
   if (f.categoryId.startsWith('wynntils:service:')) {
     servicePopup.value = { feature: f, screenPos }
     store.setFocus(null)
@@ -294,14 +291,14 @@ function onFeatureClick(featureId: string, screenPos: { x: number, y: number }) 
   }
 }
 
-function onTerritoryClick(territory: TerritoryEntry, screenPos: { x: number, y: number }) {
+function onTerritoryClick(territory: TerritoryEntry, _screenPos: { x: number, y: number }) {
   servicePopup.value = null
-  territoryPopup.value = { territory, screenPos }
+  selectedTerritory.value = territory
 }
 
 function onMapClick() {
   servicePopup.value = null
-  territoryPopup.value = null
+  selectedTerritory.value = null
   store.setCoordPin(null)
 }
 
@@ -315,7 +312,7 @@ watch(
       lootrunPanelOpen.value = false
       store.setFocus(null)
       servicePopup.value = null
-      territoryPopup.value = null
+      selectedTerritory.value = null
       try {
         territoryEntries.value = await ensureTerritoryData()
       }
@@ -357,7 +354,7 @@ watch(selectedEvent, (ev) => {
   if (ev) {
     store.setFocus(null)
     servicePopup.value = null
-    territoryPopup.value = null
+    selectedTerritory.value = null
   }
 })
 watch(worldEvents, (fresh) => {
@@ -493,6 +490,7 @@ function onCursorMove(p: { x: number, z: number }) {
       <Toast />
       <MapCanvas
         :active-ingredient="activeIngredient"
+        :selected-territory="selectedTerritory?.name ?? null"
         @ready="mapRef = $event"
         @feature-click="onFeatureClick"
         @territory-click="onTerritoryClick"
@@ -535,10 +533,9 @@ function onCursorMove(p: { x: number, z: number }) {
           :screen-pos="servicePopup?.screenPos ?? null"
           @close="servicePopup = null"
         />
-        <TerritoryPopup
-          :territory="territoryPopup?.territory ?? null"
-          :screen-pos="territoryPopup?.screenPos ?? null"
-          @close="territoryPopup = null"
+        <TerritoryDetailPanel
+          :territory="selectedTerritory"
+          @close="selectedTerritory = null"
         />
         <KeyboardShortcuts :open="shortcutsOpen" @close="shortcutsOpen = false" />
         <!-- Crosshair — mobile only, shows map center for coord reference -->
