@@ -30,7 +30,7 @@ async function main() {
     throw new Error('versions.json is empty')
   const { gameVersion } = latest
 
-  const items = await cdn.fetchJson<CdnItem[]>(`data/${gameVersion}/items.json`)
+  const { items } = await cdn.fetchJson<{ items: CdnItem[] }>(`data/${gameVersion}/items.json`)
   console.log(`Warming ${items.length} items (game version ${gameVersion})${force ? ' [--force]' : ''}`)
 
   const cachedKeys = force
