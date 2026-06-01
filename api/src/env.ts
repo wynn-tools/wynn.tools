@@ -9,6 +9,8 @@ const schema = z.object({
   DISCORD_TOKEN: z.string().min(1),
   DISCORD_GUILD_ID: z.string().regex(/^\d+$/, 'Discord snowflake ID'),
   DISCORD_INVITE_URL: z.string().url(),
+  DISCORD_PUBLIC_KEY: z.string().regex(/^[0-9a-f]{64}$/, 'Discord public key (hex, 32 bytes)'),
+  DISCORD_APPLICATION_ID: z.string().regex(/^\d+$/, 'Discord snowflake ID'),
   FRONTEND_URL: z.string().url(),
   COOKIE_DOMAIN: z.string().min(1),
   CDN_BASE_URL: z.string().url(),
