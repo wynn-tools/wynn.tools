@@ -179,9 +179,13 @@ export function humanizeField(path: string): FieldLabel {
 // The builder math uses shorthand internally; this lets us reach the curated
 // label/unit table without changing every caller.
 const _SHORT_TO_V3: Record<string, string> = (() => {
+  // Multiple v3 names can map to the same shorthand (e.g. xpBonus + combatExperience → xpb).
+  // First-wins so the curated label (the one listed first in key-maps) is what we humanize against.
   const reverse: Record<string, string> = {}
-  for (const [v3, short] of Object.entries(_V3_TO_SHORT))
-    reverse[short] = v3
+  for (const [v3, short] of Object.entries(_V3_TO_SHORT)) {
+    if (!(short in reverse))
+      reverse[short] = v3
+  }
   return reverse
 })()
 
