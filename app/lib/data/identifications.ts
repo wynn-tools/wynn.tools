@@ -121,7 +121,7 @@ export const IDENTIFICATION_MAP: Record<string, FieldLabel> = {
   'manaRegen': { label: 'Mana Regen', unit: '/5s' },
   'manaSteal': { label: 'Mana Steal', unit: '/3s' },
   'walkSpeed': { label: 'Walk Speed', unit: '%' },
-  'xpBonus': { label: 'Xp Bonus', unit: '%' },
+  'xpBonus': { label: 'Combat Experience', unit: '%' },
   'exploding': { label: 'Exploding', unit: '%' },
   'lifeSteal': { label: 'Life Steal', unit: '/3s' },
   'reflection': { label: 'Reflection', unit: '%' },
