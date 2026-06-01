@@ -66,6 +66,11 @@ describe('roll-overrides codec', () => {
     expect(itemOverrides.get(0)?.get('spd')).toBe(-4)
   })
 
+  it('drops unknown ids on encode (symmetric with decode)', () => {
+    const items = new Map([[0, new Map([['notAnId', 5], ['sdPct', 3]])]])
+    expect(encodeRollOverrides(items, new Map())).toBe('h:sdPct=3')
+  })
+
   it('emits ids in ROLLED_IDS order regardless of insertion order', () => {
     // sdPct comes before mdPct in ROLLED_IDS
     const items = new Map([

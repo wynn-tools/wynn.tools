@@ -46,11 +46,14 @@ export function encodeRollOverrides(
   const emit = (slotKey: string, ids: Map<string, number>) => {
     if (ids.size === 0)
       return
-    const ordered = [...ids.entries()].sort(
+    const filtered = [...ids.entries()].filter(([id]) => ROLLED_ID_SET.has(id))
+    if (filtered.length === 0)
+      return
+    filtered.sort(
       (a, b) =>
         (ROLLED_ID_ORDER.get(a[0]) ?? 1e9) - (ROLLED_ID_ORDER.get(b[0]) ?? 1e9),
     )
-    const pairs = ordered.map(([id, v]) => `${id}=${v}`).join(',')
+    const pairs = filtered.map(([id, v]) => `${id}=${v}`).join(',')
     groups.push(`${slotKey}:${pairs}`)
   }
   ITEM_SLOT_KEYS.forEach((key, idx) => {
