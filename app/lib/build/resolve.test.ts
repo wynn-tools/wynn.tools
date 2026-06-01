@@ -10,6 +10,7 @@ import {
   NONE_RAW_ITEMS,
   resolveBuildItems,
 } from './resolve'
+import { DEFAULT_ROLL_CONTEXT } from './roll-context'
 
 describe('cleanRawItem', () => {
   it('builds skillpoints/reqs and defaults, without mutating input', () => {
@@ -404,5 +405,81 @@ describe('resolveBuildItems', () => {
     expect(result.wynnOrder[0]).toBe(result.equipment[3]) // boots
     expect(result.wynnOrder[1]).toBe(result.equipment[2]) // leggings
     expect(result.wynnOrder[2]).toBe(result.equipment[1]) // chestplate
+  })
+
+  describe('appliedRolls', () => {
+    // A non-fixID item with sdPct:10 gives minRolls.sdPct=3, maxRolls.sdPct=13
+    const rawRolled = {
+      name: 'RolledHelmet',
+      id: 50,
+      category: 'armor',
+      type: 'helmet',
+      slots: 0,
+      sdPct: 10,
+    }
+    const rolledBuild = {
+      versionId: 0,
+      equipment: [
+        { kind: 'normal' as const, id: 50 },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: null },
+        { kind: 'normal' as const, id: 2 },
+      ],
+      powders: [[], [], [], [], []],
+      tomeIds: [],
+      sp: null,
+      level: 10,
+      aspects: [],
+      activeAtree: [],
+    }
+
+    it('each resolved item carries appliedRolls', () => {
+      const index = buildRawItemIndex([rawRolled, rawWeapon])
+      const result = resolveBuildItems(rolledBuild, index)
+      const helm = result.equipment[0]!
+      expect(helm.get('appliedRolls')).toBeInstanceOf(Map)
+    })
+
+    it('with DEFAULT_ROLL_CONTEXT, appliedRolls equals maxRolls', () => {
+      const index = buildRawItemIndex([rawRolled, rawWeapon])
+      const result = resolveBuildItems(rolledBuild, index, undefined, DEFAULT_ROLL_CONTEXT)
+      const helm = result.equipment[0]!
+      const maxRolls = helm.get('maxRolls') as Map<string, number>
+      const appliedRolls = helm.get('appliedRolls') as Map<string, number>
+      expect(appliedRolls).toEqual(maxRolls)
+    })
+
+    it('with preset min, appliedRolls equals minRolls', () => {
+      const index = buildRawItemIndex([rawRolled, rawWeapon])
+      const result = resolveBuildItems(rolledBuild, index, undefined, {
+        preset: 'min',
+        itemOverrides: new Map(),
+        tomeOverrides: new Map(),
+      })
+      const helm = result.equipment[0]!
+      const minRolls = helm.get('minRolls') as Map<string, number>
+      const appliedRolls = helm.get('appliedRolls') as Map<string, number>
+      expect(appliedRolls).toEqual(minRolls)
+    })
+
+    it('with override {sdPct: 7} on slot 0, appliedRolls.sdPct === 7 and other ids use preset', () => {
+      const index = buildRawItemIndex([rawRolled, rawWeapon])
+      const result = resolveBuildItems(rolledBuild, index, undefined, {
+        preset: 'max',
+        itemOverrides: new Map([[0, new Map([['sdPct', 7]])]]),
+        tomeOverrides: new Map(),
+      })
+      const helm = result.equipment[0]!
+      const appliedRolls = helm.get('appliedRolls') as Map<string, number>
+      expect(appliedRolls.get('sdPct')).toBe(7)
+      // hpBonus is not in the override, should be maxRolls value (0 for this item)
+      const maxRolls = helm.get('maxRolls') as Map<string, number>
+      expect(appliedRolls.get('hpBonus')).toBe(maxRolls.get('hpBonus'))
+    })
   })
 })

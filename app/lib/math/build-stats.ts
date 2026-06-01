@@ -125,9 +125,9 @@ export function aggregateBuildStats(
 
   const majorIds = new Set<string>()
   for (const item of items) {
-    const maxRolls = item.get('maxRolls') as Map<string, number> | undefined
-    if (maxRolls) {
-      for (const [id, value] of maxRolls) {
+    const appliedRolls = item.get('appliedRolls') as Map<string, number> | undefined
+    if (appliedRolls) {
+      for (const [id, value] of appliedRolls) {
         if (STATIC_IDS.includes(id))
           continue
         statMap.set(id, (numOr0(statMap.get(id))) + value)

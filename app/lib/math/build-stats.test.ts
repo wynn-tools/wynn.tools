@@ -6,14 +6,19 @@ import { aggregateBuildStats, CLASS_DEFENSE_MULTIPLIERS } from './build-stats'
 import { computeDefenseStats } from './defense'
 import { levelToHPBase } from './skillpoints'
 
-/** Minimal expanded item: maxRolls map + optional static ids / major ids. */
+/**
+ * Minimal expanded item: maxRolls map + optional static ids / major ids.
+ *  appliedRolls mirrors maxRolls (default/max preset).
+ */
 function mkItem(opts: {
   maxRolls?: Record<string, number>
   statics?: Record<string, number>
   majorIds?: string[]
 } = {}): ExpandedItem {
   const m = new Map<string, unknown>()
-  m.set('maxRolls', new Map(Object.entries(opts.maxRolls ?? {})))
+  const maxRolls = new Map(Object.entries(opts.maxRolls ?? {}))
+  m.set('maxRolls', maxRolls)
+  m.set('appliedRolls', new Map(maxRolls))
   for (const [k, v] of Object.entries(opts.statics ?? {}))
     m.set(k, v)
   if (opts.majorIds)

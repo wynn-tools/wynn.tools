@@ -7,6 +7,7 @@ import { ATTACK_SPEEDS } from '../math/constants'
 import { levelToHPBase } from '../math/skillpoints'
 import { computeBuild } from './compute-build'
 import { buildRawItemIndex, buildRawTomeIndex } from './resolve'
+import { DEFAULT_ROLL_CONTEXT } from './roll-context'
 
 // ---------------------------------------------------------------------------
 // Synthetic raw-item fixture — a trivial relik weapon + 8 NONE-like armor pieces
@@ -169,5 +170,52 @@ describe('computeBuild with powder specials', () => {
       | Map<string, number>
       | undefined
     expect(damMult?.get('Curse')).toBeUndefined()
+  })
+})
+
+describe('computeBuild rollContext', () => {
+  it('omitting rollContext == passing DEFAULT_ROLL_CONTEXT', () => {
+    const rawBuild = makeRawBuild()
+    const ctx = makeBuildContext()
+    const a = computeBuild(rawBuild, ctx)
+    const b = computeBuild(
+      rawBuild,
+      ctx,
+      undefined,
+      undefined,
+      DEFAULT_ROLL_CONTEXT,
+    )
+    expect([...a.stats.entries()]).toEqual([...b.stats.entries()])
+  })
+
+  it('preset min produces strictly lower aggregated sdPct than max for a rolled build', () => {
+    const rawBuild = makeRawBuild()
+    const ctx = makeBuildContext()
+    const maxRes = computeBuild(rawBuild, ctx)
+    const minRes = computeBuild(rawBuild, ctx, undefined, undefined, {
+      preset: 'min',
+      itemOverrides: new Map(),
+      tomeOverrides: new Map(),
+    })
+    const maxSd = (maxRes.stats.get('sdPct') as number) ?? 0
+    const minSd = (minRes.stats.get('sdPct') as number) ?? 0
+    expect(minSd).toBeLessThanOrEqual(maxSd)
+  })
+
+  it('per-id override on slot 0 changes only that id in aggregated stats', () => {
+    const rawBuild = makeRawBuild()
+    const ctx = makeBuildContext()
+    const base = computeBuild(rawBuild, ctx)
+    const override = computeBuild(rawBuild, ctx, undefined, undefined, {
+      preset: 'max',
+      itemOverrides: new Map([[0, new Map([['sdPct', 0]])]]),
+      tomeOverrides: new Map(),
+    })
+    // sdPct should drop by exactly the helmet's max sdPct.
+    expect(override.stats.get('sdPct')).toBeLessThanOrEqual(
+      base.stats.get('sdPct') as number,
+    )
+    // hpBonus on any *other* slot is unaffected.
+    expect(override.stats.get('hpBonus')).toBe(base.stats.get('hpBonus'))
   })
 })

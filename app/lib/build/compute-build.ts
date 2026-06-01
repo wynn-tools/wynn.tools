@@ -25,6 +25,7 @@ import type { RawAspectData } from '../types/aspect'
 import type { AtreeAbility, AtreeData } from '../types/atree'
 import type { ItemSet } from '../types/item'
 import type { RawItemIndex, RawTomeIndex } from './resolve'
+import type { RollContext } from './roll-context'
 import { getSortedClassAtree } from '../atree/build-atree'
 import { mergeAtree } from '../atree/merge'
 import { applyAtreePropBonuses, collectAtreeRawStats } from '../atree/raw-stats'
@@ -43,6 +44,9 @@ import { levelToSkillPoints } from '../math/skillpoints'
 import { computeSpWarning } from '../math/sp-warning'
 import { computeSpellParts } from '../math/spell-calc'
 import { resolveBuildItems, resolveTomes } from './resolve'
+import { DEFAULT_ROLL_CONTEXT } from './roll-context'
+
+export type { RollContext, RollPreset } from './roll-context'
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -111,14 +115,14 @@ export interface BuildResult {
  *  7. computeSpellParts(melee, stats, weapon) + computeMeleeDps
  *  8. computeDefenseStats(stats) → defense
  */
-export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: BuildBoosts, powderActive?: PowderActive): BuildResult {
+export function computeBuild(rawBuild: RawBuild, ctx: BuildContext, boosts?: BuildBoosts, powderActive?: PowderActive, rollContext: RollContext = DEFAULT_ROLL_CONTEXT): BuildResult {
   const { rawItemIndex, sets, atreeData } = ctx
 
   // Step 1: resolve items
-  const { weapon, allItems: itemsOnly, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex, ctx.craftContext)
+  const { weapon, allItems: itemsOnly, wynnOrder } = resolveBuildItems(rawBuild, rawItemIndex, ctx.craftContext, rollContext)
 
   // Resolve tomes and fold into allItems / wynnOrder
-  const { tomes, guildTome } = resolveTomes(rawBuild.tomeIds, ctx.tomeIndex)
+  const { tomes, guildTome } = resolveTomes(rawBuild.tomeIds, ctx.tomeIndex, rollContext)
   const allItems = [...itemsOnly, ...tomes]
   const wynnOrderWithGuild = [...wynnOrder, guildTome]
 

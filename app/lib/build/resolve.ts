@@ -12,11 +12,17 @@ import type { RawBuild } from '../codec/build-codec'
 import type { EquipmentSlot } from '../codec/equipment-codec'
 import type { CraftContext, CraftedItem } from '../crafter/types'
 import type { ExpandedItem } from '../math/expand-item'
+import type { RollContext } from './roll-context'
 import { computeCraft } from '../crafter/compute-craft'
 import { POWDER_TIERS, SKP_ELEMENTS } from '../data/powder-constants'
 import { expandItem } from '../math/expand-item'
 import { POWDER_ARMOR_HEALTH, POWDER_STATS } from '../math/powder-stats'
 import { applyWeaponPowders } from '../math/weapon-damage'
+import {
+  computeAppliedRolls,
+  DEFAULT_ROLL_CONTEXT,
+
+} from './roll-context'
 
 // ---------------------------------------------------------------------------
 // Field lists — ported verbatim from build_utils.js item_fields / str_item_fields
@@ -468,6 +474,7 @@ export function buildRawTomeIndex(rawTomes: Record<string, unknown>[]): RawTomeI
 export function resolveTomes(
   tomeIds: Array<number | null>,
   tomeIndex: RawTomeIndex,
+  rollContext: RollContext = DEFAULT_ROLL_CONTEXT,
 ): { tomes: ExpandedItem[], guildTome: ExpandedItem } {
   const tomes: ExpandedItem[] = []
 
@@ -478,7 +485,9 @@ export function resolveTomes(
     const cleaned = tomeIndex.resolveId(id)
     if (cleaned === null)
       continue
-    tomes.push(expandItem(cleaned as Record<string, unknown>))
+    const expanded = expandItem(cleaned as Record<string, unknown>)
+    attachAppliedRolls(expanded, rollContext.preset, rollContext.tomeOverrides.get(i))
+    tomes.push(expanded)
   }
 
   // Guild tome is index 6
@@ -488,17 +497,20 @@ export function resolveTomes(
     const cleaned = tomeIndex.resolveId(guildTomeId)
     if (cleaned !== null) {
       guildTome = expandItem(cleaned as Record<string, unknown>)
+      attachAppliedRolls(guildTome, rollContext.preset, rollContext.tomeOverrides.get(6))
     }
     else {
       guildTome = expandItem(
         cleanRawItem({ id: -1, name: 'NoGuildTome', type: 'guildTome', category: 'tome' }) as Record<string, unknown>,
       )
+      attachAppliedRolls(guildTome, 'max', undefined)
     }
   }
   else {
     guildTome = expandItem(
       cleanRawItem({ id: -1, name: 'NoGuildTome', type: 'guildTome', category: 'tome' }) as Record<string, unknown>,
     )
+    attachAppliedRolls(guildTome, 'max', undefined)
   }
 
   return { tomes, guildTome }
@@ -657,6 +669,11 @@ export function craftedToExpandedItem(crafted: CraftedItem): ExpandedItem {
     expanded.set(key, range.max)
   }
 
+  // Attach appliedRolls with default (max) preset so standalone callers
+  // don't encounter a missing map. resolveBuildItems will overwrite this
+  // with the correct preset/override after resolveSlot returns.
+  attachAppliedRolls(expanded, 'max', undefined)
+
   return expanded
 }
 
@@ -680,6 +697,7 @@ export function resolveBuildItems(
   rawBuild: RawBuild,
   index: RawItemIndex,
   craftContext?: CraftContext,
+  rollContext: RollContext = DEFAULT_ROLL_CONTEXT,
 ): ResolvedBuildItems {
   const { equipment: slots, powders } = rawBuild
 
@@ -708,6 +726,7 @@ export function resolveBuildItems(
     if (m.get('category') === 'armor') {
       applyArmorPowders(m)
     }
+    attachAppliedRolls(m, rollContext.preset, rollContext.itemOverrides.get(i))
     equipment.push(m)
   }
 
@@ -717,9 +736,52 @@ export function resolveBuildItems(
   const weaponPowders = powdersForSlot(powders, 8).slice(0, weaponSlots)
   weapon.set('powders', weaponPowders)
   applyWeaponPowders(weapon)
+  attachAppliedRolls(weapon, rollContext.preset, rollContext.itemOverrides.get(8))
 
   const allItems: ExpandedItem[] = [...equipment, weapon]
   const wynnOrder: ExpandedItem[] = WYNN_ORDER_INDICES.map(idx => equipment[idx]!)
 
   return { equipment, weapon, allItems, wynnOrder }
+}
+
+// ---------------------------------------------------------------------------
+// Private helpers
+// ---------------------------------------------------------------------------
+
+function attachAppliedRolls(
+  item: ExpandedItem,
+  preset: 'min' | 'avg' | 'max',
+  overrides: Map<string, number> | undefined,
+): void {
+  const minRolls = item.get('minRolls') as Map<string, number> | undefined
+  const maxRolls = item.get('maxRolls') as Map<string, number> | undefined
+  if (!minRolls || !maxRolls) {
+    item.set('appliedRolls', new Map())
+    return
+  }
+  const clamped = overrides
+    ? clampOverrides(overrides, minRolls, maxRolls)
+    : undefined
+  item.set(
+    'appliedRolls',
+    computeAppliedRolls(minRolls, maxRolls, preset, clamped),
+  )
+}
+
+function clampOverrides(
+  overrides: Map<string, number>,
+  minRolls: Map<string, number>,
+  maxRolls: Map<string, number>,
+): Map<string, number> {
+  const out = new Map<string, number>()
+  for (const [id, raw] of overrides) {
+    const min = minRolls.get(id)
+    const max = maxRolls.get(id)
+    if (min === undefined || max === undefined)
+      continue
+    const lo = Math.min(min, max)
+    const hi = Math.max(min, max)
+    out.set(id, Math.max(lo, Math.min(hi, Math.round(raw))))
+  }
+  return out
 }
