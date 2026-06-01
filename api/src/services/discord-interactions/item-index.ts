@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { env } from '../../env'
 
 export interface ItemSummary {
@@ -132,4 +133,10 @@ export function stopItemIndex(): void {
     clearInterval(refreshTimer)
   refreshTimer = null
   cached = null
+}
+
+export function __setItemIndexForTesting(index: ItemIndex): void {
+  if (process.env.NODE_ENV !== 'test')
+    throw new Error('test-only')
+  cached = index
 }

@@ -20,6 +20,8 @@ export default defineConfig({
       DISCORD_TOKEN: 'test-bot-token',
       DISCORD_GUILD_ID: '111',
       DISCORD_INVITE_URL: 'https://discord.gg/test',
+      DISCORD_PUBLIC_KEY: '0000000000000000000000000000000000000000000000000000000000000000',
+      DISCORD_APPLICATION_ID: '123456789012345678',
       FRONTEND_URL: 'https://wynn.tools',
       COOKIE_DOMAIN: '.wynn.tools',
       CDN_BASE_URL: 'https://cdn.wynn.tools/',

@@ -11,13 +11,25 @@ export async function dispatch(interaction: Interaction): Promise<InteractionRes
     return { type: ResponseType.PONG }
 
   if (interaction.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
-    const index = getItemIndex()
+    let index
+    try {
+      index = getItemIndex()
+    }
+    catch {
+      return ephemeral('Items unavailable, try again in a moment.')
+    }
     // Every autocompleted option across our commands is an item-name lookup.
     return autocompleteItem(interaction, index)
   }
 
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-    const index = getItemIndex()
+    let index
+    try {
+      index = getItemIndex()
+    }
+    catch {
+      return ephemeral('Items unavailable, try again in a moment.')
+    }
     switch (interaction.data?.name) {
       case 'item': return handleItem(interaction, index, 'name')
       case 'price': return await handlePrice(interaction, index)
