@@ -139,6 +139,10 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
   color: var(--color-bg);
   background: var(--color-accent);
 }
+.preset-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
 
 .stats {
   display: flex;
