@@ -5,12 +5,11 @@ import { getCachedPrice } from '../../market-cache'
 import { createWynnventoryClient } from '../../wynnventory'
 import { ephemeral } from '../dispatch'
 import { POWERED_BY_WYNNVENTORY } from '../embed'
+import { formatEmeraldsCompact } from '../format-emeralds'
 import { getOption, ResponseType } from '../types'
 
-const fmt = new Intl.NumberFormat('en-US')
-
-function num(v: unknown): string {
-  return typeof v === 'number' ? fmt.format(Math.round(v)) : 'n/a'
+function em(v: unknown): string {
+  return typeof v === 'number' && v > 0 ? formatEmeraldsCompact(v) : 'n/a'
 }
 
 function headline(payload: Record<string, unknown>): unknown {
@@ -45,10 +44,10 @@ export async function handlePrice(interaction: Interaction, index: ItemIndex): P
         title: item.name,
         description: 'WynnVentory market summary',
         fields: [
-          { name: 'Average', value: num(headline(payload)), inline: true },
-          { name: 'Lowest', value: num(payload.lowest_price), inline: true },
-          { name: 'Highest', value: num(payload.highest_price), inline: true },
-          { name: 'Listings', value: num(payload.total_count), inline: true },
+          { name: 'Average', value: em(headline(payload)), inline: true },
+          { name: 'Lowest', value: em(payload.lowest_price), inline: true },
+          { name: 'Highest', value: em(payload.highest_price), inline: true },
+          { name: 'Listings', value: typeof payload.total_count === 'number' ? String(payload.total_count) : 'n/a', inline: true },
         ],
         footer: POWERED_BY_WYNNVENTORY,
       }],

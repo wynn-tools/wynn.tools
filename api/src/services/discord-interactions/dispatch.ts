@@ -31,7 +31,7 @@ export async function dispatch(interaction: Interaction): Promise<InteractionRes
       return ephemeral('Items unavailable, try again in a moment.')
     }
     switch (interaction.data?.name) {
-      case 'item': return handleItem(interaction, index, 'name')
+      case 'item': return await handleItem(interaction, index, 'name')
       case 'price': return await handlePrice(interaction, index)
       case 'builds': return await handleBuilds(interaction, index)
       default: return ephemeral(`Unknown command: ${interaction.data?.name}`)

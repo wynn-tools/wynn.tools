@@ -12,6 +12,7 @@ const schema = z.object({
   DISCORD_PUBLIC_KEY: z.string().regex(/^[0-9a-f]{64}$/, 'Discord public key (hex, 32 bytes)'),
   DISCORD_APPLICATION_ID: z.string().regex(/^\d+$/, 'Discord snowflake ID'),
   FRONTEND_URL: z.string().url(),
+  API_PUBLIC_URL: z.string().url(),
   COOKIE_DOMAIN: z.string().min(1),
   CDN_BASE_URL: z.string().url(),
   WYNNVENTORY_API_KEY: z.string().min(1),

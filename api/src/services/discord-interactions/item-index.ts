@@ -7,7 +7,12 @@ export interface ItemSummary {
   displayName: string
   rarity: string
   type: string
+  subType: string | null
   tier: string | null
+  level: number | null
+  classRequirement: string | null
+  powderSlots: number | null
+  majorIds: string[]
   requirements: Record<string, unknown>
   identifications: Record<string, unknown>
 }
@@ -82,6 +87,8 @@ let refreshTimer: NodeJS.Timeout | null = null
 
 interface CdnVersion { gameVersion: string, hash: string }
 interface CdnItemsFile { items: CdnItem[] }
+interface CdnRequirements { level?: number, classRequirement?: string, [k: string]: unknown }
+interface CdnMajorId { name?: string }
 interface CdnItem {
   id?: number
   name?: string
@@ -89,8 +96,10 @@ interface CdnItem {
   type?: string
   subType?: string
   tier?: string | null
-  requirements?: Record<string, unknown>
+  powderSlots?: number
+  requirements?: CdnRequirements
   identifications?: Record<string, unknown>
+  majorIds?: CdnMajorId[]
 }
 
 async function fetchLatestItems(): Promise<ItemSummary[]> {
@@ -110,7 +119,12 @@ async function fetchLatestItems(): Promise<ItemSummary[]> {
       // Wynncraft v3 items use `tier` (Legendary/Fabled/...) as the rarity concept.
       rarity: (i.tier ?? 'common').toLowerCase(),
       type: i.type ?? 'unknown',
+      subType: i.subType ?? null,
       tier: i.tier ?? null,
+      level: i.requirements?.level ?? null,
+      classRequirement: i.requirements?.classRequirement ?? null,
+      powderSlots: i.powderSlots ?? null,
+      majorIds: (i.majorIds ?? []).map(m => m.name ?? '').filter(Boolean),
       requirements: i.requirements ?? {},
       identifications: i.identifications ?? {},
     }))
