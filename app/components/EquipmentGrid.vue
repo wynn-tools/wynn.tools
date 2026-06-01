@@ -451,7 +451,9 @@ const powderSlotMax = computed(() =>
     color 0.12s,
     border-color 0.12s;
 }
-.slot:hover .rolls-btn {
+.slot:hover .rolls-btn,
+.slot:focus-within .rolls-btn,
+.rolls-btn:focus-visible {
   opacity: 1;
 }
 .rolls-btn:hover {

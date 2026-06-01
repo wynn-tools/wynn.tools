@@ -498,7 +498,10 @@ export const useBuildStore = defineStore('build', () => {
     return resolvedEquipmentComputed.value?.allItems[slot] ?? null
   }
 
-  // TODO memoize: duplicates resolve work done inside computeBuild, acceptable for v1
+  // TODO memoize: duplicates resolve work done inside computeBuild, acceptable for v1.
+  // COUPLING: this re-walk mirrors resolveTomes' skip predicate (null id, unresolvable id).
+  // If resolveTomes ever changes its skip conditions, the slot correlation below will silently
+  // diverge — fix by exposing a bySlot map directly from resolveTomes when that happens.
   const resolvedTomesComputed = computed(() => {
     if (!rawBuild.value || !ctx.value)
       return null

@@ -144,7 +144,9 @@ function clearAll() {
         </div>
         <ul class="rows">
           <li v-for="row in rows" :key="row.id" class="row">
-            <span class="label">{{ row.label }}</span>
+            <span class="label">
+              {{ row.label }}<span v-if="row.unit" class="unit">{{ row.unit }}</span>
+            </span>
             <span class="lo">{{ row.loEnd }}</span>
             <input
               class="input"
@@ -271,6 +273,10 @@ function clearAll() {
 }
 .label {
   color: var(--color-text);
+}
+.unit {
+  color: var(--color-faint);
+  margin-left: 2px;
 }
 .lo,
 .hi {
