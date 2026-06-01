@@ -20,10 +20,10 @@ describe('formatEmeralds', () => {
 
 describe('formatEmeraldsCompact', () => {
   it('keeps the two most-significant units by default', () => {
-    expect(formatEmeraldsCompact(1847282)).toBe('450le 63eb')
+    expect(formatEmeraldsCompact(1847282)).toBe('7stx 2le')
   })
   it('honours a custom unit cap', () => {
-    expect(formatEmeraldsCompact(1847282, 1)).toBe('450le')
+    expect(formatEmeraldsCompact(1847282, 1)).toBe('7stx')
   })
   it('skips zero units when picking the top ones', () => {
     expect(formatEmeraldsCompact(4096 * 12 + 5)).toBe('12le 5e') // no eb → le + e
