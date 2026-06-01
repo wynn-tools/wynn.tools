@@ -38,7 +38,7 @@ export function handleItem(
         title: item.name,
         url,
         color: rarityColor(item.rarity),
-        description: `**${item.rarity}** ${item.type}${item.tier ? ` · ${item.tier}` : ''}`,
+        description: `**${item.tier ?? 'Common'}** ${item.type}`,
         fields: idFields,
       }],
       components: [{

@@ -79,30 +79,34 @@ function levenshtein(a: string, b: string): number {
 let cached: ItemIndex | null = null
 let refreshTimer: NodeJS.Timeout | null = null
 
-interface CdnVersions { versions: { gameVersion: string }[] }
+interface CdnVersion { gameVersion: string, hash: string }
+interface CdnItemsFile { items: CdnItem[] }
 interface CdnItem {
-  internalName?: string
+  id?: number
   name?: string
-  rarity?: string
+  displayName?: string
   type?: string
+  subType?: string
   tier?: string | null
   requirements?: Record<string, unknown>
   identifications?: Record<string, unknown>
-  id?: number
 }
 
 async function fetchLatestItems(): Promise<ItemSummary[]> {
   const base = env().CDN_BASE_URL.replace(/\/$/, '')
-  const versions = await (await fetch(`${base}/versions.json`)).json() as CdnVersions
-  const latest = versions.versions[versions.versions.length - 1].gameVersion
-  const itemsRaw = await (await fetch(`${base}/data/${latest}/items.json`)).json() as Record<string, CdnItem> | CdnItem[]
-  const list = Array.isArray(itemsRaw) ? itemsRaw : Object.values(itemsRaw)
+  const versions = await (await fetch(`${base}/versions.json`)).json() as CdnVersion[]
+  if (!Array.isArray(versions) || versions.length === 0)
+    throw new Error('versions.json is empty or malformed')
+  const latest = versions[versions.length - 1].gameVersion
+  const itemsFile = await (await fetch(`${base}/data/${latest}/items.json`)).json() as CdnItemsFile
+  const list = itemsFile.items ?? []
   return list
     .filter(i => i.name)
     .map(i => ({
       id: i.id ?? 0,
       name: i.name as string,
-      rarity: i.rarity ?? 'common',
+      // Wynncraft v3 items use `tier` (Legendary/Fabled/...) as the rarity concept.
+      rarity: (i.tier ?? 'common').toLowerCase(),
       type: i.type ?? 'unknown',
       tier: i.tier ?? null,
       requirements: i.requirements ?? {},
