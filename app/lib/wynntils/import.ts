@@ -18,10 +18,26 @@ const TYPE_TO_SLOTS: Record<string, number[]> = {
   necklace: [7],
 }
 
-interface IdentRange {
+export interface IdentRange {
   min: number
   max: number
   raw: number
+}
+
+/** Default range lookup for real CleanedRawItems coming from the CDN adapter. */
+export function defaultGetIdentRange(item: CleanedRawItem, shorthand: string): IdentRange | null {
+  // CleanedRawItem extends Record<string, unknown> in practice; cast bridges the index signature
+  const expanded = expandItem(item as Record<string, unknown>)
+  const minRolls = expanded.get('minRolls') as Map<string, number> | undefined
+  const maxRolls = expanded.get('maxRolls') as Map<string, number> | undefined
+  const min = minRolls?.get(shorthand)
+  const max = maxRolls?.get(shorthand)
+  if (min === undefined || max === undefined)
+    return null
+  if (min === 0 && max === 0)
+    return null
+  const raw = (item as Record<string, unknown>)[shorthand] as number ?? 0
+  return { min, max, raw }
 }
 
 function routeSlot(item: CleanedRawItem, occupied: Set<number>): { slot: number, warning?: string } {
@@ -47,37 +63,6 @@ function findItemByName(ctx: BuildContext, name: string): CleanedRawItem | null 
   return null
 }
 
-/**
- * Get the rolling range for a shorthand id from a CleanedRawItem.
- *
- * Items from the CDN adapter have flat numeric fields (e.g. `item.str = 10`).
- * The test mocks supply an `identifications: Map<string, {min,max,raw}>` directly
- * (as unknown as CleanedRawItem). We check the map path first, then fall back to
- * deriving min/max from expandItem's rolling math on the flat field.
- */
-function getIdentRange(item: CleanedRawItem, shorthand: string): IdentRange | null {
-  // Test-mock path: item has an explicit identifications Map
-  const idents = (item as unknown as Record<string, unknown>).identifications
-  if (idents instanceof Map) {
-    const entry = idents.get(shorthand) as IdentRange | undefined
-    return entry ?? null
-  }
-
-  // Real-item path: derive from the flat field via expandItem rolling math
-  const expanded = expandItem(item as unknown as Record<string, unknown>)
-  const minRolls = expanded.get('minRolls') as Map<string, number>
-  const maxRolls = expanded.get('maxRolls') as Map<string, number>
-  const min = minRolls?.get(shorthand)
-  const max = maxRolls?.get(shorthand)
-  if (min === undefined || max === undefined)
-    return null
-  // If both min and max are 0, this stat isn't present on the item
-  if (min === 0 && max === 0)
-    return null
-  const raw = (item as unknown as Record<string, unknown>)[shorthand] as number ?? 0
-  return { min, max, raw }
-}
-
 function percentileToRaw(roll: number, range: IdentRange): number {
   const lo = Math.min(range.min, range.max)
   const hi = Math.max(range.min, range.max)
@@ -90,6 +75,7 @@ export function resolveImport(
   ctx: BuildContext,
   idKeys: Map<number, string>,
   occupied: Set<number>,
+  getRange: (item: CleanedRawItem, shorthand: string) => IdentRange | null = defaultGetIdentRange,
 ): ImportRow {
   const typeBlock = blocks.find(b => b.name === 'TypeData')
   if (!typeBlock || typeBlock.name !== 'TypeData')
@@ -130,7 +116,7 @@ export function resolveImport(
         warnings.push(`Stat '${v3}' has no wynn.tools mapping — skipped.`)
         continue
       }
-      const range = getIdentRange(item, shorthand)
+      const range = getRange(item, shorthand)
       if (!range) {
         warnings.push(`Item has no '${shorthand}' identification — skipped.`)
         continue
@@ -179,6 +165,7 @@ export function parseAndResolveAll(
   ctx: BuildContext,
   idKeys: Map<number, string>,
   parseFn: (line: string) => Block[] = parseIdString,
+  getRange: (item: CleanedRawItem, shorthand: string) => IdentRange | null = defaultGetIdentRange,
 ): BatchResult {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
   const applied: ResolvedImport[] = []
@@ -193,7 +180,7 @@ export function parseAndResolveAll(
       errors.push({ source: line, message: `Invalid Wynntils item string: ${(e as Error).message}` })
       continue
     }
-    const result = resolveImport(blocks, ctx, idKeys, occupied)
+    const result = resolveImport(blocks, ctx, idKeys, occupied, getRange)
     if (result.ok) {
       applied.push(result.row)
       occupied.add(result.row.slot)
