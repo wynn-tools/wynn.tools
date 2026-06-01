@@ -51,8 +51,9 @@ export async function mountPixiOverlay(map: LMap): Promise<PixiHandle> {
     players: new Container(),
     focus: new Container(),
     coordPin: new Container(),
+    worldEvents: new Container(),
   }
-  // Render order: territories → markers → clusters → lootrun → ingredientDrops → focus → players → coordPin
+  // Render order: territories → markers → clusters → lootrun → ingredientDrops → focus → players → coordPin → worldEvents
   // players must be above focus (place labels) so player heads are never buried under city text
   root.addChild(
     layers.territories,
@@ -63,6 +64,7 @@ export async function mountPixiOverlay(map: LMap): Promise<PixiHandle> {
     layers.focus,
     layers.players,
     layers.coordPin,
+    layers.worldEvents,
   )
   app.stage.addChild(root)
 

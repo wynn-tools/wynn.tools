@@ -239,7 +239,7 @@ const LENGTH_LABEL: Record<WorldEvent['length'], string> = {
             <span class="ml-1 tabular-nums text-copper">{{ formatCountdown(activeEvent.schedule) }}</span>
           </div>
           <div v-else class="text-xs text-muted/60">
-            Always active
+            No upcoming run in the next 15 minutes
           </div>
         </div>
 

@@ -103,7 +103,7 @@ const LENGTH_LABEL: Record<WorldEvent['length'], string> = {
         </div>
         <div class="text-[10px] tabular-nums text-muted/50">
           <span v-if="event.schedule">{{ formatCountdown(event.schedule) }}</span>
-          <span v-else>Always active</span>
+          <span v-else>No upcoming run</span>
         </div>
       </button>
     </div>

@@ -678,32 +678,3 @@
     }
   }
 }
-
-/* World event map markers — Leaflet divIcon */
-.world-event-marker {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--color-accent-dim);
-  cursor: pointer;
-  animation: world-event-pulse 2s ease-out infinite;
-}
-
-@keyframes world-event-pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-accent-dim) 60%, transparent);
-  }
-  70% {
-    box-shadow: 0 0 0 10px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .world-event-marker {
-    animation: none;
-    box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent-dim) 40%, transparent);
-  }
-}

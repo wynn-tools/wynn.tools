@@ -42,7 +42,7 @@ import {
   entriesForWorld,
   tileToLatLngBounds,
 } from '~/composables/useTileLayer'
-import { useWorldEventLayer } from '~/composables/useWorldEventLayer'
+import { renderWorldEvents, repositionWorldEvents } from '~/composables/useWorldEventLayer'
 import { useWorldEvents } from '~/composables/useWorldEvents'
 import { getWorld } from '~/config/worlds'
 import { useMapStore } from '~/stores/map'
@@ -78,7 +78,28 @@ let pixiHandledClick = false
 const store = useMapStore()
 const { players } = usePlayerLocations()
 const { events: worldEvents } = useWorldEvents()
-useWorldEventLayer(lmap, worldEvents, event => emit('eventMarkerClick', event))
+
+async function reseedWorldEvents() {
+  const map = lmap.value
+  const p = pixi.value
+  if (!map || !p)
+    return
+  // Only show events with a current/upcoming run inside the 15-min visibility
+  // window (schedule is the next visible run; null means nothing soon).
+  const scheduled = worldEvents.value.filter(e => e.schedule !== null)
+  await renderWorldEvents(map, p.layers.worldEvents, scheduled, (event) => {
+    pixiHandledClick = true
+    setTimeout(() => {
+      pixiHandledClick = false
+    }, 0)
+    emit('eventMarkerClick', event)
+  })
+  p.redraw()
+}
+
+watch(worldEvents, () => {
+  reseedWorldEvents()
+})
 let zoomSyncing = false
 let centerSyncing = false
 let playerRenderInFlight = false
@@ -232,6 +253,7 @@ onMounted(async () => {
       }
       repositionCoordPin(lmap.value!, pixi.value.layers.coordPin, store.coordPin)
       repositionIngredientDrops(lmap.value!, pixi.value.layers.ingredientDrops)
+      repositionWorldEvents(lmap.value!, pixi.value.layers.worldEvents)
       pixi.value.redraw()
     }
   })
@@ -248,6 +270,7 @@ onMounted(async () => {
     if (pixi.value) {
       rerenderPositions(lmap.value!, sprites.value, allFeatures.value)
       repositionPlayerMarkers(lmap.value!, pixi.value.layers.players)
+      repositionWorldEvents(lmap.value!, pixi.value.layers.worldEvents)
       rebuildClusters()
       pixi.value.redraw()
     }
@@ -290,6 +313,7 @@ onMounted(async () => {
   const featureData = await loadAllFeatures()
   allFeatures.value = [...featureData.places, ...featureData.content, ...featureData.services]
   await reseedMarkers()
+  await reseedWorldEvents()
   await renderPlayerMarkers(map, pixi.value!.layers.players, players.value)
   // If activeIngredient was set before Pixi finished initializing (race: cached searchData
   // resolves faster than mountPixiOverlay), the watch guard `if (!p)` would have exited early.
