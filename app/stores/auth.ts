@@ -1,11 +1,13 @@
 import type { ApiUser } from '~/composables/useApi'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useApi } from '~/composables/useApi'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<ApiUser | null>(null)
   const pending = ref(true)
+
+  const discordJoinStatus = computed(() => user.value?.discordJoinStatus ?? null)
 
   function setUser(u: ApiUser) {
     user.value = u
@@ -37,5 +39,15 @@ export const useAuthStore = defineStore('auth', () => {
     await navigateTo('/')
   }
 
-  return { user, pending, setUser, clearUser, login, logout }
+  async function declineDiscordPrompt() {
+    const api = useApi()
+    try {
+      await api.setDiscordPrompt('declined')
+      if (user.value)
+        user.value = { ...user.value, discordJoinStatus: 'declined' }
+    }
+    catch { /* swallow — declining is best-effort */ }
+  }
+
+  return { user, pending, setUser, clearUser, login, logout, discordJoinStatus, declineDiscordPrompt }
 })

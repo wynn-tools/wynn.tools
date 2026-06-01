@@ -39,6 +39,65 @@ export async function exchangeCode(code: string, fetchImpl: FetchImpl = fetch): 
   return json.access_token
 }
 
+export function buildJoinAuthorizeUrl(state: string): string {
+  const e = env()
+  const url = new URL('https://discord.com/oauth2/authorize')
+  url.searchParams.set('client_id', e.DISCORD_CLIENT_ID)
+  url.searchParams.set('redirect_uri', e.DISCORD_REDIRECT_URI)
+  url.searchParams.set('response_type', 'code')
+  url.searchParams.set('scope', 'identify guilds.join')
+  url.searchParams.set('state', state)
+  return url.toString()
+}
+
+export type DiscordJoinErrorKind = 'rate_limit' | 'forbidden' | 'banned' | 'network' | 'unknown'
+
+export class DiscordJoinError extends Error {
+  constructor(public kind: DiscordJoinErrorKind, message: string) {
+    super(message)
+    this.name = 'DiscordJoinError'
+  }
+}
+
+// Discord error codes (https://discord.com/developers/docs/topics/opcodes-and-status-codes#json)
+const BANNED_FROM_GUILD = 40007
+
+export async function addGuildMember(
+  userAccessToken: string,
+  discordUserId: string,
+  fetchImpl: FetchImpl = fetch,
+): Promise<{ added: boolean }> {
+  const e = env()
+  let res: Response
+  try {
+    res = await fetchImpl(`https://discord.com/api/v10/guilds/${e.DISCORD_GUILD_ID}/members/${discordUserId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bot ${e.DISCORD_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ access_token: userAccessToken }),
+    })
+  }
+  catch (err) {
+    throw new DiscordJoinError('network', (err as Error).message)
+  }
+
+  if (res.status === 201)
+    return { added: true }
+  if (res.status === 204)
+    return { added: false }
+  if (res.status === 429)
+    throw new DiscordJoinError('rate_limit', 'Discord rate limited (status 429)')
+  if (res.status === 403) {
+    const body = await res.json().catch(() => ({})) as { code?: number, message?: string }
+    if (body.code === BANNED_FROM_GUILD)
+      throw new DiscordJoinError('banned', body.message ?? 'User is banned from the guild')
+    throw new DiscordJoinError('forbidden', body.message ?? 'Forbidden')
+  }
+  throw new DiscordJoinError('unknown', `Discord add-member failed (status ${res.status})`)
+}
+
 export async function fetchProfile(accessToken: string, fetchImpl: FetchImpl = fetch): Promise<DiscordProfile> {
   const res = await fetchImpl('https://discord.com/api/users/@me', {
     headers: { Authorization: `Bearer ${accessToken}` },

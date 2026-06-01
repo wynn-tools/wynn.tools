@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ChevronDown, FileClock, Hammer, LayoutList, Map, Menu, Package, Search, Sword, X } from '@lucide/vue'
 import { onClickOutside } from '@vueuse/core'
+import { useDiscordJoin } from '~/composables/useDiscordJoin'
 
 const route = useRoute()
+const { join: onDiscord } = useDiscordJoin()
 
 const dropdownGroups = [
   {
@@ -23,10 +25,15 @@ const dropdownGroups = [
   },
 ]
 
-const standalone = [
+type StandaloneItem
+  = | { name: string, href: string, icon: typeof Search, action?: undefined }
+    | { name: string, iconName: string, action: 'discord' }
+
+const standalone: StandaloneItem[] = [
   { name: 'Items', href: '/items', icon: Search },
   { name: 'Map', href: '/map', icon: Map },
   { name: 'Changelog', href: '/changelog', icon: FileClock },
+  { name: 'Discord', iconName: 'logos:discord-icon', action: 'discord' },
 ]
 
 // Desktop dropdowns
@@ -99,7 +106,16 @@ watch(() => route.path, () => {
 
         <ul class="nav-group" role="list">
           <li v-for="tool in standalone" :key="tool.name">
-            <NuxtLink :to="tool.href" class="nav-link">
+            <button
+              v-if="tool.action === 'discord'"
+              type="button"
+              class="nav-link"
+              @click="onDiscord"
+            >
+              <Icon :name="tool.iconName" size="16" class="nav-icon" aria-hidden="true" />
+              <span class="nav-label">{{ tool.name }}</span>
+            </button>
+            <NuxtLink v-else :to="tool.href" class="nav-link">
               <component :is="tool.icon" :size="16" class="nav-icon" aria-hidden="true" />
               <span class="nav-label">{{ tool.name }}</span>
             </NuxtLink>
@@ -149,15 +165,21 @@ watch(() => route.path, () => {
 
         <!-- Standalone links -->
         <div class="mobile-section mobile-section--flat">
-          <NuxtLink
-            v-for="tool in standalone"
-            :key="tool.name"
-            :to="tool.href"
-            class="mobile-item mobile-item--flat"
-          >
-            <component :is="tool.icon" :size="16" class="mobile-item-icon" aria-hidden="true" />
-            <span class="mobile-item-name">{{ tool.name }}</span>
-          </NuxtLink>
+          <template v-for="tool in standalone" :key="tool.name">
+            <button
+              v-if="tool.action === 'discord'"
+              type="button"
+              class="mobile-item mobile-item--flat"
+              @click="onDiscord"
+            >
+              <Icon :name="tool.iconName" size="16" class="mobile-item-icon" aria-hidden="true" />
+              <span class="mobile-item-name">{{ tool.name }}</span>
+            </button>
+            <NuxtLink v-else :to="tool.href" class="mobile-item mobile-item--flat">
+              <component :is="tool.icon" :size="16" class="mobile-item-icon" aria-hidden="true" />
+              <span class="mobile-item-name">{{ tool.name }}</span>
+            </NuxtLink>
+          </template>
         </div>
       </div>
     </Transition>
@@ -250,6 +272,13 @@ watch(() => route.path, () => {
   transition:
     color 0.12s ease-out,
     background 0.12s ease-out;
+}
+
+button.nav-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
 }
 
 .nav-link:hover {
@@ -477,6 +506,14 @@ watch(() => route.path, () => {
   transition:
     color 0.12s ease-out,
     background 0.12s ease-out;
+}
+
+button.mobile-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
 }
 
 .mobile-item:active {

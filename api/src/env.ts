@@ -6,6 +6,9 @@ const schema = z.object({
   DISCORD_CLIENT_ID: z.string().min(1),
   DISCORD_CLIENT_SECRET: z.string().min(1),
   DISCORD_REDIRECT_URI: z.string().url(),
+  DISCORD_TOKEN: z.string().min(1),
+  DISCORD_GUILD_ID: z.string().regex(/^\d+$/, 'Discord snowflake ID'),
+  DISCORD_INVITE_URL: z.string().url(),
   FRONTEND_URL: z.string().url(),
   COOKIE_DOMAIN: z.string().min(1),
   CDN_BASE_URL: z.string().url(),
@@ -27,4 +30,8 @@ let cached: Env | null = null
 export function env(): Env {
   cached ??= parseEnv(process.env)
   return cached
+}
+
+export function resetEnvCache(): void {
+  cached = null
 }

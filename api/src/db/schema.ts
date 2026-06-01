@@ -24,6 +24,9 @@ export type Visibility = (typeof visibility)[number]
 export const profileVisibility = ['public', 'private'] as const
 export type ProfileVisibility = (typeof profileVisibility)[number]
 
+export const discordJoinStatus = ['unset', 'joined', 'declined'] as const
+export type DiscordJoinStatus = (typeof discordJoinStatus)[number]
+
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   discordId: text('discord_id').notNull(),
@@ -32,6 +35,8 @@ export const users = pgTable('users', {
   displayName: text('display_name'),
   bio: text('bio'),
   profileVisibility: text('profile_visibility', { enum: profileVisibility }).notNull().default('public'),
+  discordJoinStatus: text('discord_join_status', { enum: discordJoinStatus }).notNull().default('unset'),
+  discordJoinedAt: timestamp('discord_joined_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [uniqueIndex('users_discord_id_idx').on(t.discordId)])

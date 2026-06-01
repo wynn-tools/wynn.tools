@@ -8,6 +8,7 @@ export interface ApiUser {
   displayName: string | null
   bio: string | null
   profileVisibility: 'public' | 'private'
+  discordJoinStatus: 'unset' | 'joined' | 'declined'
 }
 
 export interface ApiOwner {
@@ -173,6 +174,8 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     getProfile: (id: string) => request<ApiProfile | ApiProfilePrivate>(`/v1/users/${id}`),
     updateProfile: (body: { displayName?: string | null, bio?: string | null, profileVisibility?: 'public' | 'private' }) =>
       request<{ displayName: string | null, bio: string | null, profileVisibility: 'public' | 'private' }>('/v1/me/profile', jsonInit('PATCH', body)),
+    setDiscordPrompt: (action: 'declined') =>
+      request<{ ok: boolean }>('/v1/me/discord-prompt', jsonInit('POST', { action })),
 
     // Keys
     listKeys: () => request<ApiKey[]>('/v1/me/keys'),

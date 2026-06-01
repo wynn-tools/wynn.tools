@@ -25,6 +25,7 @@ export default defineNuxtConfig({
       cdnBaseUrl: 'https://cdn.wynn.tools/',
       athenaUrl: 'https://athena.wynntils.com',
       apiBaseUrl: 'https://api.wynn.tools',
+      discordInviteUrl: 'https://discord.gg/tKPdvKdfJq',
     },
   },
   app: {
