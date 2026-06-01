@@ -9,9 +9,12 @@ import {
   DialogRoot,
   DialogTitle,
 } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { humanizeShortId } from '~/lib/data/identifications'
 import { idRound } from '~/lib/math/expand-item'
+import { parseIdString } from '~/lib/wynntils/decode'
+import { getIdKeys } from '~/lib/wynntils/id-keys'
+import { resolveImport } from '~/lib/wynntils/import'
 import { useBuildStore } from '~/stores/build'
 
 const props = defineProps<{
@@ -28,6 +31,51 @@ const props = defineProps<{
 const emit = defineEmits<{ 'update:open': [v: boolean] }>()
 
 const store = useBuildStore()
+
+const pasteValue = ref('')
+const pasteError = ref<string | null>(null)
+
+async function onPaste(ev: ClipboardEvent) {
+  const text = (ev.clipboardData?.getData('text') ?? '').trim()
+  if (!text)
+    return
+  ev.preventDefault()
+  pasteValue.value = text
+  pasteError.value = null
+  if (!store.ctx)
+    return
+
+  let blocks
+  try {
+    blocks = parseIdString(text)
+  }
+  catch {
+    pasteError.value = 'Invalid Wynntils item string.'
+    return
+  }
+
+  let idKeys
+  try {
+    idKeys = await getIdKeys()
+  }
+  catch {
+    pasteError.value = 'Wynntils ID list unavailable, try again later.'
+    return
+  }
+
+  const result = resolveImport(blocks, store.ctx, idKeys, new Set())
+  if (!result.ok) {
+    pasteError.value = result.error.message
+    return
+  }
+  if (result.row.decodedName !== props.itemName) {
+    pasteError.value = `Pasted item is '${result.row.decodedName}', this slot has '${props.itemName}'.`
+    return
+  }
+
+  store.applyImport([{ ...result.row, slot: props.slotIdx }])
+  pasteValue.value = ''
+}
 
 interface Row {
   id: string
@@ -127,6 +175,18 @@ function clearAll() {
             ×
           </DialogClose>
         </header>
+        <div v-if="props.kind === 'item'" class="wynntils-paste">
+          <input
+            v-model="pasteValue"
+            type="text"
+            placeholder="Paste Wynntils item string"
+            class="paste-input"
+            @paste="onPaste"
+          >
+          <p v-if="pasteError" class="paste-error">
+            {{ pasteError }}
+          </p>
+        </div>
         <div class="bulk">
           <span class="kicker">Set all to</span>
           <button type="button" @click="setAllTo('min')">
@@ -311,5 +371,25 @@ function clearAll() {
 }
 .reset-spacer {
   width: 20px;
+}
+.wynntils-paste {
+  padding: 0 0 0.5rem;
+}
+.paste-input {
+  width: 100%;
+  font: inherit;
+  padding: 0.4rem 0.6rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  border-radius: 6px;
+}
+.paste-input::placeholder {
+  color: var(--color-muted);
+}
+.paste-error {
+  color: var(--color-error, oklch(60% 0.18 25));
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
 }
 </style>
