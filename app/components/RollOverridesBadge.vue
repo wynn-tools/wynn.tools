@@ -21,8 +21,8 @@ const store = useBuildStore()
       <span class="dot" />
     </PopoverTrigger>
     <PopoverPortal>
-      <PopoverContent class="popover" :side-offset="6">
-        <div class="popover-line">
+      <PopoverContent class="roll-overrides-popover" :side-offset="6">
+        <div class="roll-overrides-popover__line">
           {{ store.totalOverrideCount }} override{{
             store.totalOverrideCount === 1 ? "" : "s"
           }}
@@ -30,7 +30,11 @@ const store = useBuildStore()
             store.itemsWithOverridesCount === 1 ? "" : "s"
           }}
         </div>
-        <button class="clear" type="button" @click="store.clearAllOverrides()">
+        <button
+          class="roll-overrides-popover__clear"
+          type="button"
+          @click="store.clearAllOverrides()"
+        >
           Clear all
         </button>
       </PopoverContent>
@@ -56,7 +60,12 @@ const store = useBuildStore()
   border-radius: 999px;
   background: var(--color-accent);
 }
-.popover {
+</style>
+
+<!-- Unscoped: PopoverPortal teleports content out of this component's subtree,
+     so Vue's scoped data-v attribute can't reach it. -->
+<style>
+.roll-overrides-popover {
   background: var(--color-surface-hi);
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -67,11 +76,12 @@ const store = useBuildStore()
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-text);
+  z-index: 60;
 }
-.popover-line {
+.roll-overrides-popover__line {
   color: var(--color-muted);
 }
-.clear {
+.roll-overrides-popover__clear {
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 4px;
@@ -83,7 +93,7 @@ const store = useBuildStore()
   letter-spacing: 0.08em;
   cursor: pointer;
 }
-.clear:hover {
+.roll-overrides-popover__clear:hover {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
