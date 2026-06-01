@@ -10,6 +10,7 @@ import {
 import { computed, ref, watch } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
 import { useMarket } from '~/composables/useMarket'
+import { SLOT_LABELS } from '~/lib/build/slot-labels'
 import { slotItemId } from '~/lib/codec/build-codec'
 import { computeCraft } from '~/lib/crafter/compute-craft'
 import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
@@ -76,19 +77,6 @@ function slotIcon(slot: number): string | null {
     return null
   return itemIconUrl(store.ctx?.rawItemIndex.resolveId(id))
 }
-
-// Full names — used for accessibility labels and PowderInput
-const SLOT_LABELS = [
-  'Helmet',
-  'Chestplate',
-  'Leggings',
-  'Boots',
-  'Ring 1',
-  'Ring 2',
-  'Bracelet',
-  'Necklace',
-  'Weapon',
-] as const
 
 // CSS grid-area names — see .equipment-grid template-areas below
 const SLOT_AREAS = ['helmet', 'chest', 'legs', 'boots', 'ring1', 'ring2', 'bracelet', 'necklace', 'weapon'] as const

@@ -1,4 +1,4 @@
-import type { BuildContext, BuildResult } from '~/lib/build/compute-build'
+import type { BuildContext, BuildResult, RollContext, RollPreset } from '~/lib/build/compute-build'
 import type { CleanedRawItem } from '~/lib/build/resolve'
 import type { RawBuild } from '~/lib/codec/build-codec'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
@@ -9,15 +9,18 @@ import type { BoostId, BuildBoosts } from '~/lib/math/boosts'
 import type { PowderActive } from '~/lib/math/powder-specials'
 import type { Aspect } from '~/lib/types/aspect'
 import { defineStore } from 'pinia'
-import { computed, ref, shallowRef } from 'vue'
+import { computed, ref, shallowRef, watch } from 'vue'
 import { loadBuildContext, peekVersionId, resolveLatestVersion } from '~/composables/useBuildData'
+import { useToast } from '~/composables/useToast'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { unlockPathTo } from '~/lib/atree/pathfind'
 import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
 import { POWDER_INDEX_BY_SLOT } from '~/lib/build/resolve'
+import { SLOT_LABELS } from '~/lib/build/slot-labels'
 import { decodeRawBuild, encodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { num } from '~/lib/codec/codec-util'
+import { decodeRollOverrides, encodeRollOverrides } from '~/lib/codec/roll-overrides'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { emptyBoosts } from '~/lib/math/boosts'
 import { SKP_ORDER } from '~/lib/math/constants'
@@ -56,7 +59,166 @@ export const TOME_SLOT_TYPES: Record<number, string> = {
   13: 'mobXpTome',
 }
 
+const ROLL_PRESET_KEY = 'wynn.tools:rollPreset'
+
+function loadPresetFromStorage(): RollPreset {
+  if (typeof localStorage === 'undefined')
+    return 'max'
+  const v = localStorage.getItem(ROLL_PRESET_KEY)
+  return v === 'min' || v === 'avg' || v === 'max' ? v : 'max'
+}
+
 export const useBuildStore = defineStore('build', () => {
+  // --- Roll controls ---------------------------------------------------------
+  // useRouter / useRoute are Nuxt auto-imports; they throw in the Vitest node
+  // environment (no Vue app). Guard with try/catch so unit tests still work.
+  let _router: ReturnType<typeof useRouter> | null = null
+  let _route: ReturnType<typeof useRoute> | null = null
+  let _pushToast: ((kind: 'info' | 'error', msg: string) => void) = () => {}
+  try {
+    _router = useRouter()
+    _route = useRoute()
+    _pushToast = useToast().push
+  }
+  catch {
+    // Running outside Nuxt app (tests) — URL sync and toast are no-ops.
+  }
+
+  const rollPreset = ref<RollPreset>(loadPresetFromStorage())
+  const itemRollOverrides = ref<Map<number, Map<string, number>>>(new Map())
+  const tomeRollOverrides = ref<Map<number, Map<string, number>>>(new Map())
+
+  function setRollPreset(p: RollPreset) {
+    rollPreset.value = p
+    if (typeof localStorage !== 'undefined')
+      localStorage.setItem(ROLL_PRESET_KEY, p)
+  }
+
+  function readOverridesFromQuery() {
+    if (!_route)
+      return
+    const raw = _route.query.rolls
+    const str = typeof raw === 'string' ? raw : ''
+    const { itemOverrides, tomeOverrides } = decodeRollOverrides(str)
+    itemRollOverrides.value = itemOverrides
+    tomeRollOverrides.value = tomeOverrides
+  }
+
+  // Write current override state back to the URL ?rolls= param.
+  // Uses a writing flag to suppress the next watch reaction (loop guard).
+  let _writingQuery = false
+  function writeOverridesToQuery() {
+    if (!_router || !_route)
+      return
+    const encoded = encodeRollOverrides(itemRollOverrides.value, tomeRollOverrides.value)
+    const query = { ..._route.query }
+    if (encoded)
+      query.rolls = encoded
+    else
+      delete query.rolls
+    _writingQuery = true
+    _router.replace({ query })
+  }
+
+  // Sync overrides from URL on init and on external navigation.
+  readOverridesFromQuery()
+  if (_route) {
+    watch(() => _route!.query.rolls, () => {
+      if (_writingQuery) {
+        _writingQuery = false
+        return
+      }
+      readOverridesFromQuery()
+    })
+  }
+
+  // --- Override mutations ----------------------------------------------------
+  function setOverride(slot: number, idName: string, raw: number) {
+    const m = new Map(itemRollOverrides.value)
+    const slotMap = new Map(m.get(slot) ?? [])
+    slotMap.set(idName, raw)
+    m.set(slot, slotMap)
+    itemRollOverrides.value = m
+    writeOverridesToQuery()
+  }
+
+  function clearOverride(slot: number, idName: string) {
+    const m = new Map(itemRollOverrides.value)
+    const slotMap = new Map(m.get(slot) ?? [])
+    slotMap.delete(idName)
+    if (slotMap.size === 0)
+      m.delete(slot)
+    else
+      m.set(slot, slotMap)
+    itemRollOverrides.value = m
+    writeOverridesToQuery()
+  }
+
+  function clearSlotOverrides(slot: number): number {
+    const existing = itemRollOverrides.value.get(slot)
+    const count = existing?.size ?? 0
+    if (count === 0)
+      return 0
+    const m = new Map(itemRollOverrides.value)
+    m.delete(slot)
+    itemRollOverrides.value = m
+    writeOverridesToQuery()
+    return count
+  }
+
+  function setTomeOverride(tomeSlot: number, idName: string, raw: number) {
+    const m = new Map(tomeRollOverrides.value)
+    const slotMap = new Map(m.get(tomeSlot) ?? [])
+    slotMap.set(idName, raw)
+    m.set(tomeSlot, slotMap)
+    tomeRollOverrides.value = m
+    writeOverridesToQuery()
+  }
+
+  function clearTomeOverride(tomeSlot: number, idName: string) {
+    const m = new Map(tomeRollOverrides.value)
+    const slotMap = new Map(m.get(tomeSlot) ?? [])
+    slotMap.delete(idName)
+    if (slotMap.size === 0)
+      m.delete(tomeSlot)
+    else
+      m.set(tomeSlot, slotMap)
+    tomeRollOverrides.value = m
+    writeOverridesToQuery()
+  }
+
+  function clearTomeSlotOverrides(tomeSlot: number): number {
+    const existing = tomeRollOverrides.value.get(tomeSlot)
+    const count = existing?.size ?? 0
+    if (count === 0)
+      return 0
+    const m = new Map(tomeRollOverrides.value)
+    m.delete(tomeSlot)
+    tomeRollOverrides.value = m
+    writeOverridesToQuery()
+    return count
+  }
+
+  function clearAllOverrides() {
+    itemRollOverrides.value = new Map()
+    tomeRollOverrides.value = new Map()
+    writeOverridesToQuery()
+  }
+
+  const totalOverrideCount = computed(() => {
+    let n = 0
+    for (const m of itemRollOverrides.value.values())
+      n += m.size
+    for (const m of tomeRollOverrides.value.values())
+      n += m.size
+    return n
+  })
+
+  const itemsWithOverridesCount = computed(
+    () => itemRollOverrides.value.size + tomeRollOverrides.value.size,
+  )
+
+  // ---------------------------------------------------------------------------
   const rawBuild = shallowRef<RawBuild | null>(null)
   const boosts = ref<BuildBoosts>(emptyBoosts())
   const powderActive = ref<PowderActive>(emptyPowderActive())
@@ -212,6 +374,9 @@ export const useBuildStore = defineStore('build', () => {
   function setItem(slot: number, id: number | null) {
     if (!rawBuild.value)
       return
+    const cleared = clearSlotOverrides(slot)
+    if (cleared > 0)
+      _pushToast('info', `Cleared ${cleared} custom roll${cleared === 1 ? '' : 's'} on ${SLOT_LABELS[slot] ?? 'slot'}`)
     const equipment = rawBuild.value.equipment.slice()
     equipment[slot] = { kind: 'normal', id }
     rawBuild.value = { ...rawBuild.value, equipment }
@@ -226,6 +391,9 @@ export const useBuildStore = defineStore('build', () => {
   function setCraftedSlot(slot: number, raw: RawCraft, recipeIsWeapon: boolean) {
     if (!rawBuild.value)
       return
+    const cleared = clearSlotOverrides(slot)
+    if (cleared > 0)
+      _pushToast('info', `Cleared ${cleared} custom roll${cleared === 1 ? '' : 's'} on ${SLOT_LABELS[slot] ?? 'slot'}`)
     const equipment = rawBuild.value.equipment.slice()
     equipment[slot] = { kind: 'crafted', raw, recipeIsWeapon }
     rawBuild.value = { ...rawBuild.value, equipment }
@@ -315,10 +483,16 @@ export const useBuildStore = defineStore('build', () => {
     powderActive.value = emptyPowderActive()
   }
 
+  const rollContext = computed<RollContext>(() => ({
+    preset: rollPreset.value,
+    itemOverrides: itemRollOverrides.value,
+    tomeOverrides: tomeRollOverrides.value,
+  }))
+
   const result = computed<BuildResult | null>(() => {
     if (!rawBuild.value || !ctx.value)
       return null
-    return computeBuild(rawBuild.value, ctx.value, boosts.value, powderActive.value)
+    return computeBuild(rawBuild.value, ctx.value, boosts.value, powderActive.value, rollContext.value)
   })
 
   const skillpoints = computed<number[]>(() => {
@@ -376,6 +550,9 @@ export const useBuildStore = defineStore('build', () => {
   function setTome(slot: number, id: number | null) {
     if (!rawBuild.value)
       return
+    const cleared = clearTomeSlotOverrides(slot)
+    if (cleared > 0)
+      _pushToast('info', `Cleared ${cleared} custom roll${cleared === 1 ? '' : 's'} on Tome ${slot + 1}`)
     const tomeIds = rawBuild.value.tomeIds.slice()
     tomeIds[slot] = id
     rawBuild.value = { ...rawBuild.value, tomeIds }
@@ -487,5 +664,66 @@ export const useBuildStore = defineStore('build', () => {
       : `Can't auto-path to "${name}" — it's blocked or needs more archetype points.`
   }
 
-  return { rawBuild, ctx, loading, error, loadFromHash, newBuild, upgradeBuild, setItem, setCraftedSlot, setLevel, currentHash, itemsForSlot, equipmentSearchItem, result, skillpoints, setSkillpoint, boosts, toggleBoost, setElemDmg, setBoosts, resetBoosts, powderActive, setPowderTier, setPowderActive, resetPowderActive, atreeNodes, atreeValidation, atreeMessage, isAtreeActive, toggleAtreeNode, unlockAtreeNode, maxPowderSlots, powdersForEquipmentSlot, setPowders, setTome, currentTomeId, tomesForSlot, classAspects, currentAspect, setAspect, setAspectTier, loadedVersionId, latestVersionId, loadedGameVersion, latestGameVersion, isOldVersion }
+  return {
+    rawBuild,
+    ctx,
+    loading,
+    error,
+    loadFromHash,
+    newBuild,
+    upgradeBuild,
+    setItem,
+    setCraftedSlot,
+    setLevel,
+    currentHash,
+    itemsForSlot,
+    equipmentSearchItem,
+    result,
+    skillpoints,
+    setSkillpoint,
+    boosts,
+    toggleBoost,
+    setElemDmg,
+    setBoosts,
+    resetBoosts,
+    powderActive,
+    setPowderTier,
+    setPowderActive,
+    resetPowderActive,
+    atreeNodes,
+    atreeValidation,
+    atreeMessage,
+    isAtreeActive,
+    toggleAtreeNode,
+    unlockAtreeNode,
+    maxPowderSlots,
+    powdersForEquipmentSlot,
+    setPowders,
+    setTome,
+    currentTomeId,
+    tomesForSlot,
+    classAspects,
+    currentAspect,
+    setAspect,
+    setAspectTier,
+    loadedVersionId,
+    latestVersionId,
+    loadedGameVersion,
+    latestGameVersion,
+    isOldVersion,
+    // Roll controls
+    rollPreset,
+    setRollPreset,
+    itemRollOverrides,
+    tomeRollOverrides,
+    setOverride,
+    clearOverride,
+    clearSlotOverrides,
+    setTomeOverride,
+    clearTomeOverride,
+    clearTomeSlotOverrides,
+    clearAllOverrides,
+    totalOverrideCount,
+    itemsWithOverridesCount,
+  }
 })
