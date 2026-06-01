@@ -2,8 +2,11 @@
 import type { BuildResult } from '~/lib/build/compute-build'
 import { computed, ref } from 'vue'
 import { buildStatSummary } from '~/lib/math/stat-summary'
+import { useBuildStore } from '~/stores/build'
 
 const props = defineProps<{ result: BuildResult }>()
+
+const store = useBuildStore()
 
 type View = 'summary' | 'detailed'
 const STORAGE_KEY = 'wynn.tools:stat-view'
@@ -38,6 +41,25 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 
 <template>
   <section class="stats">
+    <header class="stat-panel-head">
+      <span class="kicker">Stats</span>
+      <div class="head-controls">
+        <div class="preset" role="group" aria-label="Roll quality preset">
+          <button
+            v-for="p in (['min', 'avg', 'max'] as const)"
+            :key="p"
+            type="button"
+            class="preset-btn"
+            :class="{ 'preset-btn--active': store.rollPreset === p }"
+            @click="store.setRollPreset(p)"
+          >
+            {{ p === 'min' ? 'Min' : p === 'avg' ? 'Avg' : 'Max' }}
+          </button>
+        </div>
+        <RollOverridesBadge />
+      </div>
+    </header>
+
     <div class="seg" role="tablist" aria-label="Stat detail level">
       <button
         v-for="v in (['summary', 'detailed'] as View[])"
@@ -79,6 +101,45 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 </template>
 
 <style scoped>
+.stat-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.head-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.preset {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.preset-btn {
+  background: transparent;
+  border: 0;
+  padding: 3px 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    background 0.12s;
+}
+.preset-btn:hover {
+  color: var(--color-text);
+}
+.preset-btn--active {
+  color: var(--color-bg);
+  background: var(--color-accent);
+}
+
 .stats {
   display: flex;
   flex-direction: column;
