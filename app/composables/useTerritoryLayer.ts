@@ -1,10 +1,22 @@
 import type { Map as LMap } from 'leaflet'
-import type { Container, Graphics as PixiGraphics, Text as PixiText } from 'pixi.js'
+import type { Container, Graphics as PixiGraphics, Sprite as PixiSprite, Text as PixiText, Texture } from 'pixi.js'
 import type { TerritoryEntry } from '~/types/map'
 
 interface TerritoryItem {
   territory: TerritoryEntry
   g: PixiGraphics
+}
+
+// 16x13 gold crown — mirrors Wynntils' Texture.GUILD_HEADQUARTERS, drawn instead
+// of the guild prefix on HQ territories.
+const HQ_ICON_URL = 'https://cdn.wynn.tools/icons/map/guild_headquarters.png'
+let hqTexturePromise: Promise<Texture> | null = null
+async function getHqTexture(): Promise<Texture> {
+  if (!hqTexturePromise) {
+    const { Assets } = await import('pixi.js')
+    hqTexturePromise = Assets.load(HQ_ICON_URL) as Promise<Texture>
+  }
+  return hqTexturePromise
 }
 
 export interface TerritoryLayerHandle {
@@ -130,7 +142,8 @@ export async function attachTerritoryLayer(
   territories: TerritoryEntry[],
   onTerritoryClick: (territory: TerritoryEntry, screenPos: { x: number, y: number }) => void,
 ): Promise<TerritoryLayerHandle> {
-  const { Graphics, Text } = await import('pixi.js')
+  const { Graphics, Sprite, Text } = await import('pixi.js')
+  const hqTex = await getHqTexture()
   container.removeChildren().forEach(c => c.destroy({ children: true }))
   const items: TerritoryItem[] = []
   const byName = new Map<string, TerritoryItem>()
@@ -156,20 +169,29 @@ export async function attachTerritoryLayer(
     })
 
     if (t.guild) {
-      const label = new Text({
-        text: `[${t.guild.prefix}]`,
-        style: {
-          fill: color,
-          fontSize: 11,
-          fontFamily: 'sans-serif',
-          stroke: { color: '#000000', width: 3 },
-          align: 'center',
-        },
-      })
-      label.anchor.set(0.5)
-      label.position.set(w / 2, h / 2)
-      label.eventMode = 'none'
-      g.addChild(label)
+      if (t.hq) {
+        const crown = new Sprite(hqTex)
+        crown.anchor.set(0.5)
+        crown.position.set(w / 2, h / 2)
+        crown.eventMode = 'none'
+        g.addChild(crown)
+      }
+      else {
+        const label = new Text({
+          text: `[${t.guild.prefix}]`,
+          style: {
+            fill: color,
+            fontSize: 11,
+            fontFamily: 'sans-serif',
+            stroke: { color: '#000000', width: 3 },
+            align: 'center',
+          },
+        })
+        label.anchor.set(0.5)
+        label.position.set(w / 2, h / 2)
+        label.eventMode = 'none'
+        g.addChild(label)
+      }
     }
 
     container.addChild(g)
@@ -226,7 +248,7 @@ export function repositionTerritoryLayer(map: LMap, handle: TerritoryLayerHandle
     item.g.position.set(screenX, screenY)
 
     if (item.g.children.length > 0) {
-      const label = item.g.children[0] as PixiText
+      const label = item.g.children[0] as PixiText | PixiSprite
       label.position.set(w / 2, h / 2)
     }
   }
