@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useBuilderRail } from '~/composables/useBuilderRail'
 import { EQUIP_SLOT_COUNT, SLOT_LABELS } from '~/lib/builder-draft/routing'
 import { itemIconUrl } from '~/lib/items/icon'
 import { TIER_COLORS } from '~/lib/items/tooltip'
-import ImportModal from './ImportModal.vue'
 
 defineEmits<{ expand: [] }>()
 
 const rail = useBuilderRail()
-const importOpen = ref(false)
 
 // CSS grid-area names, matching the builder's EquipmentGrid template.
 const SLOT_AREAS = ['helmet', 'chest', 'legs', 'boots', 'ring1', 'ring2', 'bracelet', 'necklace', 'weapon'] as const
@@ -98,21 +96,11 @@ const slots = computed(() =>
       >
         Clear
       </button>
-      <button
-        type="button"
-        class="rail-import"
-        title="Import from Wynntils"
-        @click="importOpen = true"
-      >
-        Import
-      </button>
     </div>
 
     <p v-if="rail.isEmpty.value" class="rail-hint">
       Equip from search to build.
     </p>
-
-    <ImportModal :open="importOpen" @update:open="importOpen = $event" />
   </section>
 </template>
 
@@ -301,26 +289,6 @@ const slots = computed(() =>
   color: var(--color-muted);
 }
 .rail-clear:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-.rail-import {
-  font: 500 10px/1 var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  padding: 2px 4px;
-  margin: -2px -4px;
-  cursor: pointer;
-  transition: color 0.12s ease-out;
-}
-.rail-import:hover {
-  color: var(--color-accent);
-}
-.rail-import:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }

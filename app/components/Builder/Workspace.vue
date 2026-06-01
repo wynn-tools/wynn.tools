@@ -17,12 +17,16 @@ const props = withDefaults(defineProps<{
 
 const store = useBuildStore()
 const showAtree = ref(!props.embedded)
+const importOpen = ref(false)
 </script>
 
 <template>
   <main class="builder" :class="{ 'builder--embedded': props.embedded }">
     <div class="builder-toolbar">
       <BuilderImportBar />
+      <button class="toolbar-import" type="button" @click="importOpen = true">
+        Import items <span class="toolbar-import-arrow" aria-hidden="true">→</span>
+      </button>
       <NuxtLink v-if="!props.embedded" to="/builds" class="toolbar-browse">
         Browse builds <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
       </NuxtLink>
@@ -76,6 +80,8 @@ const showAtree = ref(!props.embedded)
         </div>
       </section>
     </template>
+
+    <BuilderImportModal :open="importOpen" @update:open="importOpen = $event" />
   </main>
 </template>
 
@@ -123,6 +129,44 @@ const showAtree = ref(!props.embedded)
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 4px;
+}
+
+.toolbar-import {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  align-self: center;
+  transition: color 0.12s ease-out;
+}
+
+.toolbar-import:hover {
+  color: var(--color-muted);
+}
+
+.toolbar-import:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.toolbar-import-arrow {
+  display: inline-block;
+  transition: transform 0.12s ease-out;
+}
+
+.toolbar-import:hover .toolbar-import-arrow {
+  transform: translateX(3px);
 }
 
 .toolbar-browse {
