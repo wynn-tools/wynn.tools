@@ -4,6 +4,7 @@ import { env } from '../../env'
 export interface ItemSummary {
   id: number
   name: string
+  displayName: string
   rarity: string
   type: string
   tier: string | null
@@ -105,6 +106,7 @@ async function fetchLatestItems(): Promise<ItemSummary[]> {
     .map(i => ({
       id: i.id ?? 0,
       name: i.name as string,
+      displayName: i.displayName ?? (i.name as string),
       // Wynncraft v3 items use `tier` (Legendary/Fabled/...) as the rarity concept.
       rarity: (i.tier ?? 'common').toLowerCase(),
       type: i.type ?? 'unknown',

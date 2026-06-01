@@ -13,9 +13,9 @@ const KP = generateKeyPairSync('ed25519')
 const PUB_HEX = KP.publicKey.export({ type: 'spki', format: 'der' }).subarray(-32).toString('hex')
 
 const FIXTURE_ITEMS = [
-  { id: 1, name: 'Warp', rarity: 'legendary', type: 'wand', tier: null, requirements: {}, identifications: { spellDamage: 30 } },
-  { id: 2, name: 'Warchief', rarity: 'fabled', type: 'helmet', tier: null, requirements: {}, identifications: {} },
-  { id: 3, name: 'Boreal Mantle', rarity: 'legendary', type: 'chestplate', tier: null, requirements: {}, identifications: {} },
+  { id: 1, name: 'Warp', displayName: 'Warp', rarity: 'legendary', type: 'wand', tier: 'Legendary', requirements: {}, identifications: { spellDamage: 30 } },
+  { id: 2, name: 'Warchief', displayName: 'Warchief', rarity: 'fabled', type: 'helmet', tier: 'Fabled', requirements: {}, identifications: {} },
+  { id: 3, name: 'Boreal Mantle', displayName: 'Boreal Mantle', rarity: 'legendary', type: 'chestplate', tier: 'Legendary', requirements: {}, identifications: {} },
 ]
 
 function signed(body: object) {
@@ -83,7 +83,8 @@ describe('discord interactions', () => {
       data: { name: 'item', options: [{ name: 'name', type: 3, value: 'Warp' }] },
     }))
     const json: any = await res.json()
-    expect(json.data.embeds[0].title).toBe('Warp')
+    // /item replies with just the URL so Discord renders the page's OG preview.
+    expect(json.data.content).toContain('/items/warp')
   })
 
   it('returns ephemeral for unknown /item name', async () => {
