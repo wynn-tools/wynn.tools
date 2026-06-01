@@ -9,6 +9,7 @@ import type { BoostId, BuildBoosts } from '~/lib/math/boosts'
 import type { ExpandedItem } from '~/lib/math/expand-item'
 import type { PowderActive } from '~/lib/math/powder-specials'
 import type { Aspect } from '~/lib/types/aspect'
+import type { ResolvedImport } from '~/lib/wynntils/types'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
 import { loadBuildContext, peekVersionId, resolveLatestVersion } from '~/composables/useBuildData'
@@ -397,6 +398,28 @@ export const useBuildStore = defineStore('build', () => {
     rawBuild.value = { ...rawBuild.value, equipment }
   }
 
+  function applyImport(rows: ResolvedImport[]) {
+    if (!rawBuild.value || rows.length === 0)
+      return
+    const equipment = rawBuild.value.equipment.slice()
+    const powders = rawBuild.value.powders.map(p => p.slice())
+    const overrides = new Map(itemRollOverrides.value)
+    for (const row of rows) {
+      equipment[row.slot] = { kind: 'normal' as const, id: row.itemId }
+      overrides.delete(row.slot)
+      if (row.overrides.size > 0)
+        overrides.set(row.slot, new Map(row.overrides))
+      const powderIdx = POWDER_INDEX_BY_SLOT.get(row.slot)
+      if (powderIdx !== undefined) {
+        const max = ctx.value ? Number(ctx.value.rawItemIndex.resolveId(row.itemId)?.slots) || 0 : 0
+        powders[powderIdx] = row.powders.slice(0, max)
+      }
+    }
+    rawBuild.value = { ...rawBuild.value, equipment, powders }
+    itemRollOverrides.value = overrides
+    writeOverridesToQuery()
+  }
+
   function setLevel(level: number) {
     if (!rawBuild.value)
       return
@@ -717,6 +740,7 @@ export const useBuildStore = defineStore('build', () => {
     upgradeBuild,
     setItem,
     setCraftedSlot,
+    applyImport,
     setLevel,
     currentHash,
     itemsForSlot,
