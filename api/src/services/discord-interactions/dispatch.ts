@@ -1,5 +1,6 @@
 import type { Interaction, InteractionResponse } from './types'
 import { EPHEMERAL_FLAG } from './embed'
+import { handleBuilds, handleBuildsComponent } from './handlers/builds'
 import { autocompleteItem, handleItem } from './handlers/item'
 import { handlePrice } from './handlers/price'
 import { getItemIndex } from './item-index'
@@ -20,13 +21,13 @@ export async function dispatch(interaction: Interaction): Promise<InteractionRes
     switch (interaction.data?.name) {
       case 'item': return handleItem(interaction, index, 'name')
       case 'price': return await handlePrice(interaction, index)
-      case 'builds': return ephemeral('Not yet implemented') // Task 4
+      case 'builds': return await handleBuilds(interaction, index)
       default: return ephemeral(`Unknown command: ${interaction.data?.name}`)
     }
   }
 
   if (interaction.type === InteractionType.MESSAGE_COMPONENT)
-    return ephemeral('Unhandled component')
+    return await handleBuildsComponent(interaction)
 
   return ephemeral('Unknown interaction type')
 }
