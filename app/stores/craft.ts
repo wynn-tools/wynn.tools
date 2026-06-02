@@ -5,7 +5,6 @@ import type { CdnClient } from '~/lib/data/cdn-client'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef } from 'vue'
 import { loadBuildContext, resolveLatestVersionId } from '~/composables/useBuildData'
-import { loadCraftData } from '~/composables/useCraftData'
 import { BitVector, BitVectorCursor } from '~/lib/codec/bit-vector'
 import { CraftCodecError, decodeCraft, encodeCraft } from '~/lib/codec/craft-codec'
 import { computeCraft } from '~/lib/crafter/compute-craft'
@@ -223,6 +222,3 @@ export const useCraftStore = defineStore('craft', () => {
     prefillFromRaw,
   }
 })
-
-// Re-export for tests / callers that want to construct a fresh raw object.
-export { loadCraftData }
