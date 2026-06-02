@@ -677,6 +677,11 @@ onMounted(() => {
      in horizontally for trees wider than the phone (one-finger pan). */
   .atree-canvas {
     max-height: none;
+    max-width: 100% !important;
+  }
+  .atree-shell {
+    width: 100%;
+    min-width: 0;
   }
   /* Minimap is desktop-only — it's too small to drive on a touchscreen and
      duplicates the function of pan-by-finger that overflow:auto already

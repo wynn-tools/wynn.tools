@@ -103,12 +103,12 @@ function fork() {
   <div>
     <div v-if="build && !isOwner" class="fork-bar">
       <span class="fork-label">
-        Viewing build by
+        <span class="fork-kicker">Viewing build by</span>
         <NuxtLink v-if="build.owner" :to="`/u/${build.owner.id}`" class="fork-owner-link">{{ build.owner.name }}</NuxtLink>
-        <span v-else>Anonymous</span>
+        <span v-else class="fork-owner-anon">Anonymous</span>
       </span>
       <button class="fork-btn" type="button" @click="fork">
-        Fork this build →
+        Fork this build <span class="fork-btn-arrow" aria-hidden="true">→</span>
       </button>
     </div>
     <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
@@ -117,44 +117,107 @@ function fork() {
 
 <style scoped>
 .fork-bar {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 40px;
-  background: var(--color-surface);
+  gap: 16px;
+  max-width: none;
+  padding: 10px max(40px, calc(50vw - var(--shell-max) / 2 + 40px));
   border-bottom: 1px solid var(--color-border);
-  font-size: 12px;
 }
 
 .fork-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
   color: var(--color-muted);
+  font-size: 13px;
 }
 
-.fork-btn {
+.fork-kicker {
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
-  background: none;
-  border: 1px solid color-mix(in oklch, var(--color-accent) 40%, transparent);
-  border-radius: 5px;
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: border-color 0.12s ease-out;
-}
-
-.fork-btn:hover {
-  border-color: var(--color-accent);
+  color: var(--color-faint);
 }
 
 .fork-owner-link {
-  color: var(--color-accent);
+  color: var(--color-text);
   text-decoration: none;
+  font-weight: 600;
+  transition: color 0.12s ease-out;
 }
-.fork-owner-link:hover {
-  text-decoration: underline;
+
+.fork-owner-link:hover,
+.fork-owner-link:focus-visible {
+  color: var(--color-accent);
+  outline: none;
+}
+
+.fork-owner-anon {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.fork-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s ease-out;
+}
+
+.fork-btn:hover {
+  color: var(--color-accent);
+}
+
+.fork-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+  color: var(--color-accent);
+}
+
+.fork-btn-arrow {
+  display: inline-block;
+  transition: transform 0.12s ease-out;
+}
+
+.fork-btn:hover .fork-btn-arrow,
+.fork-btn:focus-visible .fork-btn-arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 720px) {
+  .fork-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px max(14px, calc(50vw - var(--shell-max) / 2 + 14px));
+  }
+}
+
+@media (max-width: 600px) {
+  .fork-bar {
+    padding-inline: var(--shell-pad-mobile, 14px);
+  }
+  .fork-kicker {
+    font-size: 10px;
+  }
 }
 </style>

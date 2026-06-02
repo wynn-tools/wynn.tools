@@ -131,6 +131,20 @@ const importOpen = ref(false)
   padding-bottom: 4px;
 }
 
+@media (max-width: 720px) {
+  .builder-toolbar {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+  }
+  .builder-toolbar > :first-child {
+    flex: 1 1 100%;
+  }
+  .builder-toolbar > :last-child {
+    margin-left: auto;
+  }
+}
+
 .toolbar-import {
   display: inline-flex;
   align-items: center;
@@ -284,6 +298,17 @@ const importOpen = ref(false)
     grid-column: 1 / -1;
     display: flex;
     justify-content: center;
+  }
+}
+
+@media (max-width: 720px) {
+  .atree-canvas-wrap {
+    justify-content: stretch;
+    width: 100%;
+  }
+  .atree-canvas-wrap > * {
+    width: 100%;
+    min-width: 0;
   }
 }
 
