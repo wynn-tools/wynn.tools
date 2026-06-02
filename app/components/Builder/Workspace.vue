@@ -97,11 +97,12 @@ onBeforeUnmount(clearAtreeConfirmTimer)
           <TomePanel />
           <BoostPanel />
           <PowderSpecialPanel />
-          <BuildSummary />
+          <AtreeAspectsPanel />
         </section>
 
         <section class="zone zone-stats" aria-label="Stats">
           <StatPanel v-if="store.result" :result="store.result" />
+          <BuildSummary />
         </section>
 
         <section class="zone zone-output" aria-label="Combat output">
@@ -158,7 +159,6 @@ onBeforeUnmount(clearAtreeConfirmTimer)
             <AtreeCanvas />
           </div>
           <AtreeActivePanel />
-          <AtreeAspectsPanel />
         </div>
       </section>
     </template>
@@ -384,12 +384,9 @@ onBeforeUnmount(clearAtreeConfirmTimer)
   outline: none;
 }
 
-/* Three columns: the ability-tree canvas (at most 9 tiles ~396px, so it hugs its
-   content), then Active Abilities, then Aspects. The cluster centers in the
-   section instead of stranding the tree in empty space. */
 .atree-split {
   display: grid;
-  grid-template-columns: auto minmax(250px, 330px) minmax(250px, 330px);
+  grid-template-columns: auto minmax(250px, 360px);
   justify-content: center;
   gap: 16px;
   align-items: start;
@@ -399,14 +396,11 @@ onBeforeUnmount(clearAtreeConfirmTimer)
   min-width: 0;
 }
 
-/* Below the width that fits all three columns, drop the canvas to a full-width
-   row and sit Active Abilities + Aspects side by side beneath it. */
-@media (max-width: 1240px) {
+@media (max-width: 1100px) {
   .atree-split {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
   .atree-canvas-wrap {
-    grid-column: 1 / -1;
     display: flex;
     justify-content: center;
   }
