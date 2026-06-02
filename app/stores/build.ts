@@ -712,6 +712,15 @@ export const useBuildStore = defineStore('build', () => {
     atreeMessage.value = null
   }
 
+  function resetAtree() {
+    if (!rawBuild.value)
+      return
+    if (rawBuild.value.activeAtree.length === 0)
+      return
+    rawBuild.value = { ...rawBuild.value, activeAtree: [] }
+    atreeMessage.value = null
+  }
+
   function unlockAtreeNode(id: number) {
     if (!rawBuild.value)
       return
@@ -763,6 +772,7 @@ export const useBuildStore = defineStore('build', () => {
     isAtreeActive,
     toggleAtreeNode,
     unlockAtreeNode,
+    resetAtree,
     maxPowderSlots,
     powdersForEquipmentSlot,
     setPowders,
