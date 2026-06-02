@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { humanizeShortId, IDENTIFICATION_MAP } from '~/lib/data/identifications'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -30,6 +31,20 @@ interface SlotMaps {
   options: string[]
   idByLabel: Map<string, number>
   labelById: Map<number, string>
+  searchKeys: Record<string, string[]>
+}
+
+function tomeStatTerms(t: Record<string, unknown>): string[] {
+  const terms: string[] = []
+  for (const key of Object.keys(t)) {
+    if (!(key in IDENTIFICATION_MAP))
+      continue
+    const v = t[key]
+    if (v == null || v === 0 || (typeof v === 'object' && Object.keys(v).length === 0))
+      continue
+    terms.push(humanizeShortId(key).label)
+  }
+  return terms
 }
 
 function buildSlotMaps(slot: number): SlotMaps {
@@ -37,13 +52,17 @@ function buildSlotMaps(slot: number): SlotMaps {
   const options: string[] = []
   const idByLabel = new Map<string, number>()
   const labelById = new Map<number, string>()
+  const searchKeys: Record<string, string[]> = {}
   for (const t of tomes) {
     const label = `${t.displayName} (${t.tier})`
     options.push(label)
     idByLabel.set(label, t.id)
     labelById.set(t.id, label)
+    const terms = tomeStatTerms(t as unknown as Record<string, unknown>)
+    if (terms.length > 0)
+      searchKeys[label] = terms
   }
-  return { options, idByLabel, labelById }
+  return { options, idByLabel, labelById, searchKeys }
 }
 
 const slotMaps = computed<Record<number, SlotMaps>>(() => {
@@ -108,6 +127,7 @@ const filled = computed(() => {
         <FilterCombobox
           :model-value="currentLabel(slot)"
           :options="slotMaps[slot].options"
+          :search-keys="slotMaps[slot].searchKeys"
           placeholder="None"
           @update:model-value="onSelect(slot, $event)"
         />

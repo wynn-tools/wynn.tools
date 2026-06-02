@@ -45,6 +45,30 @@ const aspectById = computed(() => new Map(aspects.value.map(a => [a.id, a])))
 const idByName = computed(() => new Map(aspects.value.map(a => [a.displayName, a.id])))
 const options = computed(() => aspects.value.map(a => a.displayName))
 
+function descPlainText(desc: unknown): string {
+  if (!desc)
+    return ''
+  if (typeof desc === 'string')
+    return desc
+  if (Array.isArray(desc))
+    return (desc as NormalizedText[]).map(s => s.text ?? '').join(' ')
+  return ''
+}
+
+const searchKeys = computed<Record<string, string[]>>(() => {
+  const out: Record<string, string[]> = {}
+  for (const a of aspects.value) {
+    const parts: string[] = [a.tier]
+    for (const t of a.tiers) {
+      const text = descPlainText((t as AspectTier).description)
+      if (text)
+        parts.push(text)
+    }
+    out[a.displayName] = parts
+  }
+  return out
+})
+
 interface SlotView {
   slot: number
   aspect: Aspect | null
@@ -130,6 +154,7 @@ function descSegments(entry: AspectTier | null): NormalizedText[] | string | nul
             class="slot-combo"
             :model-value="v.name"
             :options="options"
+            :search-keys="searchKeys"
             placeholder="Empty"
             @update:model-value="onSelect(v.slot, $event)"
           />

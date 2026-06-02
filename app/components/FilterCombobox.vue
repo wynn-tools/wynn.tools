@@ -2,6 +2,9 @@
 const props = defineProps<{
   options: string[]
   placeholder?: string
+  /** Optional per-option extra search terms (description, stats, tags…).
+   *  Matched against the query in addition to the option label itself. */
+  searchKeys?: Record<string, string[]>
 }>()
 const model = defineModel<string | null>({ required: true })
 
@@ -57,7 +60,19 @@ const filtered = computed(() => {
   if (!query.value)
     return props.options
   const q = query.value.toLowerCase()
-  return props.options.filter(o => o.toLowerCase().includes(q))
+  const keys = props.searchKeys
+  return props.options.filter((o) => {
+    if (o.toLowerCase().includes(q))
+      return true
+    const extras = keys?.[o]
+    if (!extras)
+      return false
+    for (const s of extras) {
+      if (s.toLowerCase().includes(q))
+        return true
+    }
+    return false
+  })
 })
 
 function openDropdown() {
