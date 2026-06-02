@@ -6,10 +6,19 @@ import { ATTACK_SPEED_LABELS, critChance } from '~/lib/math/dps'
 
 const props = defineProps<{ result: BuildResult }>()
 
-const open = ref<Record<number, boolean>>({ 0: true })
+const open = ref<Record<string, boolean>>({})
 
-function toggle(key: number) {
+function toggle(key: string) {
   open.value = { ...open.value, [key]: !open.value[key] }
+}
+
+function isMelee(spellOut: SpellOutput): boolean {
+  return spellOut.spell.scaling === 'melee'
+}
+
+function isOpen(spellOut: SpellOutput): boolean {
+  const k = spellOut.spell.name
+  return open.value[k] ?? isMelee(spellOut)
 }
 
 function fmt(n: number) {
@@ -62,12 +71,12 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
     <ul class="acc">
       <li
         v-for="spellOut in spells"
-        :key="spellOut.spell.baseSpell"
+        :key="spellOut.spell.name"
         class="acc-item"
-        :class="{ 'acc-item--open': open[spellOut.spell.baseSpell] }"
+        :class="{ 'acc-item--open': isOpen(spellOut) }"
       >
-        <button class="acc-trigger" type="button" @click="toggle(spellOut.spell.baseSpell)">
-          <span class="acc-chevron" :class="{ 'acc-chevron--open': open[spellOut.spell.baseSpell] }">▸</span>
+        <button class="acc-trigger" type="button" @click="toggle(spellOut.spell.name)">
+          <span class="acc-chevron" :class="{ 'acc-chevron--open': isOpen(spellOut) }">▸</span>
           <span class="acc-title">
             {{ spellOut.spell.name }}
             <span v-if="spellOut.cost !== null" class="acc-cost">
@@ -75,13 +84,13 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
             </span>
           </span>
           <span class="acc-value mono">
-            {{ spellOut.spell.baseSpell === 0 ? fmt(melee.averageDps) : fmt(avg(displayPart(spellOut)!)) }}
+            {{ isMelee(spellOut) ? fmt(melee.averageDps) : fmt(avg(displayPart(spellOut)!)) }}
           </span>
         </button>
 
-        <div v-if="open[spellOut.spell.baseSpell]" class="acc-body">
+        <div v-if="isOpen(spellOut)" class="acc-body">
           <!-- Melee summary row -->
-          <template v-if="spellOut.spell.baseSpell === 0">
+          <template v-if="isMelee(spellOut)">
             <div class="row">
               <span class="label">Attack Speed</span>
               <span class="value mono">{{ ATTACK_SPEED_LABELS[melee.attackSpeed] ?? melee.attackSpeed }}</span>
