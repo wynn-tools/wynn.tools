@@ -333,13 +333,15 @@ button.nav-link {
 
 .nav-dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   background: color-mix(in oklch, var(--color-surface) 96%, transparent);
+  background-clip: padding-box;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid color-mix(in oklch, var(--color-accent) 20%, transparent);
+  border-top: 4px solid transparent;
   border-radius: 8px;
   padding: 4px;
   min-width: 200px;
