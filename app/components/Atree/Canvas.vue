@@ -369,7 +369,8 @@ onMounted(() => {
                 <!-- Base: all directions, no active glow -->
                 <img
                   :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.name}.png`"
-                  class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+                  class="connector pointer-events-none absolute [image-rendering:pixelated]"
+                  :class="conn.name.endsWith('_active') ? 'active-connector' : 'z-0'"
                   :style="{
                     left: `${conn.col * CELL}px`,
                     top: `${conn.row * CELL}px`,
@@ -384,7 +385,7 @@ onMounted(() => {
                 <img
                   v-if="conn.activeName"
                   :src="`https://cdn.wynn.tools/nextgen/abilities/2.1/connectors/grid/${conn.activeName}_active.png`"
-                  class="pointer-events-none absolute z-0 [image-rendering:pixelated]"
+                  class="connector active-connector pointer-events-none absolute [image-rendering:pixelated]"
                   :style="{
                     left: `${conn.col * CELL}px`,
                     top: `${conn.row * CELL}px`,
@@ -564,6 +565,16 @@ onMounted(() => {
 .atree-grid button img {
   transform: scale(var(--node-scale, 1));
   transform-origin: center;
+}
+
+.connector {
+  transform: scale(1.2);
+  z-index: 1;
+}
+
+.active-connector {
+  transform: scale(1.2) translateY(-3px);
+  z-index: 1;
 }
 
 /* Minimap — docks beside the canvas (flex sibling). Stays put while the canvas
