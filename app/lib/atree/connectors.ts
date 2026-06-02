@@ -22,6 +22,40 @@ const NODE_CDN = 'https://cdn.wynn.tools/nextgen/abilities/2.1/nodes'
 // - matches ^(node|ultimate)[A-Z] e.g. "nodeWhite", "ultimateBoltslinger"
 const RICH_ASSET_RE = /^(?:node|ultimate)[A-Z]/
 
+// Per-color render scale, mirroring the official ability tree CSS so e.g.
+// blue nodes read larger than orange ones. Grid math stays at 44px; only the
+// artwork transforms. Ultimates keep their 1.5 (handled separately at the call
+// site) to match the in-game emphasis.
+const NODE_SCALE_BY_KIND: Record<string, number> = {
+  nodeWhite: 1.05,
+  nodeYellow: 1.0,
+  nodeOrange: 1.0,
+  nodePurple: 1.1,
+  nodeRed: 1.2,
+  nodeBlue: 1.25,
+  nodeArcher: 1.1,
+  nodeAssassin: 1.1,
+  nodeMage: 1.1,
+  nodeShaman: 1.1,
+  nodeWarrior: 1.1,
+}
+
+/** Normalised node kind (e.g. `nodeBlue`, `nodeArcher`, `ultimateBoltslinger`). */
+export function nodeKind(icon: string | undefined): string {
+  if (icon && icon.startsWith('abilityTree.'))
+    return icon.slice('abilityTree.'.length)
+  if (icon && RICH_ASSET_RE.test(icon))
+    return icon
+  return nodeColor(icon)
+}
+
+export function nodeScale(icon: string | undefined): number {
+  const kind = nodeKind(icon)
+  if (kind.startsWith('ultimate'))
+    return 1.5
+  return NODE_SCALE_BY_KIND[kind] ?? 1
+}
+
 export type NodeVariant = 'base' | 'active' | 'pulse'
 
 const VARIANT_SUFFIX: Record<NodeVariant, string> = {

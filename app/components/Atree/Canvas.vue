@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from 'reka-ui'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { anyDir, computeAtreeConnectors, connectorTileName, dirsEqual, nodeImageUrl } from '~/lib/atree/connectors'
+import { anyDir, computeAtreeConnectors, connectorTileName, dirsEqual, nodeImageUrl, nodeScale } from '~/lib/atree/connectors'
 import { useBuildStore } from '~/stores/build'
 
 const store = useBuildStore()
@@ -410,8 +410,9 @@ onMounted(() => {
                     class="group absolute z-[1] flex size-11 items-center justify-center border-0 bg-transparent p-0 transition-[filter,opacity] duration-100"
                     :class="[NODE_STATE_CLASSES[nodeState(node)], { 'node--ultimate': isUltimate(node) }]"
                     :style="{
-                      left: `${node.ability.display.col * CELL}px`,
-                      top: `${node.ability.display.row * CELL}px`,
+                      'left': `${node.ability.display.col * CELL}px`,
+                      'top': `${node.ability.display.row * CELL}px`,
+                      '--node-scale': nodeScale(node.ability.display.icon),
                     }"
                     :aria-pressed="store.isAtreeActive(node.ability.id)"
                     :aria-label="`${node.ability.display_name}, ${node.ability.cost} AP, ${nodeState(node)}`"
@@ -560,10 +561,8 @@ onMounted(() => {
   filter: sepia(0.45) hue-rotate(310deg) saturate(1.1);
 }
 
-/* Ultimate nodes render visually larger than normal nodes (matches the
-   in-game treatment). Grid math stays at CELL — only the art scales. */
-:deep(.node--ultimate) img {
-  transform: scale(1.5);
+.atree-grid button img {
+  transform: scale(var(--node-scale, 1));
   transform-origin: center;
 }
 
