@@ -79,18 +79,16 @@ watch(() => route.params.hash, syncFromQuery)
 </script>
 
 <template>
-  <section class="ps">
-    <header class="ps-head">
-      <span class="kicker">Powder Specials</span>
+  <CollapsibleSection title="Powder Specials">
+    <template v-if="!powderActiveIsEmpty(store.powderActive)" #actions>
       <button
-        v-if="!powderActiveIsEmpty(store.powderActive)"
         type="button"
         class="ps-reset"
         @click="store.resetPowderActive()"
       >
         Reset
       </button>
-    </header>
+    </template>
 
     <div class="tabs ps-tabs" role="tablist">
       <button
@@ -153,24 +151,10 @@ watch(() => route.params.hash, syncFromQuery)
         <span class="ps-slider-val mono">{{ store.boosts.elemDmg[selected] }}%</span>
       </label>
     </div>
-  </section>
+  </CollapsibleSection>
 </template>
 
 <style scoped>
-.ps {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-.ps-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-}
 .ps-reset {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 10px;

@@ -72,13 +72,12 @@ watch(() => route.params.hash, syncFromQuery)
 </script>
 
 <template>
-  <section class="boost">
-    <header class="boost-head">
-      <span class="kicker">Active Boosts</span>
-      <button v-if="anyActive" type="button" class="boost-reset" @click="store.resetBoosts()">
+  <CollapsibleSection title="Active Boosts">
+    <template v-if="anyActive" #actions>
+      <button type="button" class="boost-reset" @click="store.resetBoosts()">
         Reset
       </button>
-    </header>
+    </template>
 
     <div class="boost-group">
       <button
@@ -105,24 +104,10 @@ watch(() => route.params.hash, syncFromQuery)
         {{ b.label }}
       </button>
     </div>
-  </section>
+  </CollapsibleSection>
 </template>
 
 <style scoped>
-.boost {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-.boost-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-}
 .boost-reset {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 10px;

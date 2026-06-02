@@ -108,11 +108,10 @@ function descSegments(entry: AspectTier | null): NormalizedText[] | string | nul
 </script>
 
 <template>
-  <aside class="aspects">
-    <header class="head">
-      <span class="kicker">Aspects</span>
+  <CollapsibleSection title="Aspects">
+    <template #badge>
       <span class="count mono">{{ usedCount }} / {{ slots.length }}</span>
-    </header>
+    </template>
 
     <p v-if="!hasClass" class="empty">
       Equip a weapon to choose aspects.
@@ -168,26 +167,10 @@ function descSegments(entry: AspectTier | null): NormalizedText[] | string | nul
         </p>
       </li>
     </ul>
-  </aside>
+  </CollapsibleSection>
 </template>
 
 <style scoped>
-.aspects {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .count {
   font-size: 12px;
   font-weight: 600;

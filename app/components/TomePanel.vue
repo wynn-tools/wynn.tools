@@ -97,11 +97,10 @@ const filled = computed(() => {
 </script>
 
 <template>
-  <section class="tomes">
-    <header class="tomes-head">
-      <span class="kicker">Tomes</span>
+  <CollapsibleSection title="Tomes">
+    <template #badge>
       <span class="tomes-count mono">{{ filled }} / {{ TOME_SLOTS.length }}</span>
-    </header>
+    </template>
 
     <div class="tomes-grid">
       <div v-for="slot in TOME_SLOTS" :key="slot" class="tome-cell">
@@ -134,24 +133,10 @@ const filled = computed(() => {
       :item-name="tomeDisplayName(openTomeSlot)"
       @update:open="(v) => { if (!v) openTomeSlot = null }"
     />
-  </section>
+  </CollapsibleSection>
 </template>
 
 <style scoped>
-.tomes {
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 8px 12px 10px;
-}
-
-.tomes-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  padding-bottom: 6px;
-}
-
 .tomes-count {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 12px;
