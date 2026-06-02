@@ -18,6 +18,52 @@ const props = withDefaults(defineProps<{
 const store = useBuildStore()
 const showAtree = ref(!props.embedded)
 const importOpen = ref(false)
+
+const atreeConfirming = ref(false)
+let atreeConfirmTimer: ReturnType<typeof setTimeout> | null = null
+const cancelBtnRef = ref<HTMLButtonElement | null>(null)
+
+const atreeAp = computed(() => store.atreeValidation?.apTotal ?? 0)
+const canResetAtree = computed(() => (store.rawBuild?.activeAtree.length ?? 0) > 0)
+
+function clearAtreeConfirmTimer() {
+  if (atreeConfirmTimer) {
+    clearTimeout(atreeConfirmTimer)
+    atreeConfirmTimer = null
+  }
+}
+
+function armAtreeReset() {
+  if (!canResetAtree.value)
+    return
+  atreeConfirming.value = true
+  clearAtreeConfirmTimer()
+  atreeConfirmTimer = setTimeout(() => {
+    atreeConfirming.value = false
+    atreeConfirmTimer = null
+  }, 4000)
+  nextTick(() => cancelBtnRef.value?.focus())
+}
+
+function confirmAtreeReset() {
+  store.resetAtree()
+  atreeConfirming.value = false
+  clearAtreeConfirmTimer()
+}
+
+function cancelAtreeReset() {
+  atreeConfirming.value = false
+  clearAtreeConfirmTimer()
+}
+
+function onAtreeConfirmKey(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    cancelAtreeReset()
+  }
+}
+
+onBeforeUnmount(clearAtreeConfirmTimer)
 </script>
 
 <template>
@@ -67,9 +113,45 @@ const importOpen = ref(false)
       <section class="atree" aria-label="Ability tree">
         <header class="atree-head">
           <span class="kicker">Ability Tree</span>
-          <button class="toggle" type="button" @click="showAtree = !showAtree">
-            {{ showAtree ? 'Hide' : 'Show' }}
-          </button>
+          <div class="atree-actions" @keydown="onAtreeConfirmKey">
+            <template v-if="!atreeConfirming">
+              <button
+                class="toggle toggle--danger"
+                type="button"
+                :disabled="!canResetAtree"
+                aria-label="Reset ability tree"
+                title="Clear all ability tree selections"
+                @click="armAtreeReset"
+              >
+                Reset
+              </button>
+            </template>
+            <template v-else>
+              <span class="atree-confirm-label" aria-live="polite">
+                Reset {{ atreeAp }} AP?
+              </span>
+              <button
+                class="toggle toggle--danger"
+                type="button"
+                aria-label="Confirm reset, clears all ability tree selections"
+                @click="confirmAtreeReset"
+              >
+                Confirm
+              </button>
+              <button
+                ref="cancelBtnRef"
+                class="toggle"
+                type="button"
+                aria-label="Cancel reset"
+                @click="cancelAtreeReset"
+              >
+                Cancel
+              </button>
+            </template>
+            <button class="toggle" type="button" @click="showAtree = !showAtree">
+              {{ showAtree ? 'Hide' : 'Show' }}
+            </button>
+          </div>
         </header>
         <div v-if="showAtree" class="atree-split">
           <div class="atree-canvas-wrap">
@@ -253,6 +335,21 @@ const importOpen = ref(false)
   gap: 10px;
 }
 
+.atree-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.atree-confirm-label {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(72% 0.13 22);
+  padding-right: 2px;
+}
+
 .toggle {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 10px;
@@ -271,6 +368,20 @@ const importOpen = ref(false)
 .toggle:hover {
   color: var(--color-copper);
   border-color: var(--color-copper);
+}
+.toggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.toggle:disabled:hover {
+  color: var(--color-muted);
+  border-color: var(--color-border);
+}
+.toggle--danger:not(:disabled):hover,
+.toggle--danger:not(:disabled):focus-visible {
+  color: oklch(72% 0.15 22);
+  border-color: oklch(58% 0.14 22);
+  outline: none;
 }
 
 /* Three columns: the ability-tree canvas (at most 9 tiles ~396px, so it hugs its
