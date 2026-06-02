@@ -218,6 +218,7 @@ function onBlur() {
 <style scoped>
 .cb {
   position: relative;
+  min-width: 0;
 }
 
 .cb-field {
