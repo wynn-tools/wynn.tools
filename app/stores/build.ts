@@ -222,6 +222,7 @@ export const useBuildStore = defineStore('build', () => {
   const boosts = ref<BuildBoosts>(emptyBoosts())
   const powderActive = ref<PowderActive>(emptyPowderActive())
   const atreeMessage = ref<string | null>(null)
+  const atreeCacheByClass = new Map<string, number[]>()
   const ctx = shallowRef<BuildContext | null>(null)
   const enc = shallowRef<EncodingConstants | null>(null)
   const weaponTypeFn = shallowRef<((id: number) => string | null) | null>(null)
@@ -378,7 +379,10 @@ export const useBuildStore = defineStore('build', () => {
       _pushToast('info', `Cleared ${cleared} custom roll${cleared === 1 ? '' : 's'} on ${SLOT_LABELS[slot] ?? 'slot'}`)
     const equipment = rawBuild.value.equipment.slice()
     equipment[slot] = { kind: 'normal', id }
-    rawBuild.value = { ...rawBuild.value, equipment }
+    const activeAtree = slot === 8
+      ? swapAtreeForEquipment(rawBuild.value.equipment, equipment, rawBuild.value.activeAtree, rawBuild.value.level)
+      : rawBuild.value.activeAtree
+    rawBuild.value = { ...rawBuild.value, equipment, activeAtree }
   }
 
   /**
@@ -395,7 +399,10 @@ export const useBuildStore = defineStore('build', () => {
       _pushToast('info', `Cleared ${cleared} custom roll${cleared === 1 ? '' : 's'} on ${SLOT_LABELS[slot] ?? 'slot'}`)
     const equipment = rawBuild.value.equipment.slice()
     equipment[slot] = { kind: 'crafted', raw, recipeIsWeapon }
-    rawBuild.value = { ...rawBuild.value, equipment }
+    const activeAtree = slot === 8
+      ? swapAtreeForEquipment(rawBuild.value.equipment, equipment, rawBuild.value.activeAtree, rawBuild.value.level)
+      : rawBuild.value.activeAtree
+    rawBuild.value = { ...rawBuild.value, equipment, activeAtree }
   }
 
   function applyImport(rows: ResolvedImport[]) {
@@ -415,7 +422,13 @@ export const useBuildStore = defineStore('build', () => {
         powders[powderIdx] = row.powders.slice(0, max)
       }
     }
-    rawBuild.value = { ...rawBuild.value, equipment, powders }
+    const activeAtree = swapAtreeForEquipment(
+      rawBuild.value.equipment,
+      equipment,
+      rawBuild.value.activeAtree,
+      rawBuild.value.level,
+    )
+    rawBuild.value = { ...rawBuild.value, equipment, powders, activeAtree }
     itemRollOverrides.value = overrides
     writeOverridesToQuery()
   }
@@ -431,6 +444,39 @@ export const useBuildStore = defineStore('build', () => {
       return null
     const wid = slotItemId(rawBuild.value.equipment[8])
     return wid == null ? null : weaponTypeFn.value(wid)
+  }
+
+  function classFromEquipment(equipment: RawBuild['equipment']): string | null {
+    if (!weaponTypeFn.value)
+      return null
+    const wid = slotItemId(equipment[8])
+    if (wid == null)
+      return null
+    const wt = weaponTypeFn.value(wid)
+    return wt ? (WEP_TO_CLASS[wt] ?? null) : null
+  }
+
+  function swapAtreeForEquipment(
+    prevEquipment: RawBuild['equipment'],
+    nextEquipment: RawBuild['equipment'],
+    prevActive: number[],
+    level: number,
+  ): number[] {
+    const oldCls = classFromEquipment(prevEquipment)
+    const newCls = classFromEquipment(nextEquipment)
+    if (oldCls === newCls)
+      return prevActive
+    if (oldCls && prevActive.length > 0)
+      atreeCacheByClass.set(oldCls, [...prevActive])
+    if (!newCls)
+      return []
+    const cached = atreeCacheByClass.get(newCls)
+    if (!cached || cached.length === 0 || !ctx.value)
+      return []
+    const newTree = getSortedClassAtree(ctx.value.atreeData, newCls)
+    const sel = new Map(cached.map(id => [id, true] as [number, boolean]))
+    const reachable = validateAtree(newTree, sel, level).reachable
+    return [...reachable]
   }
 
   const currentHash = computed<string | null>(() => {
