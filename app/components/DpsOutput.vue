@@ -18,7 +18,7 @@ function isMelee(spellOut: SpellOutput): boolean {
 
 function isOpen(spellOut: SpellOutput): boolean {
   const k = spellOut.spell.name
-  return open.value[k] ?? isMelee(spellOut)
+  return open.value[k] ?? false
 }
 
 function fmt(n: number) {

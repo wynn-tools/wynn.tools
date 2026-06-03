@@ -28,7 +28,7 @@ import { emptyBoosts } from '~/lib/math/boosts'
 import { SKP_ORDER } from '~/lib/math/constants'
 import { emptyPowderActive } from '~/lib/math/powder-specials'
 
-const DEFAULT_LEVEL = 106
+const DEFAULT_LEVEL = 120
 
 const SLOT_TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'ring', 'bracelet', 'necklace'] as const
 
