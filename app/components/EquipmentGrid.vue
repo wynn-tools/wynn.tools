@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { CraftedItem } from '~/lib/crafter/types'
-import type { RawMarketPrice } from '~/lib/market/types'
 import {
   HoverCardContent,
   HoverCardPortal,
   HoverCardRoot,
   HoverCardTrigger,
 } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
-import { useMarket } from '~/composables/useMarket'
+import { useBuildMarket } from '~/composables/useBuildMarket'
 import { SLOT_LABELS } from '~/lib/build/slot-labels'
 import { slotItemId } from '~/lib/codec/build-codec'
 import { computeCraft } from '~/lib/crafter/compute-craft'
@@ -17,58 +16,30 @@ import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
 import { powderElementMeta } from '~/lib/data/powder-elements'
 import { itemIconUrl } from '~/lib/items/icon'
 import { formatEmeralds } from '~/lib/market/format-emeralds'
-import { pickIdHeadline } from '~/lib/market/summarize'
+import { pickId } from '~/lib/market/summarize'
 import { useBuildStore } from '~/stores/build'
 import { useCraftStore } from '~/stores/craft'
 
 const store = useBuildStore()
 const craftStore = useCraftStore()
-const market = useMarket()
-const slotPrices = ref<Map<number, RawMarketPrice | null>>(new Map())
-
-// Fetch a headline price per occupied, non-crafted gear slot.
-let priceGen = 0
-async function refreshPrices() {
-  const gen = ++priceGen
-  const names: { slot: number, name: string }[] = []
-  for (let slot = 0; slot <= 8; slot++) {
-    const entry = store.rawBuild?.equipment[slot]
-    if (entry?.kind === 'crafted')
-      continue
-    const id = slotItemId(entry)
-    if (id == null || id >= 10000)
-      continue
-    const item = store.ctx?.rawItemIndex.resolveId(id)
-    const name = item?.name as string | undefined
-    if (name)
-      names.push({ slot, name })
-  }
-  if (names.length === 0) {
-    slotPrices.value = new Map()
-    return
-  }
-  try {
-    const results = await market.prices(names.map(n => ({ name: n.name })))
-    if (gen !== priceGen)
-      return
-    const map = new Map<number, RawMarketPrice | null>()
-    names.forEach((n, idx) => map.set(n.slot, results[idx] ?? null))
-    slotPrices.value = map
-  }
-  catch {
-    if (gen === priceGen)
-      slotPrices.value = new Map()
-  }
-}
-
-watch(() => store.rawBuild?.equipment, refreshPrices, { immediate: true, deep: true })
+const { mode, priceFor } = useBuildMarket()
 
 function slotPrice(slot: number): string | null {
-  const p = slotPrices.value.get(slot)
+  const entry = store.rawBuild?.equipment[slot]
+  if (!entry || entry.kind === 'crafted')
+    return null
+  const id = slotItemId(entry)
+  if (id == null || id >= 10000)
+    return null
+  const item = store.ctx?.rawItemIndex.resolveId(id)
+  const name = item?.name as string | undefined
+  if (!name)
+    return null
+  const p = priceFor(name)
   if (!p)
     return null
-  const h = pickIdHeadline(p)
-  return h == null ? null : formatEmeralds(h)
+  const v = pickId(p, mode.value)
+  return v == null ? null : formatEmeralds(v)
 }
 
 function slotIcon(slot: number): string | null {

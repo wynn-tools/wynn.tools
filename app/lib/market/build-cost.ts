@@ -1,5 +1,6 @@
+import type { MarketMode } from './summarize'
 import type { RawMarketPrice } from './types'
-import { pickIdHeadline, pickUnidHeadline } from './summarize'
+import { pickId, pickUnid } from './summarize'
 
 export interface BuildCostEntry {
   label: string // slot or display label, for the breakdown UI
@@ -27,7 +28,7 @@ export interface BuildCost {
   lines: BuildCostLine[]
 }
 
-export function buildCost(entries: BuildCostEntry[]): BuildCost {
+export function buildCost(entries: BuildCostEntry[], mode: MarketMode = 'avg'): BuildCost {
   let identifiedTotal = 0
   let unidentifiedTotal = 0
   let pricedCount = 0
@@ -37,8 +38,8 @@ export function buildCost(entries: BuildCostEntry[]): BuildCost {
   for (const e of entries) {
     if (e.tradeable)
       tradeableCount++
-    const id = e.tradeable && e.price ? pickIdHeadline(e.price) : null
-    const unid = e.tradeable && e.price ? pickUnidHeadline(e.price) : null
+    const id = e.tradeable && e.price ? pickId(e.price, mode) : null
+    const unid = e.tradeable && e.price ? pickUnid(e.price, mode) : null
     if (e.tradeable && id != null) {
       pricedCount++
       identifiedTotal += id * e.count

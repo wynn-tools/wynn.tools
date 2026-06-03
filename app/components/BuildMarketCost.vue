@@ -1,64 +1,11 @@
 <script setup lang="ts">
 import type { BuildCostEntry } from '~/lib/market/build-cost'
-import type { RawMarketPrice } from '~/lib/market/types'
-import { computed, ref, watch } from 'vue'
-import { useMarket } from '~/composables/useMarket'
-import { slotItemId } from '~/lib/codec/build-codec'
+import { computed } from 'vue'
+import { useBuildMarket } from '~/composables/useBuildMarket'
 import { buildCost } from '~/lib/market/build-cost'
-import { collectBuildItems } from '~/lib/market/collect-build-items'
 import { formatEmeralds } from '~/lib/market/format-emeralds'
-import { useBuildStore } from '~/stores/build'
 
-const store = useBuildStore()
-const market = useMarket()
-const priceMap = ref<Map<string, RawMarketPrice | null>>(new Map())
-
-// Gather gear (slots 0..8) + flattened powders from the store.
-const collected = computed(() => {
-  const rb = store.rawBuild
-  const ctx = store.ctx
-  if (!rb || !ctx)
-    return []
-  const gear: { label: string, name: string, crafted: boolean }[] = []
-  for (let slot = 0; slot <= 8; slot++) {
-    const entry = rb.equipment[slot]
-    if (entry?.kind === 'crafted') {
-      gear.push({ label: `Slot ${slot}`, name: `Crafted ${slot}`, crafted: true })
-      continue
-    }
-    const id = slotItemId(entry)
-    if (id == null || id >= 10000)
-      continue
-    const item = ctx.rawItemIndex.resolveId(id)
-    const name = item?.name as string | undefined
-    if (name)
-      gear.push({ label: (item?.displayName as string) ?? name, name, crafted: false })
-  }
-  const powders = rb.powders.flat()
-  return collectBuildItems({ gear, powders })
-})
-
-let fetchGen = 0
-watch(collected, async (items) => {
-  const gen = ++fetchGen
-  const tradeable = items.filter(i => i.tradeable)
-  if (tradeable.length === 0) {
-    priceMap.value = new Map()
-    return
-  }
-  try {
-    const results = await market.prices(tradeable.map(i => ({ name: i.name, tier: i.tier ?? undefined })))
-    if (gen !== fetchGen)
-      return
-    const map = new Map<string, RawMarketPrice | null>()
-    tradeable.forEach((i, idx) => map.set(`${i.name}|${i.tier ?? ''}`, results[idx] ?? null))
-    priceMap.value = map
-  }
-  catch {
-    if (gen === fetchGen)
-      priceMap.value = new Map()
-  }
-}, { immediate: true })
+const { mode, setMode, collected, priceFor } = useBuildMarket()
 
 const cost = computed(() => {
   const entries: BuildCostEntry[] = collected.value.map(i => ({
@@ -67,9 +14,9 @@ const cost = computed(() => {
     tier: i.tier,
     count: i.count,
     tradeable: i.tradeable,
-    price: i.tradeable ? priceMap.value.get(`${i.name}|${i.tier ?? ''}`) ?? null : null,
+    price: i.tradeable ? priceFor(i.name, i.tier) : null,
   }))
-  return buildCost(entries)
+  return buildCost(entries, mode.value)
 })
 </script>
 
@@ -79,7 +26,21 @@ const cost = computed(() => {
       <h3 class="cost-title">
         Market Cost
       </h3>
-      <MarketAttribution />
+      <div class="cost-controls">
+        <div class="preset" role="group" aria-label="Market price mode">
+          <button
+            v-for="m in (['min', 'avg', 'max'] as const)"
+            :key="m"
+            type="button"
+            class="preset-btn"
+            :class="{ 'preset-btn--active': mode === m }"
+            @click="setMode(m)"
+          >
+            {{ m === 'min' ? 'Min' : m === 'avg' ? 'Avg' : 'Max' }}
+          </button>
+        </div>
+        <MarketAttribution />
+      </div>
     </header>
     <div class="totals">
       <div class="total">
@@ -109,8 +70,9 @@ const cost = computed(() => {
 
 .cost-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .cost-title {
@@ -121,6 +83,49 @@ const cost = computed(() => {
   text-transform: uppercase;
   color: var(--color-muted);
   margin: 0;
+}
+
+.cost-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preset {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.preset-btn {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: transparent;
+  border: none;
+  padding: 3px 7px;
+  cursor: pointer;
+  transition:
+    color 0.12s,
+    background 0.12s;
+}
+.preset-btn:not(:last-child) {
+  border-right: 1px solid var(--color-border);
+}
+.preset-btn:hover {
+  color: var(--color-text);
+}
+.preset-btn--active {
+  color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
+}
+.preset-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
 }
 
 .totals {
