@@ -468,13 +468,17 @@ export const useBuildStore = defineStore('build', () => {
       return prevActive
     if (oldCls && prevActive.length > 0)
       atreeCacheByClass.set(oldCls, [...prevActive])
-    if (!newCls)
-      return []
-    const cached = atreeCacheByClass.get(newCls)
-    if (!cached || cached.length === 0 || !ctx.value)
+    if (!newCls || !ctx.value)
       return []
     const newTree = getSortedClassAtree(ctx.value.atreeData, newCls)
-    const sel = new Map(cached.map(id => [id, true] as [number, boolean]))
+    const rootId = newTree[0]?.ability.id
+    const cached = atreeCacheByClass.get(newCls)
+    const seedIds = cached && cached.length > 0
+      ? cached
+      : (rootId != null ? [rootId] : [])
+    if (seedIds.length === 0)
+      return []
+    const sel = new Map(seedIds.map(id => [id, true] as [number, boolean]))
     const reachable = validateAtree(newTree, sel, level).reachable
     return [...reachable]
   }
