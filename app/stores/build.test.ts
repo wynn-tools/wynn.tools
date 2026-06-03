@@ -246,6 +246,41 @@ describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — currentHash round-trip
     // totalHp should differ from the original oracle HP (most helmet swaps change HP)
     expect(store.result!.defense.totalHp).not.toBe(originalHp)
   }, 30_000)
+
+  it('changing weapon to a different class swaps atreeNodes to the new class tree and seeds its head', async () => {
+    const { createCdnClient } = await import('~/lib/data/cdn-client')
+    const client = createCdnClient('https://cdn.wynn.tools')
+    const store = useBuildStore()
+
+    await store.loadFromHash(oracleHash, client)
+    expect(store.error).toBeNull()
+
+    const originalHeadName = store.atreeNodes[0]?.ability.display_name
+    expect(originalHeadName).toBeDefined()
+
+    // Pick a weapon whose class differs from the current weapon
+    const currentSlot8 = store.rawBuild!.equipment[8]
+    const currentWeaponId = currentSlot8?.kind === 'normal' ? currentSlot8.id : null
+    expect(currentWeaponId).not.toBeNull()
+    const currentItem = store.ctx!.rawItemIndex.resolveId(currentWeaponId!)
+    const currentType = currentItem?.type as string
+
+    const weapons = store.itemsForSlot(8)
+    const altWeapon = weapons.find(w => (w.type as string) !== currentType && (w.id as number) < 10000)
+    expect(altWeapon, `expected a weapon of a different class than ${currentType}`).toBeDefined()
+
+    store.setItem(8, altWeapon!.id as number)
+
+    // After swap, atreeNodes should be the NEW class's tree, not the old one.
+    const newHeadName = store.atreeNodes[0]?.ability.display_name
+    expect(newHeadName).toBeDefined()
+    expect(newHeadName, 'atreeNodes head must change with weapon class').not.toBe(originalHeadName)
+
+    // The new head should be auto-seeded (AP >= 1, activeAtree contains the head id).
+    const newHeadId = store.atreeNodes[0]!.ability.id
+    expect(store.rawBuild!.activeAtree, 'new class root should be seeded').toContain(newHeadId)
+    expect(store.atreeValidation.apTotal).toBeGreaterThan(0)
+  }, 30_000)
 })
 
 describe.skipIf(!process.env.LIVE_CDN)('useBuildStore — powder editing (live CDN)', () => {

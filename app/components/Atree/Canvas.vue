@@ -120,6 +120,8 @@ function nodeState(node: AtreeNode): NodeState {
   return stateMap.value.get(node.ability.id) ?? 'locked'
 }
 
+const treeClassKey = computed(() => store.atreeNodes[0]?.ability.display_name ?? 'empty')
+
 const apOverCap = computed(() =>
   store.atreeValidation.apTotal > store.atreeValidation.apCap,
 )
@@ -356,6 +358,7 @@ onMounted(() => {
             :style="{ width: `${scaledWidth}px`, height: `${scaledHeight}px` }"
           >
             <div
+              :key="treeClassKey"
               class="atree-grid relative shrink-0"
               :style="{
                 width: `${gridWidth}px`,
@@ -486,6 +489,7 @@ onMounted(() => {
         <!-- Minimap overlay: only shown when the tree exceeds the viewport. -->
         <div
           v-if="overflows && miniW > 0 && miniH > 0"
+          :key="treeClassKey"
           class="atree-minimap"
           :style="{ width: `${miniW}px`, height: `${miniH}px` }"
           role="region"
