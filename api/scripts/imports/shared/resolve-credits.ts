@@ -17,7 +17,7 @@ export function makeCreditResolver(
     if (!entry)
       throw new Error(`Unknown credit '${rawCredit}' in ${source}/credits.json`)
 
-    const sentinelDiscordId = `external:${source}:${entry.handle}`
+    const sentinelDiscordId = `external:${entry.handle}`
     const db = getDb()
 
     const existing = await db.query.users.findFirst({
@@ -28,9 +28,13 @@ export function makeCreditResolver(
       return existing.id
     }
 
-    // Slug collision with an existing user (regardless of kind)
+    // Slug collision with an existing user that is NOT one of our synthetics
+    // (a non-external row holding the same lower(username))
     const slugConflict = await db.query.users.findFirst({
-      where: (u, { sql }) => sql`lower(${u.username}) = lower(${entry.handle})`,
+      where: (u, { sql, and, ne }) => and(
+        sql`lower(${u.username}) = lower(${entry.handle})`,
+        ne(u.discordId, sentinelDiscordId),
+      ),
     })
     if (slugConflict) {
       throw new Error(

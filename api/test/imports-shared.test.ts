@@ -18,7 +18,7 @@ describe('resolveCredit', () => {
     const u = await getDb().query.users.findFirst({
       where: (u, { eq }) => eq(u.id, id),
     })
-    expect(u!.discordId).toBe('external:build-db:yy7erig')
+    expect(u!.discordId).toBe('external:yy7erig')
     expect(u!.kind).toBe('person')
     expect(u!.username).toBe('yy7erig')
     expect(u!.profileVisibility).toBe('public')
@@ -29,6 +29,14 @@ describe('resolveCredit', () => {
     const id1 = await resolve('yy7erig')
     const id2 = await resolve('yy7erig')
     expect(id1).toBe(id2)
+  })
+
+  it('shares synthetic users across sources with the same handle', async () => {
+    const resolveBd = makeCreditResolver('build-db', credits)
+    const resolveSv = makeCreditResolver('sugvon', credits)
+    const idBd = await resolveBd('yy7erig')
+    const idSv = await resolveSv('yy7erig')
+    expect(idBd).toBe(idSv)
   })
 
   it('aborts on unknown credit', async () => {
