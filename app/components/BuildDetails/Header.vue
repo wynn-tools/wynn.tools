@@ -7,6 +7,7 @@ import NotesEditor from './NotesEditor.vue'
 import NotesView from './NotesView.vue'
 import TagChips from './TagChips.vue'
 import TagPicker from './TagPicker.vue'
+import TutorialPicker from './TutorialPicker.vue'
 
 const props = defineProps<{
   build: ApiBuild
@@ -20,6 +21,7 @@ defineEmits<{
   updateTags: [tags: string[]]
   updateCredits: [credits: { id: string, username: string, displayName: string, avatar: string | null }[]]
   updateNotes: [notes: string | null]
+  updateTutorial: [url: string | null]
 }>()
 
 const hasTags = computed(() => !!props.build.tags && props.build.tags.length > 0)
@@ -69,14 +71,18 @@ const visibilityLabel = computed(() => {
             @change="(t: string[]) => $emit('updateTags', t)"
           />
           <TagChips v-else-if="hasTags" :tags="build.tags" :max="6" />
+          <TutorialPicker
+            v-if="isOwner"
+            :tutorial-url="build.tutorialUrl"
+            @save="(u: string | null) => $emit('updateTutorial', u)"
+          />
           <a
-            v-if="hasTutorial"
+            v-else-if="hasTutorial"
             class="tutorial-link"
             :href="build.tutorialUrl ?? '#'"
             target="_blank"
             rel="noopener"
           >↗ Watch tutorial</a>
-          <slot name="owner-edits" />
         </div>
       </div>
 

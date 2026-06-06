@@ -155,6 +155,23 @@ async function onUpdateNotes(notes: string | null) {
   }
 }
 
+async function onUpdateTutorial(url: string | null) {
+  if (!build.value)
+    return
+  const prev = build.value.tutorialUrl
+  build.value = { ...build.value, tutorialUrl: url }
+  try {
+    const res = await api.updateBuild(build.value.id, { tutorialUrl: url })
+    if (build.value)
+      build.value = { ...build.value, tutorialUrl: res.tutorialUrl }
+  }
+  catch (err) {
+    console.error('Failed to update tutorial', err)
+    if (build.value)
+      build.value = { ...build.value, tutorialUrl: prev }
+  }
+}
+
 async function onRemoveMeCredit() {
   if (!build.value)
     return
@@ -181,6 +198,7 @@ async function onRemoveMeCredit() {
       @update-tags="onUpdateTags"
       @update-credits="onUpdateCredits"
       @update-notes="onUpdateNotes"
+      @update-tutorial="onUpdateTutorial"
     />
     <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
   </div>
