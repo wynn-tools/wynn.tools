@@ -4,7 +4,7 @@ import { createCdnClient } from '~/lib/data/cdn-client'
 import { slugify } from '~/lib/items-search/slug'
 import { getDb, schema } from '../db/client'
 import { env } from '../env'
-import { setOgCache } from '../services/og-cache'
+import { OG_CACHE_VERSION, setOgCache } from '../services/og-cache'
 import { createOgFetcher } from '../services/og-fetcher'
 
 const BATCH = 5
@@ -39,7 +39,7 @@ async function main() {
         (await getDb()
           .select({ key: schema.ogImageCache.key })
           .from(schema.ogImageCache)
-          .where(like(schema.ogImageCache.key, 'item:%'))
+          .where(like(schema.ogImageCache.key, `v${OG_CACHE_VERSION}:item:%`))
         ).map(r => r.key),
       )
 
@@ -50,7 +50,7 @@ async function main() {
   async function processItem(item: CdnItem, index: number) {
     const slug = slugify(item.displayName)
     const key = `item:${slug}`
-    if (cachedKeys.has(key)) {
+    if (cachedKeys.has(`v${OG_CACHE_VERSION}:${key}`)) {
       skipped++
       return
     }
