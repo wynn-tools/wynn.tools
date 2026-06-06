@@ -1,7 +1,7 @@
 import type { SQL } from 'drizzle-orm'
 import type { CursorData } from '../lib/pagination'
 import { zValidator } from '@hono/zod-validator'
-import { and, asc, desc, eq, exists, ilike, or, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, exists, ilike, inArray, or, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
@@ -297,6 +297,79 @@ export const builds = new Hono()
     if (!existing || existing.userId !== auth.user.id)
       throw new AppError(404, 'not_found', 'Build not found')
     await getDb().delete(schema.builds).where(eq(schema.builds.id, existing.id))
+    return c.json({ ok: true })
+  })
+  .put('/:id/credits', requireAuth, zValidator('json', z.object({
+    credits: z.array(z.object({ userId: z.string().min(1) })).max(10),
+  })), async (c) => {
+    const auth = c.get('auth')
+    const existing = await getDb().query.builds.findFirst({ where: (b, { eq }) => eq(b.id, c.req.param('id')) })
+    if (!existing || existing.userId !== auth.user.id)
+      throw new AppError(404, 'not_found', 'Build not found')
+    if (!hasScope(auth, 'builds:write'))
+      throw new AppError(403, 'forbidden', 'Missing builds:write scope')
+    const { credits } = c.req.valid('json')
+
+    const seen = new Set<string>()
+    const ordered: string[] = []
+    for (const { userId } of credits) {
+      if (seen.has(userId))
+        continue
+      if (userId === existing.userId)
+        throw new AppError(400, 'owner_not_creditable', 'Owner cannot be in credits')
+      seen.add(userId)
+      ordered.push(userId)
+    }
+
+    if (ordered.length > 0) {
+      const found = await getDb().query.users.findMany({
+        where: inArray(schema.users.id, ordered),
+        columns: { id: true },
+      })
+      if (found.length !== ordered.length)
+        throw new AppError(400, 'unknown_user', 'One or more userIds do not exist')
+    }
+
+    await getDb().transaction(async (tx) => {
+      await tx.delete(schema.buildCredits).where(eq(schema.buildCredits.buildId, existing.id))
+      if (ordered.length > 0) {
+        await tx.insert(schema.buildCredits).values(
+          ordered.map((userId, position) => ({ buildId: existing.id, userId, position })),
+        )
+      }
+    })
+
+    const rows = await getDb().query.buildCredits.findMany({
+      where: (bc, { eq }) => eq(bc.buildId, existing.id),
+      orderBy: (bc, { asc }) => [asc(bc.position)],
+      with: { user: true },
+    })
+
+    if (existing.visibility !== 'private')
+      prewarmBuildOg(existing.id)
+
+    return c.json({
+      credits: rows.map(r => ({
+        id: r.user.id,
+        username: r.user.username,
+        displayName: r.user.displayName ?? r.user.username,
+        avatar: r.user.avatar,
+      })),
+    })
+  })
+  .delete('/:id/credits/me', requireAuth, async (c) => {
+    const auth = c.get('auth')
+    const buildId = c.req.param('id')
+    const existing = await getDb().query.builds.findFirst({ where: (b, { eq }) => eq(b.id, buildId) })
+    if (!existing)
+      throw new AppError(404, 'not_found', 'Build not found')
+    if (existing.visibility === 'private' && existing.userId !== auth.user.id)
+      throw new AppError(404, 'not_found', 'Build not found')
+    const deleted = await getDb().delete(schema.buildCredits).where(and(eq(schema.buildCredits.buildId, buildId), eq(schema.buildCredits.userId, auth.user.id))).returning({ userId: schema.buildCredits.userId })
+    if (deleted.length === 0)
+      throw new AppError(404, 'not_found', 'Not credited on this build')
+    if (existing.visibility !== 'private')
+      prewarmBuildOg(existing.id)
     return c.json({ ok: true })
   })
 
