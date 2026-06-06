@@ -195,7 +195,7 @@ const setOptions = computed(() =>
           <header class="results-head">
             <span class="count">{{ data?.charms.length ?? 0 }} charms</span>
           </header>
-          <div v-if="data?.charms.length" class="results-list results-list--charms">
+          <div v-if="data?.charms.length" class="results-list">
             <CharmResultCard v-for="charm in data.charms" :key="charm.id" :charm="charm" />
           </div>
           <p v-else class="state">
@@ -338,11 +338,6 @@ const setOptions = computed(() =>
 .results-list {
   column-width: 280px;
   column-gap: 12px;
-}
-.results-list--charms {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 10px;
 }
 /* ── Slide-out full-builder panel (overlays the results) ─────────── */
 .build-overlay {
