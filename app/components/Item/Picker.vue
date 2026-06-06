@@ -466,6 +466,7 @@ async function selectSavedItem(item: ApiItemSummary) {
     padding: 10px 14px;
     font-size: 13px;
     min-height: 44px;
+    contain-intrinsic-size: auto 44px;
   }
   .picker-icon {
     width: 28px;
@@ -584,6 +585,8 @@ async function selectSavedItem(item: ApiItemSummary) {
   transition:
     background 0.08s,
     color 0.08s;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 36px;
 }
 
 .picker-icon {
