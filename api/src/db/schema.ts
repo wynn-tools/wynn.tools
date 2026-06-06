@@ -73,7 +73,10 @@ export const builds = pgTable('builds', {
   notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, t => [index('builds_user_id_idx').on(t.userId)])
+}, t => [
+  index('builds_user_id_idx').on(t.userId),
+  index('idx_builds_tags_gin').using('gin', t.tags),
+])
 
 export const craftedItems = pgTable('crafted_items', {
   id: text('id').primaryKey(),

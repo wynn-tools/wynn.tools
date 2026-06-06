@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "idx_builds_tags_gin" ON "builds" USING gin ("tags");
