@@ -11,11 +11,16 @@ export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')!
   const config = useRuntimeConfig()
 
-  let build: { buildString: string, name: string, visibility: string }
+  interface BuildResp {
+    buildString: string
+    name: string
+    visibility: string
+    tags?: string[]
+    credits?: { username: string, displayName: string }[]
+  }
+  let build: BuildResp
   try {
-    build = await $fetch<{ buildString: string, name: string, visibility: string }>(
-      `${config.public.apiBaseUrl}/v1/builds/${id}`,
-    )
+    build = await $fetch<BuildResp>(`${config.public.apiBaseUrl}/v1/builds/${id}`)
   }
   catch {
     throw createError({ statusCode: 404 })
@@ -40,7 +45,8 @@ export default defineEventHandler(async (event) => {
       : () => false,
   }))
   const result = computeBuild(raw, loaded.ctx)
-  const buildMeta = extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, build.name)
+  const credits = (build.credits ?? []).map(c => ({ username: c.username, name: c.displayName }))
+  const buildMeta = extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, build.name, credits, build.tags ?? [])
 
   const ogPath = buildOgImagePath('BuildCard', buildMeta as Record<string, unknown>, `/b/${id}`)
   const data = await $fetch<ArrayBuffer>(ogPath, { responseType: 'arrayBuffer' })
