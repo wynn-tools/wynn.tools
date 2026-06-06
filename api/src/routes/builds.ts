@@ -1,7 +1,7 @@
 import type { SQL } from 'drizzle-orm'
 import type { CursorData } from '../lib/pagination'
 import { zValidator } from '@hono/zod-validator'
-import { and, asc, desc, eq, ilike, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, exists, ilike, or, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
@@ -49,20 +49,29 @@ const buildsListQuery = z.object({
   sort: z.enum(['newest', 'oldest', 'name']).optional().default('newest'),
   class: z.enum(CLASS_VALUES).optional(),
   itemId: z.coerce.number().int().positive().optional(),
+  gameVersion: z.string().max(40).optional(),
+  creator: z.string().max(40).optional(),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).optional().default(DEFAULT_PAGE_SIZE),
 })
 
-// /mine doesn't expose class or itemId filters
-const mineListQuery = buildsListQuery.omit({ class: true, itemId: true })
+// /mine doesn't expose class, itemId, or creator filters
+const mineListQuery = buildsListQuery.omit({ class: true, itemId: true, creator: true })
+
+interface ListFilterInput {
+  q?: string
+  playerClass?: string
+  itemId?: number
+  gameVersion?: string
+  creator?: string
+}
 
 function buildFilterConditions(
-  q: string | undefined,
-  playerClass: string | undefined,
-  itemId: number | undefined,
+  input: ListFilterInput,
   sort: string,
   cursor: CursorData | null,
 ) {
+  const { q, playerClass, itemId, gameVersion, creator } = input
   const extra: SQL[] = []
   if (q)
     extra.push(ilike(schema.builds.name, `%${q}%`))
@@ -70,6 +79,20 @@ function buildFilterConditions(
     extra.push(eq(schema.builds.playerClass, playerClass))
   if (itemId != null)
     extra.push(sql`${schema.builds.itemIds} @> ARRAY[${itemId}]::integer[]`)
+  if (gameVersion)
+    extra.push(eq(schema.builds.gameVersion, gameVersion))
+  if (creator) {
+    const creditMatch = exists(
+      getDb()
+        .select({ one: sql`1` })
+        .from(schema.buildCredits)
+        .where(and(
+          eq(schema.buildCredits.buildId, schema.builds.id),
+          eq(schema.buildCredits.userId, creator),
+        )),
+    )
+    extra.push(or(eq(schema.builds.userId, creator), creditMatch)!)
+  }
   if (cursor) {
     if ('n' in cursor) {
       extra.push(sql`(${schema.builds.name}, ${schema.builds.id}) > (${cursor.n}, ${cursor.id})`)
@@ -118,9 +141,9 @@ async function resolveViewerId(cookieHeader?: string, authHeader?: string): Prom
 
 export const builds = new Hono()
   .get('/', zValidator('query', buildsListQuery), async (c) => {
-    const { q, sort, class: playerClass, itemId, cursor: rawCursor, limit } = c.req.valid('query')
+    const { q, sort, class: playerClass, itemId, gameVersion, creator, cursor: rawCursor, limit } = c.req.valid('query')
     const cursor = decodeCursor(rawCursor)
-    const filterConds = buildFilterConditions(q, playerClass, itemId, sort, cursor)
+    const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion, creator }, sort, cursor)
     const rows = await getDb().query.builds.findMany({
       with: { user: true },
       where: and(eq(schema.builds.visibility, 'public'), ...filterConds),
@@ -164,9 +187,9 @@ export const builds = new Hono()
     const auth = c.get('auth')
     if (!hasScope(auth, 'builds:read'))
       throw new AppError(403, 'forbidden', 'Missing builds:read scope')
-    const { q, sort, cursor: rawCursor, limit } = c.req.valid('query')
+    const { q, sort, gameVersion, cursor: rawCursor, limit } = c.req.valid('query')
     const cursor = decodeCursor(rawCursor)
-    const filterConds = buildFilterConditions(q, undefined, undefined, sort, cursor)
+    const filterConds = buildFilterConditions({ q, gameVersion }, sort, cursor)
     const rows = await getDb().query.builds.findMany({
       where: and(eq(schema.builds.userId, auth.user.id), ...filterConds),
       orderBy: buildOrderBy(sort),
@@ -239,9 +262,9 @@ export const builds = new Hono()
 
 export const userBuilds = new Hono().get('/:id/builds', zValidator('query', buildsListQuery), async (c) => {
   const userId = c.req.param('id')
-  const { q, sort, class: playerClass, itemId, cursor: rawCursor, limit } = c.req.valid('query')
+  const { q, sort, class: playerClass, itemId, gameVersion, cursor: rawCursor, limit } = c.req.valid('query')
   const cursor = decodeCursor(rawCursor)
-  const filterConds = buildFilterConditions(q, playerClass, itemId, sort, cursor)
+  const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion }, sort, cursor)
   const rows = await getDb().query.builds.findMany({
     with: { user: true },
     where: and(eq(schema.builds.userId, userId), eq(schema.builds.visibility, 'public'), ...filterConds),

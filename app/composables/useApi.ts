@@ -98,6 +98,16 @@ export interface BuildListFilters {
   sort?: 'newest' | 'oldest' | 'name'
   class?: 'Assassin' | 'Warrior' | 'Mage' | 'Archer' | 'Shaman'
   itemId?: number
+  gameVersion?: string
+  /** User id; matches builds where the user is owner OR a credited co-author. */
+  creator?: string
+}
+
+export interface ApiUserSearchResult {
+  id: string
+  username: string
+  name: string
+  avatar: string | null
 }
 
 export interface ItemListFilters {
@@ -178,6 +188,8 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
 
     // Profile
     getProfile: (id: string) => request<ApiProfile | ApiProfilePrivate>(`/v1/users/${id}`),
+    searchUsers: (q: string) =>
+      request<{ data: ApiUserSearchResult[] }>(`/v1/users/search?q=${encodeURIComponent(q)}`),
     updateProfile: (body: { displayName?: string | null, bio?: string | null, profileVisibility?: 'public' | 'private' }) =>
       request<{ displayName: string | null, bio: string | null, profileVisibility: 'public' | 'private' }>('/v1/me/profile', jsonInit('PATCH', body)),
     setDiscordPrompt: (action: 'declined') =>
