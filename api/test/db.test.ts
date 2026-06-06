@@ -57,6 +57,13 @@ describe('db schema', () => {
       kind: 'community',
     }).returning()
     expect(user.kind).toBe('community')
+
+    const [defaultUser] = await db.insert(schema.users).values({
+      id: newResourceId(),
+      discordId: '1000',
+      username: 'default_user',
+    }).returning()
+    expect(defaultUser.kind).toBe('real')
   })
 
   it('builds has source, tags, tutorial_url, notes columns', async () => {
@@ -120,7 +127,9 @@ describe('db schema', () => {
     const credit = await db.query.buildCredits.findFirst({
       where: (c, { eq }) => eq(c.buildId, build.id),
     })
-    expect(credit?.userId).toBe(user.id)
-    expect(credit?.position).toBe(0)
+    expect(credit).toBeDefined()
+    expect(credit!.buildId).toBe(build.id)
+    expect(credit!.userId).toBe(user.id)
+    expect(credit!.position).toBe(0)
   })
 })
