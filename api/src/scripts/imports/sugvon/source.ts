@@ -1,4 +1,5 @@
-> **Welcome to The Ultimate Build Guide**  
+// Generated from source.txt — keep in sync if updated.
+export const SUGVON_SOURCE = String.raw`> **Welcome to The Ultimate Build Guide**  
 > **By SugVon**  
 >   
 > 
@@ -1098,3 +1099,4 @@
 > *   One more thing, I recently updated the build guide to Fruma builds, while deleting every build that was made prior to fruma, but there was a ton of work put in for everything done back then too, so if you are looking for pre fruma builds, you can find them [here](https://docs.google.com/document/d/1K1wkm5eY6Cc81V6IFEESkreDSWz3nt1kue3FdXGHz-k/edit?usp=sharing)
 > 
 > **Thank you for checking out this thread, have a nice day!**
+`

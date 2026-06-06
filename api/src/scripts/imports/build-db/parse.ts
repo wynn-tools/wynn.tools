@@ -1,9 +1,6 @@
 import type { CreditsMap, NormalizedBuildImport } from '../shared/types.js'
-import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const here = dirname(fileURLToPath(import.meta.url))
+import creditsData from './credits.json' with { type: 'json' }
+import sourceData from './source.json' with { type: 'json' }
 
 interface BuildDbEntry {
   tag: string
@@ -19,8 +16,7 @@ interface BuildDb {
 }
 
 export function parseBuildDb(): NormalizedBuildImport[] {
-  const raw = readFileSync(resolve(here, 'source.json'), 'utf-8')
-  const file = JSON.parse(raw) as BuildDb
+  const file = sourceData as BuildDb
   const results: NormalizedBuildImport[] = []
 
   for (const [key, entry] of Object.entries(file.Builds)) {
@@ -52,8 +48,7 @@ export function parseBuildDb(): NormalizedBuildImport[] {
 }
 
 export function loadCredits(): CreditsMap {
-  const raw = readFileSync(resolve(here, 'credits.json'), 'utf-8')
-  return JSON.parse(raw) as CreditsMap
+  return creditsData as CreditsMap
 }
 
 export function validateCredits(

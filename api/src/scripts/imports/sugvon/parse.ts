@@ -1,9 +1,6 @@
 import type { CreditsMap, NormalizedBuildImport } from '../shared/types.js'
-import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const here = dirname(fileURLToPath(import.meta.url))
+import creditsData from './credits.json' with { type: 'json' }
+import { SUGVON_SOURCE } from './source'
 
 // Strip the leading "> " blockquote prefix (may have multiple spaces / blank)
 function stripQuote(line: string): string {
@@ -97,8 +94,7 @@ function isVariantCreditLine(line: string): boolean {
 }
 
 export function parseSugvon(): NormalizedBuildImport[] {
-  const raw = readFileSync(resolve(here, 'source.txt'), 'utf-8')
-  const lines = raw.split('\n')
+  const lines = SUGVON_SOURCE.split('\n')
 
   const results: NormalizedBuildImport[] = []
 
@@ -308,8 +304,7 @@ export function parseSugvon(): NormalizedBuildImport[] {
 }
 
 export function loadCredits(): CreditsMap {
-  const raw = readFileSync(resolve(here, 'credits.json'), 'utf-8')
-  return JSON.parse(raw) as CreditsMap
+  return creditsData as CreditsMap
 }
 
 export function validateCredits(
