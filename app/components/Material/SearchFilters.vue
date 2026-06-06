@@ -17,10 +17,12 @@ function toggleStr(list: string[], value: string): string[] {
 
 <template>
   <div class="filters">
-    <input
-      :value="criteria.name" class="f-input" type="text" placeholder="Material name…"
-      @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
-    >
+    <Teleport defer to="#filters-name-portal">
+      <input
+        :value="criteria.name" class="f-input" type="text" placeholder="Material name…"
+        @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
+      >
+    </Teleport>
     <fieldset class="f-group">
       <legend>Gathering</legend>
       <button

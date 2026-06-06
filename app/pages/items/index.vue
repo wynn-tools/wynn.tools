@@ -299,10 +299,15 @@ const setOptions = computed(() =>
 /* `:deep()` because the `<aside class="sidebar">` element is rendered by the
    FiltersSidebar child component, so page-scoped selectors don't reach it
    directly. Without this the global `position: sticky; top: 76px` wins and
-   the sidebar refuses to scroll. */
+   the sidebar refuses to scroll. The shell fills the column; the aside inside
+   it flexes to fill the remaining height below the always-visible name input. */
+.layout :deep(.filters-shell) {
+  height: 100%;
+  min-height: 0;
+}
 .layout :deep(.sidebar) {
   position: static;
-  height: 100%;
+  flex: 1;
   min-height: 0;
   overflow-y: auto;
   padding-right: 8px;

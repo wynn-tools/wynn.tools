@@ -33,10 +33,12 @@ function toggleStr(list: string[], value: string): string[] {
 
 <template>
   <div class="filters">
-    <input
-      :value="criteria.name" class="f-input" type="text" placeholder="Ingredient name…"
-      @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
-    >
+    <Teleport defer to="#filters-name-portal">
+      <input
+        :value="criteria.name" class="f-input" type="text" placeholder="Ingredient name…"
+        @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
+      >
+    </Teleport>
     <input
       :value="criteria.mob" class="f-input" type="text" placeholder="Mob name…"
       @input="criteria = { ...criteria, mob: ($event.target as HTMLInputElement).value }"
