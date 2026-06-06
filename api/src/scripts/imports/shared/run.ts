@@ -11,20 +11,21 @@ export async function runImport(opts: {
   credits: CreditsMap
 }) {
   const db = getDb()
-  const existing = await db.execute(
-    sql`SELECT 1 FROM builds WHERE source = ${opts.source} LIMIT 1`,
+  const existingRows = await db.execute<{ build_string: string }>(
+    sql`SELECT build_string FROM builds WHERE source = ${opts.source}`,
   )
-  if (existing.rows.length > 0) {
-    throw new Error(
-      `Refusing to re-run import: builds with source='${opts.source}' already exist`,
-    )
-  }
+  const alreadyImported = new Set(existingRows.rows.map(r => r.build_string))
 
   const resolve = makeCreditResolver(opts.source, opts.credits)
   let inserted = 0
   let skipped = 0
+  let existing = 0
 
   for (const entry of opts.entries) {
+    if (alreadyImported.has(entry.buildString)) {
+      existing++
+      continue
+    }
     const version = await detectGameVersion(entry.buildString)
     if (!version) {
       console.warn(`[skip] ${entry.name}: could not detect game version`)
@@ -60,5 +61,5 @@ export async function runImport(opts: {
     }
     inserted++
   }
-  console.log(`Imported ${inserted} builds (skipped ${skipped})`)
+  console.log(`Imported ${inserted} builds (skipped ${skipped}, already present ${existing})`)
 }
