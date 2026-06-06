@@ -246,6 +246,7 @@ function clearAllFilters() {
               :game-version="b.gameVersion"
               :owner-id="b.owner?.id"
               :owner-name="b.owner?.name"
+              :owner-username="b.owner?.username"
               :show-owner="true"
             />
           </div>

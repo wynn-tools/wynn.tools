@@ -13,6 +13,7 @@ export interface ApiUser {
 
 export interface ApiOwner {
   id: string
+  username: string
   name: string
   discordId: string
   avatar: string | null
@@ -63,10 +64,15 @@ export interface ApiItemSummary {
 
 export interface ApiProfile {
   id: string
+  username: string
   name: string
   bio: string | null
   avatar: string | null
   discordId: string
+  kind: 'real' | 'person' | 'community' | 'anonymous'
+  profileUrl: string | null
+  canonicalSlug: string
+  resolvedVia: 'username' | 'id'
 }
 
 export interface ApiProfilePrivate {

@@ -13,6 +13,7 @@ defineProps<{
   gameVersion: string
   ownerId?: string
   ownerName?: string
+  ownerUsername?: string
   showOwner?: boolean
 }>()
 
@@ -46,7 +47,7 @@ async function onHoverOpen(open: boolean, id: string) {
             <span class="card-version">{{ gameVersion }}</span>
             <span v-if="ownerName && ownerId" class="card-owner-wrap">
               by
-              <NuxtLink :to="`/u/${ownerId}`" class="card-owner" @click.stop>{{ ownerName }}</NuxtLink>
+              <NuxtLink :to="`/u/${ownerUsername ?? ownerId}`" class="card-owner" @click.stop>{{ ownerName }}</NuxtLink>
             </span>
             <span v-else-if="showOwner" class="card-owner-anon">Anonymous</span>
           </span>

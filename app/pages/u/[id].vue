@@ -4,13 +4,13 @@ import { useApi } from '~/composables/useApi'
 
 const route = useRoute()
 const api = useApi()
-const userId = computed(() => String(route.params.id))
+const slug = computed(() => String(route.params.id))
 
 // Profile
 const { data: profileData, error: profileError } = await useAsyncData<ApiProfile | ApiProfilePrivate>(
-  () => `profile-${userId.value}`,
-  () => api.getProfile(userId.value),
-  { watch: [userId] },
+  () => `profile-${slug.value}`,
+  () => api.getProfile(slug.value),
+  { watch: [slug] },
 )
 
 if (profileError.value) {
@@ -19,9 +19,18 @@ if (profileError.value) {
 }
 
 const isPrivate = computed(() => !!profileData.value && 'private' in profileData.value)
-const profile = computed(() =>
+const fullProfile = computed(() =>
   !isPrivate.value && profileData.value ? (profileData.value as ApiProfile) : null,
 )
+const profile = fullProfile
+
+// Redirect legacy nanoid URLs to canonical slug
+if (fullProfile.value && fullProfile.value.resolvedVia === 'id' && fullProfile.value.canonicalSlug !== slug.value) {
+  await navigateTo(`/u/${fullProfile.value.canonicalSlug}`, { redirectCode: 301, replace: true })
+}
+
+// userId for API calls — use the resolved profile id when available
+const userId = computed(() => fullProfile.value?.id ?? slug.value)
 
 function avatarUrl(discordId: string, avatar: string) {
   return `https://cdn.discordapp.com/avatars/${discordId}/${avatar}.webp?size=80`
@@ -117,6 +126,13 @@ if (!isPrivate.value) {
           <p v-if="profile.bio" class="profile-bio">
             {{ profile.bio }}
           </p>
+          <a
+            v-if="profile.profileUrl"
+            :href="profile.profileUrl"
+            class="profile-url"
+            target="_blank"
+            rel="noopener noreferrer"
+          >{{ profile.profileUrl }}</a>
         </div>
       </header>
 
@@ -154,6 +170,7 @@ if (!isPrivate.value) {
             :game-version="b.gameVersion"
             :owner-id="b.owner?.id"
             :owner-name="b.owner?.name"
+            :owner-username="b.owner?.username"
           />
         </div>
         <div v-if="buildsNextCursor" class="load-more">
@@ -246,6 +263,14 @@ if (!isPrivate.value) {
   font-size: 13px;
   color: var(--color-muted);
   margin: 0;
+}
+.profile-url {
+  font-size: 12px;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+.profile-url:hover {
+  color: var(--color-accent);
 }
 
 .card-grid {
