@@ -386,9 +386,18 @@ export const userBuilds = new Hono().get('/:id/builds', zValidator('query', buil
   const { q, sort, class: playerClass, itemId, gameVersion, tag, cursor: rawCursor, limit } = c.req.valid('query')
   const cursor = decodeCursor(rawCursor)
   const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion, tags: tag }, sort, cursor)
+  const creditMatch = exists(
+    getDb()
+      .select({ one: sql`1` })
+      .from(schema.buildCredits)
+      .where(and(
+        eq(schema.buildCredits.buildId, schema.builds.id),
+        eq(schema.buildCredits.userId, userId),
+      )),
+  )
   const rows = await getDb().query.builds.findMany({
     with: { user: true },
-    where: and(eq(schema.builds.userId, userId), eq(schema.builds.visibility, 'public'), ...filterConds),
+    where: and(or(eq(schema.builds.userId, userId), creditMatch), eq(schema.builds.visibility, 'public'), ...filterConds),
     orderBy: buildOrderBy(sort),
     limit: limit + 1,
   })
@@ -403,6 +412,7 @@ export const userBuilds = new Hono().get('/:id/builds', zValidator('query', buil
       owner: resolveOwner(r.user),
       tags: r.tags ?? [],
       hasTutorial: !!r.tutorialUrl,
+      isCredit: r.userId !== userId,
     })),
     nextCursor: next,
   })

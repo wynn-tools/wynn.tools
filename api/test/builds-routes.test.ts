@@ -197,6 +197,24 @@ describe('builds routes (no network)', () => {
     expect((await app()(`/v1/builds/${b.id}`)).status).toBe(404)
   })
 
+  it('includes credit-only builds with isCredit=true on /v1/users/:id/builds', async () => {
+    const { user: owner } = await session()
+    const [credUser] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'cu', username: 'creduser' }).returning()
+    const [b1] = await getDb().insert(schema.builds).values({
+      id: 'cb1',
+      userId: owner.id,
+      name: 'OwnedByOwner',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'public',
+    }).returning()
+    await getDb().insert(schema.buildCredits).values({ buildId: b1.id, userId: credUser.id, position: 0 })
+    const res = await app()(`/v1/users/${credUser.id}/builds`)
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].isCredit).toBe(true)
+  })
+
   it('lists a user\'s public builds without decoding', async () => {
     const { user } = await session()
     await getDb().insert(schema.builds).values({

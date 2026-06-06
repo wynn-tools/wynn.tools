@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ApiBuildSummary, ApiItemSummary, ApiProfile, ApiProfilePrivate } from '~/composables/useApi'
 import { useApi } from '~/composables/useApi'
+import { useAuthStore } from '~/stores/auth'
 
 const route = useRoute()
 const api = useApi()
+const auth = useAuthStore()
 const slug = computed(() => String(route.params.id))
 
 // Profile
@@ -70,6 +72,25 @@ async function loadBuilds(cursor?: string) {
   }
   finally {
     buildsLoading.value = false
+  }
+}
+
+const isViewingOwnProfile = computed(() => !!auth.user && !!fullProfile.value && auth.user.id === fullProfile.value.id)
+const openKebab = ref<string | null>(null)
+
+async function removeMyCredit(buildId: string) {
+  // eslint-disable-next-line no-alert
+  if (typeof window !== 'undefined' && !window.confirm('Remove yourself from this build\'s credits?'))
+    return
+  try {
+    await api.removeMyCreditFromBuild(buildId)
+    builds.value = builds.value.filter(b => !(b.id === buildId && b.isCredit))
+  }
+  catch (err) {
+    console.error('Failed to remove credit', err)
+  }
+  finally {
+    openKebab.value = null
   }
 }
 
@@ -182,18 +203,29 @@ if (!isPrivate.value) {
           No public builds.
         </div>
         <div v-else class="card-grid">
-          <BuildCard
-            v-for="b in builds"
-            :id="b.id"
-            :key="b.id"
-            :name="b.name"
-            :game-version="b.gameVersion"
-            :owner-id="b.owner?.id"
-            :owner-name="b.owner?.name"
-            :owner-username="b.owner?.username"
-            :tags="b.tags"
-            :has-tutorial="b.hasTutorial"
-          />
+          <div v-for="b in builds" :key="b.id" class="card-wrap">
+            <BuildCard
+              :id="b.id"
+              :name="b.name"
+              :game-version="b.gameVersion"
+              :owner-id="b.owner?.id"
+              :owner-name="b.owner?.name"
+              :owner-username="b.owner?.username"
+              :tags="b.tags"
+              :has-tutorial="b.hasTutorial"
+            />
+            <span v-if="b.isCredit" class="credited-badge">Credited</span>
+            <div v-if="b.isCredit && isViewingOwnProfile" class="kebab-wrap">
+              <button type="button" class="kebab-btn" aria-label="Build options" @click="openKebab = openKebab === b.id ? null : b.id">
+                ⋯
+              </button>
+              <div v-if="openKebab === b.id" class="kebab-menu">
+                <button type="button" class="kebab-item" @click="removeMyCredit(b.id)">
+                  Remove me from this credit
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         <div v-if="buildsNextCursor" class="load-more">
           <button
@@ -240,6 +272,68 @@ if (!isPrivate.value) {
 </template>
 
 <style scoped>
+.card-wrap {
+  position: relative;
+}
+.credited-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--color-surface-hi);
+  color: var(--color-accent);
+  border: 1px solid color-mix(in oklch, var(--color-accent) 30%, var(--color-border));
+  pointer-events: none;
+}
+.kebab-wrap {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}
+.kebab-btn {
+  background: var(--color-surface-hi);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 2px 8px;
+  font-size: 14px;
+  line-height: 1;
+}
+.kebab-btn:hover {
+  color: var(--color-text);
+}
+.kebab-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 4px);
+  background: var(--color-surface-hi);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 4px;
+  z-index: 10;
+  white-space: nowrap;
+}
+.kebab-item {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+}
+.kebab-item:hover {
+  background: var(--color-surface);
+}
 .profile-page {
   display: flex;
   flex-direction: column;
