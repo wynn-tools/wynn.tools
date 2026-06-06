@@ -25,11 +25,11 @@ function onRemoveMe() {
 <template>
   <span v-if="owner" class="byline">
     By
-    <NuxtLink :to="`/u/${owner.username}`" class="byline-owner">@{{ owner.username }}</NuxtLink>
+    <NuxtLink :to="`/u/${owner.username}`" class="byline-owner">{{ owner.name }}</NuxtLink>
     <template v-if="credits.length > 0">
       with
       <template v-for="(c, i) in visible" :key="c.id">
-        <NuxtLink :to="`/u/${c.username}`" class="byline-credit">@{{ c.username }}</NuxtLink>
+        <NuxtLink :to="`/u/${c.username}`" class="byline-credit">{{ c.displayName }}</NuxtLink>
         <button
           v-if="viewerId && viewerId === c.id && owner.id !== c.id"
           type="button"

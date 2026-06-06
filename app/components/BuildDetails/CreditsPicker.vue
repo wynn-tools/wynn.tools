@@ -91,7 +91,6 @@ function moveDown(i: number) {
             <button type="button" class="result-btn" @click="add(u)">
               <img v-if="u.avatar" :src="u.avatar" alt="" class="avatar">
               <span>{{ u.name }}</span>
-              <span class="result-user">@{{ u.username }}</span>
             </button>
           </li>
         </ul>
@@ -103,7 +102,6 @@ function moveDown(i: number) {
           <li v-for="(c, i) in credits" :key="c.id" class="current-row">
             <img v-if="c.avatar" :src="c.avatar" alt="" class="avatar">
             <span class="current-name">{{ c.displayName }}</span>
-            <span class="current-user">@{{ c.username }}</span>
             <span class="row-actions">
               <button type="button" class="row-btn" :disabled="i === 0" aria-label="Move up" @click="moveUp(i)">↑</button>
               <button type="button" class="row-btn" :disabled="i === credits.length - 1" aria-label="Move down" @click="moveDown(i)">↓</button>

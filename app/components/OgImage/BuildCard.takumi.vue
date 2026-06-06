@@ -59,7 +59,7 @@ const props = withDefaults(
 )
 
 const bylineText = computed(() => {
-  const list = props.credits.slice(0, 3).map(c => `@${c.username}`).join(', ')
+  const list = props.credits.slice(0, 3).map(c => c.name).join(', ')
   const overflow = props.credits.length > 3 ? `, +${props.credits.length - 3}` : ''
   return list ? `with ${list}${overflow}` : ''
 })

@@ -392,7 +392,6 @@ function clearAllFilters() {
                   >
                   <span v-else class="item-suggestion-icon item-suggestion-icon--empty" aria-hidden="true" />
                   <span class="creator-name">{{ u.name }}</span>
-                  <span class="creator-handle">@{{ u.username }}</span>
                 </li>
               </ul>
               <ul
