@@ -283,6 +283,38 @@ describe('builds routes (no network)', () => {
     expect(body2.nextCursor).toBeNull()
   })
 
+  it('filters by tag with ?tag=dps&tag=raid (AND-semantics)', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values([
+      { id: 't1', userId: user.id, name: 'Both', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', tags: ['dps', 'raid', 'tank'] },
+      { id: 't2', userId: user.id, name: 'OnlyDps', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', tags: ['dps'] },
+      { id: 't3', userId: user.id, name: 'OnlyRaid', buildString: ORACLE_HASH, gameVersion: '2.2', visibility: 'public', tags: ['raid'] },
+    ])
+    const res = await app()('/v1/builds?tag=dps&tag=raid')
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.data).toHaveLength(1)
+    expect(body.data[0].name).toBe('Both')
+  })
+
+  it('card payload includes tags and hasTutorial', async () => {
+    const { user } = await session()
+    await getDb().insert(schema.builds).values({
+      id: 'card1',
+      userId: user.id,
+      name: 'Card',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'public',
+      tags: ['dps'],
+      tutorialUrl: 'https://www.youtube.com/watch?v=abcdefghijk',
+    })
+    const res = await app()('/v1/builds')
+    const body = await res.json()
+    expect(body.data[0].tags).toEqual(['dps'])
+    expect(body.data[0].hasTutorial).toBe(true)
+  })
+
   it('composes q and class filters', async () => {
     const { user } = await session()
     await getDb().insert(schema.builds).values([

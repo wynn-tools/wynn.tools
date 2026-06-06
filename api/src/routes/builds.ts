@@ -56,6 +56,7 @@ const buildsListQuery = z.object({
   itemId: z.coerce.number().int().positive().optional(),
   gameVersion: z.string().max(40).optional(),
   creator: z.string().max(40).optional(),
+  tag: z.union([z.string(), z.array(z.string())]).optional().transform(v => Array.isArray(v) ? v.slice(0, 8) : v ? [v] : []),
   cursor: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(MAX_PAGE_SIZE).optional().default(DEFAULT_PAGE_SIZE),
 })
@@ -69,6 +70,7 @@ interface ListFilterInput {
   itemId?: number
   gameVersion?: string
   creator?: string
+  tags?: string[]
 }
 
 function buildFilterConditions(
@@ -76,7 +78,7 @@ function buildFilterConditions(
   sort: string,
   cursor: CursorData | null,
 ) {
-  const { q, playerClass, itemId, gameVersion, creator } = input
+  const { q, playerClass, itemId, gameVersion, creator, tags } = input
   const extra: SQL[] = []
   if (q)
     extra.push(ilike(schema.builds.name, `%${q}%`))
@@ -86,6 +88,10 @@ function buildFilterConditions(
     extra.push(sql`${schema.builds.itemIds} @> ARRAY[${itemId}]::integer[]`)
   if (gameVersion)
     extra.push(eq(schema.builds.gameVersion, gameVersion))
+  if (tags && tags.length > 0) {
+    const tagList = sql.join(tags.map(t => sql`${t}`), sql`, `)
+    extra.push(sql`${schema.builds.tags} @> ARRAY[${tagList}]::text[]`)
+  }
   if (creator) {
     const creditMatch = exists(
       getDb()
@@ -146,9 +152,9 @@ async function resolveViewerId(cookieHeader?: string, authHeader?: string): Prom
 
 export const builds = new Hono()
   .get('/', zValidator('query', buildsListQuery), async (c) => {
-    const { q, sort, class: playerClass, itemId, gameVersion, creator, cursor: rawCursor, limit } = c.req.valid('query')
+    const { q, sort, class: playerClass, itemId, gameVersion, creator, tag, cursor: rawCursor, limit } = c.req.valid('query')
     const cursor = decodeCursor(rawCursor)
-    const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion, creator }, sort, cursor)
+    const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion, creator, tags: tag }, sort, cursor)
     const rows = await getDb().query.builds.findMany({
       with: { user: true },
       where: and(eq(schema.builds.visibility, 'public'), ...filterConds),
@@ -164,6 +170,8 @@ export const builds = new Hono()
         name: r.name,
         gameVersion: r.gameVersion,
         owner: resolveOwner(r.user),
+        tags: r.tags ?? [],
+        hasTutorial: !!r.tutorialUrl,
       })),
       nextCursor: next,
     })
@@ -192,9 +200,9 @@ export const builds = new Hono()
     const auth = c.get('auth')
     if (!hasScope(auth, 'builds:read'))
       throw new AppError(403, 'forbidden', 'Missing builds:read scope')
-    const { q, sort, gameVersion, cursor: rawCursor, limit } = c.req.valid('query')
+    const { q, sort, gameVersion, tag, cursor: rawCursor, limit } = c.req.valid('query')
     const cursor = decodeCursor(rawCursor)
-    const filterConds = buildFilterConditions({ q, gameVersion }, sort, cursor)
+    const filterConds = buildFilterConditions({ q, gameVersion, tags: tag }, sort, cursor)
     const rows = await getDb().query.builds.findMany({
       where: and(eq(schema.builds.userId, auth.user.id), ...filterConds),
       orderBy: buildOrderBy(sort),
@@ -203,7 +211,7 @@ export const builds = new Hono()
     const hasMore = rows.length > limit
     const page = rows.slice(0, limit)
     const next = hasMore ? buildNextCursor(sort, page[page.length - 1]) : null
-    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion })), nextCursor: next })
+    return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion, tags: r.tags ?? [], hasTutorial: !!r.tutorialUrl })), nextCursor: next })
   })
   .get('/:id', async (c) => {
     const id = c.req.param('id')
@@ -375,9 +383,9 @@ export const builds = new Hono()
 
 export const userBuilds = new Hono().get('/:id/builds', zValidator('query', buildsListQuery), async (c) => {
   const userId = c.req.param('id')
-  const { q, sort, class: playerClass, itemId, gameVersion, cursor: rawCursor, limit } = c.req.valid('query')
+  const { q, sort, class: playerClass, itemId, gameVersion, tag, cursor: rawCursor, limit } = c.req.valid('query')
   const cursor = decodeCursor(rawCursor)
-  const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion }, sort, cursor)
+  const filterConds = buildFilterConditions({ q, playerClass, itemId, gameVersion, tags: tag }, sort, cursor)
   const rows = await getDb().query.builds.findMany({
     with: { user: true },
     where: and(eq(schema.builds.userId, userId), eq(schema.builds.visibility, 'public'), ...filterConds),
@@ -393,6 +401,8 @@ export const userBuilds = new Hono().get('/:id/builds', zValidator('query', buil
       name: r.name,
       gameVersion: r.gameVersion,
       owner: resolveOwner(r.user),
+      tags: r.tags ?? [],
+      hasTutorial: !!r.tutorialUrl,
     })),
     nextCursor: next,
   })
