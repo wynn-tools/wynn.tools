@@ -213,6 +213,11 @@ export const builds = new Hono()
     }
 
     const ownerRow = await getDb().query.users.findFirst({ where: (u, { eq }) => eq(u.id, build.userId) })
+    const creditRows = await getDb().query.buildCredits.findMany({
+      where: (bc, { eq }) => eq(bc.buildId, build.id),
+      orderBy: (bc, { asc }) => [asc(bc.position)],
+      with: { user: true },
+    })
     const { decoded, gameVersion, playerClass, level, equipNames } = await decodeBuild(build.buildString)
     return c.json({
       id: build.id,
@@ -225,6 +230,15 @@ export const builds = new Hono()
       equipNames,
       buildString: build.buildString,
       decoded,
+      tags: build.tags ?? [],
+      notes: build.notes,
+      tutorialUrl: build.tutorialUrl,
+      credits: creditRows.map(r => ({
+        id: r.user.id,
+        username: r.user.username,
+        displayName: r.user.displayName ?? r.user.username,
+        avatar: r.user.avatar,
+      })),
       createdAt: build.createdAt,
       updatedAt: build.updatedAt,
     })

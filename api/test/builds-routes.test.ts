@@ -231,4 +231,53 @@ describe.skipIf(!process.env.LIVE_CDN)('builds routes (live CDN)', () => {
     expect((await app()(`/v1/builds/${id}`)).status).toBe(404)
     expect((await app()(`/v1/builds/${id}`, { headers: { cookie } })).status).toBe(200)
   }, 60_000)
+
+  it('returns tags/notes/tutorialUrl + credits ordered by position', async () => {
+    const { user } = await session()
+    const [credA] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'a', username: 'alice', displayName: 'Alice', avatar: 'avA' }).returning()
+    const [credB] = await getDb().insert(schema.users).values({ id: newResourceId(), discordId: 'b', username: 'bob', displayName: null, avatar: null }).returning()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'meta1',
+      userId: user.id,
+      name: 'Meta',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2.0.31',
+      visibility: 'public',
+      tags: ['dps', 'raid'],
+      notes: 'Hello',
+      tutorialUrl: 'https://www.youtube.com/watch?v=abcdefghijk',
+    }).returning()
+    await getDb().insert(schema.buildCredits).values([
+      { buildId: b.id, userId: credB.id, position: 1 },
+      { buildId: b.id, userId: credA.id, position: 0 },
+    ])
+    const res = await app()(`/v1/builds/${b.id}`)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.tags).toEqual(['dps', 'raid'])
+    expect(body.notes).toBe('Hello')
+    expect(body.tutorialUrl).toBe('https://www.youtube.com/watch?v=abcdefghijk')
+    expect(body.credits).toHaveLength(2)
+    expect(body.credits[0]).toMatchObject({ id: credA.id, username: 'alice', displayName: 'Alice', avatar: 'avA' })
+    expect(body.credits[1]).toMatchObject({ id: credB.id, username: 'bob', displayName: 'bob', avatar: null })
+  }, 60_000)
+
+  it('returns empty credits array and null notes/tutorialUrl when unset', async () => {
+    const { user } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'meta2',
+      userId: user.id,
+      name: 'NoMeta',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2.0.31',
+      visibility: 'public',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.tags).toEqual([])
+    expect(body.notes).toBeNull()
+    expect(body.tutorialUrl).toBeNull()
+    expect(body.credits).toEqual([])
+  }, 60_000)
 })
