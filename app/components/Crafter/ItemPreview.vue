@@ -2,7 +2,7 @@
 import type { CraftedItem, IdRange } from '~/lib/crafter/types'
 import { computed } from 'vue'
 import { humanizeField, isInverted } from '~/lib/data/identifications'
-import { attributeUrl, frameUrl, miscUrl, spriteUrl } from '~/lib/items/icon'
+import { attributeUrl, emblemUrl, frameUrl, miscUrl, spriteUrl } from '~/lib/items/icon'
 import {
   attackSpeedLabel,
   ID_BAD_COLOR,
@@ -79,6 +79,21 @@ const isArmor = computed(() => crafted.value?.category === 'armor')
 const isConsumable = computed(() => crafted.value?.category === 'consumable')
 
 const icon = computed(() => crafted.value ? spriteUrl(crafted.value.type) : null)
+
+// Match in-game tooltip emblem language: shield for armor, hexagon for potions,
+// sticker for accessories, square for everything else (weapons, scrolls, food).
+const emblem = computed(() => {
+  const c = crafted.value
+  if (!c)
+    return null
+  if (c.category === 'armor')
+    return emblemUrl('shield')
+  if (c.category === 'accessory')
+    return emblemUrl('sticker')
+  if (c.type === 'potion')
+    return emblemUrl('hexagon')
+  return emblemUrl('square')
+})
 
 interface DamageLine { element: string, text: string }
 const damageLines = computed<DamageLine[]>(() => {
@@ -211,6 +226,7 @@ function handleEquipClick() {
       <!-- Header -->
       <div class="tt-header">
         <div class="tt-emblemwrap">
+          <img v-if="emblem" :src="emblem" class="tt-emblem" alt="" aria-hidden="true">
           <img v-if="icon" :src="icon" class="tt-sprite" alt="" aria-hidden="true">
         </div>
         <div class="tt-headtext">
@@ -367,6 +383,14 @@ function handleEquipClick() {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.tt-emblem {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  transform: scale(1.2);
 }
 .tt-sprite {
   position: relative;
