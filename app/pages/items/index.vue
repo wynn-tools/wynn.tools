@@ -141,6 +141,40 @@ const setOptions = computed(() =>
 
     <div v-else class="layout" :class="layoutMode">
       <FiltersSidebar v-if="showSidebar" panel-id="search-filters-panel">
+        <template #name>
+          <input
+            v-if="tab === 'items'"
+            :value="criteria.name"
+            class="f-input"
+            type="text"
+            placeholder="Item name…"
+            @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
+          >
+          <input
+            v-else-if="tab === 'ingredients'"
+            :value="ingredientCriteria.name"
+            class="f-input"
+            type="text"
+            placeholder="Ingredient name…"
+            @input="ingredientCriteria = { ...ingredientCriteria, name: ($event.target as HTMLInputElement).value }"
+          >
+          <input
+            v-else-if="tab === 'tomes'"
+            :value="tomeCriteria.name"
+            class="f-input"
+            type="text"
+            placeholder="Tome name…"
+            @input="tomeCriteria = { ...tomeCriteria, name: ($event.target as HTMLInputElement).value }"
+          >
+          <input
+            v-else-if="tab === 'materials'"
+            :value="materialCriteria.name"
+            class="f-input"
+            type="text"
+            placeholder="Material name…"
+            @input="materialCriteria = { ...materialCriteria, name: ($event.target as HTMLInputElement).value }"
+          >
+        </template>
         <ItemSearchFilters v-if="tab === 'items'" v-model="criteria" :major-id-options="majorIdOptions" :set-options="setOptions" />
         <IngredientSearchFilters v-else-if="tab === 'ingredients'" v-model="ingredientCriteria" />
         <TomeSearchFilters v-else-if="tab === 'tomes'" v-model="tomeCriteria" />

@@ -12,6 +12,11 @@ import { useMapStore } from '~/stores/map'
 
 const props = defineProps<{ features: MapFeature[], mobileOpen?: boolean }>()
 const emit = defineEmits<{ 'update:mobileOpen': [v: boolean] }>()
+
+const mobileOpenLocal = computed({
+  get: () => props.mobileOpen ?? false,
+  set: v => emit('update:mobileOpen', v),
+})
 const store = useMapStore()
 const collapsed = ref(false)
 
@@ -370,137 +375,118 @@ function reset() {
   </div>
 
   <!-- Mobile bottom sheet -->
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition duration-200"
-      enter-from-class="translate-y-full opacity-0"
-      enter-to-class="translate-y-0 opacity-100"
-      leave-active-class="transition duration-150"
-      leave-from-class="translate-y-0 opacity-100"
-      leave-to-class="translate-y-full opacity-0"
-    >
-      <div
-        v-if="mobileOpen"
-        class="md:hidden fixed inset-x-0 bottom-0 z-[600] max-h-[70vh] overflow-y-auto rounded-t-2xl bg-bg p-4 shadow-2xl ring-1 ring-accent/20"
+  <BottomSheet v-model="mobileOpenLocal" title="Filters" max-height="70vh">
+    <template #header-actions>
+      <button
+        type="button"
+        class="rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent"
+        @click="toggleAll"
       >
-        <div class="mb-3 flex items-center justify-between">
-          <h3 class="text-sm font-semibold text-accent">
-            Filters
-          </h3>
-          <div class="flex items-center gap-1.5">
-            <button
-              type="button"
-              class="rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent"
-              @click="toggleAll"
-            >
-              {{ allOn ? 'All off' : 'All on' }}
-            </button>
-            <span class="h-3 w-px bg-border" aria-hidden="true" />
-            <button
-              type="button"
-              class="rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent"
-              @click="reset"
-            >
-              Reset
-            </button>
-            <MapCloseBtn aria-label="Close filters" @click="emit('update:mobileOpen', false)" />
-          </div>
+        {{ allOn ? 'All off' : 'All on' }}
+      </button>
+      <span class="h-3 w-px bg-border" aria-hidden="true" />
+      <button
+        type="button"
+        class="rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-muted hover:text-accent"
+        @click="reset"
+      >
+        Reset
+      </button>
+    </template>
+    <div class="md:hidden">
+      <div v-if="hasContentEnabled" class="mb-3 border-b border-border pb-3">
+        <div class="mb-1.5 flex items-center justify-between">
+          <span class="font-mono text-[10px] font-medium uppercase tracking-wider text-muted/70">Level Range</span>
+          <span class="font-mono text-[10px] tabular-nums text-muted/70">
+            {{ levelRange[0] }}–{{ levelRange[1] }}
+          </span>
         </div>
-
-        <div v-if="hasContentEnabled" class="mb-3 border-b border-border pb-3">
-          <div class="mb-1.5 flex items-center justify-between">
-            <span class="font-mono text-[10px] font-medium uppercase tracking-wider text-muted/70">Level Range</span>
-            <span class="font-mono text-[10px] tabular-nums text-muted/70">
-              {{ levelRange[0] }}–{{ levelRange[1] }}
-            </span>
-          </div>
-          <SliderRoot
-            v-model="levelRange"
-            :min="datasetRange.min"
-            :max="datasetRange.max"
-            :step="1"
-            class="relative flex w-full touch-none select-none items-center py-1"
+        <SliderRoot
+          v-model="levelRange"
+          :min="datasetRange.min"
+          :max="datasetRange.max"
+          :step="1"
+          class="relative flex w-full touch-none select-none items-center py-1"
+        >
+          <SliderTrack
+            class="relative h-1 w-full grow overflow-hidden rounded-full bg-border"
           >
-            <SliderTrack
-              class="relative h-1 w-full grow overflow-hidden rounded-full bg-border"
-            >
-              <SliderRange class="absolute h-full bg-accent/70" />
-            </SliderTrack>
-            <SliderThumb
-              v-for="_ in 2"
-              :key="_"
-              class="block h-3.5 w-3.5 rounded-full border border-accent/60 bg-bg shadow transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-            />
-          </SliderRoot>
-        </div>
-
-        <section v-for="g in groups" :key="g.label" class="mb-2 last:mb-0">
-          <button
-            type="button"
-            class="flex w-full items-center gap-1.5 rounded px-1 py-1 text-left transition-colors hover:bg-surface"
-            :aria-expanded="!collapsedGroups.has(g.label)"
-            @click="toggleGroup(g.label)"
-          >
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="flex-shrink-0 text-muted/60 transition-transform"
-              :class="collapsedGroups.has(g.label) ? '-rotate-90' : ''"
-              aria-hidden="true"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-            <span class="flex-1 font-mono text-[10px] font-medium uppercase tracking-wider text-muted/70">
-              {{ g.label }}
-            </span>
-            <span class="font-mono text-[10px] tabular-nums text-muted/50">
-              {{ groupOnCount(g) }}/{{ g.leafIds.length }}
-            </span>
-            <span
-              class="rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider transition-colors"
-              :class="groupAnyOn(g) ? 'text-accent hover:bg-accent/8' : 'text-muted hover:text-accent'"
-              role="button"
-              tabindex="-1"
-              @click="toggleGroupAll(g, $event)"
-            >
-              {{ groupAllOn(g) ? 'Off' : 'On' }}
-            </span>
-          </button>
-          <ul v-if="!collapsedGroups.has(g.label)" class="mt-0.5 space-y-0.5">
-            <li
-              v-for="item in g.items"
-              :key="item.cat.id"
-              class="flex items-center justify-between gap-2 text-sm" :class="[item.depth > 0 && 'pl-4']"
-            >
-              <label class="flex flex-1 cursor-pointer items-center gap-2 py-0.5">
-                <input
-                  type="checkbox"
-                  :checked="itemChecked(item)"
-                  :indeterminate="itemIndeterminate(item)"
-                  class="accent-accent"
-                  @change="store.toggleCategory(item.cat.id)"
-                >
-                <img :src="item.cat.icon" alt="" class="h-4 w-4 flex-shrink-0 object-contain">
-                <span class="truncate text-muted">{{ item.cat.label }}</span>
-              </label>
-              <span
-                v-if="itemZoomGated(item)"
-                title="Zoom in to see these markers"
-                class="flex-shrink-0 text-[10px] text-muted/50"
-              >zoom in</span>
-              <span v-else class="flex-shrink-0 font-mono text-[10px] tabular-nums text-muted/50">
-                {{ itemCount(item) }}
-              </span>
-            </li>
-          </ul>
-        </section>
+            <SliderRange class="absolute h-full bg-accent/70" />
+          </SliderTrack>
+          <SliderThumb
+            v-for="_ in 2"
+            :key="_"
+            class="block h-3.5 w-3.5 rounded-full border border-accent/60 bg-bg shadow transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          />
+        </SliderRoot>
       </div>
-    </Transition>
-  </Teleport>
+
+      <section v-for="g in groups" :key="g.label" class="mb-2 last:mb-0">
+        <button
+          type="button"
+          class="flex w-full items-center gap-1.5 rounded px-1 py-1 text-left transition-colors hover:bg-surface"
+          :aria-expanded="!collapsedGroups.has(g.label)"
+          @click="toggleGroup(g.label)"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="flex-shrink-0 text-muted/60 transition-transform"
+            :class="collapsedGroups.has(g.label) ? '-rotate-90' : ''"
+            aria-hidden="true"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+          <span class="flex-1 font-mono text-[10px] font-medium uppercase tracking-wider text-muted/70">
+            {{ g.label }}
+          </span>
+          <span class="font-mono text-[10px] tabular-nums text-muted/50">
+            {{ groupOnCount(g) }}/{{ g.leafIds.length }}
+          </span>
+          <span
+            class="rounded px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wider transition-colors"
+            :class="groupAnyOn(g) ? 'text-accent hover:bg-accent/8' : 'text-muted hover:text-accent'"
+            role="button"
+            tabindex="-1"
+            @click="toggleGroupAll(g, $event)"
+          >
+            {{ groupAllOn(g) ? 'Off' : 'On' }}
+          </span>
+        </button>
+        <ul v-if="!collapsedGroups.has(g.label)" class="mt-0.5 space-y-0.5">
+          <li
+            v-for="item in g.items"
+            :key="item.cat.id"
+            class="flex items-center justify-between gap-2 text-sm" :class="[item.depth > 0 && 'pl-4']"
+          >
+            <label class="flex flex-1 cursor-pointer items-center gap-2 py-0.5">
+              <input
+                type="checkbox"
+                :checked="itemChecked(item)"
+                :indeterminate="itemIndeterminate(item)"
+                class="accent-accent"
+                @change="store.toggleCategory(item.cat.id)"
+              >
+              <img :src="item.cat.icon" alt="" class="h-4 w-4 flex-shrink-0 object-contain">
+              <span class="truncate text-muted">{{ item.cat.label }}</span>
+            </label>
+            <span
+              v-if="itemZoomGated(item)"
+              title="Zoom in to see these markers"
+              class="flex-shrink-0 text-[10px] text-muted/50"
+            >zoom in</span>
+            <span v-else class="flex-shrink-0 font-mono text-[10px] tabular-nums text-muted/50">
+              {{ itemCount(item) }}
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </BottomSheet>
 </template>

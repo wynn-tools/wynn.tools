@@ -55,16 +55,6 @@ function removeSet(name: string): void {
 
 <template>
   <div class="filters">
-    <Teleport defer to="#filters-name-portal">
-      <input
-        :value="criteria.name"
-        class="f-input"
-        type="text"
-        placeholder="Item name…"
-        @input="criteria = { ...criteria, name: ($event.target as HTMLInputElement).value }"
-      >
-    </Teleport>
-
     <fieldset class="f-group f-group--type">
       <legend>Type</legend>
       <button
@@ -170,12 +160,9 @@ function removeSet(name: string): void {
   padding: 0;
 }
 
-/* Slot order: name → Type → Identifications → Rarity → Level → Restriction → Set → Major ID. */
+/* Slot order: Type → Identifications → Rarity → Level → Restriction → Set → Major ID. */
 .filters > * {
   order: 5;
-}
-.f-input {
-  order: 0;
 }
 .f-group--type {
   order: 1;
@@ -185,9 +172,6 @@ function removeSet(name: string): void {
 }
 .f-group--tier {
   order: 3;
-}
-.f-input {
-  width: 100%;
 }
 
 /* Type filter: sprite icon inline */
