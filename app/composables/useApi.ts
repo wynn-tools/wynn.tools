@@ -19,6 +19,13 @@ export interface ApiOwner {
   avatar: string | null
 }
 
+export interface ApiBuildCredit {
+  id: string
+  username: string
+  displayName: string
+  avatar: string | null
+}
+
 export interface ApiBuild {
   id: string
   name: string
@@ -30,6 +37,10 @@ export interface ApiBuild {
   equipNames: ({ name: string, tier: string } | null)[]
   buildString: string
   decoded: unknown
+  tags: string[]
+  notes: string | null
+  tutorialUrl: string | null
+  credits: ApiBuildCredit[]
   createdAt: string
   updatedAt: string
 }
@@ -40,6 +51,9 @@ export interface ApiBuildSummary {
   gameVersion: string
   visibility?: 'public' | 'unlisted' | 'private'
   owner?: ApiOwner | null
+  tags?: string[]
+  hasTutorial?: boolean
+  isCredit?: boolean
 }
 
 export interface ApiItem {
@@ -101,6 +115,7 @@ export interface BuildListFilters {
   gameVersion?: string
   /** User id; matches builds where the user is owner OR a credited co-author. */
   creator?: string
+  tag?: string[]
 }
 
 export interface ApiUserSearchResult {
@@ -137,12 +152,18 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     return { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }
   }
 
-  function paginationQuery(filters?: Record<string, string | number | undefined>, cursor?: string, limit?: number): string {
+  function paginationQuery(filters?: Record<string, string | number | string[] | undefined>, cursor?: string, limit?: number): string {
     const params = new URLSearchParams()
     if (filters) {
       for (const [k, v] of Object.entries(filters)) {
-        if (v !== undefined)
+        if (v === undefined)
+          continue
+        if (Array.isArray(v)) {
+          for (const x of v) params.append(k, String(x))
+        }
+        else {
           params.set(k, String(v))
+        }
       }
     }
     if (cursor)
@@ -168,9 +189,13 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
       request<PageResult<ApiBuildSummary>>(`/v1/users/${userId}/builds${paginationQuery(filters, cursor, limit)}`),
     createBuild: (body: { name: string, buildString: string, visibility?: string }) =>
       request<{ id: string }>('/v1/builds', jsonInit('POST', body)),
-    updateBuild: (id: string, body: { name?: string, buildString?: string, visibility?: string }) =>
-      request<{ id: string, name: string, visibility: string }>(`/v1/builds/${id}`, jsonInit('PATCH', body)),
+    updateBuild: (id: string, body: { name?: string, buildString?: string, visibility?: string, tags?: string[], notes?: string | null, tutorialUrl?: string | null }) =>
+      request<{ id: string, name: string, visibility: string, tags: string[], notes: string | null, tutorialUrl: string | null }>(`/v1/builds/${id}`, jsonInit('PATCH', body)),
     deleteBuild: (id: string) => request<{ ok: boolean }>(`/v1/builds/${id}`, { method: 'DELETE' }),
+    replaceBuildCredits: (id: string, credits: { userId: string }[]) =>
+      request<{ credits: ApiBuildCredit[] }>(`/v1/builds/${id}/credits`, jsonInit('PUT', { credits })),
+    removeMyCreditFromBuild: (id: string) =>
+      request<{ ok: boolean }>(`/v1/builds/${id}/credits/me`, { method: 'DELETE' }),
 
     // Items
     getItem: (id: string) => request<ApiItem>(`/v1/items/${id}`),
