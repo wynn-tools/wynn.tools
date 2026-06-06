@@ -17,6 +17,12 @@ export function makeCreditResolver(
     if (!entry)
       throw new Error(`Unknown credit '${rawCredit}' in ${source}/credits.json`)
 
+    // Explicit link: credit maps to an existing user account verbatim.
+    if (entry.userId) {
+      cache.set(rawCredit, entry.userId)
+      return entry.userId
+    }
+
     const sentinelDiscordId = `external:${entry.handle}`
     const db = getDb()
 

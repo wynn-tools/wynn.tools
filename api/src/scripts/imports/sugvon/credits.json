@@ -93,7 +93,8 @@
   },
   "LogicalSpaghetti": {
     "handle": "logicalspaghetti",
-    "kind": "person"
+    "kind": "person",
+    "userId": "iQL9kmo3z6WI"
   },
   "Me": {
     "handle": "sugvon",
