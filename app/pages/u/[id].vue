@@ -91,11 +91,31 @@ async function loadItems(cursor?: string) {
 }
 
 if (!isPrivate.value) {
-  await useAsyncData(
+  const { data: initial } = await useAsyncData(
     () => `user-content-${userId.value}`,
-    () => Promise.all([loadBuilds(), loadItems()]),
+    async () => {
+      const [b, i] = await Promise.all([
+        api.getUserBuilds(userId.value, undefined, undefined, 20),
+        api.getUserItems(userId.value, undefined, undefined, 20),
+      ])
+      return { builds: b.data, buildsCursor: b.nextCursor, items: i.data, itemsCursor: i.nextCursor }
+    },
     { watch: [userId] },
   )
+  if (initial.value) {
+    builds.value = initial.value.builds
+    buildsNextCursor.value = initial.value.buildsCursor
+    items.value = initial.value.items
+    itemsNextCursor.value = initial.value.itemsCursor
+  }
+  watch(initial, (v) => {
+    if (!v)
+      return
+    builds.value = v.builds
+    buildsNextCursor.value = v.buildsCursor
+    items.value = v.items
+    itemsNextCursor.value = v.itemsCursor
+  })
 }
 </script>
 
@@ -197,6 +217,7 @@ if (!isPrivate.value) {
             :name="i.name"
             :game-version="i.gameVersion"
             :owner-id="i.owner?.id"
+            :owner-username="i.owner?.username"
             :owner-name="i.owner?.name"
             :craft-hash="i.craftHash"
           />
