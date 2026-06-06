@@ -47,6 +47,7 @@ export interface BuildMeta {
   combatLines: BuildMetaCombat[]
   sp: BuildMetaSp[]
   elementalDefenses: BuildMetaDef[]
+  owner: string | null
   credits: BuildMetaCredit[]
   tags: string[]
 }
@@ -107,6 +108,7 @@ export function extractBuildMeta(
   weaponTypeFn: (id: number) => string | null,
   result: BuildResult,
   name: string | null,
+  owner: string | null = null,
   credits: BuildMetaCredit[] = [],
   tags: string[] = [],
 ): BuildMeta {
@@ -187,6 +189,7 @@ export function extractBuildMeta(
     combatLines,
     sp,
     elementalDefenses,
+    owner,
     credits,
     tags,
   }

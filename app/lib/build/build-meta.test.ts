@@ -190,22 +190,24 @@ describe('extractBuildMeta', () => {
     expect(str.iconUrl).toContain('sp/strength_off.png')
   })
 
-  it('defaults credits and tags to empty arrays when not provided', () => {
+  it('defaults owner/credits/tags to empty when not provided', () => {
     const { ctx, weaponType } = makeBuildContext()
     const raw = makeRawBuild()
     const result = computeBuild(raw, ctx as any)
     const meta = extractBuildMeta(raw, ctx as any, weaponType, result, null)
+    expect(meta.owner).toBeNull()
     expect(meta.credits).toEqual([])
     expect(meta.tags).toEqual([])
   })
 
-  it('passes through credits and tags when provided', () => {
+  it('passes through owner, credits, and tags when provided', () => {
     const { ctx, weaponType } = makeBuildContext()
     const raw = makeRawBuild()
     const result = computeBuild(raw, ctx as any)
     const credits = [{ username: 'alice', name: 'Alice' }]
     const tags = ['dps', 'raid']
-    const meta = extractBuildMeta(raw, ctx as any, weaponType, result, null, credits, tags)
+    const meta = extractBuildMeta(raw, ctx as any, weaponType, result, null, 'Owner Name', credits, tags)
+    expect(meta.owner).toBe('Owner Name')
     expect(meta.credits).toEqual(credits)
     expect(meta.tags).toEqual(tags)
   })

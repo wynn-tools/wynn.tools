@@ -39,6 +39,7 @@ const props = withDefaults(
     combatLines?: Combat[]
     sp?: Sp[]
     elementalDefenses?: Def[]
+    owner?: string | null
     credits?: Credit[]
     tags?: string[]
   }>(),
@@ -53,15 +54,22 @@ const props = withDefaults(
     combatLines: () => [],
     sp: () => [],
     elementalDefenses: () => [],
+    owner: null,
     credits: () => [],
     tags: () => [],
   },
 )
 
 const bylineText = computed(() => {
-  const list = props.credits.slice(0, 3).map(c => c.name).join(', ')
+  const creditList = props.credits.slice(0, 3).map(c => c.name).join(', ')
   const overflow = props.credits.length > 3 ? `, +${props.credits.length - 3}` : ''
-  return list ? `with ${list}${overflow}` : ''
+  if (props.owner && creditList)
+    return `By ${props.owner} with ${creditList}${overflow}`
+  if (props.owner)
+    return `By ${props.owner}`
+  if (creditList)
+    return `with ${creditList}${overflow}`
+  return ''
 })
 
 function formatStat(n: number): string {

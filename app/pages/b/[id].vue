@@ -61,7 +61,8 @@ const { data: buildMeta } = await useAsyncData(
       }))
       const result = computeBuild(raw, loaded.ctx)
       const credits = (build.value?.credits ?? []).map(c => ({ username: c.username, name: c.displayName }))
-      return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, build.value?.name ?? null, credits, build.value?.tags ?? [])
+      const owner = build.value?.owner?.name ?? null
+      return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, build.value?.name ?? null, owner, credits, build.value?.tags ?? [])
     }
     catch {
       return null

@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
     visibility: string
     tags?: string[]
     credits?: { username: string, displayName: string }[]
+    owner?: { name: string } | null
   }
   let build: BuildResp
   try {
@@ -46,7 +47,7 @@ export default defineEventHandler(async (event) => {
   }))
   const result = computeBuild(raw, loaded.ctx)
   const credits = (build.credits ?? []).map(c => ({ username: c.username, name: c.displayName }))
-  const buildMeta = extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, build.name, credits, build.tags ?? [])
+  const buildMeta = extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, build.name, build.owner?.name ?? null, credits, build.tags ?? [])
 
   const ogPath = buildOgImagePath('BuildCard', buildMeta as Record<string, unknown>, `/b/${id}`)
   const data = await $fetch<ArrayBuffer>(ogPath, { responseType: 'arrayBuffer' })
