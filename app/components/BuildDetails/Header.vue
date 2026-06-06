@@ -3,6 +3,7 @@ import type { ApiBuild } from '~/composables/useApi'
 import { computed } from 'vue'
 import Byline from './Byline.vue'
 import CreditsPicker from './CreditsPicker.vue'
+import NotesEditor from './NotesEditor.vue'
 import NotesView from './NotesView.vue'
 import TagChips from './TagChips.vue'
 import TagPicker from './TagPicker.vue'
@@ -18,6 +19,7 @@ defineEmits<{
   removeMeCredit: []
   updateTags: [tags: string[]]
   updateCredits: [credits: { id: string, username: string, displayName: string, avatar: string | null }[]]
+  updateNotes: [notes: string | null]
 }>()
 
 const hasTags = computed(() => !!props.build.tags && props.build.tags.length > 0)
@@ -78,10 +80,12 @@ const visibilityLabel = computed(() => {
         </div>
       </div>
 
-      <div v-if="hasNotes" class="header-row header-row-3">
+      <div v-if="isOwner" class="header-row header-row-3">
+        <NotesEditor :notes="build.notes" @save="(n: string | null) => $emit('updateNotes', n)" />
+      </div>
+      <div v-else-if="hasNotes" class="header-row header-row-3">
         <NotesView :markdown="build.notes" />
       </div>
-      <slot name="owner-notes" />
     </div>
   </header>
 </template>

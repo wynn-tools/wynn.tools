@@ -138,6 +138,23 @@ async function onUpdateCredits(credits: { id: string, username: string, displayN
   }
 }
 
+async function onUpdateNotes(notes: string | null) {
+  if (!build.value)
+    return
+  const prev = build.value.notes
+  build.value = { ...build.value, notes }
+  try {
+    const res = await api.updateBuild(build.value.id, { notes })
+    if (build.value)
+      build.value = { ...build.value, notes: res.notes }
+  }
+  catch (err) {
+    console.error('Failed to update notes', err)
+    if (build.value)
+      build.value = { ...build.value, notes: prev }
+  }
+}
+
 async function onRemoveMeCredit() {
   if (!build.value)
     return
@@ -163,6 +180,7 @@ async function onRemoveMeCredit() {
       @remove-me-credit="onRemoveMeCredit"
       @update-tags="onUpdateTags"
       @update-credits="onUpdateCredits"
+      @update-notes="onUpdateNotes"
     />
     <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
   </div>
