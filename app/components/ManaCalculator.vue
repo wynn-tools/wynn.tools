@@ -35,6 +35,17 @@ const cycleStr = computed<string>({
   },
 })
 
+// Toggles for including MR / MS in the sustain calc — lets you see spell drain
+// against base regen alone (matches wynnmana's "what if I had no sustain" view).
+const includeMr = computed<boolean>({
+  get: () => queryStr('mr') !== '0',
+  set: v => writeQuery('mr', v ? null : '0'),
+})
+const includeMs = computed<boolean>({
+  get: () => queryStr('ms') !== '0',
+  set: v => writeQuery('ms', v ? null : '0'),
+})
+
 function writeQuery(key: string, value: string | null) {
   const query = { ...route.query }
   if (value == null)
@@ -70,8 +81,8 @@ const cycle = computed(() => parseCycle(cycleStr.value))
 
 const sustain = computed(() =>
   computeManaSustain({
-    manaRegen: (props.result.stats.get('mr') as number) ?? 0,
-    manaSteal: (props.result.stats.get('ms') as number) ?? 0,
+    manaRegen: includeMr.value ? ((props.result.stats.get('mr') as number) ?? 0) : 0,
+    manaSteal: includeMs.value ? ((props.result.stats.get('ms') as number) ?? 0) : 0,
     cps: cps.value,
     cycle: cycle.value,
     spellCosts: spellCosts.value,
@@ -120,6 +131,25 @@ const netTone = computed(() => (sustain.value.netPerSec >= 0 ? 'pos' : 'neg'))
           :value="cycleStr"
           @input="onCycle"
         >
+      </label>
+    </div>
+
+    <div class="toggles">
+      <label class="toggle">
+        <input
+          type="checkbox"
+          :checked="includeMr"
+          @change="includeMr = ($event.target as HTMLInputElement).checked"
+        >
+        <span class="toggle-label">Include MR</span>
+      </label>
+      <label class="toggle">
+        <input
+          type="checkbox"
+          :checked="includeMs"
+          @change="includeMs = ($event.target as HTMLInputElement).checked"
+        >
+        <span class="toggle-label">Include MS</span>
       </label>
     </div>
 
@@ -229,6 +259,31 @@ const netTone = computed(() => (sustain.value.netPerSec >= 0 ? 'pos' : 'neg'))
 }
 .field-input[type='number'] {
   appearance: textfield;
+}
+
+.toggles {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input {
+  accent-color: var(--color-accent);
+  margin: 0;
+}
+.toggle-label {
+  font-family: 'Geist Mono', 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-faint);
 }
 
 .legend {
