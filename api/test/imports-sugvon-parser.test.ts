@@ -147,16 +147,16 @@ describe('validateCredits', () => {
     expect(missing.length).toBeGreaterThan(0)
   })
 
-  it('credits.json maps "me" to sugvon-sv handle', () => {
+  it('credits.json maps "me" to sugvon handle', () => {
     const credits = loadCredits()
     expect(credits.me).toBeDefined()
-    expect(credits.me.handle).toBe('sugvon-sv')
+    expect(credits.me.handle).toBe('sugvon')
   })
 
-  it('credits.json maps "Me" (capitalized) to sugvon-sv handle', () => {
+  it('credits.json maps "Me" (capitalized) to sugvon handle', () => {
     const credits = loadCredits()
     expect(credits.Me).toBeDefined()
-    expect(credits.Me.handle).toBe('sugvon-sv')
+    expect(credits.Me.handle).toBe('sugvon')
   })
 
   it('all credit entries have kind person or anonymous', () => {
