@@ -25,6 +25,7 @@ interface Combat {
   name: string
   dps: number
 }
+interface Credit { username: string, name: string }
 
 const props = withDefaults(
   defineProps<{
@@ -38,6 +39,8 @@ const props = withDefaults(
     combatLines?: Combat[]
     sp?: Sp[]
     elementalDefenses?: Def[]
+    credits?: Credit[]
+    tags?: string[]
   }>(),
   {
     name: null,
@@ -50,8 +53,16 @@ const props = withDefaults(
     combatLines: () => [],
     sp: () => [],
     elementalDefenses: () => [],
+    credits: () => [],
+    tags: () => [],
   },
 )
+
+const bylineText = computed(() => {
+  const list = props.credits.slice(0, 3).map(c => `@${c.username}`).join(', ')
+  const overflow = props.credits.length > 3 ? `, +${props.credits.length - 3}` : ''
+  return list ? `with ${list}${overflow}` : ''
+})
 
 function formatStat(n: number): string {
   return n.toLocaleString('en-US', { maximumFractionDigits: 0 })
@@ -226,6 +237,35 @@ const panelStyle = computed(() => ({
             <span :style="{ display: 'flex' }">tools</span>
           </div>
         </div>
+      </div>
+
+      <div
+        v-if="bylineText || tags.length"
+        :style="{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px',
+          marginTop: '14px',
+          flexWrap: 'wrap',
+        }"
+      >
+        <span
+          v-if="bylineText"
+          :style="{ display: 'flex', fontFamily: SANS, fontSize: '14px', color: C.muted }"
+        >{{ bylineText }}</span>
+        <span
+          v-for="t in tags.slice(0, 3)"
+          :key="t"
+          :style="{
+            display: 'flex',
+            fontFamily: SANS,
+            fontSize: '12px',
+            color: headColor,
+            padding: '3px 9px',
+            border: `1px solid ${headColor}`,
+            borderRadius: '99px',
+          }"
+        >{{ t }}</span>
       </div>
 
       <div

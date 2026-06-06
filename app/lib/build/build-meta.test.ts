@@ -190,6 +190,26 @@ describe('extractBuildMeta', () => {
     expect(str.iconUrl).toContain('sp/strength_off.png')
   })
 
+  it('defaults credits and tags to empty arrays when not provided', () => {
+    const { ctx, weaponType } = makeBuildContext()
+    const raw = makeRawBuild()
+    const result = computeBuild(raw, ctx as any)
+    const meta = extractBuildMeta(raw, ctx as any, weaponType, result, null)
+    expect(meta.credits).toEqual([])
+    expect(meta.tags).toEqual([])
+  })
+
+  it('passes through credits and tags when provided', () => {
+    const { ctx, weaponType } = makeBuildContext()
+    const raw = makeRawBuild()
+    const result = computeBuild(raw, ctx as any)
+    const credits = [{ username: 'alice', name: 'Alice' }]
+    const tags = ['dps', 'raid']
+    const meta = extractBuildMeta(raw, ctx as any, weaponType, result, null, credits, tags)
+    expect(meta.credits).toEqual(credits)
+    expect(meta.tags).toEqual(tags)
+  })
+
   it('maps non-zero elemental defenses with icons and signs', () => {
     const { ctx, weaponType } = makeBuildContext()
     const raw = makeRawBuild()

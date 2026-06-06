@@ -33,6 +33,8 @@ export interface BuildMetaCombat {
   dps: number
 }
 
+export interface BuildMetaCredit { username: string, name: string }
+
 export interface BuildMeta {
   name: string | null
   level: number
@@ -45,6 +47,8 @@ export interface BuildMeta {
   combatLines: BuildMetaCombat[]
   sp: BuildMetaSp[]
   elementalDefenses: BuildMetaDef[]
+  credits: BuildMetaCredit[]
+  tags: string[]
 }
 
 /** Equipment slot index → index in raw.powders array (matches POWDERABLE in equipment-codec). */
@@ -103,6 +107,8 @@ export function extractBuildMeta(
   weaponTypeFn: (id: number) => string | null,
   result: BuildResult,
   name: string | null,
+  credits: BuildMetaCredit[] = [],
+  tags: string[] = [],
 ): BuildMeta {
   const weaponSlot = raw.equipment[8]
   const wid = slotItemId(weaponSlot)
@@ -181,5 +187,7 @@ export function extractBuildMeta(
     combatLines,
     sp,
     elementalDefenses,
+    credits,
+    tags,
   }
 }
