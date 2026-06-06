@@ -28,7 +28,10 @@ export function parseBuildDb(): NormalizedBuildImport[] {
     if (!hash)
       continue
 
-    const primaryCredit = (entry.credit ?? '').trim() || 'generic build'
+    const rawCredit = (entry.credit ?? '').trim() || 'generic build'
+    const parts = rawCredit.split(',').map(s => s.trim()).filter(Boolean)
+    const primaryCredit = parts[0] ?? 'generic build'
+    const secondaryCredits = parts.slice(1)
     const tags = entry.tag
       .split(',')
       .map(s => s.trim())
@@ -39,7 +42,7 @@ export function parseBuildDb(): NormalizedBuildImport[] {
       buildString: hash,
       playerClass: entry.class,
       primaryCredit,
-      secondaryCredits: [],
+      secondaryCredits,
       tags,
       source: 'build-db',
     })
@@ -61,11 +64,13 @@ export function validateCredits(
   const seen = new Set<string>()
 
   for (const entry of entries) {
-    const credit = entry.primaryCredit
-    if (!seen.has(credit)) {
-      seen.add(credit)
-      if (!(credit in credits)) {
-        missing.push(credit)
+    const allCredits = [entry.primaryCredit, ...entry.secondaryCredits]
+    for (const credit of allCredits) {
+      if (!seen.has(credit)) {
+        seen.add(credit)
+        if (!(credit in credits)) {
+          missing.push(credit)
+        }
       }
     }
   }

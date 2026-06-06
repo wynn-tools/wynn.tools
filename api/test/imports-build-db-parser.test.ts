@@ -39,6 +39,17 @@ describe('parseBuildDb', () => {
       expect(entry.buildString.length).toBeGreaterThan(0)
     }
   })
+
+  it('splits compound credits into primaryCredit and secondaryCredits', () => {
+    const entries = parseBuildDb()
+    // Find an entry that was originally "RawFish, Umbrionix"
+    const compound = entries.find(
+      e => e.primaryCredit === 'RawFish' && e.secondaryCredits.includes('Umbrionix'),
+    )
+    expect(compound).toBeDefined()
+    expect(compound!.primaryCredit).toBe('RawFish')
+    expect(compound!.secondaryCredits).toContain('Umbrionix')
+  })
 })
 
 describe('validateCredits', () => {
