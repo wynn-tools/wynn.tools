@@ -124,6 +124,7 @@ function clearAllFilters() {
               :name="item.name"
               :game-version="item.gameVersion"
               :owner-id="item.owner?.id"
+              :owner-username="item.owner?.username"
               :owner-name="item.owner?.name"
               :show-owner="true"
               :craft-hash="item.craftHash"

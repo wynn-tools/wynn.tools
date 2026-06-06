@@ -56,7 +56,7 @@ function fork() {
     <div v-if="item && !isOwner" class="fork-bar">
       <span class="fork-label">
         Viewing item by
-        <NuxtLink v-if="item.owner" :to="`/u/${item.owner.id}`" class="fork-owner-link">{{ item.owner.name }}</NuxtLink>
+        <NuxtLink v-if="item.owner" :to="`/u/${item.owner.username ?? item.owner.id}`" class="fork-owner-link">{{ item.owner.name }}</NuxtLink>
         <span v-else>Anonymous</span>
       </span>
       <button class="fork-btn" type="button" @click="fork">

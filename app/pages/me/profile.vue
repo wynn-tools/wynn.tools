@@ -20,7 +20,7 @@ const copied = ref(false)
 function copyProfileLink() {
   if (!auth.user)
     return
-  navigator.clipboard.writeText(`${window.location.origin}/u/${auth.user.id}`)
+  navigator.clipboard.writeText(`${window.location.origin}/u/${auth.user.username ?? auth.user.id}`)
   copied.value = true
   setTimeout(() => {
     copied.value = false
@@ -63,7 +63,7 @@ async function save() {
           Profile
         </h1>
         <div class="page-header-actions">
-          <NuxtLink v-if="auth.user" :to="`/u/${auth.user.id}`" class="view-profile-link">
+          <NuxtLink v-if="auth.user" :to="`/u/${auth.user.username ?? auth.user.id}`" class="view-profile-link">
             View public profile
           </NuxtLink>
           <button v-if="auth.user" class="copy-link-btn" type="button" @click="copyProfileLink">
