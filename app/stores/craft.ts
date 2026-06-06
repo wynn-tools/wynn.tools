@@ -22,10 +22,22 @@ export function defaultRawCraft(): RawCraft {
 }
 
 function firstRecipeId(ctx: CraftContext): number {
-  // Map preserves insertion order; the recipes map is populated from the
-  // adapter in CDN order, which is stable enough for "first recipe".
-  const next = ctx.recipes.keys().next()
-  return next.done ? 0 : next.value
+  // Default to the max-level variant of the first type in CDN order, so the
+  // crafter opens on the top-tier recipe rather than the lvl-1 starter.
+  let firstType: string | null = null
+  let bestId = 0
+  let bestHigh = -1
+  for (const [id, rec] of ctx.recipes) {
+    if (firstType === null)
+      firstType = rec.type
+    if (rec.type !== firstType)
+      continue
+    if (rec.lvl[1] > bestHigh) {
+      bestHigh = rec.lvl[1]
+      bestId = id
+    }
+  }
+  return bestId
 }
 
 function recipeIsWeapon(ctx: CraftContext, id: number): boolean {

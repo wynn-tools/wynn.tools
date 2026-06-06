@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CraftedItem, IdRange } from '~/lib/crafter/types'
 import { computed } from 'vue'
-import { humanizeField, isInverted } from '~/lib/data/identifications'
+import { humanizeShortId, isInverted } from '~/lib/data/identifications'
 import { attributeUrl, emblemUrl, frameUrl, miscUrl, spriteUrl } from '~/lib/items/icon'
 import {
   attackSpeedLabel,
@@ -130,7 +130,7 @@ const idRows = computed<IdRow[]>(() => {
   if (!ids)
     return []
   return Object.entries(ids).map(([key, r]: [string, IdRange]) => {
-    const { label, unit } = humanizeField(key)
+    const { label, unit } = humanizeShortId(key)
     // "good" direction: positive for normal ids; inverted (cost) is good when negative.
     const refVal = r.max // use max as representative for sign direction
     const good = isInverted(key) ? refVal < 0 : refVal > 0
@@ -180,6 +180,14 @@ const durationText = computed(() => {
     return null
   const [min, max] = c.duration
   return min === max ? `${min}s` : `${min}-${max}s`
+})
+
+const durabilityText = computed(() => {
+  const c = crafted.value
+  if (!c?.durability)
+    return null
+  const [min, max] = c.durability
+  return min === max ? `${max}` : `${min}-${max}`
 })
 
 function sepStyle() {
@@ -281,9 +289,9 @@ function handleEquipClick() {
         </div>
       </template>
 
-      <!-- Powder slots (weapons + armor) -->
-      <p v-if="(isWeapon || isArmor) && crafted.slots > 0" class="tt-row tt-muted">
-        Powder Slots [{{ 'o'.repeat(crafted.slots) }}]
+      <!-- Durability (weapons, armor, accessories) -->
+      <p v-if="durabilityText" class="tt-row tt-muted">
+        Durability {{ durabilityText }}
       </p>
 
       <div class="tt-sep" :style="sepStyle()" />
@@ -316,6 +324,11 @@ function handleEquipClick() {
           <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
         </li>
       </ul>
+
+      <!-- Powder slots (weapons + armor) — bottom of tooltip, in-game order -->
+      <p v-if="(isWeapon || isArmor) && crafted.slots > 0" class="tt-row tt-muted tt-powder">
+        Powder Slots [{{ 'o'.repeat(crafted.slots) }}]
+      </p>
 
       <!-- Equip in builder -->
       <div v-if="showEquipButton" class="cp-actions">
