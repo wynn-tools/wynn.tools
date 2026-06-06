@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { performClaim } from '../scripts/admin/claim'
 import { getDb, schema } from '../src/db/client'
+import { performClaim } from '../src/scripts/admin/claim'
 import { resetDb } from './helpers/db'
 
 const ORACLE_HASH = 'CU0mCX5GOm3P5H05coX-DEdG4kYgBjtUktZ-B0'

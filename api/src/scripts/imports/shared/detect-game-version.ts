@@ -1,7 +1,7 @@
 import process from 'node:process'
-import { BitVector, BitVectorCursor } from '../../../../app/lib/codec/bit-vector'
-import { decodeHeader } from '../../../../app/lib/codec/header'
-import { ENCODING_BASE_VERSION } from '../../../../app/lib/codec/version'
+import { BitVector, BitVectorCursor } from '../../../../../app/lib/codec/bit-vector'
+import { decodeHeader } from '../../../../../app/lib/codec/header'
+import { ENCODING_BASE_VERSION } from '../../../../../app/lib/codec/version'
 
 export interface VersionEntry {
   hash: string

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { loadCredits, parseSugvon, validateCredits } from '../scripts/imports/sugvon/parse'
+import { loadCredits, parseSugvon, validateCredits } from '../src/scripts/imports/sugvon/parse'
 
 describe('parseSugvon', () => {
   it('produces more than 50 entries after variant flattening', () => {

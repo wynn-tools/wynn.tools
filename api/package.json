@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "discord:register": "tsx --env-file=.env src/scripts/register-discord-commands.ts",
-    "admin:claim": "tsx --env-file=.env scripts/admin/claim.ts",
+    "admin:claim": "tsx --env-file=.env src/scripts/admin/claim.ts",
     "build": "tsup",
     "start": "node --env-file=.env dist/index.js",
     "test": "vitest --no-file-parallelism",
@@ -18,7 +18,7 @@
     "db:dev:reset": "docker compose -f ../deploy/compose.dev.yaml down -v && docker compose -f ../deploy/compose.dev.yaml up -d --wait",
     "db:test:up": "docker compose -f ../deploy/compose.test.yaml up -d --wait",
     "db:test:down": "docker compose -f ../deploy/compose.test.yaml down -v",
-    "imports:run": "tsx --env-file=.env scripts/imports/main.ts"
+    "imports:run": "tsx --env-file=.env src/scripts/imports/main.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",

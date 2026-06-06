@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { loadCredits, parseBuildDb, validateCredits } from '../scripts/imports/build-db/parse'
+import { loadCredits, parseBuildDb, validateCredits } from '../src/scripts/imports/build-db/parse'
 
 describe('parseBuildDb', () => {
   it('returns a non-empty array of NormalizedBuildImport', () => {

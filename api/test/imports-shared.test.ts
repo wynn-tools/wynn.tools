@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { makeCreditResolver } from '../scripts/imports/shared/resolve-credits'
 import { getDb, schema } from '../src/db/client'
 import { newResourceId } from '../src/lib/ids'
+import { makeCreditResolver } from '../src/scripts/imports/shared/resolve-credits'
 import { resetDb } from './helpers/db'
 
 const credits = {

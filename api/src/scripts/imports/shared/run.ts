@@ -1,7 +1,7 @@
 import type { CreditsMap, NormalizedBuildImport } from './types'
 import { sql } from 'drizzle-orm'
-import { getDb, schema } from '../../../src/db/client'
-import { newResourceId } from '../../../src/lib/ids'
+import { getDb, schema } from '../../../db/client'
+import { newResourceId } from '../../../lib/ids'
 import { detectGameVersion } from './detect-game-version'
 import { makeCreditResolver } from './resolve-credits'
 

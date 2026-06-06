@@ -1,6 +1,6 @@
 import type { CreditsMap } from './types'
-import { getDb, schema } from '../../../src/db/client'
-import { newResourceId } from '../../../src/lib/ids'
+import { getDb, schema } from '../../../db/client'
+import { newResourceId } from '../../../lib/ids'
 
 export function makeCreditResolver(
   source: 'build-db' | 'sugvon',

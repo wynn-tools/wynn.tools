@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { sql } from 'drizzle-orm'
-import { getDb } from '../../src/db/client'
+import { getDb } from '../../db/client'
 
 interface ClaimOpts { syntheticId: string, realId: string, confirm: boolean }
 
