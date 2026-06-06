@@ -4,6 +4,7 @@ import { useApi } from '~/composables/useApi'
 import { loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
 import { extractBuildMeta } from '~/lib/build/build-meta'
 import { computeBuild } from '~/lib/build/compute-build'
+import { stripMarkdown } from '~/lib/build/markdown'
 import { decodeRawBuild } from '~/lib/codec/build-codec'
 import { useAuthStore } from '~/stores/auth'
 import { useBuildStore } from '~/stores/build'
@@ -76,11 +77,16 @@ const itemDescription = computed(() =>
   buildMeta.value?.items.filter(i => i.name !== '—').map(i => i.name).join(' · ') ?? '',
 )
 
+const seoDescription = computed(() => {
+  const notes = stripMarkdown(build.value?.notes ?? '', 200)
+  return notes || itemDescription.value
+})
+
 useSeoMeta({
   title: ogTitle,
   ogTitle,
-  description: itemDescription,
-  ogDescription: itemDescription,
+  description: seoDescription,
+  ogDescription: seoDescription,
   twitterCard: 'summary_large_image',
   ogImage: computed(() => `${config.public.apiBaseUrl}/v1/og/build/${id.value}`),
 })
@@ -97,127 +103,31 @@ function fork() {
   if (build.value?.buildString)
     router.push(`/builder/${build.value.buildString}`)
 }
+
+async function onRemoveMeCredit() {
+  if (!build.value)
+    return
+  try {
+    await api.removeMyCreditFromBuild(build.value.id)
+    const fresh = await api.getBuild(build.value.id)
+    build.value = fresh
+  }
+  catch (err) {
+    console.error('Failed to remove credit', err)
+  }
+}
 </script>
 
 <template>
   <div>
-    <div v-if="build && !isOwner" class="fork-bar">
-      <span class="fork-label">
-        <span class="fork-kicker">Viewing build by</span>
-        <NuxtLink v-if="build.owner" :to="`/u/${build.owner.username ?? build.owner.id}`" class="fork-owner-link">{{ build.owner.name }}</NuxtLink>
-        <span v-else class="fork-owner-anon">Anonymous</span>
-      </span>
-      <button class="fork-btn" type="button" @click="fork">
-        Fork this build <span class="fork-btn-arrow" aria-hidden="true">→</span>
-      </button>
-    </div>
+    <BuildDetailsHeader
+      v-if="build"
+      :build="build"
+      :viewer-id="auth.user?.id ?? null"
+      :is-owner="isOwner"
+      @fork="fork"
+      @remove-me-credit="onRemoveMeCredit"
+    />
     <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
   </div>
 </template>
-
-<style scoped>
-.fork-bar {
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  max-width: none;
-  padding: 10px max(40px, calc(50vw - var(--shell-max) / 2 + 40px));
-  border-bottom: 1px solid var(--color-border);
-}
-
-.fork-label {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  min-width: 0;
-  color: var(--color-muted);
-  font-size: 13px;
-}
-
-.fork-kicker {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-}
-
-.fork-owner-link {
-  color: var(--color-text);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.12s ease-out;
-}
-
-.fork-owner-link:hover,
-.fork-owner-link:focus-visible {
-  color: var(--color-accent);
-  outline: none;
-}
-
-.fork-owner-anon {
-  color: var(--color-muted);
-  font-style: italic;
-}
-
-.fork-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-faint);
-  background: transparent;
-  border: none;
-  padding: 4px 0;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.12s ease-out;
-}
-
-.fork-btn:hover {
-  color: var(--color-accent);
-}
-
-.fork-btn:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: 3px;
-  color: var(--color-accent);
-}
-
-.fork-btn-arrow {
-  display: inline-block;
-  transition: transform 0.12s ease-out;
-}
-
-.fork-btn:hover .fork-btn-arrow,
-.fork-btn:focus-visible .fork-btn-arrow {
-  transform: translateX(3px);
-}
-
-@media (max-width: 720px) {
-  .fork-bar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 10px max(14px, calc(50vw - var(--shell-max) / 2 + 14px));
-  }
-}
-
-@media (max-width: 600px) {
-  .fork-bar {
-    padding-inline: var(--shell-pad-mobile, 14px);
-  }
-  .fork-kicker {
-    font-size: 10px;
-  }
-}
-</style>
