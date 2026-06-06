@@ -19,20 +19,32 @@ const patchProfileBody = z.object({
   profileVisibility: z.enum(schema.profileVisibility).optional(),
 })
 
-export const userProfile = new Hono().get('/:id', async (c) => {
-  const user = await getDb().query.users.findFirst({
-    where: (u, { eq }) => eq(u.id, c.req.param('id')),
+export const userProfile = new Hono().get('/:slug', async (c) => {
+  const slug = c.req.param('slug')
+  const db = getDb()
+  let user = await db.query.users.findFirst({
+    where: (u, { sql: s }) => s`lower(${u.username}) = lower(${slug})`,
   })
+  let resolvedVia: 'username' | 'id' = 'username'
+  if (!user) {
+    user = await db.query.users.findFirst({ where: (u, { eq }) => eq(u.id, slug) })
+    resolvedVia = 'id'
+  }
   if (!user)
     throw new AppError(404, 'not_found', 'User not found')
   if (user.profileVisibility === 'private')
     return c.json({ private: true })
   return c.json({
     id: user.id,
+    username: user.username,
     name: user.displayName ?? user.username,
     bio: user.bio,
     avatar: user.avatar,
     discordId: user.discordId,
+    kind: user.kind,
+    profileUrl: user.profileUrl,
+    canonicalSlug: user.username,
+    resolvedVia,
   })
 })
 
