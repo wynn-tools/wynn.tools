@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import type { SearchIngredient } from '~/lib/items-search/types'
+import { useVirtualizer } from '@tanstack/vue-virtual'
 import Fuse from 'fuse.js'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { toSearchIngredient } from '~/lib/items-search/ingredient-to-search'
 import { useCraftStore } from '~/stores/craft'
 
@@ -62,6 +63,24 @@ function selectId(id: number | null) {
   emit('select', id)
 }
 
+// Virtualize the ingredient list. Row 0 is the "None" entry. Cards have
+// highly variable heights (identifications + recipe stats vary per item),
+// so we rely on dynamic measurement.
+const listScrollEl = ref<HTMLDivElement | null>(null)
+const rowCount = computed(() => results.value.length + 1)
+const virtualizer = useVirtualizer(
+  computed(() => ({
+    count: rowCount.value,
+    getScrollElement: () => listScrollEl.value,
+    estimateSize: () => 180,
+    overscan: 4,
+  })),
+)
+
+watch(results, () => {
+  listScrollEl.value?.scrollTo({ top: 0 })
+})
+
 function onHoverEnter(id: number) {
   const ing = store.ctx?.ingredients.get(id) ?? null
   emit('hoverIngredient', ing)
@@ -117,21 +136,38 @@ onUnmounted(() => {
           ✕
         </button>
       </div>
-      <ul class="picker-list">
-        <li class="picker-item picker-item--none" @click="selectId(null)">
-          None
-        </li>
-        <li
-          v-for="ing in results"
-          :key="ing.id"
-          class="picker-item"
-          @click="selectId(ing.id)"
-          @mouseenter="onHoverEnter(ing.id)"
-          @mouseleave="onHoverLeave"
+      <div ref="listScrollEl" class="picker-list">
+        <div
+          class="picker-list-inner"
+          :style="{ height: `${virtualizer.getTotalSize()}px` }"
         >
-          <IngredientResultCard :ingredient="ing" />
-        </li>
-      </ul>
+          <div
+            v-for="vRow in virtualizer.getVirtualItems()"
+            :key="vRow.key"
+            :ref="el => virtualizer.measureElement(el as Element | null)"
+            :data-index="vRow.index"
+            class="picker-row"
+            :style="{ transform: `translateY(${vRow.start}px)` }"
+          >
+            <div
+              v-if="vRow.index === 0"
+              class="picker-item picker-item--none"
+              @click="selectId(null)"
+            >
+              None
+            </div>
+            <div
+              v-else
+              class="picker-item"
+              @click="selectId(results[vRow.index - 1]!.id)"
+              @mouseenter="onHoverEnter(results[vRow.index - 1]!.id)"
+              @mouseleave="onHoverLeave"
+            >
+              <IngredientResultCard :ingredient="results[vRow.index - 1]!" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -218,13 +254,23 @@ onUnmounted(() => {
 }
 
 .picker-list {
-  list-style: none;
   overflow-y: auto;
   flex: 1;
   padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  position: relative;
+}
+
+.picker-list-inner {
+  position: relative;
+  width: 100%;
+}
+
+.picker-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding-bottom: 6px;
 }
 
 .picker-item {

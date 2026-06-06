@@ -2,6 +2,7 @@
 import type { ApiItemSummary } from '~/composables/useApi'
 import type { CleanedRawItem } from '~/lib/build/resolve'
 import type { CraftedItem } from '~/lib/crafter/types'
+import { useVirtualizer } from '@tanstack/vue-virtual'
 import Fuse from 'fuse.js'
 import {
   HoverCardContent,
@@ -72,6 +73,24 @@ const filteredItems = computed<CleanedRawItem[]>(() => {
 function selectItem(id: number | null) {
   emit('select', id)
 }
+
+// Virtualize the items list. Row 0 is the "None" entry; rows 1..N map to
+// filteredItems. Dynamic measurement (`measureElement`) handles the mobile
+// row-size bump without per-breakpoint config.
+const itemsScrollEl = ref<HTMLDivElement | null>(null)
+const itemRows = computed(() => filteredItems.value.length + 1)
+const itemsVirtualizer = useVirtualizer(
+  computed(() => ({
+    count: itemRows.value,
+    getScrollElement: () => itemsScrollEl.value,
+    estimateSize: () => 36,
+    overscan: 8,
+  })),
+)
+
+watch(filteredItems, () => {
+  itemsScrollEl.value?.scrollTo({ top: 0 })
+})
 
 // ----- Crafted tab -----
 
@@ -313,29 +332,46 @@ async function selectSavedItem(item: ApiItemSummary) {
           {{ pasteError }}
         </p>
       </div>
-      <ul class="picker-list">
-        <li class="picker-item picker-item--none" @click="selectItem(null)">
-          None
-        </li>
-        <li
-          v-for="item in filteredItems"
-          :key="item.id as number"
-          class="picker-item"
-          @click="selectItem(item.id as number)"
+      <div ref="itemsScrollEl" class="picker-list picker-list--virtual">
+        <div
+          class="picker-list-inner"
+          :style="{ height: `${itemsVirtualizer.getTotalSize()}px` }"
         >
-          <img
-            v-if="itemIconUrl(item)"
-            :src="itemIconUrl(item)!"
-            class="picker-icon"
-            loading="lazy"
-            draggable="false"
-            aria-hidden="true"
-            alt=""
+          <div
+            v-for="vRow in itemsVirtualizer.getVirtualItems()"
+            :key="vRow.key"
+            :ref="el => itemsVirtualizer.measureElement(el as Element | null)"
+            :data-index="vRow.index"
+            class="picker-row"
+            :style="{ transform: `translateY(${vRow.start}px)` }"
           >
-          <span v-else class="picker-icon picker-icon--empty" aria-hidden="true" />
-          <span class="picker-item-name">{{ item.displayName }}</span>
-        </li>
-      </ul>
+            <div
+              v-if="vRow.index === 0"
+              class="picker-item picker-item--none"
+              @click="selectItem(null)"
+            >
+              None
+            </div>
+            <div
+              v-else
+              class="picker-item"
+              @click="selectItem(filteredItems[vRow.index - 1]!.id as number)"
+            >
+              <img
+                v-if="itemIconUrl(filteredItems[vRow.index - 1]!)"
+                :src="itemIconUrl(filteredItems[vRow.index - 1]!)!"
+                class="picker-icon"
+                loading="lazy"
+                draggable="false"
+                aria-hidden="true"
+                alt=""
+              >
+              <span v-else class="picker-icon picker-icon--empty" aria-hidden="true" />
+              <span class="picker-item-name">{{ filteredItems[vRow.index - 1]!.displayName }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
 
     <div v-else-if="tab === 'crafted'" class="picker-crafted-host" @click.stop>
@@ -466,7 +502,6 @@ async function selectSavedItem(item: ApiItemSummary) {
     padding: 10px 14px;
     font-size: 13px;
     min-height: 44px;
-    contain-intrinsic-size: auto 44px;
   }
   .picker-icon {
     width: 28px;
@@ -573,6 +608,22 @@ async function selectSavedItem(item: ApiItemSummary) {
   flex: 1;
 }
 
+.picker-list--virtual {
+  position: relative;
+}
+
+.picker-list-inner {
+  position: relative;
+  width: 100%;
+}
+
+.picker-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
 .picker-item {
   display: flex;
   align-items: center;
@@ -585,8 +636,6 @@ async function selectSavedItem(item: ApiItemSummary) {
   transition:
     background 0.08s,
     color 0.08s;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 36px;
 }
 
 .picker-icon {

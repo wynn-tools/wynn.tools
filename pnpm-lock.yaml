@@ -17,6 +17,9 @@ importers:
       '@pinia/nuxt':
         specifier: ^0.11.3
         version: 0.11.3(magicast@0.5.3)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))
+      '@tanstack/vue-virtual':
+        specifier: ^3.13.28
+        version: 3.13.28(vue@3.5.34(typescript@6.0.3))
       fuse.js:
         specifier: ^7.3.0
         version: 7.3.0
@@ -2623,11 +2626,11 @@ packages:
   '@takumi-rs/wasm@1.5.1':
     resolution: {integrity: sha512-uOWjizXOYsM8n6cRngyw7oqvYBrkCvB1CHKEKC6069OSi/D/iCoo8gf23S7QnDN6A8H9QSbrS4RlnVVflZgCfA==}
 
-  '@tanstack/virtual-core@3.15.0':
-    resolution: {integrity: sha512-0AwPGx0I8QxPYjAxShT/+z+ZOe9u8mW5rsXvivCTjRfRmz9a43+3mRyi4wwlyoUqOC56q/jatKa0Bh9M99BEHQ==}
+  '@tanstack/virtual-core@3.17.0':
+    resolution: {integrity: sha512-gOxY/hFkPh/XQYhnThBHzkbkX3Ed+z/iushyz+R+JAr213aXxUDgQoTgTdrDpBSRsjFM73P/KfUyWmaF9WHMkQ==}
 
-  '@tanstack/vue-virtual@3.13.25':
-    resolution: {integrity: sha512-/ez+t68a5O4CgVysvk7Bav0XbSYSYufOVHZveXF+DYO9hvtg2UheYzR0YkniCeUtXmMjDne1dDqwBMkOmEUOow==}
+  '@tanstack/vue-virtual@3.13.28':
+    resolution: {integrity: sha512-A+jWpXtMpWXKhGLKQrXeC9mk1VgYeMWSJ+o0CTCEi+HLYMSQFdVmPG9lJz7d4XJyIkc5xVwZU9QY67QpScqnxA==}
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
@@ -8747,11 +8750,11 @@ snapshots:
       - react
       - react-dom
 
-  '@tanstack/virtual-core@3.15.0': {}
+  '@tanstack/virtual-core@3.17.0': {}
 
-  '@tanstack/vue-virtual@3.13.25(vue@3.5.34(typescript@6.0.3))':
+  '@tanstack/vue-virtual@3.13.28(vue@3.5.34(typescript@6.0.3))':
     dependencies:
-      '@tanstack/virtual-core': 3.15.0
+      '@tanstack/virtual-core': 3.17.0
       vue: 3.5.34(typescript@6.0.3)
 
   '@tybys/wasm-util@0.10.2':
@@ -12505,7 +12508,7 @@ snapshots:
       '@floating-ui/vue': 1.1.11(vue@3.5.34(typescript@6.0.3))
       '@internationalized/date': 3.12.1
       '@internationalized/number': 3.6.6
-      '@tanstack/vue-virtual': 3.13.25(vue@3.5.34(typescript@6.0.3))
+      '@tanstack/vue-virtual': 3.13.28(vue@3.5.34(typescript@6.0.3))
       '@vueuse/core': 14.3.0(vue@3.5.34(typescript@6.0.3))
       '@vueuse/shared': 14.3.0(vue@3.5.34(typescript@6.0.3))
       aria-hidden: 1.2.6
