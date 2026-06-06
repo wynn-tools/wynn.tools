@@ -17,6 +17,7 @@ export function toSearchIngredient(ing: Ingredient): SearchIngredient {
     itemOnlyIDs: ing.itemOnlyIDs as unknown as Record<string, number>,
     consumableOnlyIDs: ing.consumableOnlyIDs as unknown as Record<string, number>,
     positionModifiers: ing.posMods,
+    droppedBy: [],
     icon: ing.icon,
   }
 }
