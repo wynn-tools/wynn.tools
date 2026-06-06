@@ -3,10 +3,16 @@ import { marked } from 'marked'
 
 marked.setOptions({ gfm: true, breaks: true })
 
+const WYNNBUILDER_URL_RE = /https:\/\/(?:wynnbuilder(?:-beta)?|hppeng-wynn)\.github\.io\/builder\/#([\w+\-=]+)/g
+
+export function rewriteWynnbuilderUrls(src: string): string {
+  return src.replace(WYNNBUILDER_URL_RE, (_, hash) => `https://wynn.tools/builder/${hash}`)
+}
+
 export function renderMarkdown(src: string): string {
   if (!src)
     return ''
-  const html = marked.parse(src, { async: false }) as string
+  const html = marked.parse(rewriteWynnbuilderUrls(src), { async: false }) as string
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })
 }
 

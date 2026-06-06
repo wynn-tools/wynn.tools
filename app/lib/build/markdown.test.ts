@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { renderMarkdown, stripMarkdown } from './markdown'
+import { renderMarkdown, rewriteWynnbuilderUrls, stripMarkdown } from './markdown'
 
 describe('renderMarkdown', () => {
   it('renders bold and links', () => {
@@ -17,6 +17,26 @@ describe('renderMarkdown', () => {
   })
   it('returns empty for empty input', () => {
     expect(renderMarkdown('')).toBe('')
+  })
+})
+
+describe('rewriteWynnbuilderUrls', () => {
+  const HASH = 'CT0620-CHWHoX16ZQYaXanXY40NDY0saG7s4s4y3sa9b482OJ2TOJOJmFOJcKIW8WD9qXDXD1-WD9J91eT22RAo990mxf+wGR+F3'
+
+  it('rewrites wynnbuilder-beta links', () => {
+    expect(rewriteWynnbuilderUrls(`see https://wynnbuilder-beta.github.io/builder/#${HASH} now`))
+      .toBe(`see https://wynn.tools/builder/${HASH} now`)
+  })
+  it('rewrites hppeng-wynn links', () => {
+    expect(rewriteWynnbuilderUrls(`https://hppeng-wynn.github.io/builder/#${HASH}`))
+      .toBe(`https://wynn.tools/builder/${HASH}`)
+  })
+  it('rewrites links inside markdown link syntax', () => {
+    const out = renderMarkdown(`[try this](https://wynnbuilder-beta.github.io/builder/#${HASH})`)
+    expect(out).toContain(`href="https://wynn.tools/builder/${HASH}"`)
+  })
+  it('leaves unrelated URLs alone', () => {
+    expect(rewriteWynnbuilderUrls('https://example.com/foo')).toBe('https://example.com/foo')
   })
 })
 
