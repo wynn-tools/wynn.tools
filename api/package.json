@@ -17,7 +17,8 @@
     "db:dev:down": "docker compose -f ../deploy/compose.dev.yaml down",
     "db:dev:reset": "docker compose -f ../deploy/compose.dev.yaml down -v && docker compose -f ../deploy/compose.dev.yaml up -d --wait",
     "db:test:up": "docker compose -f ../deploy/compose.test.yaml up -d --wait",
-    "db:test:down": "docker compose -f ../deploy/compose.test.yaml down -v"
+    "db:test:down": "docker compose -f ../deploy/compose.test.yaml down -v",
+    "imports:run": "tsx --env-file=.env scripts/imports/main.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",
