@@ -15,15 +15,34 @@ const props = withDefaults(defineProps<{
   ingredient: Ingredient | null
   highlighted?: boolean
   effectiveness?: number
+  previewing?: boolean
 }>(), {
   highlighted: false,
   effectiveness: undefined,
+  previewing: false,
 })
 
 const emit = defineEmits<{
   open: []
   clear: []
 }>()
+
+const effAriaLabel = computed<string | undefined>(() => {
+  if (props.effectiveness === undefined)
+    return undefined
+  return props.previewing
+    ? `Effectiveness would become ${props.effectiveness}%`
+    : `Effectiveness ${props.effectiveness}%`
+})
+
+const emptyAriaLabel = computed<string>(() => {
+  const base = `Add ingredient to slot ${props.index + 1}`
+  if (props.effectiveness === undefined)
+    return base
+  return props.previewing
+    ? `${base}. Effectiveness would become ${props.effectiveness}%.`
+    : `${base}. Effectiveness ${props.effectiveness}%.`
+})
 
 // Slots are laid out in a 2-column grid; odd-index slots sit in the right
 // column where a right-side tooltip would be clipped. Pick `left` for those
@@ -87,7 +106,7 @@ function onClear(e: MouseEvent) {
           v-if="effectiveness !== undefined"
           class="slot-eff"
           :class="effClass(effectiveness)"
-          :aria-label="`Effectiveness ${formatEff(effectiveness)}`"
+          :aria-label="effAriaLabel"
         >
           [{{ formatEff(effectiveness) }}]
         </span>
@@ -114,11 +133,19 @@ function onClear(e: MouseEvent) {
     type="button"
     class="slot"
     :class="{ 'slot--highlighted': highlighted }"
-    :aria-label="`Add ingredient to slot ${index + 1}`"
+    :aria-label="emptyAriaLabel"
     @click="emit('open')"
   >
     <span class="slot-plus" aria-hidden="true">+</span>
     <span class="slot-empty-label">Add ingredient</span>
+    <span
+      v-if="effectiveness !== undefined"
+      class="slot-eff slot-eff--empty"
+      :class="effClass(effectiveness)"
+      aria-hidden="true"
+    >
+      [{{ formatEff(effectiveness) }}]
+    </span>
   </button>
 </template>
 
@@ -222,6 +249,15 @@ function onClear(e: MouseEvent) {
   background: var(--color-border);
 }
 
+.slot-body,
+.slot-plus,
+.slot-empty-label,
+.slot-clear,
+.slot-eff {
+  position: relative;
+  z-index: 1;
+}
+
 .slot-eff {
   position: absolute;
   top: 6px;
@@ -231,6 +267,12 @@ function onClear(e: MouseEvent) {
   line-height: 1;
   letter-spacing: 0.02em;
   pointer-events: none;
+}
+
+.slot-eff--empty {
+  /* No clear button on empty slots — sit flush in the corner instead of
+     offset for a ✕ that isn't there. */
+  right: 10px;
 }
 
 .eff--good {

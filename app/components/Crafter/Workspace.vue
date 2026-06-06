@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
+import { onMounted, ref, watch } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
+import { useMediaQuery } from '~/composables/useMediaQuery'
 import { useCraftStore } from '~/stores/craft'
 
 // `embedded`: when true, this workspace is being mounted inside another tool
@@ -28,6 +30,40 @@ const props = withDefaults(defineProps<{
 })
 
 const store = useCraftStore()
+
+// Picker state lives here so the picker can mount either inline in the right
+// rail (desktop) or as a fixed overlay (tablet/mobile). The grid is dumb about
+// where the picker lives — it just emits `open(index)` and reads back
+// `openSlot` + `hoveredIngredient` to compute effectiveness previews.
+const openSlot = ref<number | null>(null)
+const hoveredIngredient = ref<Ingredient | null>(null)
+
+// 1100px matches the existing breakpoint where `.crafter-main` grows a 380px
+// right column for the item preview. Above that, the picker takes over the
+// column while open; below it, we fall back to the centered modal so the
+// player can still see the grid above the sheet.
+const isWide = useMediaQuery('(min-width: 1100px)')
+
+function openPicker(index: number) {
+  openSlot.value = index
+  hoveredIngredient.value = null
+}
+
+function closePicker() {
+  openSlot.value = null
+  hoveredIngredient.value = null
+}
+
+function onPickerSelect(id: number | null) {
+  if (openSlot.value == null)
+    return
+  store.setIngredient(openSlot.value, id)
+  closePicker()
+}
+
+function onHoverIngredient(ing: Ingredient | null) {
+  hoveredIngredient.value = ing
+}
 
 // Embedded mode is responsible for ensuring the craft context is loaded — the
 // standalone `/crafter` page does this in its own onMounted, but when we're
@@ -86,16 +122,40 @@ watch(
       </header>
       <div class="crafter-main">
         <section class="crafter-ingredients" aria-label="Ingredients">
-          <CrafterIngredientGrid />
+          <CrafterIngredientGrid
+            :open-slot="openSlot"
+            :hovered-ingredient="hoveredIngredient"
+            @open="openPicker"
+          />
         </section>
-        <aside class="crafter-output" aria-label="Crafted item preview">
+        <aside
+          class="crafter-output"
+          :aria-label="isWide && openSlot !== null ? 'Choose ingredient' : 'Crafted item preview'"
+        >
+          <CrafterIngredientPicker
+            v-if="isWide && openSlot !== null"
+            :slot-index="openSlot"
+            variant="rail"
+            @select="onPickerSelect"
+            @close="closePicker"
+            @hover-ingredient="onHoverIngredient"
+          />
           <CrafterItemPreview
+            v-else
             :hide-equip-button="!onEquip"
             :on-equip="onEquip"
             :equip-disabled-reason="equipDisabledReason"
           />
         </aside>
       </div>
+      <CrafterIngredientPicker
+        v-if="!isWide && openSlot !== null"
+        :slot-index="openSlot"
+        variant="modal"
+        @select="onPickerSelect"
+        @close="closePicker"
+        @hover-ingredient="onHoverIngredient"
+      />
     </template>
   </main>
 </template>

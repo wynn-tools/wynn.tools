@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { computeAffectedCells, computeEffectiveness } from '~/lib/crafter/compute-craft'
 import { useCraftStore } from '~/stores/craft'
 
-const store = useCraftStore()
+const props = defineProps<{
+  openSlot: number | null
+  hoveredIngredient: Ingredient | null
+}>()
 
-const openSlot = ref<number | null>(null)
-const hoveredIngredient = ref<Ingredient | null>(null)
+const emit = defineEmits<{
+  open: [index: number]
+}>()
+
+const store = useCraftStore()
 
 const slotIngredients = computed<(Ingredient | null)[]>(() => {
   const ctx = store.ctx
@@ -19,41 +25,53 @@ const slotIngredients = computed<(Ingredient | null)[]>(() => {
   })
 })
 
-// Per-slot effectiveness moves into the slot cards themselves (was previously
-// rendered in the deleted CrafterRecipeStatsPanel). Compute once per change to
-// the ingredient set — `computeEffectiveness` is a pure function.
+// Real effectiveness from currently-placed ingredients. Always defined for all
+// six slots — `computeEffectiveness` returns a flat 6-entry row-major array.
 const effectiveness = computed<number[]>(() => computeEffectiveness(slotIngredients.value))
 
+// Preview effectiveness: what the matrix would look like if the hovered
+// ingredient were virtually placed in the open slot. Null when nothing's hovered.
+const previewEffectiveness = computed<number[] | null>(() => {
+  const ing = props.hoveredIngredient
+  const from = props.openSlot
+  if (!ing || from == null)
+    return null
+  const virt = slotIngredients.value.slice()
+  virt[from] = ing
+  return computeEffectiveness(virt)
+})
+
 const highlightedCells = computed<Set<number>>(() => {
-  const ing = hoveredIngredient.value
-  const from = openSlot.value
+  const ing = props.hoveredIngredient
+  const from = props.openSlot
   if (!ing || from == null)
     return new Set()
   return computeAffectedCells(ing, from)
 })
 
-function openPicker(index: number) {
-  openSlot.value = index
+function isPreviewing(i: number): boolean {
+  if (previewEffectiveness.value === null)
+    return false
+  // The source slot is also "previewing" — the user is deciding for it,
+  // so its own would-be effectiveness matters even though
+  // `computeAffectedCells` deliberately excludes it.
+  return highlightedCells.value.has(i) || props.openSlot === i
 }
 
-function closePicker() {
-  openSlot.value = null
-  hoveredIngredient.value = null
+function effFor(i: number): number {
+  if (isPreviewing(i) && previewEffectiveness.value)
+    return previewEffectiveness.value[i]
+  return effectiveness.value[i]
 }
 
-function onSelect(id: number | null) {
-  if (openSlot.value == null)
-    return
-  store.setIngredient(openSlot.value, id)
-  closePicker()
+function isHighlighted(i: number): boolean {
+  // Visual accent on the source slot too while previewing, so the user can
+  // see at a glance which slot they're filling.
+  return highlightedCells.value.has(i) || (props.hoveredIngredient !== null && props.openSlot === i)
 }
 
 function onClear(index: number) {
   store.setIngredient(index, null)
-}
-
-function onHoverIngredient(ing: Ingredient | null) {
-  hoveredIngredient.value = ing
 }
 </script>
 
@@ -65,19 +83,13 @@ function onHoverIngredient(ing: Ingredient | null) {
         :key="i"
         :index="i"
         :ingredient="ing"
-        :highlighted="highlightedCells.has(i)"
-        :effectiveness="ing ? effectiveness[i] : undefined"
-        @open="openPicker(i)"
+        :highlighted="isHighlighted(i)"
+        :effectiveness="effFor(i)"
+        :previewing="isPreviewing(i)"
+        @open="emit('open', i)"
         @clear="onClear(i)"
       />
     </div>
-    <CrafterIngredientPicker
-      v-if="openSlot !== null"
-      :slot-index="openSlot"
-      @select="onSelect"
-      @close="closePicker"
-      @hover-ingredient="onHoverIngredient"
-    />
   </div>
 </template>
 

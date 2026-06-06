@@ -6,7 +6,12 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { toSearchIngredient } from '~/lib/items-search/ingredient-to-search'
 import { useCraftStore } from '~/stores/craft'
 
-defineProps<{ slotIndex: number }>()
+const props = withDefaults(defineProps<{
+  slotIndex: number
+  variant?: 'modal' | 'rail'
+}>(), {
+  variant: 'modal',
+})
 const emit = defineEmits<{
   select: [id: number | null]
   close: []
@@ -74,7 +79,8 @@ function onKey(e: KeyboardEvent) {
 }
 
 function onBackdropClick() {
-  emit('close')
+  if (props.variant === 'modal')
+    emit('close')
 }
 
 onMounted(() => {
@@ -88,11 +94,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="picker-overlay" @click.self="onBackdropClick">
+  <div
+    :class="variant === 'modal' ? 'picker-overlay' : 'picker-rail-wrap'"
+    @click.self="onBackdropClick"
+  >
     <div
       class="picker"
+      :class="{ 'picker--rail': variant === 'rail' }"
       role="dialog"
-      aria-modal="true"
+      :aria-modal="variant === 'modal' ? 'true' : undefined"
       :aria-label="`Choose ingredient for slot ${slotIndex + 1}`"
     >
       <div class="picker-header">
@@ -149,6 +159,23 @@ onUnmounted(() => {
   max-height: 70vh;
   overflow: hidden;
   box-shadow: 0 10px 30px oklch(0% 0 0 / 0.4);
+}
+
+/* Rail variant: sits inline in the workspace's right column, replacing the
+   item preview while a slot is being picked. No backdrop, no fixed position,
+   no drop shadow — it's a panel, not a modal. */
+.picker-rail-wrap {
+  display: contents;
+}
+
+.picker--rail {
+  width: 100%;
+  max-width: 100%;
+  max-height: calc(100vh - 140px);
+  box-shadow: none;
+  border-radius: 8px;
+  position: sticky;
+  top: 80px;
 }
 
 .picker-header {
