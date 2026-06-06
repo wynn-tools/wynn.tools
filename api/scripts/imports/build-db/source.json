@@ -1,0 +1,1092 @@
+{
+  "Builds": {
+    "Paladin Ascendancy": {
+      "tag": "warrior, paladin, Legendary island, raids, world events, hpr",
+      "link": "https://wynnbuilder-beta.github.io//builder/#CU0XJnDJ0F1X5n66smWy4qmmTpRSvtsVWhtKqC3",
+      "credit": "Atlas Inc Discord",
+      "weapon": "Ascendancy",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "Warden Mage Levelling": {
+      "tag": "mage, levelling, cosmic, lockdown, cosmic",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CU0lbmh94N2jbmIFMwnS2qvWFlDuEgtpJ-Xx3",
+      "credit": "generic build",
+      "weapon": "Warden",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Arcanist fake Rainbow Warden": {
+      "tag": "mage, arcanist, silly, raids, intangible, lightweight, lockdown, Conquered Skies, Forgotten Chronicles, life sustain, lifesteal, qol, walk speed, ws",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CU0m-WvGy+3CnWbHiCIlHMFYFlKwwC5eG0uzyqVu+F6",
+      "credit": "yy7erig",
+      "weapon": "Warden",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Acolyte Fast Hybrid Cross Cut": {
+      "tag": "shaman, acolyte, silly, manasteal, hybrid, walk speed, ws, Gruesome Knots, Slayer",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CU0oqW5GOm3rQWbHiCIlHQdm4pDEJ20UFixh-Fz0",
+      "credit": "yy7erig",
+      "weapon": "Cross-Cut",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Acolyte Heavy Hybrid Sunstar": {
+      "tag": "shaman, acolyte, silly, life sustain, lifesteal, hybrid, manasteal, superconductor",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CU09DG6GmH4SQG762e066mlHkcDSg40yUOtN-Vw1",
+      "credit": "yy7erig",
+      "weapon": "Sunstar",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Summoner Scattered Psyche": {
+      "tag": "shaman, summoner, silly, dps, raid, world event, etw, glass, spellspam, auraspam, mana regen, Sorcery, Furious Effigy",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0k21-CCI4mRWjHiDIhJOFYVpKu468C0e-f6+37lIH30",
+      "credit": "yy7erig",
+      "weapon": "Scattered Psyche",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.water3.webp",
+      "class": "Shaman"
+    },
+    "Summoner Monarch": {
+      "tag": "shaman, summoner, silly, dps, raid, world event, etwf, spellsteal, lifesteal, sustain, damage",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT00+WEJmH4SQWcHqCYrHq3o7pREf10+Vg+1pBDh0",
+      "credit": "yy7erig",
+      "weapon": "Monarch",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.air3.webp",
+      "class": "Shaman"
+    },
+    "Arcanist Malevolent Urge": {
+      "tag": "mage, arcanist, silly, dps, raid, ETF, damage, Perfect Recall, Meteor Crash, Lockdown, Entropy, Self-Sufficient, Self Sufficient, Sorcery",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT02E1dFuH4iwmeH6D2qHO3YvlRoBld7-3t-n0",
+      "credit": "yy7erig",
+      "weapon": "Malevolent Urge",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Lightbender Halcyon": {
+      "tag": "mage,lightbender,healer,raid,world event",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0g2nDJWI4jWWfJCTIhJEGoupDXZG1W+v4qFpySz0",
+      "credit": "Sunomon",
+      "weapon": "Halcyon",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi3.webp",
+      "class": "Mage"
+    },
+    "Guardian Support": {
+      "tag": "warrior,support,tank,provoke,Raid,0damage,paladin",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT00EnaFmC3OQGTAa4oQGAZHtqRj3Q9iAWUR-1-UI7C1",
+      "credit": "2kaa",
+      "weapon": "Guardian",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "acolyte hadal": {
+      "tag": "shaman,raid,dps,acolyte",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0e1Ev0Gya39nJEXQEvaSZaRqw4-SWg9buI-k7zUOkda0",
+      "credit": "Silentmaxx",
+      "weapon": "Hadal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.water3.webp",
+      "class": "Shaman"
+    },
+    "Riftwalker Quetzalcoatl": {
+      "tag": "Mage,Raid,Dps,Riftwalker,rainbow",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0-2HyGiK4VJnKEcoH15aGIFk6uqAWy0uzyYCflkEm6",
+      "credit": "Iwanaga_Kotoko_",
+      "weapon": "Quetzalcoatl",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Riftwalker Monster": {
+      "tag": "Raid,Ehp,Dps,riftwalker,mage,lockdown",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0h2H5GuH4O5ngHMDI15MbXicRSA30yUUHcqtQTY2",
+      "credit": "SilentMaxx",
+      "weapon": "Monster",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Riftwalker Trance": {
+      "tag": "Raid,melee,Cstack,riftwalker,Dps",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0oCtOJEqhsuymucDTYBUpcU4WTWTWTWTWTWTCfa0H0s1s1s1s1s1snaI2GvHomm8lDbJV0W+tjsgfkaX1",
+      "credit": "2kaa",
+      "weapon": "Trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "PalaMonk Idol": {
+      "tag": "Warrior,Idol,DPS,Raid,Spell,world event,surf,battle monk",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0e1Iv0sCb7169v8OCI6tDj77AIGA7UDfS6e41TCi9TCi9i9i9JA90jEXz8gQInbsZleD6RQMm6",
+      "credit": "2kaa",
+      "weapon": "Idol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.water3.webp",
+      "class": "Warrior"
+    },
+    "Architect Trickster": {
+      "tag": "assassin,architect,trickster,dps,raid,world event,tanky,mana regen",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0+2l9Fe3l9FIWkvy2zcuiQaLZKG1OeW1z6SvVkdKcF+AJA0",
+      "credit": "snakiesnake",
+      "weapon": "Architect",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.earth3.webp",
+      "class": "Assassin"
+    },
+    "RawFish Strati Sharpshooter (Fruma)": {
+      "tag": "sharpshooter, archer, stratiformis, raid",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0oqG2EuY3c5HgJITI15amWtqYSU20y+C+uJ7rjA",
+      "credit": "rawfish",
+      "weapon": "Stratiformis",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.air3.webp",
+      "class": "Archer"
+    },
+    "Tstack sunstar ritualist": {
+      "tag": "tstack, sunstar, crafted, ritualist",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CTG48g8OOQWcWcWcec810Y2K21VDmq2cMm-6PO8Np6E94Q70QFsSjihy2q1",
+      "credit": "birdmade",
+      "weapon": "sunstar",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Freedom Boltslinger 2": {
+      "tag": "freedom, boltslinger",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0dpAgEh3BgEB5Jvy3Cb+awaKdKGXuZ0g9bob-nx7c7TSE40",
+      "credit": "mariohhh",
+      "weapon": "freedom",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.multi3.webp",
+      "class": "Archer"
+    },
+    "Freedom Boltslinger": {
+      "tag": "archer, freedom, boltslinger, rainbow, dps, raid, world event, sorcery",
+      "link": "https://wynnbuilder.github.io/builder/#CM0dp0-CuY3O6W10C0GnEam0ecNfB-Jx7s3wXT2",
+      "credit": "yy7erig",
+      "weapon": "Freedom",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.multi3.webp",
+      "class": "Archer"
+    },
+    "Cstack trance perilous flare riftcanist": {
+      "tag": "cstack, trance, perilous flare, cypress amber, warchief, riftwalker, arcanist, riftcanist",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT08+kvGlQZp3ZDE+QkvH0s1s1s1sH42sna2041O7O7O7O7H8O7JA00b7H27Zyk9lnFNe-ThbQg39C0",
+      "credit": "birdmade",
+      "weapon": "trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Budget cstack trance perilous flare riftcanist": {
+      "tag": "cstack, trance, perilous flare, cypress amber, warchief, riftwalker, arcanist, riftcanist",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT08+kvGlQZp3ZDE+Qkvqg230KGXCCCoxcyOP0YVkG-xMBrK7IO0",
+      "credit": "birdmade",
+      "weapon": "trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Moirai Revolution": {
+      "tag": "sharpshooter, revolution, raid, moirai, set",
+      "link": "https://wynnbuilder-beta.github.io//builder/#CT04E1OJOI4Z5XjHiDYmHml1TpKSo4GK0yUC+uJ7rpY0",
+      "credit": "rawfish",
+      "weapon": "Revolution",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.air3.webp",
+      "class": "Archer"
+    },
+    "Riftbender Trance": {
+      "tag": "riftbender, mage, trance, fruma",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CT0831zAym0+QWfHCDY57omm8lRoBjdRjLJT93F",
+      "credit": "Sunomon",
+      "weapon": "Trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Boreal Ignis": {
+      "tag": "sharpshooter, trapper, bolt, raid, hpr, tank",
+      "link": "https://rawfish69.github.io/build-solver/?wb=N4IgziBcoBZQLAJgGzIDQgMYIIwE54MAbKZABgA4MAjKHZCgdgwCccEBWRRVxT7mizoBmShgB2nPDgwB3OozLIAvsTqIyGbJHEBXIkQxwd%2BosqA",
+      "credit": "fish",
+      "weapon": "ignis",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.fire3.webp",
+      "class": "Archer"
+    },
+    "loot bonus armors / accessories (crafted recipes)": {
+      "tag": "loot bonus, crafteds, lootrun, world events",
+      "link": "https://wynnbuilder-beta.github.io/builder/#COG48gebebebebebec8100W8GBHBHBHBHBHBXDH20000082sJCJsJsJOICJWJa00041c9j8j8x9c9j8n9IG4SOOmOmWdOmWduc8504",
+      "credit": "anonymous",
+      "weapon": "oak wood relik",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.basicWood.webp",
+      "class": "Shaman"
+    },
+    "(Mythicless) Black Amaranth Bashscream Fallen EWA": {
+      "tag": "warrior, mythicless, galleon, EWA, fallen, bashscream, damage, raid, world events, walk speed, life steal, mana steal, spellsteal, qol",
+      "link": "https://wynnbuilder.github.io/builder/#CN0G2MS61kuKEPn1utkJy5Gt1LEOympY5z9N0mlxKs-kJ3",
+      "credit": "yy7erig",
+      "weapon": "Black Amaranth",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.earth3.webp",
+      "class": "Warrior"
+    },
+    "(Mythicless) The End Acolyte ETWA": {
+      "tag": "shaman, mythicless, possible revenant, etwa, acolyte, double totem, spell, manasteal, spellsteal, life steal, sustain, support, damage, raid, world events, raids, walk speed, TNA, heal",
+      "link": "https://wynnbuilder.github.io/builder/#CN0G2G0EC34-vmKEco1AGOGWmi5d21720-xpsUex20",
+      "credit": "yy7erig",
+      "weapon": "The End",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.earth3.webp",
+      "class": "Shaman"
+    },
+    "(Mythicless) Starburst Lightbender WFA": {
+      "tag": "Keywords: mage, wfa, lightbender, lb, riftbender, spell, manasteal, support, healer, flashfreeze",
+      "link": "https://wynnbuilder.github.io/builder/#CN0oqGsF8t2zTGoDAln45EQHFiTkqFUQgMxqO1",
+      "credit": "yy7erig",
+      "weapon": "Starburst",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Tanky Gentle Glow Lament Lightbender TWF": {
+      "tag": "mage, lament, lightbender, lb, twf, spell, manasteal, spellsteal, support, healer, gentle glow, raid, crafted, raids",
+      "link": "https://wynnbuilder.github.io/builder/#CN0TlWu4Ol3zT41c9c9h9h9h9h9m9IG4OcOcicicicic0d81GX92CJCJMJMJMJMJYJa0UrCo1L2G-uXfQb20",
+      "credit": "yy7erig",
+      "weapon": "Lament",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "Cerberus Intless Spellsteal Riftwalker": {
+      "tag": "Gaia, cerberus, intless, spellsteal, riftwalker, damage, spell, dps, raid, world event, manasteal, Meteor Crash",
+      "link": "https://wynnbuilder.github.io/builder/#CN0X60uFmE1SQmZ3USmrE4KWAlBSc60y-jtsNx2",
+      "credit": "yy7erig",
+      "weapon": "Cerberus",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Lament Riftbender TWFA": {
+      "tag": "mage, lament, stardew, riftwalker, lightbender, spell, manasteal, support, raid, tanky, heal",
+      "link": "https://wynnbuilder.github.io/builder/#CN0vA025Kq0yQ00FwY1t8uMmhcHEJ00w7FDLhTQi0",
+      "credit": "CNM Guild",
+      "weapon": "lament",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "warrior xp grind": {
+      "tag": "lvl99, xp, scrap, bmonk, church",
+      "link": "https://wynnbuilder.github.io/builder/#CN0QZMElW69SQxywqBubZ24KW016IgGmjtwGn0T2ipehExhRFksw5s41R",
+      "credit": "kosmakapro",
+      "weapon": "Wybel Horn Spear",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.basicWood.webp",
+      "class": "Warrior"
+    },
+    "first endgame warrior build": {
+      "tag": "end game, new player, bmonk, fallen",
+      "link": "https://wynnbuilder.github.io/builder/#CN0826T2mzY37kHSmryo114BueA7dJWaoEVnAMuAtu2NPkuswsxUNrgMVEwgxywtxvFDCwY2",
+      "credit": "kosmakapr",
+      "weapon": "Harwrol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.multi3.webp",
+      "class": "Warrior"
+    },
+    "cheap blood guard": {
+      "tag": "guard, heal, dps, ehp, bloodpact, fallen, paladin",
+      "link": "https://wynnbuilder.github.io/builder/#CN0O0VT63+w4cur1JpBd77mz3v9K63JDlSzJutsVWRdav0",
+      "credit": "kosmakapro",
+      "weapon": "Guardian",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "full crafted pala huic": {
+      "tag": "huic, paladin, warrior, ehp, dmg, shieldstike",
+      "link": "https://wynnbuilder.github.io/builder/#CNG4iZiZ0X0XiZuoec81ly8O7P71212P7nbvCH2UvHWQYEISIEYQYE2RY4yoZ0r4TauaS4r4T4o49ub71z9c9KDz9z9z4W9IG4qdOcGrqdqdqJ0c81HGVYP2LJVIVIFXMY441z9c9KDz9z9z4T9IG4CZuoaZuomnuoCd850ly5hOXhSZBSXvYRhRlxTLhQzv4xCrsVFOtlxNA",
+      "credit": "kosmakapro",
+      "weapon": "guardian",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "Cheap Idol": {
+      "tag": "idol, cheap, surf, mana regen, dps, raid",
+      "link": "https://wynnbuilder.github.io/builder/#CN0e16T+3Co1Pt+vKpe3w86e056kmWgczglqUzhqqacmE",
+      "credit": "kosmakapro",
+      "weapon": "Idol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.water3.webp",
+      "class": "Warrior"
+    },
+    "Idol dps": {
+      "tag": "idol, dps, low ehp, water dmg, surf, bmonk, warrior",
+      "link": "https://wynnbuilder.github.io/builder/#CN0e16T+3Co1Pt+vKp8F2aEaEaEaEaEaEWJaW8GwGwGwGwGwGw0EH2Y0f3f3f3f3f3f3p4982aEaEaEaEaEaEYJa0KriNzbshVHJJM5s1",
+      "credit": "kosmakapro",
+      "weapon": "Idol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.water3.webp",
+      "class": "Warrior"
+    },
+    "guard full support": {
+      "tag": "ehp, overheal, heal, altruism, guardian",
+      "link": "https://wynnbuilder.github.io/builder/#CN0F+UT8gywODvzWfvbp66smmw4qmWfcN+YLimLkn5ENSRTxTlhQLhFdOdfs+x1x+T-I1",
+      "credit": "kosmakapro",
+      "weapon": "Guardian",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "Idol lr": {
+      "tag": "Lootrun, idol, spell, mana, ehp, crafted,",
+      "link": "https://wynnbuilder.github.io/builder/#CN0e1UT4diuHGMIMoononHoH2RY4ipnMpBF2OJOJOJOJuIuIWJaW8WDXDXDXDXBXB1EH2W23NOGLp8VnAMuAtu2NOkuswsxUNrgMVEnEJjzshVHJJM5s1",
+      "credit": "kosmakapro",
+      "weapon": "idol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.water3.webp",
+      "class": "Warrior"
+    },
+    "blood guard": {
+      "tag": "guardian-paladin-fallen-warrior",
+      "link": "https://wynnbuilder.github.io/builder/#CN0O0VT8gyw4cur1JpBF2wJCJeQwJwJw90JaW8eFnCXgfFfFfd0CH2eWI4qdOcGrqdqdqJqb81OgvbhXgP+jz7us9PE",
+      "credit": "kosmakapro",
+      "weapon": "guardian",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "Az Boltslinger eTWa": {
+      "tag": "archer, az, boltslinger, spell, damage, raid, world event, walk speed, ws, TNA, dps",
+      "link": "https://wynnbuilder.github.io/builder/#CN0vA02ECq0CnmM7Ik166EdWccHui30uVw+myWUOJ0",
+      "credit": "yy7erig",
+      "weapon": "Az",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.thunder3.webp",
+      "class": "Archer"
+    },
+    "Ignis Boltslinger (no Titano)": {
+      "tag": "archer, ignis, boltslinger, spell, damage, raid, world event, dps, ehp, hpr, tanky, Napalm, Transcendence, qcara, Altruism",
+      "link": "https://wynnbuilder.github.io/builder/#CN0yzm+F4c011n28M0Xy4kongcNkqFFz7aHRc0",
+      "credit": "yy7erig",
+      "weapon": "Ignis",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.fire3.webp",
+      "class": "Archer"
+    },
+    "Ignis Trapper EtwF (No Titano)": {
+      "tag": "archer, ignis, crusade sabatons, crabs, trapper, spell, damage, raid, world event, ehp, hpr, sustain, tanky, Napalm, Altruism",
+      "link": "https://wynnbuilder.github.io/builder/#CN0yzUTg0+w4cur9KphpZ3USWy4qmmgcNEo40UFytAZiH1L",
+      "credit": "yy7erig",
+      "weapon": "Ignis",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.fire3.webp",
+      "class": "Archer"
+    },
+    "Crabs Fatal": {
+      "tag": "mage, OG, rainbow",
+      "link": "https://wynnbuilder.github.io/builder/#CN0vAm-3OK3XQW6Ei3XA8ammecBUWq00Z1C6W--Ccrsv5",
+      "credit": "RawFish",
+      "weapon": "fatal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Gaia EWa 25w Riftcanist": {
+      "tag": "mage, Gaia, galleon, Riftwalker, arcanist, riftcanist, 20 winded, 25 winded, 20w, 25w, spell, dps, world event, raid, mana steal, spellsteal, Earthen Splinter, hybrid",
+      "link": "https://wynnbuilder.github.io/builder/#CN0n6Gq98Y3dQGT2gJW2DypHfc5ky+ljDVZ91",
+      "credit": "yy7erig",
+      "weapon": "Gaia",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.earth3.webp",
+      "class": "Mage"
+    },
+    "Orange Lily ETW Boltslinger": {
+      "tag": "archer, galleon, boltslinger, etw, spell, dps, world event, raid, mana steal, spellsteal, sorcery",
+      "link": "https://wynnbuilder.github.io/builder/#CN0e10-C8Y3dQGoDIk1HBmlXpYHEY0WfzFdwS6zmF1",
+      "credit": "yy7erig",
+      "weapon": "Orange Lily",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.multi3.webp",
+      "class": "Archer"
+    },
+    "Nullification Trickshade Panderift": {
+      "tag": "assassin, nullification, pandemonium, shadestepper, trickster, trickshade, spell, dps, raid, world event, Punishment, Madness, Sorcery, life steal, mana regen",
+      "link": "https://wynnbuilder.github.io/builder/#CN0t01-CuY3O6W10C0WA8ammicHkUxq7ce+vU9T7NOa1",
+      "credit": "yy7erig",
+      "weapon": "Nullification",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.basicGold.webp",
+      "class": "Assassin"
+    },
+    "Animosity Heavy Melee": {
+      "tag": "assassin, Animosity, Shadestepper, heavy melee, dps, raid, world event, Explosive Impact, life steal, mana steal,",
+      "link": "https://wynnbuilder.github.io/builder/#CN04KmeCG2456W3GS0Y57Y-nTW5nHk0m-y7gxsgM",
+      "credit": "unknown",
+      "weapon": "Animosity",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.basicWood.webp",
+      "class": "Assassin"
+    },
+    "Lament Riftwalker ETW": {
+      "tag": "mage, lament, riftwalker, etw, healer, healing, manasteal, spellsteal, sustain, dps, world event, raid, sorcery",
+      "link": "https://wynnbuilder.github.io/builder/#CM0jx6TudDwaEPqXNpeJoDIk156kmmhcHkqFdlTEkj0",
+      "credit": "yy7erig",
+      "weapon": "Lament",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "(Guild Wars) Lament Solo": {
+      "tag": "mage, lament, wfa, lightbender, heal, solo, guild wars, wars, warring, sorcery, expunge,",
+      "link": "https://wynnbuilder.github.io/builder/#CM0S76TudDwSmRqv8sepN3gmW-E20ohcHE300QFVyqMfFS1",
+      "credit": "unknown source",
+      "weapon": "Lament",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "6/8 Crafted Lament Riftbender eTW": {
+      "tag": "mage, lament, stardew, etw, tw, mr, manasteal, spellsteal, riftbender, lightbender, heal, healer, dps, world event, raid, crafteds, tome",
+      "link": "https://wynnbuilder.github.io/builder/#CM0t07z8m8v91ZfWHDHquCH26z8m8v91ZHDHoGoWDH26TurCwHWPYPoQoQoQoQ2SY441c9c9h9h9h9h9m9IG4OcOcicicicicOc81HWPYPoQoQoQoQISY4mhcHEz00w7FDLhTQi0",
+      "credit": "yy7erig",
+      "weapon": "Lament",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "6/8 CR Pure RW": {
+      "tag": "mage, pure, etWa, tWa, consumeables, consu, mr, Riftwalker, rw, heal, mr, dps, world event, raid, sorcery",
+      "link": "https://wynnbuilder.github.io/builder/#CM0t01-CHGxXg26ZaXHIE2RY482QFKLmOaCCIoH8Ja0HWPYPoQoQoQoQ2SY441c9c9h9h9h9h9m9IG4OcOcicicicicOc81HWPYPoQoQoQoQISY40i6a40uzVxkTvS",
+      "credit": "yy7erig",
+      "weapon": "Pure",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi1.webp",
+      "class": "Mage"
+    },
+    "Pure Riftwalker Rainbow": {
+      "tag": "Mage, pure, rainbow, Riftwalker, Rw, heal, sustain, mr, manasteal, tomes, dps, world event, raid, sorcery",
+      "link": "https://wynnbuilder.github.io/builder/#CM0KKG4CCn3O6GoDIkHnEam0i6K50uzVxkTvS",
+      "credit": "yy7erig",
+      "weapon": "Pure",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi1.webp",
+      "class": "Mage"
+    },
+    "Lunar Spine Riftwalker eTWA": {
+      "tag": "mage, Stardew, cheap, riftwalker, rw, twa, eTWA, spell, manasteal, lifesteal, tomes, sustain, dps, world event, raid, Sorcery",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vA0-C0y0yQGoDIk1564+mYcHSY00y+lTtkSE",
+      "credit": "yy7erig",
+      "weapon": "Lunar Spine",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Hellstrand Trapper/Sharp ETWF": {
+      "tag": "archer, cheap, trapper, focus, sharpshooter, etwf, spell, lifesteal, mana steal, spellsteal, sustain, dps, world event, raid, Napalm",
+      "link": "https://wynnbuilder.github.io/builder/#CM0yz0-B4c07IWt7y+mrEMbXFbNkqUyFw7XhQ",
+      "credit": "yy7erig",
+      "weapon": "Hellstrand",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.fire3.webp",
+      "class": "Archer"
+    },
+    "Herald of Ruin Trapper/Sharp ETWF": {
+      "tag": "archer, galleon, trapper, focus, sharpshooter, etwf, spell, dps, world event, raid, Napalm, Fallout",
+      "link": "https://wynnbuilder.github.io/builder/#CM0yzG42CF1dQm28M01KEml1ClHNQF+7zZmLD",
+      "credit": "yy7erig",
+      "weapon": "Herald of Ruin",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.fire3.webp",
+      "class": "Archer"
+    },
+    "Judas Riftbender TWA": {
+      "tag": "mage, stardew, lightbender, twa, melee, spell, spellsteal, mana steal, heal, chain lightning, dps, world event, raid,",
+      "link": "https://wynnbuilder.github.io/builder/#CM0qJ0iC0y0yQGoDIk1664+0RYBkqFVQgMvqm1",
+      "credit": "yy7erig",
+      "weapon": "Judas",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Judas Rawstack": {
+      "tag": "mage, warchief, arcanist, et, perilous flare, melee, rawstack, chain lightning, dps, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM08+0xFah3+QG46YmW57om0RYBzvYm21G-V6J-T0",
+      "credit": "yy7erig",
+      "weapon": "Judas",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Singularity Heavy Melee": {
+      "tag": "mage, singularity, arcanist, rainbow, melee, heavy melee, chain lightning, dps, raid, world events",
+      "link": "https://wynnbuilder.github.io/builder/#CM09D013464I1n3GU0I15M-1jcB00EB20w-pOwl3",
+      "credit": "yy7erig",
+      "weapon": "Singularity",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi3.webp",
+      "class": "Mage"
+    },
+    "Lunar Spine Spellsteal Riftwalker": {
+      "tag": "mage, stardew, riftwalker, twa, spellsteal, mana steal, curse, dps, raid, world event, cheap",
+      "link": "https://wynnbuilder.github.io/builder/#CM0buG2E0y0yQGoDIkXA64+mYcHSfzVJtrpk",
+      "credit": "yy7erig",
+      "weapon": "Lunar Spine",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Nullification Heavy Melee": {
+      "tag": "assassin, nullification, shadestepper, rainbow, hmelee, heavy melee, melee, dps, Explosive Impact, raid, world event, Quake, lifesteal, manasteal",
+      "link": "https://wynnbuilder.github.io/builder/#CM0tAMKdHPurnYJXX57RWO34BE8XXPDBSy60qF-i+kDY3",
+      "credit": "yy7erig",
+      "weapon": "Nullification",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.basicGold.webp",
+      "class": "Assassin"
+    },
+    "Morph-Freedom Bolt Equivalent": {
+      "tag": "archer, freedom, boltslinger, rainbow, spell, dps, raid, world event, world event, cheap, untradable",
+      "link": "https://wynnbuilder.github.io/builder/#CM0AKWz4CF1IKm05C0G15am0ecHbJYW51W-XlFCFO-3",
+      "credit": "yy7erig",
+      "weapon": "Freedom",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.multi3.webp",
+      "class": "Archer"
+    },
+    "Panic Zealot Tstack": {
+      "tag": "shaman, panic zealot, ritualist, etfa, tierstack, dps, furious effigy, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM06WsT20WY6xESQsT6sXw4Ae00EYmjeVWd0WA1WsBRisijH7",
+      "credit": "Triumph_OuO",
+      "weapon": "Sunstar",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Hadal Acolyte": {
+      "tag": "shaman, hadal, acolyte, raid, crafted, HEF tome",
+      "link": "https://wynnbuilder.github.io/builder/#CM0e16TGmDgEfJ6TurCwHGBYRIQoqHQoq1SY441j8k9f9J7f9J7m9I05TWR1eQ6v1w20t10QlNpRxXE3",
+      "credit": "Umbrionix",
+      "weapon": "Hadal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.water3.webp",
+      "class": "Shaman"
+    },
+    "Olympic Lootrun": {
+      "tag": "shaman, olympic, summoner, lr, lootrun, qol, ws",
+      "link": "https://wynnbuilder.github.io/builder/#CM0oqsT+q0vMxEOQsT2nG86+mW76krip3q60fV+zTUJ5",
+      "credit": "Umbrionix",
+      "weapon": "Olympic",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.air3.webp",
+      "class": "Shaman"
+    },
+    "Rainbow Absolution": {
+      "tag": "shaman, absolution, acolyte, healer, raid, notg, tna, tcc, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vAWQ6uY3XQsvO0030Ki39CCf1s30Ul-PxXEf4",
+      "credit": "badlife, Umbrionix",
+      "weapon": "Absolution",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.fire3.webp",
+      "class": "Shaman"
+    },
+    "Arbalest Uproot Spam ETA": {
+      "tag": "shaman, arbalest, summoner, spellspam",
+      "link": "https://wynnbuilder.github.io/builder/#CM0CuWM38Y3uQmKEco1y3Qd0XW5E+30wtWll7le0",
+      "credit": "badlife",
+      "weapon": "Aftershock",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.earth3.webp",
+      "class": "Shaman"
+    },
+    "Olympic Summoner": {
+      "tag": "shaman, olympic, summoner, raid, lootrun",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vAs574SxwZHjTzX9skJ862nG15ammjcNnbtR+fF7lX0",
+      "credit": "Rawfish",
+      "weapon": "Olympic",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.air3.webp",
+      "class": "Shaman"
+    },
+    "Mob Grind Toxo": {
+      "tag": "shaman, toxo, toxoplasmosis, grind, freerunner, greed, magnet, loot",
+      "link": "https://wynnbuilder.github.io/builder/#CM0Pumd6HGEYMYVXMYVXM2RY482oHqIyBqIyBqI8Ja0W024Gmx92oHyIWByIWByIYJa0wrSvoxFVVthK0",
+      "credit": "h4zer",
+      "weapon": "toxoplasmosis",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.earth3.webp",
+      "class": "Shaman"
+    },
+    "Ashock Tstack": {
+      "tag": "shaman, aftershock, ashock, tstack, melee, rage , tna, greed",
+      "link": "https://wynnbuilder.github.io/builder/#CMG4OaSOaZKZWNKQec81GhX8u9v99DnIf6vEXDH2Wl6H0RYR2RYRIK2d2SY4028ylH66gqiW7uB0Wq0uz+EjKsq810",
+      "credit": "2kaa",
+      "weapon": "Aftershock",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.earth3.webp",
+      "class": "Shaman"
+    },
+    "EHP Resonance Crabs Acolyte": {
+      "tag": "shaman, resonance, crusade sabatons, acolyte, rainbow, spell, tank, dps, support, gruesome knots, raid",
+      "link": "https://wynnbuilder.github.io/builder/#CM0A6WQ6Om3XQGoDM0HnEamW8lHr3i50460qUjiPxnE7",
+      "credit": "Silentmaxx",
+      "weapon": "Resonance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.basicGold.webp",
+      "class": "Shaman"
+    },
+    "Sunstar Tstack": {
+      "tag": "shaman, sunstar, warchief, ritualist, etf, tierstack, dps, raid, tcc",
+      "link": "https://wynnbuilder.github.io/builder/#CM0iuWM3uG1+QGr2gMG15omGkcBUWp0Gu0WtZTOTjrSQ",
+      "credit": "Rawfish, Umbrionix",
+      "weapon": "Sunstar",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Immolation Summoner Spellsteal": {
+      "tag": "shaman, immolation, summoner, quad, spell, mana steal, multi role, raid, notg, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CG0m-W5Gy+3SQW10oZH15MbnFkNvb+DvxTyc2",
+      "credit": "Umbrionix",
+      "weapon": "immolation",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.fire3.webp",
+      "class": "Shaman"
+    },
+    "Handheld Mortar Ritualist Tierstack ETFA": {
+      "tag": "shaman, handheld mortar, etfa, tierstack, dps, sorcery, raid, tcc, budget",
+      "link": "https://wynnbuilder.github.io/builder/#CM0T90s1Cn3OVWw4gMmq2AGGBlNvvD0mxbDMBRBa7",
+      "credit": "Me1tryllis",
+      "weapon": "Olympic",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.air3.webp",
+      "class": "Shaman"
+    },
+    "Sunstar Summoner TFA": {
+      "tag": "shaman, sunstar, summoner, ritualist, tfa, spell, manasteal, lifesteal, spellsteal, dps, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0m-kSi0YEWNEvJkSc2mK0G5mv4orSnH01R1G-JrFOUXU0",
+      "credit": "yy7erig",
+      "weapon": "Sunstar",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Phlebotomy Acolyte Level-Scale": {
+      "tag": "Shaman, acolyte, spell, dps, Cannulate, Geocentrism, crafted, level scale, notg, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CMG4SqSq8r4U8r4UyN81YWZcZ6fcm3fcmZv29G44U4U4U4U4U4USO818Ee8mCPsGGHGHGHGfoG2Y0paP31515151bA3982CJcD4K4K4K4KUBaW8mCPsGGHGHGHGXmG2GetbJB0OGj7SZMxC",
+      "credit": "Rawfish",
+      "weapon": "Absolution",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.fire3.webp",
+      "class": "Shaman"
+    },
+    "Trickshade Grimtrap": {
+      "tag": "assassin, grimtrap, shadestepper, dps, raid",
+      "link": "https://wynnbuilder.github.io/builder/#CM0DuG008Y3uQmKEqmH15uM0fc5kyF-zdcYkC0",
+      "credit": "tankofpacer, Umbrionix",
+      "weapon": "Grimtrap",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.earth3.webp",
+      "class": "Assassin"
+    },
+    "Cata Alternative Trickster": {
+      "tag": "assassin, cataclysm, cata, trickster, no-crafted, dps, tna, raid",
+      "link": "https://wynnbuilder.github.io/builder/#CM0G702kB7E1NEhL6T6emM7ylHx4sqSn3q50vzxToC-u50",
+      "credit": "Umbrionix",
+      "weapon": "Cataclysm",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.thunder3.webp",
+      "class": "Assassin"
+    },
+    "Nirvana Acrobat Rainbow": {
+      "tag": "assassin, nirvana, stardew, trickster, acrobat, rainbow, spell, dps, raid, tcc, tna",
+      "link": "https://wynnbuilder.github.io/builder/#CG0vAUTGmDwWi3yQMS2emM7WoX46YrCo3q50I2We0qUkqFpjn4",
+      "credit": "Iwanagakotoko",
+      "weapon": "Nirvana",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.water3.webp",
+      "class": "Assassin"
+    },
+    "Archangel Acrobat ETWA": {
+      "tag": "assassin, archangel, acrobat, spell, dps, tank, raid, world event, budget, lootrun",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vAsrd0SxESusrE-vsrdjECb3K1qEXCDxSK6uI0yUwVnVtXH0",
+      "credit": "Umbrionix",
+      "weapon": "Archangel",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.air3.webp",
+      "class": "Assassin"
+    },
+    "Weathered Shade TWA": {
+      "tag": "assassin, weathered, shadestepper, twa, spell, dps, raid, tna",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vA0W2Wi3-vmyFao1g0QdmlcTEy80+7-xwVv90",
+      "credit": "Tankofpacer",
+      "weapon": "Weathered",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.air3.webp",
+      "class": "Assassin"
+    },
+    "Grimtrap Acrobat ETW": {
+      "tag": "assassin, grimtrap, acrobat, etw, spell, dps, raid, world event, lootrun",
+      "link": "https://wynnbuilder.github.io/builder/#CM0G7MSMeiu8YRn1UpYp28M01KEQd0fc5EA40+dxacyn3u1",
+      "credit": "ender",
+      "weapon": "Grimtrap",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.earth3.webp",
+      "class": "Assassin"
+    },
+    "Nullification Acrobat": {
+      "tag": "assassin, nullification, acrobat, rainbow, spell, multi role, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0Eckq7rCZ2EV9kSqsTvaSZaRKiZs9ChvAgBldvlulxm8",
+      "credit": "Umbrionix",
+      "weapon": "Nullification",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.basicGold.webp",
+      "class": "Assassin"
+    },
+    "TWF Shadetrick Inferno": {
+      "tag": "assassin, trickster, spellspam, raid, notg, non-crafted, 2spin1stab, tome needed",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vvWuaN7s9lEDkUTuW074mwWVEOryob-vTsfz3Yo0",
+      "credit": "snakiesnake, Umbrionix",
+      "weapon": "Inferno",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.fire3.webp",
+      "class": "Assassin"
+    },
+    "Acrobat Nirvana": {
+      "tag": "assassin, acrobat, nirvana, raids, lootrun, DPS",
+      "link": "https://wynnbuilder.github.io/builder/#CG0vA6T2m1ZQWNpep286e056QdGicHkqUc+5-jn0",
+      "credit": "carrut",
+      "weapon": "Nirvana",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.water3.webp",
+      "class": "Assassin"
+    },
+    "Cata Trickster": {
+      "tag": "assassin, cataclysm, Trickster, dps, raid, world event, glass",
+      "link": "https://wynnbuilder.github.io/builder/#CM0SVWMZBdq9NE+QkSqmX6E21G45sqSnbtZxaOynde1",
+      "credit": "Umbrionix",
+      "weapon": "Cataclysm",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.thunder3.webp",
+      "class": "Assassin"
+    },
+    "Cspring Boltslinger": {
+      "tag": "archer, cspring, boltslinger, no-mythic, crafted",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vAmVWH7ZQZEQxm05gmG15am41v6v8B9N9v6v8b9I2m8FmM0GK0Y2m-yu-nPKJ0",
+      "credit": "Rawfish",
+      "weapon": "Spring",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.water3.webp",
+      "class": "Archer"
+    },
+    "ETWA Grandmother": {
+      "tag": "archer, grandmother, gma, Trapper,  sharpshooter, raid, focus, rage",
+      "link": "https://wynnbuilder.github.io/builder/#CM0CuMSqQiu8YRnvKpYpM7M01s3oXHgc5y0T1GQV+7-ZWLD",
+      "credit": "2kaa",
+      "weapon": "Grandmother",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.earth3.webp",
+      "class": "Archer"
+    },
+    "Crafted Divzer Bolt": {
+      "tag": "archer, divzer, boltslinger, etw, spell, mana steal, dps, raid, tna, crafted, hpr Tome needed",
+      "link": "https://wynnbuilder.github.io/builder/#CMG48gaZ8Q8l8l8lKd81NgJO1aEvoPjob71C9C92Ai92A2AW9IG4mama8emc8e8e0c81WX92OIOI4KOJ4K4KwIa0wqSn3q50Q60yFtFhEXXV",
+      "credit": "ThinkPed",
+      "weapon": "Divzer",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.thunder3.webp",
+      "class": "Archer"
+    },
+    "Stratiformis Boltslinger": {
+      "tag": "archer, stratiformis, boltslinger, rainbow, spell, dps, raid, tna, lootrun, qol, ws",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vA6TImjxuYRqvF7oZn05AeW46Ctip3q60g2y6WC2yVuzZpg7c0",
+      "credit": "RawFish, Umbrionix",
+      "weapon": "Stratiformis",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.air3.webp",
+      "class": "Archer"
+    },
+    "Laby Trapper ETF": {
+      "tag": "archer, labyrinth, crusade sabatons, trapper, etf, spell, dps, napalm, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0yzMSqQiu0uPn9KphpZ3USmq2QdG8lN7p20j7kcBDRyY4",
+      "credit": "Umbrionix",
+      "weapon": "Labyrinth",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.earth3.webp",
+      "class": "Archer"
+    },
+    "Epoch Tierstack": {
+      "tag": "archer, epoch, warchief, sharpshooter, boltslinger, eta, tierstack, dps, raid, tcc, world event, crafted, tome needed",
+      "link": "https://wynnbuilder.github.io/builder/#CMG4KZSOWcKQWcWcec81NEGKsT2pixuhPtHTI4mcucmcuc4bid0d81H0RYR2RYRIKoUYPY4W4EynTnPU0G-ZFEpkEz1",
+      "credit": "Umbrionix",
+      "weapon": "Epoch",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.basicGold.webp",
+      "class": "Archer"
+    },
+    "Freedom Bolt/Trapper Rainbow": {
+      "tag": "archer, freedom, boltslinger, rainbow, spell, dps, raid, world event, budget, lootrun",
+      "link": "https://wynnbuilder.github.io/builder/#CM0Ec657rCxQEkukKEX765d1A4GXYT8X1GDZAFGR08FGU0b1s6m-l-imWeV",
+      "credit": "Umbrionix",
+      "weapon": "Freedom",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.multi3.webp",
+      "class": "Archer"
+    },
+    "Spring Bolt/Trapper ETW": {
+      "tag": "archer, spring, boltslinger, ewa, spell, dps, sorcery, raid, world event, lootrun",
+      "link": "https://wynnbuilder.github.io/builder/#CM0626TudDwivQq9ymepM7M0156ypXkcHUWf0Gc0W-bzdfMYx0",
+      "credit": "Gamenoedge, Umbrionix",
+      "weapon": "Spring",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.water3.webp",
+      "class": "Archer"
+    },
+    "Grandmother Trapper ETF": {
+      "tag": "archer, grandmother, trapper, ETF, spell, dps, Napalm, raid, notg, world event, crafted, tome needed",
+      "link": "https://wynnbuilder.github.io/builder/#CM0yzGO1HWHIEIE2foZoZ2RY40iFYWm4pamamamam4u49822JCJ2J2J2J2JWJaW88CnC9C9C9C9CnCH2YWm4pamamamamau49WKDluo-uwNRqu5a0",
+      "credit": "suoped",
+      "weapon": "Grandmother",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.earth3.webp",
+      "class": "Archer"
+    },
+    "DPS Divzer": {
+      "tag": "archer, divzer, div, boltslinger, Raid, TNA, NOL, TCC, etw, dps,",
+      "link": "https://wynnbuilder.github.io/builder/#CM0G7GO1aE1hL41c92A2A2A2Ai9m99G4Oc8e8e8e8emc0da0WX92CJ4K4K4K4KOJYJI0wqSnb-Pt7dBz1X1",
+      "credit": "yy7erig",
+      "weapon": "Divzer",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/bow.thunder3.webp",
+      "class": "Archer"
+    },
+    "LI Alkatraz": {
+      "tag": "warrior, alkatraz, alka, fallen, tstack, tierstack, raid, notg, tcc, tna, nol, dps, legendary island, li",
+      "link": "https://wynnbuilder.github.io/builder/#CMG48gOaSOyaKZOhec81BEPxMy8GFv9X9nIf6vEXDH2MSyriuOe82QHSJIJcEIJcEWJa0AeG66eq8GM0Wy-o-pl9-mx-t1",
+      "credit": "Rawfish",
+      "weapon": "Alkatraz",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.earth1.webp",
+      "class": "Warrior"
+    },
+    "Fallen Thrundacrack": {
+      "tag": "warrior, thrundacrack, fallen, tcrack, spellspam, lootrun, dps",
+      "link": "https://wynnbuilder.github.io/builder/#CM0QZWQcB7NSNErQ6TqmX6EAsHx4srSXBjNlV-oe7",
+      "credit": "Rawfish",
+      "weapon": "Thrundacrack",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.thunder3.webp",
+      "class": "Warrior"
+    },
+    "Thrundacrack Fallen ETWF": {
+      "tag": "warrior, thrundacrack, fallen, etwf, spell, dps, raid, lootrun, world event, tome",
+      "link": "https://wynnbuilder.github.io/builder/#CM0SV02kBdESNEwt6TC0W10mwGx4srCgTs20yxhz--P2",
+      "credit": "Umbrionix",
+      "weapon": "Thrundacrack",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.thunder3.webp",
+      "class": "Warrior"
+    },
+    "Crafted Idol DPS": {
+      "tag": "warrior, idol, fallen, battlemonk, spell, dps, raid, tna, crafted",
+      "link": "https://wynnbuilder.github.io/builder/#CM0e16z8u9n8vI97v8v8vCH26z887n8v81FfzezWDH2sz887n8v81FfzezWCH2sz8ODPDnCXDPDPD1CH2YWrar4p4sarar4m4982MJMJCJOJMJMJqIaW8ODPDnCXDPDPDfBH2GLp8FmK0aU-Ut-t9",
+      "credit": "Umbrionix",
+      "weapon": "Idol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.water3.webp",
+      "class": "Warrior"
+    },
+    "Convergence EWF Altersurf": {
+      "tag": "warrior, convergence, crusade sabatons, fallen, battlemonk, paladin, ewf, spell, dps, tank, transcendence, taunt, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0e1MSs-juOK3XQMS2eW10u6HPCunzgkJhzyBMCjdn1",
+      "credit": "Umbrionix",
+      "weapon": "Convergence",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.multi3.webp",
+      "class": "Warrior"
+    },
+    "Hero Bmonk Bashscream EWA": {
+      "tag": "warrior, hero, battlemonk, ewa, spell, dps, saviors sacrifice, raid, world event, tome",
+      "link": "https://wynnbuilder.github.io/builder/#CM0yt0W2mX3X7G86C0GH7QdGhcb8YBltuJdUs31",
+      "credit": "ender",
+      "weapon": "Hero",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.air3.webp",
+      "class": "Warrior"
+    },
+    "Guardian War Tank": {
+      "tag": "warrior, guardian, wf, hpr, tank, guardian, radiance, rally, taunt, war",
+      "link": "https://wynnbuilder.github.io/builder/#CM0S7myE0X3sQm66smmw4AZXfcNEyEGA0wjz7uxJY0",
+      "credit": "Badlife",
+      "weapon": "Guardian",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.fire3.webp",
+      "class": "Warrior"
+    },
+    "Alternative Hero Lootrun": {
+      "tag": "warrior, hero, idol, paladin, battlemonk, palamonk, lootrun, lr, sustain, loot bonus",
+      "link": "https://wynnbuilder.github.io/builder/#CM0ytsvyf1jasXJuXTz11K4mc4cmcmcmcmc0d81HGO2R2R2R2R2RYPY40Z7QrC6LSA1K20yUZFe-rcI",
+      "credit": "DemonicRampage",
+      "weapon": "Hero",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.air3.webp",
+      "class": "Warrior"
+    },
+    "Idol Lootrun Pala": {
+      "tag": "idol, lootrun, tough, tank, mana regen,health regen ,survival ,warrior ,paladin",
+      "link": "https://wynnbuilder.github.io/builder/#CM0e16T+q0aTmMpep05uV0M7amWgcHEeM0UlyixQJE1",
+      "credit": "Umbrionix",
+      "weapon": "idol",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.water3.webp",
+      "class": "Warrior"
+    },
+    "Hero General Bashscream w/Idol": {
+      "tag": "warrior, hero, palamonk, paladin, battlemonk, etwa, wa, sorcery, dps, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0ytsL7+PBYJBfNLu4UONTqmn05Ae0Z7QriZJGWW0WtZhzR3Zq3",
+      "credit": "DillyWeee",
+      "weapon": "Hero",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.air3.webp",
+      "class": "Warrior"
+    },
+    "Warp Lr Riftwalker Crafted": {
+      "tag": "mage, warp, riftwalker, lootrun, qol, ws, lunar spine, lb, lq",
+      "link": "https://wynnbuilder.github.io/builder/#CM082md6HWHoJoJYVXVXV1RY40NDY0C4C4C4C4C4C4u4982mGmGmGmGmGmGWJaW8031313131313nCH2eT22RsvNsoQNxQNxoI5tssgNzQMp470ip5FyvfR-tsBpt5",
+      "credit": "Crashtendo",
+      "weapon": "Warp",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "War Monster": {
+      "tag": "mage, monster, lightbender, Offhand Lunarspine, Offhand King of Hearts, spell, mixed mana, solo, low, Medium, fhigh, war",
+      "link": "https://wynnbuilder.github.io/builder/#CM0S7UT6y0FNlE7nUT0u10FadG0Garyof1WB1GxvZpfLxn5",
+      "credit": "Umbrionix",
+      "weapon": "Monster",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "General Monster": {
+      "tag": "mage, monster, lightbender, etf, spell, mixed mana, raids,",
+      "link": "https://wynnbuilder.github.io/builder/#CM0X6G5mNdbAlEOVUT2emZ3mUmLEaryobtl+UMMfu0",
+      "credit": "yy7erig, Umbrionix",
+      "weapon": "Monster",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "ETW Lament Crafted Lightbender": {
+      "tag": "mage, lament, lightbender, lb, etw, spell, manasteal, spellsteal, support, healer, flashfreeze, raid, crafted",
+      "link": "https://wynnbuilder.github.io/builder/#CMG44mucOayaWnKmec81ZEHm6TOKCwmhPqfyM4OcOcicicicic0d81HWPYPoQoQoQoQYPY441c9c9h9h9h9h9n9I0lQ6va60uzhlcgrAu0",
+      "credit": "yy7erig",
+      "weapon": "Lament",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "Slayer Fatal Riftwalker (Entropy)": {
+      "tag": "mage, fatal, slayer, riftwalker, entropy, lootrun, tomes needed",
+      "link": "https://wynnbuilder.github.io/builder/#CM0SVWQcB7NSNErQ6TqmX10irHx46rSnbtBVkEhV3",
+      "credit": "Rawfish",
+      "weapon": "Fatal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Budget Fatal Riftwalker": {
+      "tag": "mage, fatal, lunar spine, riftwalker, raid, world event, budget",
+      "link": "https://wynnbuilder.github.io/builder/#CM0SV02E0uvoHRtbZ10qmH15ammecBky-jtsNR3",
+      "credit": "Rawfish, Umbrionix",
+      "weapon": "Fatal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Fatal Rainbow Riftbender": {
+      "tag": "mage, fatal, lightbender, riftwalker, rainbow, spell, dps, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM01-WQ6OK3yQG762eGH7ammecBky+TEBhMuT",
+      "credit": "Me1tryllis",
+      "weapon": "Fatal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Fatal Arcanist ETW": {
+      "tag": "mage, fatal, arcanist, etw, spell, dps",
+      "link": "https://wynnbuilder.github.io/builder/#CM0G70-Cm90wtm64wm0KEwlnecBUWi08--PChlPB",
+      "credit": "CNM Guild",
+      "weapon": "Fatal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Singularity Arcanist Madness": {
+      "tag": "mage, singularity, rainbow, spell, dps, madness, raid",
+      "link": "https://wynnbuilder.github.io/builder/#CM0EcG2EKq0QxG05coXA8am0jcN90mXo0m-V6pwRs2",
+      "credit": "CNM Guild",
+      "weapon": "Singularity",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi3.webp",
+      "class": "Mage"
+    },
+    "Trance Riftbender ETF Crafted": {
+      "tag": "mage, trance, crusade sabatons, riftwalker, lightbender, etf, spell, manasteal, dps, support, raid, notg, tcc, tna, crafted",
+      "link": "https://wynnbuilder.github.io/builder/#CM0X6GO1HWHoo16JxHxHx1RY4WGDYWmamamamamam4u49822J2J2J2J2J2JWJaW88C9C9C9C9C9CnCH2YWmamamamamamau49WHUNSfV+rvqAdm1",
+      "credit": "Umbrionix",
+      "weapon": "Trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Fatal Arcanist ETWA Sorcery": {
+      "tag": "mage, fatal, arcanist, etwa, spell, dps, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CG0G7G2EG00wtm64wmGH7uMmecBky+FxRCTR",
+      "credit": "Rawfish, Umbrionix",
+      "weapon": "Fatal",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.thunder3.webp",
+      "class": "Mage"
+    },
+    "Quetzalcoatl Revenant Arcanist ETWA": {
+      "tag": "mage, quetzalcoatl, revenant, arcanist, etwa, spell, lifesteal, dps, raid, world event, tome needed",
+      "link": "https://wynnbuilder.github.io/builder/#CM0vAsrdm28Cpk+WhPNVM0nKEAwGx4wnjZ3V1WtNzvwqT3",
+      "credit": "Umbrionix",
+      "weapon": "Quetzalcoatl",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Revenant Quetz": {
+      "tag": "Mage, Arcanist, Quetzalcoatl, Quetz, raid, dps, Lootrun, qol, ws",
+      "link": "https://wynnbuilder.github.io/builder/#CM0W9sT0K03U0N32nmKEWVGx4wnjZB--vQhbT1",
+      "credit": "Umbrionix",
+      "weapon": "Quetzalcoatl",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Warp Riftwalker TWA Sorcery": {
+      "tag": "mage, warp, riftwalker, spell, dps, sorcery, entropy, raid, tna,crafted, tome needed",
+      "link": "https://wynnbuilder.github.io/builder/#CM0yt0-CHW7Z7pJoJIQIQ2RY40NDOW2vn8F8jJGOpEN+-sRwEU6",
+      "credit": "Suoped, Umbrionix",
+      "weapon": "Warp",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Pure Arcanist TWA": {
+      "tag": "mage, pure, arcanist, twa, spell, dps, entropy, flashfreeze, raid, world event, crafted, tome",
+      "link": "https://wynnbuilder.github.io/builder/#CM0qJG2EH06Jx16ZaHxHE2RY482mOQFmOaCQFoH8Ja0HWPYPoQoQoQoQ2SY4GvDir1Z7WrGUlodZpcT3",
+      "credit": "Umbrionix",
+      "weapon": "Pure",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi1.webp",
+      "class": "Mage"
+    },
+    "Pure Arcanist Level Scale": {
+      "tag": "mage, pure, arcanist, rainbow, spell, mixed mana, dps, raid, notg, world event, budget, level scale",
+      "link": "https://wynnbuilder.github.io/builder/#CM0rKGb3SW1sSW6E4q0M7Ij1i6C506qxLy3hf1",
+      "credit": "Umbrionix",
+      "weapon": "Pure",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi1.webp",
+      "class": "Mage"
+    },
+    "Warp Riftwalker EWA": {
+      "tag": "mage, warp, riftwalker, ewa, spell, mixed mana, raid, world event, lootrun, Tomes needed, Offhand Lunar spine",
+      "link": "https://wynnbuilder.github.io/builder/#CM0820W2KE1kQm05mm156kmWmczqPFWt12Am-tzckZR",
+      "credit": "Umbrionix",
+      "weapon": "Warp",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Funambulist Spellshade Weathered": {
+      "tag": "Assassin, Weathered, Spell, dps, Juggle, Roving Assassin, misc",
+      "link": "https://wynnbuilder.github.io/builder/#CM01+G0Eiw3CnW10G0H15c1mlcTEn1Y30wdtBhhcAO0",
+      "credit": "yy7erig",
+      "weapon": "Weathered",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.air3.webp",
+      "class": "Assassin"
+    },
+    "Madness Arcanist Singularity": {
+      "tag": "Mage, Singularity, Arcanist, Spell, dps, Intangible, Sorcery, Orbital Chain, Madness, raid",
+      "link": "https://wynnbuilder.github.io/builder/#CM0p1ntFCn3O6WT8i3XA8am0jcN90mbtlPVZwl1",
+      "credit": "yy7erig",
+      "weapon": "Singularity",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi3.webp",
+      "class": "Mage"
+    },
+    "Conquered Skies Trickster Nullification": {
+      "tag": "Assassin, Nullification, rainbow, spell, Trickster, manasteal, lifesteal, dps, raid, world event",
+      "link": "https://wynnbuilder.github.io/builder/#CM0m-mtFy+3O6mM7C0GnEMbnicHEN10+dxaY+nduG",
+      "credit": "yy7erig",
+      "weapon": "Nullification",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.basicGold.webp",
+      "class": "Assassin"
+    },
+    "boreal warp with discoverer": {
+      "tag": "warp,lootrun,defense,tough,tank,survival,hpr,health regen,no tome",
+      "link": "https://wynnbuilder.github.io/builder/#11_0eO0QU0r50QN0Fx0OW0K40OH0R10V0V0V1B2M1g1000FU01000FU1000FU1007lU0z0z0+0+0+0+0-1T2Y2Y2Z2Z2a2a401401401401401--PqclPB",
+      "credit": "xgu,Silentmaxx",
+      "weapon": "Warp",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Thrundacrack Fallen Battlemonk eTWf": {
+      "weapon": "Thrundacrack",
+      "credit": "gamenoedge",
+      "tag": "warrior, thrundacrack, fallen, battlemonk, etwf, spell, dps, raid, lootrun, world event, tome",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_0VR0u70uS0tv0050050TN0Ji0Qw0j2C110e021g010006C10006C10009I102J6I0z0z0+0+0+0+0-1TjNVz-cp0",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.thunder3.webp",
+      "class": "Warrior"
+    },
+    "Bloodbath Fallen ETwf": {
+      "weapon": "Bloodbath",
+      "credit": "suoped",
+      "tag": "warrior, bloodbath, fallen, etwf, spell, dps, raid, world event, crafted, tome",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_07F0DP0030QzCR-19H9k9H9k9HAS9W91CR-19H9k9H9k9HAS9W9100WCR-19H9k9H9k9HAS9T910yb221u0j0y001g1000361000361000361000361001Z60z0z0+0+0+0+0-1T-Mznlxx0",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/spear.earth3.webp",
+      "class": "Warrior"
+    },
+    "Third Wish Arcanist Rainbow": {
+      "weapon": "Third Wish",
+      "credit": "Me1tryllis",
+      "tag": "mage, third wish, rainbow, spell, dps, lightweight, raid, world event, budget",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_0z-0u80r50nB0WA0K00x40OH0xs0o0y0y0t0e1g0010009I10009I1004fI0z0z0+0+0+0+0-1TlVp+6pwB",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.multi3.webp",
+      "class": "Mage"
+    },
+    "Quetzalcoatl Crabs Arcanist Madness": {
+      "weapon": "Quetzalcoatl",
+      "credit": "CNM Guild",
+      "tag": "mage, quetzalcoatl, crusade sabatons, arcanist, rainbow, spell, dps, madness, raid, world event, lootrun",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_0690Pf0D40QW0uP0vI0Wf0Ji0uy1G1C0y1V1H1g0000103tlU0z0z0+0+0+0+0k1T--PChlPB",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Pande Warp Riftbender W/ Guild Tome": {
+      "weapon": "Warp",
+      "credit": "birdmade",
+      "tag": "mage, warp, riftbender, lightbender, riftwalker, pandemonium, pande, mana, raids, tcc, tna",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_0cD0F+0uj0wh0Xr0Xr0Wf0OH0R10l0v0+0l2M1g10009I1000FU10009I1000FU1004fU0z0z0+0+0+0+0-1TzZddqwtn2",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.air3.webp",
+      "class": "Mage"
+    },
+    "Tstack Aftershock (11th Hour + Crafted)": {
+      "weapon": "aftershock",
+      "credit": "rawfish",
+      "tag": "shaman, aftershock, ashock, tier stack, crafted",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_0uh0xOCR-19w9F9CAM8r9t9i910QzCR-18j9k8j9k9f7J9m910BK0BI0uH0QK1u1Q0010001g100036100036100036100036100niO0z0z0+0+0+0+0-1TjNT3ros2P0",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.earth3.webp",
+      "class": "Shaman"
+    },
+    "ETA Tstack Sunstar": {
+      "weapon": "Sunstar",
+      "credit": "rawfish",
+      "tag": "shaman, sunstar, ritualist, tstack, melee, raid, world event, tome",
+      "link": "https://wynnbuilder.github.io/builder?v=16#9_0uZ0KF0PW0Qq0uP0Jf00W0OO0Qu161p-Z-Z181g000010036C0z0z0+0+0+0+0-1Tl7RkksM46",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/relik.thunder3.webp",
+      "class": "Shaman"
+    },
+    "Acrobat Cataclysm": {
+      "weapon": "Cataclysm",
+      "credit": "rawfish",
+      "tag": "assassin, cataclysm, acrobat, dps, raid, world event, glass",
+      "link": "https://wynnbuilder.github.io/builder?v=16#10_0Au01+0r50tv0uP0A50K40OH0QQ0O2C1a0O0e1g10006C00010036C0z0z0+0+0+0+0-1T2Y2Y2Z2Z2a2ajNZ-YzsO0",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.thunder3.webp",
+      "class": "Assassin"
+    }
+  }
+}
