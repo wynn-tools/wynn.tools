@@ -1,11 +1,28 @@
 <script setup lang="ts">
+import type { VersionEntry } from '~/lib/data/cdn-adapter/version-paths'
+import { useCdnClient } from '~/composables/useBuildData'
+import { cdnPathFor, latestVersionId, resolveVersionSegment } from '~/lib/data/cdn-adapter/version-paths'
 import { itemHistory } from '~/lib/items-search/history'
+import { adaptItems } from '~/lib/items-search/item-search-adapter'
 import { buildSlugIndex, resolveSlug } from '~/lib/items-search/slug'
 
 const route = useRoute()
 const config = useRuntimeConfig()
 const slug = computed(() => String(route.params.name))
 const nameHint = computed(() => (route.query.name ? String(route.query.name) : undefined))
+
+const { data: seoItem } = await useAsyncData(
+  () => `seo-item-${slug.value}`,
+  async () => {
+    const client = useCdnClient()
+    const versions = await client.fetchJson<VersionEntry[]>('versions.json')
+    const gameVersion = resolveVersionSegment(latestVersionId(versions), versions)
+    const itemsFile = await client.fetchJson<Parameters<typeof adaptItems>[0]>(cdnPathFor(gameVersion, 'items.json'))
+    const items = adaptItems(itemsFile)
+    return resolveSlug(buildSlugIndex(items), slug.value, nameHint.value) ?? null
+  },
+  { watch: [slug] },
+)
 
 const { data: searchData, pending } = useItemSearchData()
 const { data: changelogs } = useItemHistorySource()
@@ -27,12 +44,13 @@ interface ResolvedSet { name: string, set: NonNullable<ReturnType<typeof getSet>
 function getSet(name: string) {
   return searchData.value?.sets.get(name)
 }
+const seoSource = computed(() => item.value ?? seoItem.value ?? null)
 const pageTitle = computed(() =>
-  item.value ? `${item.value.displayName} — wynn.tools` : 'Item — wynn.tools',
+  seoSource.value ? `${seoSource.value.displayName} — wynn.tools` : 'Item — wynn.tools',
 )
 const pageDesc = computed(() =>
-  item.value
-    ? `${item.value.tier} ${item.value.subType} (level ${item.value.level}) — stats, identifications, and history on wynn.tools.`
+  seoSource.value
+    ? `${seoSource.value.tier} ${seoSource.value.subType} (level ${seoSource.value.level}) — stats, identifications, and history on wynn.tools.`
     : 'Wynncraft item stats and history.',
 )
 useSeoMeta({
