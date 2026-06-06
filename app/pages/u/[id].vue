@@ -191,6 +191,8 @@ if (!isPrivate.value) {
             :owner-id="b.owner?.id"
             :owner-name="b.owner?.name"
             :owner-username="b.owner?.username"
+            :tags="b.tags"
+            :has-tutorial="b.hasTutorial"
           />
         </div>
         <div v-if="buildsNextCursor" class="load-more">

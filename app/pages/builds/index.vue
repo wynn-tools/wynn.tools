@@ -466,6 +466,8 @@ function clearAllFilters() {
               :owner-name="b.owner?.name"
               :owner-username="b.owner?.username"
               :show-owner="true"
+              :tags="b.tags"
+              :has-tutorial="b.hasTutorial"
             />
           </div>
           <div v-if="nextCursor" class="load-more">

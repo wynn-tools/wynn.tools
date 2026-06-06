@@ -15,6 +15,8 @@ defineProps<{
   ownerName?: string
   ownerUsername?: string
   showOwner?: boolean
+  tags?: string[]
+  hasTutorial?: boolean
 }>()
 
 const api = useApi()
@@ -42,7 +44,11 @@ async function onHoverOpen(open: boolean, id: string) {
     <HoverCardTrigger as-child>
       <article class="build-card">
         <NuxtLink :to="`/b/${id}`" class="card-link">
-          <span class="card-name">{{ name }}</span>
+          <span class="card-name-row">
+            <span class="card-name">{{ name }}</span>
+            <span v-if="hasTutorial" class="card-tutorial" title="Has tutorial video" aria-label="Has tutorial">▶</span>
+          </span>
+          <BuildDetailsTagChips v-if="tags && tags.length > 0" :tags="tags" :max="3" />
           <span class="card-meta">
             <span class="card-version">{{ gameVersion }}</span>
             <span v-if="ownerName && ownerId" class="card-owner-wrap">
@@ -95,10 +101,19 @@ async function onHoverOpen(open: boolean, id: string) {
   text-decoration: none;
 }
 
+.card-name-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .card-name {
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text);
+}
+.card-tutorial {
+  font-size: 10px;
+  color: var(--color-accent);
 }
 
 .card-meta {
