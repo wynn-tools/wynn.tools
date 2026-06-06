@@ -67,6 +67,103 @@ describe('builds routes (no network)', () => {
     expect(body.name).toBe('Updated')
   })
 
+  it('pATCH normalizes tags and drops class slugs', async () => {
+    const { user, cookie } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'tagpatch',
+      userId: user.id,
+      name: 'T',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'private',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`, {
+      method: 'PATCH',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ tags: ['Mage', 'DPS', 'raids', 'ws'] }),
+    })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.tags).toEqual(['dps', 'raid', 'walk-speed'])
+  })
+
+  it('pATCH rejects notes over 8000 chars', async () => {
+    const { user, cookie } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'notespatch',
+      userId: user.id,
+      name: 'N',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'private',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`, {
+      method: 'PATCH',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ notes: 'x'.repeat(8001) }),
+    })
+    expect(res.status).toBe(400)
+  })
+
+  it('pATCH canonicalizes youtu.be URL', async () => {
+    const { user, cookie } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'tutpatch',
+      userId: user.id,
+      name: 'Tut',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'private',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`, {
+      method: 'PATCH',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ tutorialUrl: 'https://youtu.be/abc123XYZ_-' }),
+    })
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.tutorialUrl).toBe('https://www.youtube.com/watch?v=abc123XYZ_-')
+  })
+
+  it('pATCH rejects non-YouTube tutorial URL', async () => {
+    const { user, cookie } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'badtut',
+      userId: user.id,
+      name: 'B',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'private',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`, {
+      method: 'PATCH',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ tutorialUrl: 'https://vimeo.com/12345' }),
+    })
+    expect(res.status).toBe(400)
+    expect((await res.json()).error.code).toBe('invalid_tutorial_url')
+  })
+
+  it('pATCH null clears tutorialUrl', async () => {
+    const { user, cookie } = await session()
+    const [b] = await getDb().insert(schema.builds).values({
+      id: 'cleartut',
+      userId: user.id,
+      name: 'C',
+      buildString: ORACLE_HASH,
+      gameVersion: '2.2',
+      visibility: 'private',
+      tutorialUrl: 'https://www.youtube.com/watch?v=zzzzzzzzz',
+    }).returning()
+    const res = await app()(`/v1/builds/${b.id}`, {
+      method: 'PATCH',
+      headers: { cookie, 'content-type': 'application/json' },
+      body: JSON.stringify({ tutorialUrl: null }),
+    })
+    expect(res.status).toBe(200)
+    expect((await res.json()).tutorialUrl).toBeNull()
+  })
+
   it('401 on create without auth', async () => {
     const res = await app()('/v1/builds', {
       method: 'POST',

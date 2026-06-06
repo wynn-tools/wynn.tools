@@ -6,10 +6,12 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
 import { env } from '../env'
+import { normalizeTags } from '../lib/build-tags'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
 import { resolveOwner } from '../lib/owner'
 import { decodeCursor, DEFAULT_PAGE_SIZE, encodeCursor, MAX_PAGE_SIZE } from '../lib/pagination'
+import { parseYouTubeUrl } from '../lib/youtube'
 import { hasScope, requireAuth } from '../middleware/auth'
 import { verifyApiKey } from '../services/api-keys'
 import { decodeBuild } from '../services/build-decode'
@@ -40,6 +42,9 @@ const patchBody = z.object({
   name: z.string().min(1).max(100).optional(),
   buildString: z.string().min(1).optional(),
   visibility: visibilityEnum.optional(),
+  tags: z.array(z.string()).max(64).optional(),
+  notes: z.string().max(8000).nullable().optional(),
+  tutorialUrl: z.string().nullable().optional(),
 })
 
 const CLASS_VALUES = ['Assassin', 'Warrior', 'Mage', 'Archer', 'Shaman'] as const
@@ -260,10 +265,31 @@ export const builds = new Hono()
       playerClass = decoded.playerClass
       itemIds = decoded.itemIds
     }
-    const [row] = await getDb().update(schema.builds).set({ ...patch, gameVersion, playerClass, itemIds, updatedAt: new Date() }).where(eq(schema.builds.id, existing.id)).returning()
+    const next: Record<string, unknown> = { ...patch, gameVersion, playerClass, itemIds, updatedAt: new Date() }
+    if (patch.tags !== undefined)
+      next.tags = normalizeTags(patch.tags)
+    if (patch.tutorialUrl !== undefined) {
+      if (patch.tutorialUrl === null || patch.tutorialUrl === '') {
+        next.tutorialUrl = null
+      }
+      else {
+        const parsed = parseYouTubeUrl(patch.tutorialUrl)
+        if (!parsed)
+          throw new AppError(400, 'invalid_tutorial_url', 'Tutorial URL must be a YouTube link')
+        next.tutorialUrl = parsed.canonical
+      }
+    }
+    const [row] = await getDb().update(schema.builds).set(next).where(eq(schema.builds.id, existing.id)).returning()
     if (row.visibility !== 'private')
       prewarmBuildOg(row.id)
-    return c.json({ id: row.id, name: row.name, visibility: row.visibility })
+    return c.json({
+      id: row.id,
+      name: row.name,
+      visibility: row.visibility,
+      tags: row.tags ?? [],
+      notes: row.notes,
+      tutorialUrl: row.tutorialUrl,
+    })
   })
   .delete('/:id', requireAuth, async (c) => {
     const auth = c.get('auth')
