@@ -8,6 +8,8 @@ import { filterMaterials } from '~/lib/items-search/filter-materials'
 import { filterTomes } from '~/lib/items-search/filter-tomes'
 import { useBuildStore } from '~/stores/build'
 
+definePageMeta({ ssr: false })
+
 useSeoMeta({
   title: 'Item Search — wynn.tools',
   ogTitle: 'Item Search — wynn.tools',
