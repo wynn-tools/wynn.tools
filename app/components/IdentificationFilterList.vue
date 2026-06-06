@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { IdFilter, IdSort } from '~/lib/items-search/types'
+import type { IdConstraint } from '~/lib/items-search/types'
 import { allIdentificationKeys, filterLabel } from '~/lib/data/identifications'
 
-const model = defineModel<{ identifications: IdFilter[], idSorts: IdSort[] }>({ required: true })
+const model = defineModel<{ constraints: IdConstraint[] }>({ required: true })
 
 const _options = allIdentificationKeys
   .map(key => ({ key, label: filterLabel(key) }))
@@ -10,10 +10,12 @@ const _options = allIdentificationKeys
 
 const labelToKey = Object.fromEntries(_options.map(o => [o.label, o.key]))
 
-const ids = computed(() => model.value.identifications)
+const idRows = computed(() => model.value.constraints.filter(
+  (c): c is Extract<IdConstraint, { kind: 'id' }> => c.kind === 'id',
+))
 
 const availableLabels = computed(() =>
-  _options.filter(o => !ids.value.some(f => f.key === o.key)).map(o => o.label),
+  _options.filter(o => !idRows.value.some(c => c.key === o.key)).map(o => o.label),
 )
 
 const addModel = ref<string | null>(null)
@@ -26,44 +28,54 @@ watch(addModel, (v) => {
   addModel.value = null
 })
 
-function update(identifications: IdFilter[], idSorts: IdSort[]) {
-  model.value = { identifications, idSorts }
+function update(constraints: IdConstraint[]) {
+  model.value = { constraints }
 }
 
 function addRow(key: string) {
-  if (key && !ids.value.some(f => f.key === key))
-    update([...ids.value, { key, exclude: false }], model.value.idSorts)
+  if (key && !idRows.value.some(c => c.key === key))
+    update([...model.value.constraints, { kind: 'id', key }])
 }
+
 function removeRow(key: string) {
-  update(
-    ids.value.filter(f => f.key !== key),
-    model.value.idSorts.filter(s => s.key !== key),
-  )
+  update(model.value.constraints.filter(c => !(c.kind === 'id' && c.key === key)))
 }
+
 function toggleExclude(key: string) {
-  const identifications = ids.value.map(f => f.key === key ? { ...f, exclude: !f.exclude } : f)
-  const nowExcluded = identifications.find(f => f.key === key)?.exclude
-  const idSorts = nowExcluded
-    ? model.value.idSorts.filter(s => s.key !== key)
-    : model.value.idSorts
-  update(identifications, idSorts)
+  update(model.value.constraints.map((c) => {
+    if (c.kind !== 'id' || c.key !== key)
+      return c
+    const nowExclude = !c.exclude
+    return nowExclude
+      ? { kind: 'id', key, exclude: true }
+      : { kind: 'id', key }
+  }))
 }
+
 function toggleSort(key: string) {
-  const existing = model.value.idSorts.find(s => s.key === key)
-  let idSorts: IdSort[]
-  if (!existing)
-    idSorts = [...model.value.idSorts, { key, dir: 'desc' }]
-  else if (existing.dir === 'desc')
-    idSorts = model.value.idSorts.map(s => s.key === key ? { ...s, dir: 'asc' } : s)
-  else
-    idSorts = model.value.idSorts.filter(s => s.key !== key)
-  update(ids.value, idSorts)
+  update(model.value.constraints.map((c) => {
+    if (c.kind !== 'id' || c.key !== key)
+      return c
+    const cur = c.sort
+    if (!cur)
+      return { ...c, sort: 'desc' }
+    if (cur === 'desc')
+      return { ...c, sort: 'asc' }
+    const { sort: _drop, ...rest } = c
+    return rest
+  }))
 }
+
 function label(key: string) {
   return filterLabel(key)
 }
+
 function sortDir(key: string) {
-  return model.value.idSorts.find(s => s.key === key)?.dir ?? null
+  return idRows.value.find(c => c.key === key)?.sort ?? null
+}
+
+function isExcluded(key: string) {
+  return idRows.value.find(c => c.key === key)?.exclude ?? false
 }
 </script>
 
@@ -76,12 +88,12 @@ function sortDir(key: string) {
       placeholder="+ Add identification…"
     />
     <ul class="idlist-rows">
-      <li v-for="f in ids" :key="f.key" class="idlist-row">
+      <li v-for="f in idRows" :key="f.key" class="idlist-row">
         <span class="idlist-label">{{ label(f.key) }}</span>
         <button type="button" :class="{ on: f.exclude }" @click="toggleExclude(f.key)">
           {{ f.exclude ? 'exclude' : 'include' }}
         </button>
-        <button type="button" :disabled="f.exclude" @click="toggleSort(f.key)">
+        <button type="button" :disabled="isExcluded(f.key)" @click="toggleSort(f.key)">
           {{ sortDir(f.key) === 'desc' ? '↓' : sortDir(f.key) === 'asc' ? '↑' : 'sort' }}
         </button>
         <button type="button" class="idlist-x" @click="removeRow(f.key)">

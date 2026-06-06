@@ -96,7 +96,6 @@ const itemResults = computed(() => data.value ? filterItems(data.value.items, cr
 const ingredientResults = computed(() => data.value ? filterIngredients(data.value.ingredients, ingredientCriteria.value) : [])
 const tomeResults = computed(() => data.value ? filterTomes(data.value.tomes, tomeCriteria.value) : [])
 const materialResults = computed(() => data.value ? filterMaterials(data.value.materials, materialCriteria.value) : [])
-const idKeys = computed(() => criteria.value.idSorts.map(s => s.key))
 const majorIdOptions = computed(() =>
   data.value
     ? [...new Set(data.value.items.flatMap(i => i.majorIds.map(m => m.name)))].sort()
@@ -152,10 +151,14 @@ const setOptions = computed(() =>
         <template v-if="tab === 'items'">
           <header class="results-head">
             <span class="count">{{ itemResults.length.toLocaleString() }} items</span>
-            <span v-if="itemResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+            <span v-if="itemResults.length > RESULT_CAP" class="count count--dim">Showing first {{ RESULT_CAP }} of {{ itemResults.length.toLocaleString() }} — add identification filters to narrow further.</span>
           </header>
-          <div v-if="itemResults.length" class="grid">
-            <ItemResultCard v-for="it in itemResults.slice(0, RESULT_CAP)" :key="it.id" :item="it" :id-keys="idKeys" />
+          <div v-if="itemResults.length" class="results-list">
+            <ItemResultCard
+              v-for="it in itemResults.slice(0, RESULT_CAP)"
+              :key="it.id"
+              :item="it"
+            />
           </div>
           <p v-else class="state">
             No items match these filters.
@@ -167,7 +170,7 @@ const setOptions = computed(() =>
             <span class="count">{{ ingredientResults.length.toLocaleString() }} ingredients</span>
             <span v-if="ingredientResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
           </header>
-          <div v-if="ingredientResults.length" class="grid">
+          <div v-if="ingredientResults.length" class="results-list">
             <IngredientResultCard v-for="ing in ingredientResults.slice(0, RESULT_CAP)" :key="ing.id" :ingredient="ing" />
           </div>
           <p v-else class="state">
@@ -180,7 +183,7 @@ const setOptions = computed(() =>
             <span class="count">{{ tomeResults.length.toLocaleString() }} tomes</span>
             <span v-if="tomeResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
           </header>
-          <div v-if="tomeResults.length" class="grid">
+          <div v-if="tomeResults.length" class="results-list">
             <TomeResultCard v-for="tome in tomeResults.slice(0, RESULT_CAP)" :key="tome.id" :tome="tome" />
           </div>
           <p v-else class="state">
@@ -192,7 +195,7 @@ const setOptions = computed(() =>
           <header class="results-head">
             <span class="count">{{ data?.charms.length ?? 0 }} charms</span>
           </header>
-          <div v-if="data?.charms.length" class="grid grid--charms">
+          <div v-if="data?.charms.length" class="results-list results-list--charms">
             <CharmResultCard v-for="charm in data.charms" :key="charm.id" :charm="charm" />
           </div>
           <p v-else class="state">
@@ -205,7 +208,7 @@ const setOptions = computed(() =>
             <span class="count">{{ materialResults.length.toLocaleString() }} materials</span>
             <span v-if="materialResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
           </header>
-          <div v-if="materialResults.length" class="grid">
+          <div v-if="materialResults.length" class="results-list">
             <MaterialResultCard v-for="mat in materialResults.slice(0, RESULT_CAP)" :key="mat.id" :material="mat" />
           </div>
           <p v-else class="state">
@@ -260,8 +263,14 @@ const setOptions = computed(() =>
 </template>
 
 <style scoped>
+/* Lock the page to the viewport below the global nav so the sidebar and results
+   each scroll inside their own column instead of forcing the whole page to scroll. */
 .page {
-  padding: 20px 0 64px;
+  height: calc(100dvh - 76px);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0 0;
+  overflow: hidden;
 }
 .toolbar {
   display: flex;
@@ -271,6 +280,7 @@ const setOptions = computed(() =>
   padding-bottom: 20px;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
 }
 /* Add the build rail as a third column. Scoped specificity beats the global
    `.layout` rule, so these widths win at desktop sizes. */
@@ -280,12 +290,31 @@ const setOptions = computed(() =>
      position: fixed and viewport-centred, so results never run under it. */
   grid-template-columns: 248px minmax(0, 1fr) var(--rail-w);
   gap: 28px;
+  flex: 1;
+  min-height: 0;
 }
 .layout--full {
   grid-template-columns: minmax(0, 1fr) var(--rail-w);
 }
-.sidebar {
+/* `:deep()` because the `<aside class="sidebar">` element is rendered by the
+   FiltersSidebar child component, so page-scoped selectors don't reach it
+   directly. Without this the global `position: sticky; top: 76px` wins and
+   the sidebar refuses to scroll. */
+.layout :deep(.sidebar) {
+  position: static;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+  padding-bottom: 24px;
+  scrollbar-width: thin;
+}
+.results {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
   padding-right: 4px;
+  padding-bottom: 24px;
   scrollbar-width: thin;
 }
 .results-head {
@@ -304,13 +333,16 @@ const setOptions = computed(() =>
 .count--dim {
   color: var(--color-muted);
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-  gap: 10px;
+/* CSS-columns masonry: each card has break-inside: avoid + margin-bottom for
+   the row gap. Columns reflow with the container width — no JS measurement. */
+.results-list {
+  column-width: 280px;
+  column-gap: 12px;
 }
-.grid--charms {
+.results-list--charms {
+  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
 }
 /* ── Slide-out full-builder panel (overlays the results) ─────────── */
 .build-overlay {
@@ -466,10 +498,26 @@ const setOptions = computed(() =>
 /* Below the side-rail breakpoint, the rail collapses to the floating FAB and
    the search returns to a single stacked column. */
 @media (max-width: 900px) {
+  /* Below the desktop breakpoint the sidebar moves into a sheet and the page
+     reverts to natural scrolling — the locked-viewport layout only makes sense
+     when both columns are visible side-by-side. */
+  .page {
+    height: auto;
+    overflow: visible;
+    padding-bottom: 64px;
+  }
   .layout,
   .layout--full {
     grid-template-columns: 1fr;
     gap: 20px;
+    min-height: 0;
+  }
+  .layout :deep(.sidebar),
+  .results {
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
+    padding-bottom: 0;
   }
   .rail-col {
     display: none;
@@ -484,11 +532,7 @@ const setOptions = computed(() =>
     padding-bottom: 14px;
     margin-bottom: 16px;
   }
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 8px;
-  }
-  .grid--charms {
+  .results-list--charms {
     grid-template-columns: 1fr;
   }
   .results-head {

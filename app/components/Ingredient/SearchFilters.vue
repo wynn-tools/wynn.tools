@@ -2,6 +2,19 @@
 import type { IngredientCriteria } from '~/lib/items-search/types'
 
 const criteria = defineModel<IngredientCriteria>({ required: true })
+
+const constraintsModel = computed({
+  get: () => criteria.value.constraints,
+  set: (v) => { criteria.value = { ...criteria.value, constraints: v } },
+})
+const rollBasis = computed({
+  get: () => criteria.value.rollBasis,
+  set: (v) => { criteria.value = { ...criteria.value, rollBasis: v } },
+})
+const focusKey = ref<string | null>(null)
+
+const INGREDIENT_QUICK_CODES = ['rawStrength', 'rawDexterity', 'rawIntelligence', 'rawDefence', 'rawAgility', 'rawSpellDamage', 'manaRegen', 'walkSpeed'] as const
+
 const TIERS = [0, 1, 2, 3]
 const SKILLS = ['woodworking', 'weaponsmithing', 'armouring', 'tailoring', 'jeweling', 'cooking', 'alchemism', 'scribing']
 
@@ -28,6 +41,17 @@ function toggleStr(list: string[], value: string): string[] {
       :value="criteria.mob" class="f-input" type="text" placeholder="Mob name…"
       @input="criteria = { ...criteria, mob: ($event.target as HTMLInputElement).value }"
     >
+    <fieldset class="f-group f-group--col f-group--ids">
+      <legend>Identifications</legend>
+      <ItemRollBasisToggle v-model="rollBasis" />
+      <ItemQuickAddChips v-model="constraintsModel" :codes="INGREDIENT_QUICK_CODES" @focus-key="focusKey = $event" />
+      <ItemActiveConstraints v-model="constraintsModel" :focus-key="focusKey" />
+      <ItemAdvancedExpression v-model="constraintsModel" />
+      <IdentificationFilterList
+        :model-value="{ constraints: constraintsModel }"
+        @update:model-value="constraintsModel = $event.constraints"
+      />
+    </fieldset>
     <fieldset class="f-group">
       <legend>Tier</legend>
       <button
@@ -63,13 +87,6 @@ function toggleStr(list: string[], value: string): string[] {
       >
         {{ s }}
       </button>
-    </fieldset>
-    <fieldset class="f-group f-group--col">
-      <legend>Identifications</legend>
-      <IdentificationFilterList
-        :model-value="{ identifications: criteria.identifications, idSorts: criteria.idSorts }"
-        @update:model-value="criteria = { ...criteria, identifications: $event.identifications, idSorts: $event.idSorts }"
-      />
     </fieldset>
   </div>
 </template>

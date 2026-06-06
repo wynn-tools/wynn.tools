@@ -1,11 +1,11 @@
-import type { IngredientCriteria, SearchIngredient } from './types'
+import type { IdConstraint, IngredientCriteria, SearchIngredient } from './types'
 import { describe, expect, it } from 'vitest'
 import { filterIngredients } from './filter-ingredients'
 
 const BASE_MOD = { above: 0, under: 0, left: 0, right: 0, touching: 0, notTouching: 0 }
 
 function base(): IngredientCriteria {
-  return { name: '', tiers: [], levelRange: [1, 110], skills: [], mob: '', identifications: [], idSorts: [] }
+  return { name: '', tiers: [], levelRange: [1, 110], skills: [], mob: '', constraints: [], rollBasis: 'possible' }
 }
 
 function mk(p: Partial<SearchIngredient>): SearchIngredient {
@@ -20,11 +20,28 @@ describe('filterIngredients', () => {
     expect(filterIngredients([a, b], { ...base(), skills: ['alchemism', 'cooking'] })).toEqual([a])
   })
 
-  it('sorts by id raw desc', () => {
-    const a = mk({ displayName: 'A', identifications: { poison: { min: 0, max: 0, raw: 100 } } })
-    const b = mk({ displayName: 'B', identifications: { poison: { min: 0, max: 0, raw: 200 } } })
-    const sorted = filterIngredients([a, b], { ...base(), idSorts: [{ key: 'poison', dir: 'desc' }] })
+  it('sorts by id favored desc (possible basis)', () => {
+    const a = mk({ displayName: 'A', identifications: { poison: { min: 0, max: 100, raw: 100 } } })
+    const b = mk({ displayName: 'B', identifications: { poison: { min: 0, max: 200, raw: 200 } } })
+    const c: IdConstraint = { kind: 'id', key: 'poison', sort: 'desc' }
+    const sorted = filterIngredients([a, b], { ...base(), constraints: [c] })
     expect(sorted.map(i => i.displayName)).toEqual(['B', 'A'])
+  })
+
+  it('presence/exclude parity', () => {
+    const a = mk({ displayName: 'A', identifications: { poison: { min: 1, max: 5, raw: 3 } } })
+    const b = mk({ displayName: 'B', identifications: {} })
+    const include: IdConstraint = { kind: 'id', key: 'poison' }
+    const exclude: IdConstraint = { kind: 'id', key: 'poison', exclude: true }
+    expect(filterIngredients([a, b], { ...base(), constraints: [include] })).toEqual([a])
+    expect(filterIngredients([a, b], { ...base(), constraints: [exclude] })).toEqual([b])
+  })
+
+  it('value threshold honors rollBasis', () => {
+    const a = mk({ displayName: 'A', identifications: { poison: { min: 1, max: 10, raw: 5 } } })
+    const c: IdConstraint = { kind: 'id', key: 'poison', min: 8 }
+    expect(filterIngredients([a], { ...base(), constraints: [c], rollBasis: 'possible' })).toHaveLength(1)
+    expect(filterIngredients([a], { ...base(), constraints: [c], rollBasis: 'guaranteed' })).toHaveLength(0)
   })
 })
 

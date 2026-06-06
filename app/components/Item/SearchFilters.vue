@@ -6,6 +6,16 @@ import { TIER_COLORS } from '~/lib/items/tooltip'
 const props = defineProps<{ majorIdOptions?: string[], setOptions?: string[] }>()
 const criteria = defineModel<ItemCriteria>({ required: true })
 
+const constraintsModel = computed({
+  get: () => criteria.value.constraints,
+  set: (v) => { criteria.value = { ...criteria.value, constraints: v } },
+})
+const rollBasis = computed({
+  get: () => criteria.value.rollBasis,
+  set: (v) => { criteria.value = { ...criteria.value, rollBasis: v } },
+})
+const focusKey = ref<string | null>(null)
+
 const majorIds = computed(() => props.majorIdOptions ?? [])
 const sets = computed(() => props.setOptions ?? [])
 const availableSets = computed(() => sets.value.filter(s => !criteria.value.sets.includes(s)))
@@ -135,11 +145,16 @@ function removeSet(name: string): void {
       />
     </fieldset>
 
-    <fieldset class="f-group f-group--col">
+    <fieldset class="f-group f-group--col f-group--ids">
       <legend>Identifications</legend>
+      <ItemRollBasisToggle v-model="rollBasis" />
+      <ItemQuickAddChips v-model="constraintsModel" @focus-key="focusKey = $event" />
+      <ItemActiveConstraints v-model="constraintsModel" :focus-key="focusKey" />
+      <ItemStatSumPresets v-model="constraintsModel" />
+      <ItemAdvancedExpression v-model="constraintsModel" />
       <IdentificationFilterList
-        :model-value="{ identifications: criteria.identifications, idSorts: criteria.idSorts }"
-        @update:model-value="criteria = { ...criteria, identifications: $event.identifications, idSorts: $event.idSorts }"
+        :model-value="{ constraints: constraintsModel }"
+        @update:model-value="constraintsModel = $event.constraints"
       />
     </fieldset>
   </div>
@@ -151,6 +166,23 @@ function removeSet(name: string): void {
   flex-direction: column;
   gap: 22px;
   padding: 0;
+}
+
+/* Slot order: name → Type → Identifications → Rarity → Level → Restriction → Set → Major ID. */
+.filters > * {
+  order: 5;
+}
+.f-input {
+  order: 0;
+}
+.f-group--type {
+  order: 1;
+}
+.f-group--ids {
+  order: 2;
+}
+.f-group--tier {
+  order: 3;
 }
 .f-input {
   width: 100%;

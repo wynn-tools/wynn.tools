@@ -197,6 +197,28 @@ export function humanizeShortId(shorthand: string): FieldLabel {
   return IDENTIFICATION_MAP[shorthand] ?? { label: camelToTitle(shorthand), unit: '' }
 }
 
+/**
+ * Resolve a user-supplied identifier (Quick-add chip, expression token, URL
+ * parameter) to the v3 official key the search path stores on items. Accepts:
+ *   - the v3 long name itself (`rawStrength`, `walkSpeed`)   — returned as-is
+ *   - the legacy hppeng shorthand (`str`, `sdPct`, `mr`)     — mapped via the reverse table
+ *   - any other camelCase identifier                         — passed through
+ * Returns null for empty / non-identifier input.
+ */
+export function canonicalKey(input: string): string | null {
+  const k = input.trim()
+  if (!k)
+    return null
+  if (k in _V3_TO_SHORT)
+    return k
+  const v3 = _SHORT_TO_V3[k]
+  if (v3)
+    return v3
+  if (/^[a-z]\w*$/i.test(k))
+    return k
+  return null
+}
+
 /** Cost-type ids invert good/bad direction (lower cost is better). */
 export function isCost(key: string): boolean {
   return key.toLowerCase().includes('cost')

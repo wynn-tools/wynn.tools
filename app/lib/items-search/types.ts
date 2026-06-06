@@ -1,3 +1,5 @@
+import type { RollBasis } from './roll-basis'
+
 import type { DamageRange, IdentificationEntry, MajorId, NormalizedText, OutputItem } from '~/lib/data/cdn-adapter/item-adapter'
 
 export type IdRange = IdentificationEntry // { min, max, raw }
@@ -112,6 +114,7 @@ export interface MaterialCriteria {
   levelRange: [number, number]
 }
 
+/** Legacy types kept for components still mid-migration. Prefer IdConstraint. */
 export interface IdFilter {
   key: string
   exclude: boolean
@@ -122,6 +125,40 @@ export interface IdSort {
   dir: 'asc' | 'desc'
 }
 
+export type SortDir = 'asc' | 'desc'
+
+export type StatSumPresetKey = 'spSum' | 'spellDmgTotal' | 'elemDmgTotal' | 'elemDefTotal'
+
+export interface IdConstraintBase {
+  /** Optional sort attached to id/sum constraints. */
+  sort?: SortDir
+}
+
+/** Single-ID constraint: presence, exclude, or value-threshold. */
+export interface IdConstraintId extends IdConstraintBase {
+  kind: 'id'
+  key: string
+  exclude?: boolean
+  min?: number
+  max?: number
+}
+
+/** Stat-sum preset (e.g. spSum, spellDmgTotal). */
+export interface IdConstraintSum extends IdConstraintBase {
+  kind: 'sum'
+  preset: StatSumPresetKey
+  min?: number
+  max?: number
+}
+
+/** Advanced expression filter. Sort is ignored for expr. */
+export interface IdConstraintExpr {
+  kind: 'expr'
+  source: string
+}
+
+export type IdConstraint = IdConstraintId | IdConstraintSum | IdConstraintExpr
+
 export interface ItemCriteria {
   name: string
   types: string[]
@@ -130,8 +167,8 @@ export interface ItemCriteria {
   levelRange: [number, number]
   restrictions: string[]
   majorId: string | null
-  identifications: IdFilter[]
-  idSorts: IdSort[]
+  constraints: IdConstraint[]
+  rollBasis: RollBasis
 }
 
 export interface IngredientCriteria {
@@ -140,6 +177,6 @@ export interface IngredientCriteria {
   levelRange: [number, number]
   skills: string[]
   mob: string
-  identifications: IdFilter[]
-  idSorts: IdSort[]
+  constraints: IdConstraint[]
+  rollBasis: RollBasis
 }
