@@ -14,7 +14,7 @@ import { slotItemId } from '~/lib/codec/build-codec'
 import { computeCraft } from '~/lib/crafter/compute-craft'
 import { POWDER_NAME_BY_ID } from '~/lib/data/powder-constants'
 import { powderElementMeta } from '~/lib/data/powder-elements'
-import { itemIconUrl } from '~/lib/items/icon'
+import { itemIconUrl, spriteUrl } from '~/lib/items/icon'
 import { formatEmeralds } from '~/lib/market/format-emeralds'
 import { pickId } from '~/lib/market/summarize'
 import { useBuildStore } from '~/stores/build'
@@ -43,7 +43,12 @@ function slotPrice(slot: number): string | null {
 }
 
 function slotIcon(slot: number): string | null {
-  const id = slotItemId(store.rawBuild?.equipment[slot])
+  const entry = store.rawBuild?.equipment[slot]
+  if (entry?.kind === 'crafted') {
+    const c = slotCrafted(slot)
+    return c ? spriteUrl(c.type) : null
+  }
+  const id = slotItemId(entry)
   if (id == null)
     return null
   return itemIconUrl(store.ctx?.rawItemIndex.resolveId(id))
