@@ -2,6 +2,7 @@
 import type { ApiBuild } from '~/composables/useApi'
 import { computed } from 'vue'
 import Byline from './Byline.vue'
+import CreditsPicker from './CreditsPicker.vue'
 import NotesView from './NotesView.vue'
 import TagChips from './TagChips.vue'
 import TagPicker from './TagPicker.vue'
@@ -16,6 +17,7 @@ defineEmits<{
   fork: []
   removeMeCredit: []
   updateTags: [tags: string[]]
+  updateCredits: [credits: { id: string, username: string, displayName: string, avatar: string | null }[]]
 }>()
 
 const hasTags = computed(() => !!props.build.tags && props.build.tags.length > 0)
@@ -44,12 +46,20 @@ const visibilityLabel = computed(() => {
       </div>
 
       <div class="header-row header-row-2">
-        <Byline
-          :owner="build.owner"
-          :credits="build.credits ?? []"
-          :viewer-id="viewerId"
-          @remove-me="$emit('removeMeCredit')"
-        />
+        <span class="byline-wrap">
+          <Byline
+            :owner="build.owner"
+            :credits="build.credits ?? []"
+            :viewer-id="viewerId"
+            @remove-me="$emit('removeMeCredit')"
+          />
+          <CreditsPicker
+            v-if="isOwner && build.owner"
+            :credits="build.credits ?? []"
+            :owner-id="build.owner.id"
+            @change="(c) => $emit('updateCredits', c)"
+          />
+        </span>
         <div class="header-row-2-right">
           <TagPicker
             v-if="isOwner"
@@ -147,6 +157,12 @@ const visibilityLabel = computed(() => {
 .header-row-2 {
   justify-content: space-between;
   align-items: flex-start;
+}
+.byline-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .header-row-2-right {
   display: inline-flex;

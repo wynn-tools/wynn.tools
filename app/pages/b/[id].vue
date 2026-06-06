@@ -121,6 +121,23 @@ async function onUpdateTags(tags: string[]) {
   }
 }
 
+async function onUpdateCredits(credits: { id: string, username: string, displayName: string, avatar: string | null }[]) {
+  if (!build.value)
+    return
+  const prev = build.value.credits
+  build.value = { ...build.value, credits }
+  try {
+    const res = await api.replaceBuildCredits(build.value.id, credits.map(c => ({ userId: c.id })))
+    if (build.value)
+      build.value = { ...build.value, credits: res.credits }
+  }
+  catch (err) {
+    console.error('Failed to update credits', err)
+    if (build.value)
+      build.value = { ...build.value, credits: prev }
+  }
+}
+
 async function onRemoveMeCredit() {
   if (!build.value)
     return
@@ -145,6 +162,7 @@ async function onRemoveMeCredit() {
       @fork="fork"
       @remove-me-credit="onRemoveMeCredit"
       @update-tags="onUpdateTags"
+      @update-credits="onUpdateCredits"
     />
     <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
   </div>
