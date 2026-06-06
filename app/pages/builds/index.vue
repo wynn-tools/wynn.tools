@@ -36,6 +36,12 @@ const activeItemId = computed(() => {
 //   'X.Y.Z' → exact match on that version
 const activeGameVersion = computed(() => (route.query.gameVersion as string) || '')
 const activeCreator = computed(() => (route.query.creator as string) || '')
+const activeTags = computed<string[]>(() => {
+  const t = route.query.tag
+  if (!t)
+    return []
+  return Array.isArray(t) ? t.map(String) : [String(t)]
+})
 
 // --- game versions ---
 const { data: versionsData } = useGameVersions()
@@ -182,6 +188,10 @@ function setFilter(patch: Record<string, string | undefined>) {
   router.push({ query: { ...route.query, ...patch, cursor: undefined } })
 }
 
+function setTags(tags: string[]) {
+  router.push({ query: { ...route.query, tag: tags.length > 0 ? tags : undefined, cursor: undefined } })
+}
+
 function onQ(val: string) {
   setFilter({ q: val || undefined })
 }
@@ -213,6 +223,7 @@ const filters = computed<BuildListFilters>(() => {
     itemId: activeItemId.value ?? undefined,
     gameVersion: gv || undefined,
     creator: activeCreator.value || undefined,
+    tag: activeTags.value.length > 0 ? activeTags.value : undefined,
   }
 })
 
@@ -315,6 +326,11 @@ function clearAllFilters() {
                 {{ v }}{{ v === latestVersion ? ' · latest' : '' }}
               </option>
             </select>
+          </fieldset>
+
+          <fieldset class="f-group f-group--col">
+            <legend>Tags</legend>
+            <BuildsTagFilterStrip :active="activeTags" @change="setTags" />
           </fieldset>
 
           <fieldset class="f-group f-group--class">
