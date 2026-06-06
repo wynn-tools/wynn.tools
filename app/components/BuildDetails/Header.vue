@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import Byline from './Byline.vue'
 import NotesView from './NotesView.vue'
 import TagChips from './TagChips.vue'
+import TagPicker from './TagPicker.vue'
 
 const props = defineProps<{
   build: ApiBuild
@@ -11,7 +12,11 @@ const props = defineProps<{
   isOwner: boolean
 }>()
 
-defineEmits<{ fork: [], removeMeCredit: [] }>()
+defineEmits<{
+  fork: []
+  removeMeCredit: []
+  updateTags: [tags: string[]]
+}>()
 
 const hasTags = computed(() => !!props.build.tags && props.build.tags.length > 0)
 const hasTutorial = computed(() => !!props.build.tutorialUrl)
@@ -46,7 +51,12 @@ const visibilityLabel = computed(() => {
           @remove-me="$emit('removeMeCredit')"
         />
         <div class="header-row-2-right">
-          <TagChips v-if="hasTags" :tags="build.tags" :max="6" />
+          <TagPicker
+            v-if="isOwner"
+            :tags="build.tags ?? []"
+            @change="(t: string[]) => $emit('updateTags', t)"
+          />
+          <TagChips v-else-if="hasTags" :tags="build.tags" :max="6" />
           <a
             v-if="hasTutorial"
             class="tutorial-link"

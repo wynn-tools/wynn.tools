@@ -104,6 +104,23 @@ function fork() {
     router.push(`/builder/${build.value.buildString}`)
 }
 
+async function onUpdateTags(tags: string[]) {
+  if (!build.value)
+    return
+  const prev = build.value.tags
+  build.value = { ...build.value, tags }
+  try {
+    const res = await api.updateBuild(build.value.id, { tags })
+    if (build.value)
+      build.value = { ...build.value, tags: res.tags }
+  }
+  catch (err) {
+    console.error('Failed to update tags', err)
+    if (build.value)
+      build.value = { ...build.value, tags: prev }
+  }
+}
+
 async function onRemoveMeCredit() {
   if (!build.value)
     return
@@ -127,6 +144,7 @@ async function onRemoveMeCredit() {
       :is-owner="isOwner"
       @fork="fork"
       @remove-me-credit="onRemoveMeCredit"
+      @update-tags="onUpdateTags"
     />
     <BuilderWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="build?.visibility" />
   </div>
