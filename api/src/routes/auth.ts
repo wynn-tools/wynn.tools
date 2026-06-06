@@ -67,6 +67,21 @@ export const auth = new Hono()
     const profile = await fetchProfile(accessToken, discordFetch())
 
     const db = getDb()
+
+    const existingReal = await db.query.users.findFirst({
+      where: (u, { eq }) => eq(u.discordId, profile.id),
+    })
+    if (!existingReal) {
+      const slugHolder = await db.query.users.findFirst({
+        where: (u, { sql, and, ne }) => and(
+          sql`lower(${u.username}) = lower(${profile.username})`,
+          ne(u.kind, 'real'),
+        ),
+      })
+      if (slugHolder)
+        throw new AppError(409, 'slug_reserved', `The handle '${profile.username}' is reserved for an imported build creator. Contact an admin to claim it, or sign in with a different Discord account.`)
+    }
+
     const [user] = await db
       .insert(schema.users)
       .values({ id: newResourceId(), discordId: profile.id, username: profile.username, avatar: profile.avatar, displayName: profile.globalName })
