@@ -43,6 +43,13 @@
       "when": 1780324672387,
       "tag": "0005_tidy_lord_tyger",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780752232298,
+      "tag": "0006_wide_leopardon",
+      "breakpoints": true
     }
   ]
 }

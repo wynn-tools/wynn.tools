@@ -1,11 +1,12 @@
 import type { Buffer } from 'node:buffer'
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import {
   customType,
   index,
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -27,6 +28,9 @@ export type ProfileVisibility = (typeof profileVisibility)[number]
 export const discordJoinStatus = ['unset', 'joined', 'declined'] as const
 export type DiscordJoinStatus = (typeof discordJoinStatus)[number]
 
+export const userKind = ['real', 'person', 'community', 'anonymous'] as const
+export type UserKind = (typeof userKind)[number]
+
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   discordId: text('discord_id').notNull(),
@@ -34,12 +38,17 @@ export const users = pgTable('users', {
   avatar: text('avatar'),
   displayName: text('display_name'),
   bio: text('bio'),
+  kind: text('kind', { enum: userKind }).notNull().default('real'),
+  profileUrl: text('profile_url'),
   profileVisibility: text('profile_visibility', { enum: profileVisibility }).notNull().default('public'),
   discordJoinStatus: text('discord_join_status', { enum: discordJoinStatus }).notNull().default('unset'),
   discordJoinedAt: timestamp('discord_joined_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, t => [uniqueIndex('users_discord_id_idx').on(t.discordId)])
+}, t => [
+  uniqueIndex('users_discord_id_idx').on(t.discordId),
+  uniqueIndex('users_username_lower_idx').on(sql`lower(${t.username})`),
+])
 
 export const sessions = pgTable('sessions', {
   id: text('id').primaryKey(),
@@ -58,6 +67,10 @@ export const builds = pgTable('builds', {
   viewCount: integer('view_count').notNull().default(0),
   playerClass: text('class'),
   itemIds: integer('item_ids').array(),
+  source: text('source'),
+  tags: text('tags').array(),
+  tutorialUrl: text('tutorial_url'),
+  notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [index('builds_user_id_idx').on(t.userId)])
@@ -73,8 +86,23 @@ export const craftedItems = pgTable('crafted_items', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [index('crafted_items_user_id_idx').on(t.userId)])
 
-export const buildsRelations = relations(builds, ({ one }) => ({
+export const buildCredits = pgTable('build_credits', {
+  buildId: text('build_id').notNull().references(() => builds.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  position: integer('position').notNull(),
+}, t => [
+  primaryKey({ columns: [t.buildId, t.userId] }),
+  index('build_credits_user_id_idx').on(t.userId),
+])
+
+export const buildsRelations = relations(builds, ({ one, many }) => ({
   user: one(users, { fields: [builds.userId], references: [users.id] }),
+  credits: many(buildCredits),
+}))
+
+export const buildCreditsRelations = relations(buildCredits, ({ one }) => ({
+  build: one(builds, { fields: [buildCredits.buildId], references: [builds.id] }),
+  user: one(users, { fields: [buildCredits.userId], references: [users.id] }),
 }))
 
 export const craftedItemsRelations = relations(craftedItems, ({ one }) => ({
