@@ -1,7 +1,7 @@
 import type { SQL } from 'drizzle-orm'
 import type { CursorData } from '../lib/pagination'
 import { zValidator } from '@hono/zod-validator'
-import { and, asc, desc, eq, exists, ilike, inArray, or, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
@@ -303,19 +303,19 @@ export const userItems = new Hono().get('/:id/items', zValidator('query', itemsL
   const { q, sort, tag, cursor: rawCursor, limit } = c.req.valid('query')
   const cursor = decodeCursor(rawCursor)
   const filterConds = itemFilterConditions({ q, tags: tag }, sort, cursor)
-  const creditMatch = exists(
-    getDb()
-      .select({ one: sql`1` })
+  const creditedIds = (
+    await getDb()
+      .select({ itemId: schema.craftedItemCredits.itemId })
       .from(schema.craftedItemCredits)
-      .where(and(
-        eq(schema.craftedItemCredits.itemId, schema.craftedItems.id),
-        eq(schema.craftedItemCredits.userId, userId),
-      )),
-  )
+      .where(eq(schema.craftedItemCredits.userId, userId))
+  ).map(r => r.itemId)
+  const ownership = creditedIds.length > 0
+    ? or(eq(schema.craftedItems.userId, userId), inArray(schema.craftedItems.id, creditedIds))!
+    : eq(schema.craftedItems.userId, userId)
   const rows = await getDb().query.craftedItems.findMany({
     with: { user: true },
     where: and(
-      or(eq(schema.craftedItems.userId, userId), creditMatch),
+      ownership,
       eq(schema.craftedItems.visibility, 'public'),
       ...filterConds,
     ),
