@@ -121,8 +121,13 @@ describe('discord interactions', () => {
       data: { name: 'builds', options: [{ name: 'class', type: 3, value: 'archer' }] },
     }))
     const json: any = await res.json()
-    expect(json.data.embeds[0].title).toMatch(/Builds \(1\)/)
-    expect(json.data.embeds[0].description).toContain('Alpha Strike')
+    expect(json.data.flags & (1 << 15)).toBe(1 << 15)
+    const container = json.data.components[0]
+    expect(container.type).toBe(17)
+    const flat = JSON.stringify(container)
+    expect(flat).toMatch(/Builds \(1\)/)
+    expect(flat).toContain('Alpha Strike')
+    expect(flat).not.toContain('Bolt Caster')
   })
 
   it('/builds reports unlinked user for unknown Discord id', async () => {
@@ -140,6 +145,7 @@ describe('discord interactions', () => {
       data: { name: 'builds', options: [{ name: 'user', type: 6, value: '111' }] },
     }))
     const json: any = await res.json()
-    expect(json.data.embeds[0].title).toMatch(/Builds \(1\)/)
+    expect(json.data.flags & (1 << 15)).toBe(1 << 15)
+    expect(JSON.stringify(json.data.components[0])).toMatch(/Builds \(1\)/)
   })
 })

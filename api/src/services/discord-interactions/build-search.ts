@@ -2,12 +2,14 @@ import { and, eq, ilike, sql } from 'drizzle-orm'
 import { getDb } from '../../db/client'
 import * as schema from '../../db/schema'
 import { users } from '../../db/schema'
+import { normalizeTags } from '../../lib/build-tags'
 
 export interface BuildSearchFilters {
   discordUserId?: string
   playerClass?: string
   itemId?: number
   nameQuery?: string
+  tag?: string
 }
 
 export interface BuildSearchResult {
@@ -16,6 +18,9 @@ export interface BuildSearchResult {
   playerClass: string | null
   gameVersion: string
   createdAt: Date
+  tags: string[]
+  hasTutorial: boolean
+  owner: { username: string, displayName: string | null } | null
 }
 
 const PAGE_SIZE = 10
@@ -42,6 +47,12 @@ export async function searchBuilds(filters: BuildSearchFilters, page: number): P
     conds.push(sql`${schema.builds.itemIds} @> ARRAY[${filters.itemId}]::integer[]`)
   if (filters.nameQuery)
     conds.push(ilike(schema.builds.name, `%${filters.nameQuery}%`))
+  if (filters.tag) {
+    const [slug] = normalizeTags([filters.tag])
+    if (!slug)
+      return { results: [], total: 0, unlinkedUser: false }
+    conds.push(sql`${schema.builds.tags} @> ARRAY[${slug}]::text[]`)
+  }
 
   const where = and(...conds)
   const [countRow] = await getDb().select({ n: sql<number>`count(*)::int` }).from(schema.builds).where(where)
@@ -52,10 +63,22 @@ export async function searchBuilds(filters: BuildSearchFilters, page: number): P
     orderBy: (b, { desc }) => [desc(b.createdAt)],
     limit: PAGE_SIZE,
     offset: page * PAGE_SIZE,
-    columns: { id: true, name: true, playerClass: true, gameVersion: true, createdAt: true },
+    columns: { id: true, name: true, playerClass: true, gameVersion: true, createdAt: true, tags: true, tutorialUrl: true },
+    with: { user: { columns: { username: true, displayName: true } } },
   })
 
-  return { results: rows, total, unlinkedUser: false }
+  const results: BuildSearchResult[] = rows.map(r => ({
+    id: r.id,
+    name: r.name,
+    playerClass: r.playerClass,
+    gameVersion: r.gameVersion,
+    createdAt: r.createdAt,
+    tags: r.tags ?? [],
+    hasTutorial: !!r.tutorialUrl,
+    owner: r.user ? { username: r.user.username, displayName: r.user.displayName } : null,
+  }))
+
+  return { results, total, unlinkedUser: false }
 }
 
 export const BUILDS_PAGE_SIZE = PAGE_SIZE
@@ -73,6 +96,8 @@ export function encodeFilters(filters: BuildSearchFilters, page: number): string
       params.set('i', String(working.itemId))
     if (working.nameQuery)
       params.set('n', working.nameQuery)
+    if (working.tag)
+      params.set('t', working.tag)
     params.set('p', String(page))
     return params.toString()
   }
@@ -95,6 +120,7 @@ export function decodeFilters(customId: string): { filters: BuildSearchFilters, 
       playerClass: params.get('c') ?? undefined,
       itemId: params.get('i') ? Number.parseInt(params.get('i')!, 10) : undefined,
       nameQuery: params.get('n') ?? undefined,
+      tag: params.get('t') ?? undefined,
     },
   }
 }

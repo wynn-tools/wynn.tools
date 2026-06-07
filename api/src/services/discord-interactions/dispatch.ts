@@ -1,16 +1,31 @@
 import type { Interaction, InteractionResponse } from './types'
+import { BUILD_TAGS } from '../../lib/build-tags'
 import { EPHEMERAL_FLAG } from './embed'
 import { handleBuilds, handleBuildsComponent } from './handlers/builds'
 import { autocompleteItem, handleItem } from './handlers/item'
 import { handlePrice } from './handlers/price'
 import { getItemIndex } from './item-index'
-import { InteractionType, ResponseType } from './types'
+import { getFocusedOption, InteractionType, ResponseType } from './types'
+
+function autocompleteTag(interaction: Interaction): InteractionResponse {
+  const focused = getFocusedOption(interaction)
+  const q = (focused?.value ?? '').toLowerCase().trim()
+  const entries = Object.entries(BUILD_TAGS)
+  const matches = entries.filter(([slug, def]) =>
+    !q || slug.includes(q) || def.label.toLowerCase().includes(q) || (def.aliases ?? []).some(a => a.toLowerCase().includes(q)),
+  )
+  const choices = matches.slice(0, 25).map(([slug, def]) => ({ name: `${def.label} (${def.axis})`, value: slug }))
+  return { type: ResponseType.AUTOCOMPLETE_RESULT, data: { choices } }
+}
 
 export async function dispatch(interaction: Interaction): Promise<InteractionResponse> {
   if (interaction.type === InteractionType.PING)
     return { type: ResponseType.PONG }
 
   if (interaction.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE) {
+    const focused = getFocusedOption(interaction)
+    if (focused?.name === 'tag')
+      return autocompleteTag(interaction)
     let index
     try {
       index = getItemIndex()
@@ -18,7 +33,6 @@ export async function dispatch(interaction: Interaction): Promise<InteractionRes
     catch {
       return ephemeral('Items unavailable, try again in a moment.')
     }
-    // Every autocompleted option across our commands is an item-name lookup.
     return autocompleteItem(interaction, index)
   }
 

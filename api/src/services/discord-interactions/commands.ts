@@ -36,6 +36,7 @@ export const COMMANDS = [
       { name: 'class', description: 'Class', type: STRING, required: false, choices: CLASS_CHOICES },
       { name: 'item', description: 'Item used in the build', type: STRING, required: false, autocomplete: true },
       { name: 'name', description: 'Search build titles (case-insensitive)', type: STRING, required: false },
+      { name: 'tag', description: 'Build tag (role, playstyle, content, budget…)', type: STRING, required: false, autocomplete: true },
     ],
   },
 ] as const
