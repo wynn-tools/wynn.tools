@@ -19,9 +19,19 @@ const sort = computed<SortOption>(() => {
   const s = route.query.sort as string
   return s === 'oldest' || s === 'name' ? s : 'newest'
 })
+const activeTags = computed<string[]>(() => {
+  const t = route.query.tag
+  if (!t)
+    return []
+  return Array.isArray(t) ? t.map(String) : [String(t)]
+})
 
 function setFilter(patch: Record<string, string | undefined>) {
   router.push({ query: { ...route.query, ...patch, cursor: undefined } })
+}
+
+function setTags(tags: string[]) {
+  router.push({ query: { ...route.query, tag: tags.length > 0 ? tags : undefined, cursor: undefined } })
 }
 
 function onQ(val: string) {
@@ -40,6 +50,7 @@ const loadError = ref<string | null>(null)
 const filters = computed<ItemListFilters>(() => ({
   q: q.value || undefined,
   sort: sort.value,
+  tag: activeTags.value.length > 0 ? activeTags.value : undefined,
 }))
 
 async function load(cursor?: string) {
@@ -66,7 +77,7 @@ watch(filters, () => {
 
 await useAsyncData('public-items', () => load())
 
-const hasActiveFilters = computed(() => !!q.value)
+const hasActiveFilters = computed(() => !!q.value || activeTags.value.length > 0)
 
 function clearAllFilters() {
   router.push({ query: {} })
@@ -96,6 +107,10 @@ function clearAllFilters() {
       <FiltersSidebar panel-id="crafted-filters-panel">
         <div class="filters">
           <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
+          <fieldset class="f-group f-group--col">
+            <legend>Tags</legend>
+            <BuildsTagFilterStrip :active="activeTags" @change="setTags" />
+          </fieldset>
         </div>
       </FiltersSidebar>
 
@@ -128,6 +143,7 @@ function clearAllFilters() {
               :owner-name="item.owner?.name"
               :show-owner="true"
               :craft-hash="item.craftHash"
+              :tags="item.tags"
             />
           </div>
           <div v-if="nextCursor" class="load-more">

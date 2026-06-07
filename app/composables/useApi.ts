@@ -63,6 +63,9 @@ export interface ApiItem {
   gameVersion: string
   visibility: 'public' | 'unlisted' | 'private'
   itemData: Record<string, unknown>
+  tags: string[]
+  notes: string | null
+  credits: ApiBuildCredit[]
   createdAt: string
   updatedAt: string
 }
@@ -74,6 +77,8 @@ export interface ApiItemSummary {
   visibility?: 'public' | 'unlisted' | 'private'
   owner?: ApiOwner | null
   craftHash?: string | null
+  tags?: string[]
+  isCredit?: boolean
 }
 
 export interface ApiProfile {
@@ -128,6 +133,7 @@ export interface ApiUserSearchResult {
 export interface ItemListFilters {
   q?: string
   sort?: 'newest' | 'oldest' | 'name'
+  tag?: string[]
 }
 
 export class ApiError extends Error {
@@ -207,9 +213,13 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
       request<PageResult<ApiItemSummary>>(`/v1/users/${userId}/items${paginationQuery(filters, cursor, limit)}`),
     createItem: (body: { name: string, itemData: Record<string, unknown>, gameVersion: string, visibility?: string }) =>
       request<{ id: string }>('/v1/items', jsonInit('POST', body)),
-    updateItem: (id: string, body: { name?: string, itemData?: Record<string, unknown>, visibility?: string }) =>
-      request<{ id: string, name: string, visibility: string }>(`/v1/items/${id}`, jsonInit('PATCH', body)),
+    updateItem: (id: string, body: { name?: string, itemData?: Record<string, unknown>, visibility?: string, tags?: string[], notes?: string | null }) =>
+      request<{ id: string, name: string, visibility: string, tags: string[], notes: string | null }>(`/v1/items/${id}`, jsonInit('PATCH', body)),
     deleteItem: (id: string) => request<{ ok: boolean }>(`/v1/items/${id}`, { method: 'DELETE' }),
+    replaceItemCredits: (id: string, credits: { userId: string }[]) =>
+      request<{ credits: ApiBuildCredit[] }>(`/v1/items/${id}/credits`, jsonInit('PUT', { credits })),
+    removeMyCreditFromItem: (id: string) =>
+      request<{ ok: boolean }>(`/v1/items/${id}/credits/me`, { method: 'DELETE' }),
 
     // Profile
     getProfile: (id: string) => request<ApiProfile | ApiProfilePrivate>(`/v1/users/${id}`),

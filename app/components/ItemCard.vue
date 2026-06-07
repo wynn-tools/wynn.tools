@@ -16,6 +16,7 @@ defineProps<{
   ownerName?: string
   showOwner?: boolean
   craftHash?: string | null
+  tags?: string[]
 }>()
 
 const { resolve } = useCraftedItemPreview()
@@ -45,6 +46,7 @@ async function onHoverOpen(open: boolean, craftHash: string | null | undefined) 
       <article class="item-card">
         <NuxtLink :to="`/c/${id}`" class="card-link">
           <span class="card-name">{{ name }}</span>
+          <BuildDetailsTagChips v-if="tags && tags.length > 0" :tags="tags" :max="3" />
           <span class="card-meta">
             <span class="card-version">{{ gameVersion }}</span>
             <span v-if="ownerName && ownerId" class="card-owner-wrap">

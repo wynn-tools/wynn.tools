@@ -254,6 +254,7 @@ if (!isPrivate.value) {
             :owner-username="i.owner?.username"
             :owner-name="i.owner?.name"
             :craft-hash="i.craftHash"
+            :tags="i.tags"
           />
         </div>
         <div v-if="itemsNextCursor" class="load-more">

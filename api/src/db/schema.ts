@@ -85,9 +85,23 @@ export const craftedItems = pgTable('crafted_items', {
   itemData: jsonb('item_data').notNull(),
   gameVersion: text('game_version').notNull(),
   visibility: text('visibility', { enum: visibility }).notNull().default('private'),
+  tags: text('tags').array(),
+  notes: text('notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-}, t => [index('crafted_items_user_id_idx').on(t.userId)])
+}, t => [
+  index('crafted_items_user_id_idx').on(t.userId),
+  index('idx_crafted_items_tags_gin').using('gin', t.tags),
+])
+
+export const craftedItemCredits = pgTable('crafted_item_credits', {
+  itemId: text('item_id').notNull().references(() => craftedItems.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  position: integer('position').notNull(),
+}, t => [
+  primaryKey({ columns: [t.itemId, t.userId] }),
+  index('crafted_item_credits_user_id_idx').on(t.userId),
+])
 
 export const buildCredits = pgTable('build_credits', {
   buildId: text('build_id').notNull().references(() => builds.id, { onDelete: 'cascade' }),
@@ -108,8 +122,14 @@ export const buildCreditsRelations = relations(buildCredits, ({ one }) => ({
   user: one(users, { fields: [buildCredits.userId], references: [users.id] }),
 }))
 
-export const craftedItemsRelations = relations(craftedItems, ({ one }) => ({
+export const craftedItemsRelations = relations(craftedItems, ({ one, many }) => ({
   user: one(users, { fields: [craftedItems.userId], references: [users.id] }),
+  credits: many(craftedItemCredits),
+}))
+
+export const craftedItemCreditsRelations = relations(craftedItemCredits, ({ one }) => ({
+  item: one(craftedItems, { fields: [craftedItemCredits.itemId], references: [craftedItems.id] }),
+  user: one(users, { fields: [craftedItemCredits.userId], references: [users.id] }),
 }))
 
 export const apiKeys = pgTable('api_keys', {
