@@ -137,7 +137,7 @@ describe('adaptIngredients', () => {
         wDefPct: { min: -10, max: -8, raw: -10 },
       },
       itemOnlyIDs: {
-        durabilityModifier: -49000,
+        durabilityModifier: -49,
         strReq: 0,
         dexReq: 0,
         intReq: 0,

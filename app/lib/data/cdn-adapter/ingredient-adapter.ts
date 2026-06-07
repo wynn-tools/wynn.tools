@@ -116,7 +116,7 @@ function adaptOne(r: RawIngredient): Ingredient {
 
   // itemOnlyIDs: skillpoint reqs mapped via REQUIREMENT_MAP, plus durabilityModifier.
   const itemOnlyIDs: IngredientItemOnlyIDs = {
-    durabilityModifier: r.itemOnlyIDs.durabilityModifier,
+    durabilityModifier: r.itemOnlyIDs.durabilityModifier / 1000,
     strReq: 0,
     dexReq: 0,
     intReq: 0,
