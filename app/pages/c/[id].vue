@@ -31,6 +31,11 @@ const isOwner = computed(() =>
   !!auth.user && !!item.value?.owner && item.value.owner.id === auth.user.id,
 )
 
+const visibilityLabel = computed(() => {
+  const v = item.value?.visibility
+  return v === 'public' ? 'Public' : v === 'unlisted' ? 'Unlisted' : 'Private'
+})
+
 useSeoMeta({
   title: computed(() => item.value ? `${item.value.name} — wynn.tools` : 'Item — wynn.tools'),
 })
@@ -53,60 +58,119 @@ function fork() {
 
 <template>
   <div>
-    <div v-if="item && !isOwner" class="fork-bar">
-      <span class="fork-label">
-        Viewing item by
-        <NuxtLink v-if="item.owner" :to="`/u/${item.owner.username ?? item.owner.id}`" class="fork-owner-link">{{ item.owner.name }}</NuxtLink>
-        <span v-else>Anonymous</span>
-      </span>
-      <button class="fork-btn" type="button" @click="fork">
-        Fork this item →
-      </button>
-    </div>
+    <header v-if="item" class="craft-header">
+      <div class="header-inner">
+        <div class="header-row header-row-1">
+          <h1 class="header-name">
+            {{ item.name }}
+          </h1>
+          <div class="header-actions">
+            <span class="visibility-chip" :data-visibility="item.visibility">{{ visibilityLabel }}</span>
+            <button v-if="!isOwner" type="button" class="fork-btn" @click="fork">
+              Fork <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+        <div class="header-row header-row-2">
+          <span class="byline">
+            By
+            <NuxtLink v-if="item.owner" :to="`/u/${item.owner.username ?? item.owner.id}`" class="byline-owner">{{ item.owner.name }}</NuxtLink>
+            <span v-else class="byline-owner">Anonymous</span>
+          </span>
+        </div>
+      </div>
+    </header>
     <CrafterWorkspace :saved-id="isOwner ? id : undefined" :is-owner="isOwner" :visibility="item?.visibility" />
   </div>
 </template>
 
 <style scoped>
-.fork-bar {
+.craft-header {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  border-bottom: 1px solid var(--color-border);
+  padding: 14px max(40px, calc(50vw - var(--shell-max) / 2 + 40px));
+  display: flex;
+  justify-content: center;
+}
+.header-inner {
+  width: 100%;
+  max-width: var(--shell-max);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.header-row {
   display: flex;
   align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.header-row-1 {
   justify-content: space-between;
+}
+.header-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+.header-actions {
+  display: inline-flex;
+  align-items: center;
   gap: 12px;
-  padding: 8px 40px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  font-size: 12px;
 }
-
-.fork-label {
-  color: var(--color-muted);
-}
-
-.fork-btn {
+.visibility-chip {
   font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  color: var(--color-faint);
+}
+.visibility-chip[data-visibility='public'] {
   color: var(--color-accent);
-  background: none;
-  border: 1px solid color-mix(in oklch, var(--color-accent) 40%, transparent);
-  border-radius: 5px;
-  padding: 4px 12px;
+  border-color: color-mix(in oklch, var(--color-accent) 40%, var(--color-border));
+}
+.fork-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 0.12s ease-out;
+  padding: 4px 8px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
 }
-
 .fork-btn:hover {
-  border-color: var(--color-accent);
-}
-
-.fork-owner-link {
   color: var(--color-accent);
+}
+.byline {
+  font-size: 13px;
+  color: var(--color-muted);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.byline-owner {
+  color: var(--color-text);
   text-decoration: none;
 }
-.fork-owner-link:hover {
-  text-decoration: underline;
+.byline-owner:hover {
+  color: var(--color-accent);
+}
+
+@media (max-width: 720px) {
+  .craft-header {
+    padding-inline: var(--shell-pad-mobile, 14px);
+  }
 }
 </style>
