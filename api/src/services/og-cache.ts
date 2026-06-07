@@ -7,7 +7,7 @@ import { getDb, schema } from '../db/client'
  * font/style updates). All cached images are silently regenerated on next read.
  * Orphaned rows from previous versions can be swept with sweepOldOgCache().
  */
-export const OG_CACHE_VERSION = 2
+export const OG_CACHE_VERSION = 3
 
 function versioned(key: string): string {
   return `v${OG_CACHE_VERSION}:${key}`
