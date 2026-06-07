@@ -1,4 +1,3 @@
-import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
 
 marked.setOptions({ gfm: true, breaks: true })
@@ -9,10 +8,13 @@ export function rewriteWynnbuilderUrls(src: string): string {
   return src.replace(WYNNBUILDER_URL_RE, (_, hash) => `https://wynn.tools/builder/${hash}`)
 }
 
-export function renderMarkdown(src: string): string {
+export async function renderMarkdown(src: string): Promise<string> {
   if (!src)
     return ''
+  if (typeof window === 'undefined')
+    return ''
   const html = marked.parse(rewriteWynnbuilderUrls(src), { async: false }) as string
+  const { default: DOMPurify } = await import('isomorphic-dompurify')
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })
 }
 

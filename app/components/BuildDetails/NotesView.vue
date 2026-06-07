@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { renderMarkdown } from '~/lib/build/markdown'
 
 const props = defineProps<{ markdown: string | null | undefined }>()
 
 const collapsed = ref(true)
-const rendered = computed(() => renderMarkdown(props.markdown ?? ''))
+const rendered = ref('')
+watch(
+  () => props.markdown,
+  async (v) => {
+    rendered.value = await renderMarkdown(v ?? '')
+  },
+  { immediate: true },
+)
 const hasContent = computed(() => !!(props.markdown && props.markdown.trim()))
 </script>
 
