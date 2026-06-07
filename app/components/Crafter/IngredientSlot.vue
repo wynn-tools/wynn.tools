@@ -16,10 +16,12 @@ const props = withDefaults(defineProps<{
   highlighted?: boolean
   effectiveness?: number
   previewing?: boolean
+  price?: string | null
 }>(), {
   highlighted: false,
   effectiveness: undefined,
   previewing: false,
+  price: null,
 })
 
 const emit = defineEmits<{
@@ -100,7 +102,10 @@ function onClear(e: MouseEvent) {
       >
         <div class="slot-body">
           <span class="slot-name" :style="{ color: nameColor(ingredient.tier) }">{{ ingredient.displayName }}</span>
-          <span class="slot-meta">Tier {{ ingredient.tier }} · Lv. {{ ingredient.lvl }}</span>
+          <span class="slot-meta">
+            Tier {{ ingredient.tier }} · Lv. {{ ingredient.lvl }}
+            <span v-if="price" class="slot-price">· {{ price }}</span>
+          </span>
         </div>
         <span
           v-if="effectiveness !== undefined"
@@ -216,6 +221,10 @@ function onClear(e: MouseEvent) {
 .slot-meta {
   font-size: 11px;
   color: var(--color-muted);
+}
+
+.slot-price {
+  color: var(--color-faint);
 }
 
 .slot-plus {

@@ -1,9 +1,8 @@
 import type { CollectedItem } from '~/lib/market/collect-build-items'
 import type { RawMarketPrice } from '~/lib/market/types'
 import { ref, watch } from 'vue'
-import { slotItemId } from '~/lib/codec/build-codec'
-import { collectBuildItems } from '~/lib/market/collect-build-items'
-import { useBuildStore } from '~/stores/build'
+import { powderMarket } from '~/lib/market/powder-name'
+import { useCraftStore } from '~/stores/craft'
 import { useMarket } from './useMarket'
 import { useMarketMode } from './useMarketMode'
 
@@ -11,41 +10,72 @@ function keyFor(name: string, tier: number | null): string {
   return `${name}|${tier ?? ''}`
 }
 
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII'] as const
+
 const { mode, setMode } = useMarketMode()
 const priceMap = ref<Map<string, RawMarketPrice | null>>(new Map())
 const collected = ref<CollectedItem[]>([])
 let initialized = false
 
 function init() {
-  const store = useBuildStore()
+  const store = useCraftStore()
   const market = useMarket()
 
   watch(
-    () => [store.rawBuild?.equipment, store.rawBuild?.powders, store.ctx] as const,
+    () => [store.raw.ingredientIds, store.raw.powders, store.ctx] as const,
     () => {
-      const rb = store.rawBuild
       const ctx = store.ctx
-      if (!rb || !ctx) {
+      if (!ctx) {
         collected.value = []
         return
       }
-      const gear: { label: string, name: string, crafted: boolean }[] = []
-      for (let slot = 0; slot <= 8; slot++) {
-        const entry = rb.equipment[slot]
-        if (entry?.kind === 'crafted') {
-          gear.push({ label: `Slot ${slot}`, name: `Crafted ${slot}`, crafted: true })
+      const grouped = new Map<string, CollectedItem>()
+
+      for (const id of store.raw.ingredientIds) {
+        if (id == null)
           continue
+        const ing = ctx.ingredients.get(id)
+        if (!ing)
+          continue
+        const tier = typeof ing.tier === 'number' ? ing.tier : null
+        const key = keyFor(ing.name, tier)
+        const existing = grouped.get(key)
+        if (existing) {
+          existing.count++
         }
-        const id = slotItemId(entry)
-        if (id == null || id >= 10000)
-          continue
-        const item = ctx.rawItemIndex.resolveId(id)
-        const name = item?.name as string | undefined
-        if (name)
-          gear.push({ label: (item?.displayName as string) ?? name, name, crafted: false })
+        else {
+          grouped.set(key, {
+            label: ing.displayName ?? ing.name,
+            name: ing.name,
+            tier,
+            count: 1,
+            tradeable: true,
+          })
+        }
       }
-      const powders = rb.powders.flat()
-      collected.value = collectBuildItems({ gear, powders })
+
+      for (const id of store.raw.powders) {
+        const m = powderMarket(id)
+        if (!m)
+          continue
+        const key = keyFor(m.name, m.tier)
+        const roman = ROMAN[m.tier] ?? String(m.tier)
+        const existing = grouped.get(key)
+        if (existing) {
+          existing.count++
+        }
+        else {
+          grouped.set(key, {
+            label: `${m.name} ${roman}`,
+            name: m.name,
+            tier: m.tier,
+            count: 1,
+            tradeable: true,
+          })
+        }
+      }
+
+      collected.value = [...grouped.values()]
     },
     { immediate: true, deep: true },
   )
@@ -79,7 +109,7 @@ function init() {
   )
 }
 
-export function useBuildMarket() {
+export function useCraftMarket() {
   if (!initialized) {
     initialized = true
     init()

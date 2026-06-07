@@ -89,7 +89,8 @@ watch(
       return
     if (!hash)
       return
-    if (!window.location.pathname.startsWith('/crafter/'))
+    const path = window.location.pathname
+    if (path !== '/crafter' && !path.startsWith('/crafter/'))
       return
     const target = `/crafter/${hash}`
     if (window.location.pathname === target)
@@ -129,6 +130,7 @@ watch(
             :hovered-ingredient="hoveredIngredient"
             @open="openPicker"
           />
+          <CrafterMarketCost />
         </section>
         <aside
           class="crafter-output"
@@ -266,6 +268,9 @@ watch(
 
 .crafter-ingredients {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .crafter-output {

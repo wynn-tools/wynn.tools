@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
 import { computed } from 'vue'
+import { useCraftMarket } from '~/composables/useCraftMarket'
 import { computeAffectedCells, computeEffectiveness } from '~/lib/crafter/compute-craft'
+import { formatEmeralds } from '~/lib/market/format-emeralds'
+import { pickId } from '~/lib/market/summarize'
 import { useCraftStore } from '~/stores/craft'
 
 const props = defineProps<{
@@ -14,6 +17,18 @@ const emit = defineEmits<{
 }>()
 
 const store = useCraftStore()
+const { mode, priceFor } = useCraftMarket()
+
+function priceFormatted(ing: Ingredient | null): string | null {
+  if (!ing)
+    return null
+  const tier = typeof ing.tier === 'number' ? ing.tier : null
+  const p = priceFor(ing.name, tier)
+  if (!p)
+    return null
+  const v = pickId(p, mode.value)
+  return v == null ? null : formatEmeralds(v)
+}
 
 const slotIngredients = computed<(Ingredient | null)[]>(() => {
   const ctx = store.ctx
@@ -86,6 +101,7 @@ function onClear(index: number) {
         :highlighted="isHighlighted(i)"
         :effectiveness="effFor(i)"
         :previewing="isPreviewing(i)"
+        :price="priceFormatted(ing)"
         @open="emit('open', i)"
         @clear="onClear(i)"
       />
