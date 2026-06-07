@@ -89,6 +89,8 @@ watch(
       return
     if (!hash)
       return
+    if (!window.location.pathname.startsWith('/crafter/'))
+      return
     const target = `/crafter/${hash}`
     if (window.location.pathname === target)
       return
