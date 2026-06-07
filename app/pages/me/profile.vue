@@ -107,15 +107,13 @@ async function save() {
 
       <div class="field">
         <label class="field-label" for="bio">Bio</label>
-        <textarea
+        <MarkdownTextarea
           id="bio"
           v-model="bio"
-          class="field-textarea"
-          maxlength="200"
-          rows="3"
-          placeholder="A short description about yourself…"
+          :max-length="200"
+          :rows="3"
+          placeholder="A short description about yourself (markdown supported)…"
         />
-        <span class="field-hint">{{ bio.length }}/200</span>
       </div>
 
       <div class="field">

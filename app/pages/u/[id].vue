@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ApiBuildSummary, ApiItemSummary, ApiProfile, ApiProfilePrivate } from '~/composables/useApi'
+import NotesView from '~/components/BuildDetails/NotesView.vue'
 import { useApi } from '~/composables/useApi'
+import { stripMarkdown } from '~/lib/build/markdown'
 import { useAuthStore } from '~/stores/auth'
 
 const route = useRoute()
@@ -43,7 +45,7 @@ const seoTitle = computed(() =>
 )
 const seoDesc = computed(() =>
   profile.value
-    ? profile.value.bio || `View ${profile.value.name}'s builds and items on wynn.tools.`
+    ? (profile.value.bio && stripMarkdown(profile.value.bio, 200)) || `View ${profile.value.name}'s builds and items on wynn.tools.`
     : 'View this user\'s builds and items on wynn.tools.',
 )
 
@@ -164,9 +166,7 @@ if (!isPrivate.value) {
           <h1 class="profile-name">
             {{ profile.name }}
           </h1>
-          <p v-if="profile.bio" class="profile-bio">
-            {{ profile.bio }}
-          </p>
+          <NotesView v-if="profile.bio" :markdown="profile.bio" class="profile-bio" />
           <a
             v-if="profile.profileUrl"
             :href="profile.profileUrl"
