@@ -19,7 +19,7 @@ const equippedLabel = computed(() => equippedSlot.value != null ? SLOT_LABELS[eq
       class="card-link"
       :aria-label="`Open ${item.displayName} details`"
     >
-      <ItemTooltip :item="item" />
+      <ItemTooltip :item="item" :exportable="false" />
     </NuxtLink>
     <span v-if="equipped" class="card-tag">
       <span class="card-tag-check" aria-hidden="true">✓</span>{{ equippedLabel }}

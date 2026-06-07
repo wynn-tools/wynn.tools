@@ -14,7 +14,9 @@ import {
   weaponClass,
 } from '~/lib/items/tooltip'
 
-const props = defineProps<{ item: SearchItem }>()
+const props = withDefaults(defineProps<{ item: SearchItem, exportable?: boolean }>(), {
+  exportable: true,
+})
 
 const SKILLS = ['strength', 'dexterity', 'intelligence', 'defence', 'agility'] as const
 
@@ -107,146 +109,182 @@ function sepStyle() {
     background: theme.value.light,
   }
 }
+
+const containerRef = ref<HTMLElement | null>(null)
+const { exporting, exportTooltip } = useTooltipExport()
+
+function onExportClick() {
+  if (!containerRef.value)
+    return
+  const slug = props.item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  exportTooltip(containerRef.value, `${slug || 'item'}.png`)
+}
 </script>
 
 <template>
-  <div class="tt-container">
-    <div class="tt-frame" :style="frameStyle" />
-    <div class="tt-inner" :style="innerStyle">
-      <!-- Header -->
-      <div class="tt-header">
-        <div class="tt-emblemwrap">
-          <img v-if="emblem" :src="emblem" class="tt-emblem" alt="" aria-hidden="true">
-          <img v-if="icon" :src="icon" class="tt-sprite" alt="" aria-hidden="true">
-        </div>
-        <div class="tt-headtext">
-          <span class="tt-name" :style="{ color: theme.color }">{{ item.displayName }}</span>
-          <div class="tt-tags">
-            <span class="tt-tag" :style="{ background: theme.color }">{{ item.tier.toLowerCase() }}</span>
-            <span class="tt-tag" :style="{ background: theme.light }">{{ item.subType }}</span>
+  <div ref="containerRef" class="tt-wrap">
+    <button
+      v-if="exportable"
+      type="button"
+      class="tt-export-btn"
+      data-export-ignore
+      :disabled="exporting"
+      :aria-label="exporting ? 'Exporting tooltip as PNG' : 'Export tooltip as PNG'"
+      @click="onExportClick"
+    >
+      <span v-if="exporting" class="tt-export-spinner" aria-hidden="true" />
+      <span v-else>Export PNG</span>
+    </button>
+
+    <div class="tt-container">
+      <div class="tt-frame" :style="frameStyle" />
+      <div class="tt-inner" :style="innerStyle">
+        <!-- Header -->
+        <div class="tt-header">
+          <div class="tt-emblemwrap">
+            <img v-if="emblem" :src="emblem" class="tt-emblem" alt="" aria-hidden="true">
+            <img v-if="icon" :src="icon" class="tt-sprite" alt="" aria-hidden="true">
           </div>
-          <div v-if="item.elements.length" class="tt-tags">
-            <span class="tt-tag tt-tag--el" :style="{ background: theme.light }">
-              <img
-                v-for="el in item.elements" :key="el" :src="attributeUrl(el)"
-                class="tt-tag-icon" alt="" aria-hidden="true"
-              >
-              <span v-if="item.elements.length === 1" class="tt-tag-el-name">{{ item.elements[0] }}</span>
+          <div class="tt-headtext">
+            <span class="tt-name" :style="{ color: theme.color }">{{ item.displayName }}</span>
+            <div class="tt-tags">
+              <span class="tt-tag" :style="{ background: theme.color }">{{ item.tier.toLowerCase() }}</span>
+              <span class="tt-tag" :style="{ background: theme.light }">{{ item.subType }}</span>
+            </div>
+            <div v-if="item.elements.length" class="tt-tags">
+              <span class="tt-tag tt-tag--el" :style="{ background: theme.light }">
+                <img
+                  v-for="el in item.elements" :key="el" :src="attributeUrl(el)"
+                  class="tt-tag-icon" alt="" aria-hidden="true"
+                >
+                <span v-if="item.elements.length === 1" class="tt-tag-el-name">{{ item.elements[0] }}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weapon: DPS + attack speed + damage -->
+        <template v-if="isWeapon">
+          <p v-if="item.averageDps != null" class="tt-dps">
+            <span :style="{ color: theme.light }">{{ item.averageDps }}</span>
+            <span class="tt-dps-unit">DPS</span>
+          </p>
+          <div v-if="item.attackSpeed" class="tt-row">
+            <img :src="attributeUrl('attack_speed')" class="tt-attr" alt="" aria-hidden="true">
+            <span class="tt-muted">{{ attackSpeedLabel(item.attackSpeed) }}
+              <span v-if="hits != null" class="tt-faint">({{ hits }} hits/s)</span>
             </span>
           </div>
-        </div>
-      </div>
-
-      <!-- Weapon: DPS + attack speed + damage -->
-      <template v-if="isWeapon">
-        <p v-if="item.averageDps != null" class="tt-dps">
-          <span :style="{ color: theme.light }">{{ item.averageDps }}</span>
-          <span class="tt-dps-unit">DPS</span>
-        </p>
-        <div v-if="item.attackSpeed" class="tt-row">
-          <img :src="attributeUrl('attack_speed')" class="tt-attr" alt="" aria-hidden="true">
-          <span class="tt-muted">{{ attackSpeedLabel(item.attackSpeed) }}
-            <span v-if="hits != null" class="tt-faint">({{ hits }} hits/s)</span>
-          </span>
-        </div>
-        <div v-if="damageLines.length" class="tt-dmg">
-          <span v-for="(d, i) in damageLines" :key="i" class="tt-dmg-item">
-            <img v-if="d.element" :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
-            <span class="tt-muted">{{ d.text }}</span>
-          </span>
-        </div>
-      </template>
-
-      <!-- Armour / accessory: health + elemental defences -->
-      <template v-else>
-        <p v-if="healthBase != null" class="tt-dps">
-          <span :style="{ color: theme.light }">{{ healthBase > 0 ? '+' : '' }}{{ healthBase }}</span>
-          <span class="tt-dps-unit">Health</span>
-        </p>
-        <template v-if="defenceLines.length">
-          <div class="tt-row">
-            <span class="tt-muted">Elemental Defences</span>
-          </div>
-          <div class="tt-dmg">
-            <span v-for="(d, i) in defenceLines" :key="i" class="tt-dmg-item">
-              <img :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
-              <span class="tt-muted">{{ d.value }}</span>
+          <div v-if="damageLines.length" class="tt-dmg">
+            <span v-for="(d, i) in damageLines" :key="i" class="tt-dmg-item">
+              <img v-if="d.element" :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
+              <span class="tt-muted">{{ d.text }}</span>
             </span>
           </div>
         </template>
-      </template>
 
-      <div class="tt-sep" :style="sepStyle()" />
+        <!-- Armour / accessory: health + elemental defences -->
+        <template v-else>
+          <p v-if="healthBase != null" class="tt-dps">
+            <span :style="{ color: theme.light }">{{ healthBase > 0 ? '+' : '' }}{{ healthBase }}</span>
+            <span class="tt-dps-unit">Health</span>
+          </p>
+          <template v-if="defenceLines.length">
+            <div class="tt-row">
+              <span class="tt-muted">Elemental Defences</span>
+            </div>
+            <div class="tt-dmg">
+              <span v-for="(d, i) in defenceLines" :key="i" class="tt-dmg-item">
+                <img :src="attributeUrl(d.element)" class="tt-attr" alt="" aria-hidden="true">
+                <span class="tt-muted">{{ d.value }}</span>
+              </span>
+            </div>
+          </template>
+        </template>
 
-      <!-- Skill point requirements -->
-      <div class="tt-sp-row">
-        <div v-for="c in spCircles" :key="c.skill" class="tt-sp">
-          <div class="tt-sp-bg">
-            <img :src="spUrl(c.active ? item.tier.toLowerCase() : 'disabled')" class="tt-sp-disc" alt="" aria-hidden="true">
-            <img :src="spUrl(c.active ? c.skill : `${c.skill}_off`)" class="tt-sp-icon" :alt="c.skill">
-          </div>
-          <div class="tt-sp-val">
-            <img :src="miscUrl(c.active ? 'check' : 'blank')" class="tt-check" alt="" aria-hidden="true">
-            <span :style="{ color: c.active ? ID_GOOD_COLOR : '#5c5c5c' }">{{ c.value }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Class / level -->
-      <div class="tt-meta">
-        <div v-if="classReq" class="tt-meta-row">
-          <span class="tt-meta-label"><img :src="miscUrl('check')" class="tt-check" alt="" aria-hidden="true"> Class Req</span>
-          <span class="tt-muted">{{ classReq }}</span>
-        </div>
-        <div class="tt-meta-row">
-          <span class="tt-meta-label"><img :src="miscUrl('check')" class="tt-check" alt="" aria-hidden="true"> Combat Level</span>
-          <span class="tt-muted">{{ item.requirements?.level ?? item.level }}</span>
-        </div>
-      </div>
-
-      <div v-if="idRows.length" class="tt-sep" :style="sepStyle()" />
-
-      <!-- Identifications: min left, max right -->
-      <ul v-if="idRows.length" class="tt-ids">
-        <li v-for="row in idRows" :key="row.label" class="tt-id">
-          <span class="tt-id-left" :style="{ color: row.color }">{{ row.left }}</span>
-          <span class="tt-id-name">{{ row.label }}</span>
-          <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
-        </li>
-      </ul>
-
-      <!-- Major IDs -->
-      <div v-if="majorIds.length" class="tt-majors">
-        <p v-for="m in majorIds" :key="m.name" class="tt-major">
-          <span class="tt-major-mark" :style="{ maskImage: `url(${miscUrl('major')})`, WebkitMaskImage: `url(${miscUrl('major')})`, background: theme.light }" />
-          <span class="tt-major-name" :style="{ color: theme.light }">{{ m.name }}:</span>
-          <span class="tt-major-text">{{ m.text }}</span>
-        </p>
-      </div>
-
-      <p v-if="item.powderSlots" class="tt-row tt-muted">
-        Powder Slots [{{ 'o'.repeat(item.powderSlots) }}]
-      </p>
-
-      <template v-if="item.lore?.length">
         <div class="tt-sep" :style="sepStyle()" />
-        <p class="tt-lore">
-          <span
-            v-for="(seg, i) in item.lore" :key="i"
-            :style="{ color: seg.color ?? '#aaaaaa' }"
-            :class="seg.font ? `tt-lore--${seg.font}` : null"
-          >{{ seg.text }}</span>
+
+        <!-- Skill point requirements -->
+        <div class="tt-sp-row">
+          <div v-for="c in spCircles" :key="c.skill" class="tt-sp">
+            <div class="tt-sp-bg">
+              <img :src="spUrl(c.active ? item.tier.toLowerCase() : 'disabled')" class="tt-sp-disc" alt="" aria-hidden="true">
+              <img :src="spUrl(c.active ? c.skill : `${c.skill}_off`)" class="tt-sp-icon" :alt="c.skill">
+            </div>
+            <div class="tt-sp-val">
+              <img :src="miscUrl(c.active ? 'check' : 'blank')" class="tt-check" alt="" aria-hidden="true">
+              <span :style="{ color: c.active ? ID_GOOD_COLOR : '#5c5c5c' }">{{ c.value }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Class / level -->
+        <div class="tt-meta">
+          <div v-if="classReq" class="tt-meta-row">
+            <span class="tt-meta-label"><img :src="miscUrl('check')" class="tt-check" alt="" aria-hidden="true"> Class Req</span>
+            <span class="tt-muted">{{ classReq }}</span>
+          </div>
+          <div class="tt-meta-row">
+            <span class="tt-meta-label"><img :src="miscUrl('check')" class="tt-check" alt="" aria-hidden="true"> Combat Level</span>
+            <span class="tt-muted">{{ item.requirements?.level ?? item.level }}</span>
+          </div>
+        </div>
+
+        <div v-if="idRows.length" class="tt-sep" :style="sepStyle()" />
+
+        <!-- Identifications: min left, max right -->
+        <ul v-if="idRows.length" class="tt-ids">
+          <li v-for="row in idRows" :key="row.label" class="tt-id">
+            <span class="tt-id-left" :style="{ color: row.color }">{{ row.left }}</span>
+            <span class="tt-id-name">{{ row.label }}</span>
+            <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
+          </li>
+        </ul>
+
+        <!-- Major IDs -->
+        <div v-if="majorIds.length" class="tt-majors">
+          <p v-for="m in majorIds" :key="m.name" class="tt-major">
+            <span class="tt-major-mark" :style="{ maskImage: `url(${miscUrl('major')})`, WebkitMaskImage: `url(${miscUrl('major')})`, background: theme.light }" />
+            <span class="tt-major-name" :style="{ color: theme.light }">{{ m.name }}:</span>
+            <span class="tt-major-text">{{ m.text }}</span>
+          </p>
+        </div>
+
+        <p v-if="item.powderSlots" class="tt-row tt-muted">
+          Powder Slots [{{ 'o'.repeat(item.powderSlots) }}]
         </p>
-      </template>
+
+        <template v-if="item.lore?.length">
+          <div class="tt-sep" :style="sepStyle()" />
+          <p class="tt-lore">
+            <span
+              v-for="(seg, i) in item.lore" :key="i"
+              :style="{ color: seg.color ?? '#aaaaaa' }"
+              :class="seg.font ? `tt-lore--${seg.font}` : null"
+            >{{ seg.text }}</span>
+          </p>
+        </template>
+
+        <div v-if="exportable" class="tt-export-mark" data-export-footer>
+          <span>wynn<span :style="{ color: theme.light }">.</span>tools</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.tt-container {
+.tt-wrap {
   position: relative;
   width: 100%;
   max-width: 482px;
+}
+.tt-wrap.is-exporting .tt-container {
+  background: transparent;
+}
+.tt-container {
+  position: relative;
+  width: 100%;
   font-family: 'wynncraft', var(--font-mono);
   letter-spacing: -1px;
   overflow: hidden;
@@ -598,5 +636,60 @@ function sepStyle() {
   .tt-lore {
     font-size: 14px;
   }
+}
+
+.tt-export-btn {
+  position: absolute;
+  top: -10px;
+  right: 6px;
+  transform: translateY(-100%);
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition:
+    color 0.12s ease-out,
+    border-color 0.12s ease-out;
+}
+.tt-export-btn:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: var(--color-faint);
+}
+.tt-export-btn:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+.tt-export-spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--color-faint);
+  border-top-color: var(--color-text);
+  border-radius: 50%;
+  animation: tt-spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+@keyframes tt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tt-export-mark {
+  display: none;
+  justify-content: center;
+  margin-top: 14px;
+  font-family: 'wynncraft', var(--font-mono);
+  font-size: 14px;
+  letter-spacing: -1px;
+  color: #5c5c5c;
 }
 </style>
