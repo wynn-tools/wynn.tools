@@ -42,6 +42,16 @@ export default defineNuxtConfig({
           innerHTML:
             'try{var p=localStorage.getItem(\'wynn:theme\')||\'dark\';var r=p===\'system\'?(matchMedia(\'(prefers-color-scheme: dark)\').matches?\'dark\':\'light\'):p;document.documentElement.dataset.theme=r}catch(e){}',
         },
+        {
+          // Pre-paint: set html[data-play] when the URL is /play or /play/* so
+          // the Wynncraft Journey token override (global.css :root[data-play])
+          // takes effect before the first paint. Without this, players see a
+          // brief flash of the Cold Forge tokens before play.global middleware
+          // hydrates. Mirrors the theme pre-paint above.
+          tagPosition: 'head',
+          innerHTML:
+            'try{var p=location.pathname;if(p===\'/play\'||p.indexOf(\'/play/\')===0)document.documentElement.dataset.play=\'true\'}catch(e){}',
+        },
       ],
     },
   },

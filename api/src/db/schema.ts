@@ -166,3 +166,71 @@ export const ogImageCache = pgTable('og_image_cache', {
   contentType: text('content_type').notNull().default('image/png'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
+
+export const wynndleMode = ['weapon', 'armor'] as const
+export type WynndleMode = (typeof wynndleMode)[number]
+
+export const wynndlePuzzles = pgTable('wynndle_puzzles', {
+  id: text('id').primaryKey(),
+  mode: text('mode', { enum: wynndleMode }).notNull(),
+  date: text('date').notNull(),
+  itemId: text('item_id').notNull(),
+  itemName: text('item_name').notNull(),
+  // Denormalized rarity captured at puzzle-creation time. Matches the same
+  // pattern used for itemName so the answer reveal can render in its proper
+  // rarity color without re-fetching the items.json snapshot. Nullable for
+  // pre-migration rows; materializeRound falls back to a pool lookup when
+  // missing.
+  itemRarity: text('item_rarity'),
+  gameVersion: text('game_version').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, t => [
+  uniqueIndex('wynndle_puzzles_mode_date_idx').on(t.mode, t.date),
+])
+
+export const wynndleRounds = pgTable('wynndle_rounds', {
+  id: text('id').primaryKey(),
+  puzzleId: text('puzzle_id').notNull().references(() => wynndlePuzzles.id, { onDelete: 'cascade' }),
+  userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  anonKey: text('anon_key'),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull().defaultNow(),
+  solvedAt: timestamp('solved_at', { withTimezone: true }),
+  hintsRevealed: integer('hints_revealed').notNull().default(0),
+  guessCount: integer('guess_count').notNull().default(0),
+  won: integer('won').notNull().default(0),
+  finished: integer('finished').notNull().default(0),
+}, t => [
+  uniqueIndex('wynndle_rounds_puzzle_user_idx')
+    .on(t.puzzleId, t.userId)
+    .where(sql`${t.userId} is not null`),
+  uniqueIndex('wynndle_rounds_puzzle_anon_idx')
+    .on(t.puzzleId, t.anonKey)
+    .where(sql`${t.anonKey} is not null`),
+  index('wynndle_rounds_user_idx').on(t.userId),
+])
+
+export const wynndleGuesses = pgTable('wynndle_guesses', {
+  id: text('id').primaryKey(),
+  roundId: text('round_id').notNull().references(() => wynndleRounds.id, { onDelete: 'cascade' }),
+  ordinal: integer('ordinal').notNull(),
+  itemId: text('item_id').notNull(),
+  itemName: text('item_name').notNull(),
+  // Mirror of itemRarity on wynndle_puzzles: denormalized so historical guess
+  // rows survive pool drift and the identity cell can render in the right
+  // rarity hex even if the pool item is gone. Nullable for pre-migration rows.
+  itemRarity: text('item_rarity'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, t => [
+  uniqueIndex('wynndle_guesses_round_ordinal_idx').on(t.roundId, t.ordinal),
+])
+
+export const wynndleStreaks = pgTable('wynndle_streaks', {
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  mode: text('mode', { enum: wynndleMode }).notNull(),
+  current: integer('current').notNull().default(0),
+  longest: integer('longest').notNull().default(0),
+  lastSolved: text('last_solved'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, t => [
+  primaryKey({ columns: [t.userId, t.mode] }),
+])

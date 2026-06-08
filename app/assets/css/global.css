@@ -160,8 +160,135 @@
   --color-copper: oklch(58% 0.13 75);
 }
 
+/* ── Play envelope ─────────────────────────────────────────────────────
+   /play swaps the whole token system to Wynncraft's Journey theme: parchment
+   panels, wood-frame nested shadows, the wynncraft + wynn-five pixel faces,
+   and Wynncraft primary green as the action color. Scoped to
+   :root[data-play="true"] (set by the play.global middleware + the nuxt.config
+   pre-paint script) so the envelope tokens never leak outside /play and the
+   Cold Forge tokens never reach inside it.
+
+   The map of overrides:
+     --color-bg        page wood ground
+     --color-surface   parchment panel
+     --color-surface-hi parchment hover
+     --color-border    wood-frame border line
+     --color-faint     faded parchment text
+     --color-muted     parchment text muted
+     --color-text      parchment text
+     --color-accent    Wynncraft primary green (replaces Arc Blue inside /play)
+     --color-accent-dim, --color-accent-glow follow
+     --font-display    'wynncraft' (was Barlow Semi Condensed)
+     --font-mono       'wynn-five' (was Geist Mono — same role, pixel font)
+     --font-body       'Figtree' (unchanged — body prose stays readable)
+
+   Plus Journey-native tokens nobody outside /play references:
+     --paper-*, --theme-col-*, --paper-bd, --primary, --primary-light/dark,
+     --element-valid, --element-warning, --element-danger (cell trio),
+     --ingot-gold (unique rarity, released from Cold Forge quarantine here),
+     --nav-shadow / --container-shadow / --inner-frame (the three heft tiers). */
+:root[data-play='true'] {
+  /* Journey palette mapped onto the existing --color-* roles so every utility
+     and component using --color-bg, --color-surface, --color-accent, etc.
+     restyles itself. */
+  --color-bg: rgb(135 119 101);
+  --color-surface: rgb(201 182 139);
+  --color-surface-hi: rgb(213 194 149);
+  --color-border: rgb(96 76 57);
+  --color-faint: rgb(141 116 92);
+  --color-muted: rgb(111 92 79);
+  --color-text: rgb(48 32 22);
+  --color-accent: rgb(136 204 66);
+  --color-accent-dim: rgb(73 90 81);
+  --color-accent-glow: rgb(136 204 66 / 0.22);
+  --color-gold: rgb(216 168 60);
+  --color-gold-dim: rgb(178 148 0);
+  --color-card: var(--color-surface);
+  --color-card-hover: var(--color-surface-hi);
+
+  /* Journey-native tokens — direct mirror of cdn.wynncraft.com/themes/journey */
+  --paper-base: rgb(201 182 139);
+  --paper-light: rgb(213 194 149);
+  --paper-dark: rgb(186 168 127);
+  --paper-text: rgb(111 92 79);
+  --paper-text-strong: rgb(48 32 22);
+  --paper-bd: rgb(96 76 57);
+  --paper-bd-light: rgb(232 212 161);
+
+  --theme-col-bg: rgb(135 119 101);
+  --theme-col-top: rgb(178 155 128);
+  --theme-col-bot: rgb(98 78 60);
+  --theme-col-dark: rgb(65 38 36);
+
+  --primary: rgb(136 204 66);
+  --primary-light: rgb(165 233 98);
+  --primary-dark: rgb(73 90 81);
+
+  --element-valid: rgb(36 152 36);
+  --element-valid-hover: rgb(40 168 40);
+  --element-valid-sub: rgb(25 105 25);
+  --element-warning: rgb(178 148 0);
+  --element-warning-hover: rgb(206 172 0);
+  --element-warning-sub: rgb(105 87 0);
+  --element-danger: rgb(169 34 34);
+  --element-danger-hover: rgb(187 37 37);
+  --element-danger-sub: rgb(107 22 22);
+
+  --ingot-gold: rgb(255 200 70);
+  --ingot-gold-dim: rgb(216 168 60);
+
+  /* Three-tier wood-frame shadow stack (heft from Q17). Heavy and medium come
+     straight from Wynncraft's --nav-shadow / --container-shadow; inner is a
+     2px border + 1px inset highlight, not a shadow. The classes that consume
+     these live further down so component selectors stay token-only. */
+  --wood-shadow-heavy:
+    0 0 0 5px rgb(139 120 91), 0 0 0 8px rgb(65 38 36), 0 0 0 10px rgb(139 120 91), 0 0 0 12px rgb(98 78 60),
+    0 0 0 15px rgb(65 38 36), 0 0 0 18px rgb(0 0 0 / 0.19);
+  --wood-shadow-medium:
+    0 0 0 3px rgb(65 38 36), 0 0 0 10px rgb(139 120 91), 0 0 0 15px rgb(98 78 60), 0 0 0 18px rgb(65 38 36),
+    0 3px 0 18px rgb(0 0 0 / 0.19);
+  --wood-shadow-mobile-heavy: 0 0 0 3px rgb(65 38 36), 0 0 0 6px rgb(139 120 91), 0 0 0 9px rgb(65 38 36);
+  --wood-shadow-mobile-medium: 0 0 0 2px rgb(65 38 36), 0 0 0 6px rgb(139 120 91), 0 0 0 9px rgb(65 38 36);
+
+  /* Font roles. wynncraft + wynn-five are already self-hosted (global.css top).
+     Display becomes the Wynncraft pixel logo face; mono becomes the bold UI
+     pixel face (same role as Geist Mono outside, different font). Body stays
+     Figtree per Q4 — prose has to be readable. */
+  --font-display: 'wynncraft', system-ui, sans-serif;
+  --font-mono: 'wynn-five', 'wynncraft', monospace;
+  --font-body: 'Figtree', system-ui, sans-serif;
+
+  /* Disable the default body background var so the layout's wood-ground div
+     (with its inset vignette) is the actual page paint. */
+  background: var(--color-bg);
+}
+
 @utility pixelated {
   image-rendering: pixelated;
+}
+
+/* ── Play envelope component utilities ──
+   The three-tier wood-frame heft (Q17) lives here once so every panel and
+   card consumes the same anatomy. Scope is implicit: outside [data-play]
+   the tokens these reference don't exist, so the classes degrade to no-op. */
+@utility wood-frame-heavy {
+  box-shadow: var(--wood-shadow-heavy);
+}
+
+@utility wood-frame-medium {
+  box-shadow: var(--wood-shadow-medium);
+}
+
+@utility wood-frame-light {
+  border: 2px solid var(--paper-bd);
+  box-shadow: inset 0 1px 0 var(--paper-bd-light);
+}
+
+@media (max-width: 720px) {
+  :root[data-play='true'] {
+    --wood-shadow-heavy: var(--wood-shadow-mobile-heavy);
+    --wood-shadow-medium: var(--wood-shadow-mobile-medium);
+  }
 }
 
 /* ── Section kicker label: mono uppercase panel/section header ──

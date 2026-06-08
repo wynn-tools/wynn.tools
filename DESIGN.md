@@ -300,3 +300,62 @@ Wynncraft's Wynnic script (`font-family: 'wynn-wynnic'`) as background texture o
 - **Don't** use generic SaaS landing patterns: "Ship faster" headlines, three-card feature rows, frosted-glass hero panels.
 - **Don't** apply `transform: translateY(-Xpx)` to cards or rows on hover. A horizontal nudge on a chevron or arrow is the only permitted movement.
 - **Don't** let any surface cast a shadow or glow at rest. Shadows and glows are state responses — hover, focus, float — not decoration.
+
+## 7. Sub-envelopes: /play questbook
+
+The Cold Forge system describes the chrome of the tools. The Play section is the **one place** that section is allowed to be a different room. `/play/*` swaps the entire token system — palette, typography, frame anatomy, focus color, motion vocabulary — for the Wynncraft Journey theme: parchment panels under arc-light wood-frames, the pixel `wynncraft` and `wynn-five` faces, and Wynncraft primary green as the action color. Inside the envelope, the chrome is the game world's UI, adapted (not impersonated) by a fan tool that lives in that world.
+
+This is a deliberate, scoped exception to four rules in §2 and §3. The exceptions apply **only when `html[data-play="true"]`** (set by `app/middleware/play.global.ts` and the pre-paint script in `nuxt.config.ts`). They do not leak; outside `/play`, the Cold Forge rules govern as written.
+
+### Active overrides inside `[data-play]`
+
+- **Walled-Garden Rule relaxes** to a guess-row sub-cell. Item identity cells inside Wynndle guess rows render the Wynncraft pixel display face and rarity hex per the existing tooltip palette. The full walled-garden item card still renders inside its own sealed boundary (the answer reveal, the hover popover); the relaxation is that the _identity-cell-sized_ footprint of that boundary is allowed _inside_ a chrome row.
+- **Gold Quarantine Rule relaxes** so Ingot Gold becomes a _chrome_ accent (the Hub PLAY CTA, the active pill state, the leaderboard rank-1 row treatment, the win-screen halo). Unique rarity reveals are preserved by a saturation split: chrome gold uses `var(--ingot-gold-dim)` (deeper, more brown-leaning), Unique reveals use the brighter `var(--ingot-gold)`. Players still read "this item is Unique" from the brighter tint.
+- **Wynnic-≤5% rule relaxes** to ≤12% opacity. The hub header sigil renders a `wynn-wynnic` glyph string at low opacity as background texture. It still carries no meaning and never receives pointer events.
+- **Mono-for-System rule reassigns the role.** Inside the envelope, `--font-mono` resolves to `wynn-five` (not Geist Mono). Counts, kickers, dates, and labels still consume the same `kicker` utility and `--font-mono` token; the underlying face changes. The role assignment ("anything that reads as system output is mono") is preserved.
+- **Arc Blue is suspended.** `--color-accent` inside `[data-play]` resolves to Wynncraft primary green (`rgb(136 204 66)`). Focus rings use `var(--primary)` (same green). Every focused element in `/play` rings green, not blue.
+
+### What stays
+
+The other rules from §2–§6 still bind:
+
+- **The flat-by-default rule.** No element casts a shadow or glow at rest. The wood-frame nested shadows are part of the _frame_, not state.
+- **The no-pure-black/white rule.** Even inside the envelope, neutrals are tinted (the Journey palette uses warm-brown hues, not `#000` / `#fff`).
+- **Modal as first thought** is still banned. The win/loss reveal is in-place (replaces the input footer), not modal.
+- **The hero-metric template, identical card grids, gradient text, glassmorphism-by-default, side-stripe borders, and em dashes** are still banned, including inside `/play`.
+- **WCAG 2.1 AA contrast and `prefers-reduced-motion`** still bind.
+
+### Three-tier wood-frame heft
+
+The envelope replaces flat parchment surfaces with one of three shadow tiers, in descending order of weight:
+
+- **Heavy (`var(--wood-shadow-heavy)`):** top envelope nav band, bottom mobile hotbar. The 6-layer Wynncraft `--nav-shadow` stack.
+- **Medium (`var(--wood-shadow-medium)`):** containers — Hub catalog rows, the game board outer frame, hint panel container, win/loss reveal panel, archive panel, leaderboard panel, dropdown panel. The 5-layer Wynncraft `--container-shadow` stack.
+- **Light (`.wood-frame-light` utility):** individual rows, cells, hint cards, leaderboard rows, archive rows, status pills, mode tabs, combobox result rows. A 2px solid `--paper-bd` border + 1px inset `--paper-bd-light` highlight, no nested shadow.
+
+Mobile reduces heavy and medium to 3-layer simplified variants (`--wood-shadow-mobile-heavy` / `--wood-shadow-mobile-medium`) to claw back horizontal real estate.
+
+### Cell trio for feedback
+
+Wynndle guess cells use Wynncraft's `--element-valid` / `--element-warning` / `--element-danger` directly for match / close / miss. Numeric miss cells overlay a `↑` / `↓` arrow alongside the red fill (color _and_ direction, not color _or_ direction). White text on filled cells; parchment-text on neutral cells. This is the cell trio for any future game in the envelope; new daily games (Tomedle, etc.) should inherit it.
+
+### Envelope navigation is game-agnostic
+
+The top pill rail (and bottom mobile hotbar) carries **Hub** and **Me** only. Individual games are not promoted into the envelope chrome, even when only one game currently ships, because:
+
+- A game's archive, leaderboard, mode tabs, and any other surface specific to it are _game-level_ concepts. Surfacing them in envelope chrome silently pins the envelope to one game's shape and makes the next added game feel like a guest.
+- The Hub is the only legitimate place to reach a game from the envelope. Each game then owns its own internal navigation inside its own sub-routes — Wynndle, for instance, exposes Weapon / Armor / Archive / Leaderboard from inside `/play/wynndle/*`, never from the envelope nav.
+- `/play/me` stays game-agnostic. Per-game options (per-mode streaks, per-game IGN overrides if a game wants one) belong on that game's own settings surface when it ships, not on the envelope's profile page.
+
+### Adding another game to `/play`
+
+A future game (Tomedle, Mythicle, etc.) adds itself as a new `GameCatalogRow` in the hub. It claims its own element-hue assignment for chrome accents per its dominant gameplay theme (Wynndle Weapon currently uses thunder gold, Armor uses earth green, future modes claim water / fire / air). It inherits the three-tier shadow heft, the trio cell vocabulary, the parchment input style, the envelope nav. It does **not** reintroduce Walled-Garden / Gold Quarantine / Wynnic / Mono rules — those are envelope-wide relaxations, not per-game opt-ins. It does **not** add itself to the envelope nav.
+
+### Identity safeguards
+
+The clone-with-attribution stance lives in actual surface elements, not just policy:
+
+- **The Wynncraft logo is never reproduced.** The wordmark in the top nav band reads `WYNN.TOOLS · PLAY`, not the Wynncraft brand.
+- **Wynncraft homepage marketing decoration is omitted.** No plank ceiling, shelves left/right, storefront posters, or `--img-store-*` assets. The envelope is the chrome, not the wynncraft.com homepage.
+- **A footer attribution renders on every `/play` page:** _Fan project. Not affiliated with Wynncraft. /play chrome adapted from Wynncraft's Journey theme._
+- **All assets self-host.** No runtime hot-linking to `cdn.wynncraft.com`. Wynncraft `wynn` and `game` fonts are served by the existing `wynncraft.woff` and `wynn-five.woff` files already in `public/fonts/`.

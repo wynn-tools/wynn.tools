@@ -13,6 +13,7 @@ import { keys } from './routes/keys'
 import { market } from './routes/market'
 import { createOgRoute } from './routes/og'
 import { meProfile, userProfile } from './routes/profile'
+import { wynndle } from './routes/wynndle'
 import { createOgFetcher } from './services/og-fetcher'
 
 export function createApp(ogFetcher?: OgFetcher): Hono {
@@ -45,6 +46,7 @@ export function createApp(ogFetcher?: OgFetcher): Hono {
   app.route('/v1/users', userProfile)
   app.route('/v1/items', items)
   app.route('/v1/market', market)
+  app.route('/v1/wynndle', wynndle)
   const fetcher = ogFetcher ?? createOgFetcher(env().FRONTEND_URL)
   app.route('/v1/og', createOgRoute(fetcher))
   return app

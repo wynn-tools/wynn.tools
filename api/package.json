@@ -19,7 +19,8 @@
     "db:test:up": "docker compose -f ../deploy/compose.test.yaml up -d --wait",
     "db:test:down": "docker compose -f ../deploy/compose.test.yaml down -v",
     "imports:run": "tsx --env-file=.env src/scripts/imports/main.ts",
-    "backfill:normalize-tags": "tsx --env-file=.env src/scripts/normalize-existing-tags.ts"
+    "backfill:normalize-tags": "tsx --env-file=.env src/scripts/normalize-existing-tags.ts",
+    "prune:wynndle": "tsx --env-file=.env scripts/prune-anon-wynndle.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.0",
@@ -29,10 +30,12 @@
     "hono": "^4.6.0",
     "nanoid": "^5.1.11",
     "pg": "^8.13.0",
+    "seedrandom": "^3.0.5",
     "zod": "^3.23.0"
   },
   "devDependencies": {
     "@types/pg": "^8.11.0",
+    "@types/seedrandom": "^3.0.8",
     "tsup": "^8.3.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",

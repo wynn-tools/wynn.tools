@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown, FileClock, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
+import { ChevronDown, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
 import { onClickOutside } from '@vueuse/core'
 import { useDiscordJoin } from '~/composables/useDiscordJoin'
 
@@ -33,6 +33,7 @@ const standalone: StandaloneItem[] = [
   { name: 'Items', href: '/items', icon: Search },
   { name: 'Inspect', href: '/inspect', icon: ScanLine },
   { name: 'Map', href: '/map', icon: Map },
+  { name: 'Play', href: '/play', icon: Gamepad2 },
   { name: 'Changelog', href: '/changelog', icon: FileClock },
   { name: 'Discord', iconName: 'logos:discord-icon', action: 'discord' },
 ]
