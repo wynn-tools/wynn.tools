@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { DamageRange } from '~/lib/data/cdn-adapter/item-adapter'
 import type { SearchItem } from '~/lib/items-search/types'
+import type { StatGroupId } from '~/lib/items/stat-order'
 import { humanizeField, isInverted } from '~/lib/data/identifications'
 import { attributeUrl, emblemUrl, frameUrl, itemIconUrl, miscUrl, spriteUrl, spUrl } from '~/lib/items/icon'
+import { GROUP_ORDER, statOrder } from '~/lib/items/stat-order'
 import {
   attackSpeedLabel,
   baseStatMeta,
@@ -135,6 +137,21 @@ const idRows = computed<IdRow[]>(() =>
     return { key, label, unit, left: `${r.min}${unit}`, right: `${r.max}${unit}`, color, override }
   }),
 )
+
+interface IdGroup { id: StatGroupId, rows: IdRow[] }
+const idGroups = computed<IdGroup[]>(() => {
+  const buckets = new Map<StatGroupId, Array<IdRow & { _order: number }>>()
+  for (const row of idRows.value) {
+    const { group, index } = statOrder(row.key)
+    if (!buckets.has(group))
+      buckets.set(group, [])
+    buckets.get(group)!.push({ ...row, _order: index })
+  }
+  for (const arr of buckets.values()) arr.sort((a, b) => a._order - b._order)
+  return GROUP_ORDER
+    .map(id => ({ id, rows: (buckets.get(id) ?? []) as IdRow[] }))
+    .filter(g => g.rows.length > 0)
+})
 
 const majorIds = computed(() =>
   props.item.majorIds.map(m => ({
@@ -284,31 +301,34 @@ function onExportClick() {
         <div v-if="idRows.length" class="tt-sep" :style="sepStyle()" />
 
         <!-- Identifications: min left, max right -->
-        <ul v-if="idRows.length" class="tt-ids">
-          <li v-for="row in idRows" :key="row.key" class="tt-id" :class="{ 'tt-id--actual': row.override || hasActualIdents }">
-            <template v-if="row.override">
-              <span class="tt-id-name">{{ row.label }}</span>
-              <span class="tt-id-actual-value">
-                <span
-                  :style="{ color: row.override.rollPct == null ? row.color : pctColorVar(row.override.rollPct) }"
-                >{{ fmtActual(row.override.actual) }}{{ row.unit }}</span>
-                <span
-                  v-if="row.override.rollPct != null"
-                  :style="{ color: pctColorVar(row.override.rollPct) }"
-                >[{{ fmtPct(row.override.rollPct) }}]</span>
-              </span>
-            </template>
-            <template v-else-if="hasActualIdents">
-              <span class="tt-id-name">{{ row.label }}</span>
-              <span class="tt-id-actual-value" :style="{ color: row.color }">{{ row.right }}</span>
-            </template>
-            <template v-else>
-              <span class="tt-id-left" :style="{ color: row.color }">{{ row.left }}</span>
-              <span class="tt-id-name">{{ row.label }}</span>
-              <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
-            </template>
-          </li>
-        </ul>
+        <template v-for="(group, gi) in idGroups" :key="group.id">
+          <div v-if="gi > 0" class="tt-sep tt-sep--ids" :style="sepStyle()" aria-hidden="true" />
+          <ul class="tt-ids">
+            <li v-for="row in group.rows" :key="row.key" class="tt-id" :class="{ 'tt-id--actual': row.override || hasActualIdents }">
+              <template v-if="row.override">
+                <span class="tt-id-name">{{ row.label }}</span>
+                <span class="tt-id-actual-value">
+                  <span
+                    :style="{ color: row.override.rollPct == null ? row.color : pctColorVar(row.override.rollPct) }"
+                  >{{ fmtActual(row.override.actual) }}{{ row.unit }}</span>
+                  <span
+                    v-if="row.override.rollPct != null"
+                    :style="{ color: pctColorVar(row.override.rollPct) }"
+                  >[{{ fmtPct(row.override.rollPct) }}]</span>
+                </span>
+              </template>
+              <template v-else-if="hasActualIdents">
+                <span class="tt-id-name">{{ row.label }}</span>
+                <span class="tt-id-actual-value" :style="{ color: row.color }">{{ row.right }}</span>
+              </template>
+              <template v-else>
+                <span class="tt-id-left" :style="{ color: row.color }">{{ row.left }}</span>
+                <span class="tt-id-name">{{ row.label }}</span>
+                <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
+              </template>
+            </li>
+          </ul>
+        </template>
 
         <slot name="weights" />
 
