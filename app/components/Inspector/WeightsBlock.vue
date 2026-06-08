@@ -53,91 +53,123 @@ function fmtPct(p: number): string {
 </script>
 
 <template>
-  <section class="weights">
-    <div class="weights-block">
-      <div class="weights-tag" data-source="nori">
-        NORI
+  <div class="tt-weights">
+    <template v-if="nori">
+      <div class="tt-weights-head">
+        <span class="tt-tag tt-weights-tag" data-source="nori">nori</span>
       </div>
-      <template v-if="nori">
-        <div
+      <ul v-if="noriProfiles.length" class="tt-weights-list">
+        <li
           v-for="p in noriProfiles"
           :key="`n:${p.name}`"
-          class="weights-row"
+          class="tt-weights-row"
         >
-          – {{ p.name }}
-          <span :style="{ color: pctColor(score(p)) }">[{{ fmtPct(score(p)) }}]</span>
-        </div>
-        <div v-if="noriProfiles.length === 0" class="weights-empty">
-          No profiles
-        </div>
-      </template>
-      <div v-else-if="pending" class="weights-skeleton" aria-hidden="true" />
-      <div v-else class="weights-unavailable">
-        Nori unavailable
-      </div>
-    </div>
+          <span class="tt-weights-name">- {{ p.name }}</span>
+          <span class="tt-weights-pct" :style="{ color: pctColor(score(p)) }">[{{ fmtPct(score(p)) }}]</span>
+        </li>
+      </ul>
+      <p v-else class="tt-weights-empty">
+        No profiles
+      </p>
+    </template>
+    <div v-else-if="pending" class="tt-weights-skeleton" aria-hidden="true" />
+    <p v-else class="tt-weights-empty">
+      Nori unavailable
+    </p>
 
-    <div class="weights-block">
-      <div class="weights-tag" data-source="wynnpool">
-        WYNNPOOL
+    <template v-if="wynnpool">
+      <div class="tt-weights-head">
+        <span class="tt-tag tt-weights-tag" data-source="wynnpool">wynnpool</span>
       </div>
-      <template v-if="wynnpool">
-        <div
+      <ul v-if="wynnpoolProfiles.length" class="tt-weights-list">
+        <li
           v-for="p in wynnpoolProfiles"
           :key="`w:${p.name}`"
-          class="weights-row"
+          class="tt-weights-row"
         >
-          – {{ p.name }}
-          <span :style="{ color: pctColor(score(p)) }">[{{ fmtPct(score(p)) }}]</span>
-        </div>
-        <div v-if="wynnpoolProfiles.length === 0" class="weights-empty">
-          No profiles
-        </div>
-      </template>
-      <div v-else-if="pending" class="weights-skeleton" aria-hidden="true" />
-      <div v-else class="weights-unavailable">
-        Wynnpool unavailable
-      </div>
-    </div>
-  </section>
+          <span class="tt-weights-name">- {{ p.name }}</span>
+          <span class="tt-weights-pct" :style="{ color: pctColor(score(p)) }">[{{ fmtPct(score(p)) }}]</span>
+        </li>
+      </ul>
+      <p v-else class="tt-weights-empty">
+        No profiles
+      </p>
+    </template>
+    <div v-else-if="pending" class="tt-weights-skeleton" aria-hidden="true" />
+    <p v-else class="tt-weights-empty">
+      Wynnpool unavailable
+    </p>
+  </div>
 </template>
 
 <style scoped>
-.weights {
-  margin-top: 0.75rem;
-  display: grid;
-  gap: 0.5rem;
+.tt-weights {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.weights-block {
-  display: grid;
-  gap: 0.1rem;
+.tt-weights-head {
+  margin-top: 6px;
 }
-.weights-tag {
-  display: inline-block;
-  padding: 0 0.4rem;
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
-  font: 600 0.7rem/1.4 var(--font-mono, monospace);
-  letter-spacing: 0.05em;
+.tt-weights-head:first-child {
+  margin-top: 0;
 }
-.weights-tag[data-source='nori'] {
-  color: #ff5d8f;
+.tt-tag {
+  color: #000;
+  font-family: 'wynn-five', 'wynn-default', var(--font-mono);
+  font-size: 18px;
+  line-height: 16px;
+  padding: 2px 6px;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: lowercase;
 }
-.weights-tag[data-source='wynnpool'] {
-  color: #5dd9ff;
+.tt-weights-tag[data-source='nori'] {
+  background: #67ccf5;
 }
-.weights-row {
+.tt-weights-tag[data-source='wynnpool'] {
+  background: #ffc457;
+}
+.tt-weights-list {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tt-weights-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 18px;
+  color: #fcfcfc;
+}
+.tt-weights-pct {
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
-.weights-unavailable,
-.weights-empty {
-  color: var(--color-muted);
+.tt-weights-empty {
+  margin: 2px 0 0;
+  font-size: 18px;
+  color: #aeaeae;
   font-style: italic;
 }
-.weights-skeleton {
-  height: 1rem;
-  background: var(--color-faint);
+.tt-weights-skeleton {
+  height: 18px;
+  margin-top: 2px;
+  background: #2a2a2a;
   border-radius: 2px;
   opacity: 0.4;
+}
+@media (max-width: 480px) {
+  .tt-weights-row,
+  .tt-weights-empty {
+    font-size: 16px;
+  }
 }
 </style>

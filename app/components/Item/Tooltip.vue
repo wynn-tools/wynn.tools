@@ -272,6 +272,10 @@ function onExportClick() {
 
         <div v-if="!compact" class="tt-sep" :style="sepStyle()" />
 
+        <slot name="weights" />
+
+        <div v-if="$slots.weights && !compact" class="tt-sep" :style="sepStyle()" />
+
         <!-- Skill point requirements -->
         <div v-if="!compact" class="tt-sp-row">
           <div v-for="c in spCircles" :key="c.skill" class="tt-sp">
@@ -329,8 +333,6 @@ function onExportClick() {
             </li>
           </ul>
         </template>
-
-        <slot name="weights" />
 
         <!-- Major IDs -->
         <div v-if="majorIds.length" class="tt-majors">
