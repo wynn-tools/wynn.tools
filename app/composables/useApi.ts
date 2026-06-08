@@ -136,6 +136,25 @@ export interface ItemListFilters {
   tag?: string[]
 }
 
+export interface ApiMarketListingStatRoll {
+  apiName: string
+  displayName: string
+  statActualValue: { value: number }
+  possibleValues: { range: { low: number, high: number, fixed?: boolean }, baseValue?: number }
+  statType?: { unit?: string }
+  internalRoll?: { low: number, high: number }
+  rollPercentage?: string
+}
+
+export interface ApiMarketListing {
+  name: string
+  listing_price: number
+  overall_roll: number | null
+  stat_rolls: ApiMarketListingStatRoll[] | null
+  shiny_stat: string | null
+  rarity: string
+}
+
 export class ApiError extends Error {
   constructor(public code: string, message: string) {
     super(message)
@@ -248,6 +267,19 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
     },
     getBuildPrices: (items: { name: string, tier?: number }[]) =>
       request<{ results: (RawMarketPrice | null)[] }>('/v1/market/prices', jsonInit('POST', { items })),
+    getListings: (name: string, opts: { sort?: string, page?: number, page_size?: number } = {}) => {
+      const params = new URLSearchParams()
+      for (const [k, v] of Object.entries(opts)) {
+        if (v != null)
+          params.set(k, String(v))
+      }
+      const qs = params.toString()
+      return request<{ items: ApiMarketListing[] }>(`/v1/market/listings/${encodeURIComponent(name)}${qs ? `?${qs}` : ''}`)
+    },
+
+    // Item analyzer (Inspector)
+    analyzeItem: (body: { encoded: string, itemName: string }) =>
+      request<{ nori: { profiles: Array<{ name: string, scales: Record<string, number> }> } | null, wynnpool: { profiles: Array<{ name: string, scales: Record<string, number> }> } | null, fetchedAt: string }>('/v1/items/analyze', jsonInit('POST', body)),
   }
 }
 

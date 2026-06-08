@@ -17,6 +17,8 @@ const schema = z.object({
   CDN_BASE_URL: z.string().url(),
   WYNNVENTORY_API_KEY: z.string().min(1),
   WYNNVENTORY_BASE_URL: z.string().url().default('https://wynnventory.com'),
+  NORI_BASE_URL: z.string().url().default('https://nori.fish'),
+  WYNNPOOL_BASE_URL: z.string().url().default('https://api.wynnpool.com'),
   PORT: z.coerce.number().int().positive().default(8080),
 })
 

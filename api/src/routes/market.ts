@@ -16,6 +16,12 @@ const priceQuery = z.object({
   shiny: z.coerce.boolean().optional(),
 })
 
+const listingsQuery = z.object({
+  sort: z.string().max(64).optional(),
+  page: z.coerce.number().int().min(1).max(1000).optional(),
+  page_size: z.coerce.number().int().min(1).max(200).optional(),
+})
+
 // Per-item schema is {name, tier?} only — shiny is intentionally omitted because
 // build-cost pricing is always non-shiny (the single /price/:name route still supports ?shiny=).
 const batchBody = z.object({
@@ -52,4 +58,10 @@ export const market = new Hono()
     if (!res.ok)
       return c.json([])
     return c.json(await res.json().catch(() => []))
+  })
+  .get('/listings/:name', zValidator('query', listingsQuery), async (c) => {
+    const name = c.req.param('name')
+    const q = c.req.valid('query')
+    const payload = await upstream().fetchListings(name, q)
+    return c.json(payload)
   })

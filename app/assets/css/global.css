@@ -91,6 +91,13 @@
   --color-elem-fire: oklch(68% 0.18 35);
   --color-elem-air: oklch(85% 0.04 250);
 
+  /* ── Wynntils roll % tier colors (item inspector) ── */
+  --inspect-roll-red: #ff5555;
+  --inspect-roll-gold: #ffaa00;
+  --inspect-roll-yellow: #ffff55;
+  --inspect-roll-green: #55ff55;
+  --inspect-roll-aqua: #55ffff;
+
   /* ── Card aliases ── */
   --color-card: var(--color-surface);
   --color-card-hover: var(--color-surface-hi);

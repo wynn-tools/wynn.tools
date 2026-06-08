@@ -5,6 +5,7 @@ import { and, asc, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
+import { env } from '../env'
 import { normalizeTags } from '../lib/build-tags'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
@@ -12,7 +13,10 @@ import { resolveOwner } from '../lib/owner'
 import { decodeCursor, DEFAULT_PAGE_SIZE, encodeCursor, MAX_PAGE_SIZE } from '../lib/pagination'
 import { hasScope, requireAuth } from '../middleware/auth'
 import { verifyApiKey } from '../services/api-keys'
+import { createNoriClient } from '../services/nori'
 import { getSessionUser } from '../services/sessions'
+import { getCachedWeights } from '../services/weights-cache'
+import { createWynnpoolClient } from '../services/wynnpool'
 
 const visibilityEnum = z.enum(schema.visibility)
 const createBody = z.object({
@@ -26,6 +30,11 @@ const patchBody = z.object({
   visibility: visibilityEnum.optional(),
   tags: z.array(z.string()).max(64).optional(),
   notes: z.string().max(8000).nullable().optional(),
+})
+
+const analyzeBody = z.object({
+  encoded: z.string().min(1).max(8192),
+  itemName: z.string().min(1).max(200),
 })
 
 const itemsListQuery = z.object({
@@ -296,6 +305,17 @@ export const items = new Hono()
     if (deleted.length === 0)
       throw new AppError(404, 'not_found', 'Not credited on this item')
     return c.json({ ok: true })
+  })
+  .post('/analyze', zValidator('json', analyzeBody, (r, c) => {
+    if (!r.success)
+      return c.json({ error: { code: 'validation_error', message: r.error.message } }, 400)
+  }), async (c) => {
+    const { encoded, itemName } = c.req.valid('json')
+    const e = env()
+    const nori = createNoriClient({ baseUrl: e.NORI_BASE_URL })
+    const wynnpool = createWynnpoolClient({ baseUrl: e.WYNNPOOL_BASE_URL })
+    const result = await getCachedWeights(itemName, encoded, { nori, wynnpool })
+    return c.json(result)
   })
 
 export const userItems = new Hono().get('/:id/items', zValidator('query', itemsListQuery), async (c) => {

@@ -153,6 +153,13 @@ export const marketPriceCache = pgTable('market_price_cache', {
   fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
+export const weightCache = pgTable('weight_cache', {
+  itemName: text('item_name').primaryKey(),
+  nori: jsonb('nori'),
+  wynnpool: jsonb('wynnpool'),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
 export const ogImageCache = pgTable('og_image_cache', {
   key: text('key').primaryKey(),
   data: bytea('data').notNull(),

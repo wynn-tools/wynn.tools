@@ -13,10 +13,37 @@ import {
   tierTheme,
   weaponClass,
 } from '~/lib/items/tooltip'
+import { rollColorVar } from '~/lib/wynntils/roll-percent'
 
-const props = withDefaults(defineProps<{ item: SearchItem, exportable?: boolean }>(), {
+export interface ActualIdentOverride {
+  actual: number
+  rollPct: number | null
+}
+
+const props = withDefaults(defineProps<{
+  item: SearchItem
+  exportable?: boolean
+  actualIdents?: Map<string, ActualIdentOverride> | null
+  overallRollPct?: number | null
+  exportFilename?: string | null
+  compact?: boolean
+}>(), {
   exportable: true,
+  actualIdents: null,
+  overallRollPct: null,
+  exportFilename: null,
+  compact: false,
 })
+
+function pctColorVar(p: number | null): string | undefined {
+  return p == null ? undefined : `var(${rollColorVar(p)})`
+}
+function fmtPct(p: number | null): string {
+  return p == null ? '' : `${p.toFixed(1)}%`
+}
+function fmtActual(n: number): string {
+  return n > 0 ? `+${n}` : String(n)
+}
 
 const SKILLS = ['strength', 'dexterity', 'intelligence', 'defence', 'agility'] as const
 
@@ -84,14 +111,28 @@ const classReq = computed(() => {
 
 const hits = computed(() => props.item.attackSpeed ? hitsPerSecond(props.item.attackSpeed) : null)
 
-interface IdRow { label: string, left: string, right: string, color: string }
+interface IdRow {
+  key: string
+  label: string
+  unit: string
+  left: string
+  right: string
+  color: string
+  override: ActualIdentOverride | null
+}
+const hasActualIdents = computed(() => props.actualIdents != null && props.actualIdents.size > 0)
+
 const idRows = computed<IdRow[]>(() =>
   Object.entries(props.item.identifications).map(([key, r]) => {
     const { label, unit } = humanizeField(key)
     const color = idIsGood(r.raw, isInverted(key)) ? ID_GOOD_COLOR : ID_BAD_COLOR
+    const override = props.actualIdents?.get(key) ?? null
+    if (hasActualIdents.value) {
+      return { key, label, unit, left: '', right: `${r.raw}${unit}`, color, override }
+    }
     if (r.min === r.max)
-      return { label, left: '', right: `${r.raw}${unit}`, color }
-    return { label, left: `${r.min}${unit}`, right: `${r.max}${unit}`, color }
+      return { key, label, unit, left: '', right: `${r.raw}${unit}`, color, override }
+    return { key, label, unit, left: `${r.min}${unit}`, right: `${r.max}${unit}`, color, override }
   }),
 )
 
@@ -116,6 +157,10 @@ const { exporting, exportTooltip } = useTooltipExport()
 function onExportClick() {
   if (!containerRef.value)
     return
+  if (props.exportFilename) {
+    exportTooltip(containerRef.value, props.exportFilename)
+    return
+  }
   const slug = props.item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
   exportTooltip(containerRef.value, `${slug || 'item'}.png`)
 }
@@ -146,7 +191,13 @@ function onExportClick() {
             <img v-if="icon" :src="icon" class="tt-sprite" alt="" aria-hidden="true">
           </div>
           <div class="tt-headtext">
-            <span class="tt-name" :style="{ color: theme.color }">{{ item.displayName }}</span>
+            <span class="tt-name" :style="{ color: theme.color }">
+              {{ item.displayName }}<span
+                v-if="overallRollPct != null"
+                class="tt-name-pct"
+                :style="{ color: pctColorVar(overallRollPct) }"
+              > [{{ fmtPct(overallRollPct) }}]</span>
+            </span>
             <div class="tt-tags">
               <span class="tt-tag" :style="{ background: theme.color }">{{ item.tier.toLowerCase() }}</span>
               <span class="tt-tag" :style="{ background: theme.light }">{{ item.subType }}</span>
@@ -164,7 +215,7 @@ function onExportClick() {
         </div>
 
         <!-- Weapon: DPS + attack speed + damage -->
-        <template v-if="isWeapon">
+        <template v-if="isWeapon && !compact">
           <p v-if="item.averageDps != null" class="tt-dps">
             <span :style="{ color: theme.light }">{{ item.averageDps }}</span>
             <span class="tt-dps-unit">DPS</span>
@@ -184,7 +235,7 @@ function onExportClick() {
         </template>
 
         <!-- Armour / accessory: health + elemental defences -->
-        <template v-else>
+        <template v-else-if="!compact">
           <p v-if="healthBase != null" class="tt-dps">
             <span :style="{ color: theme.light }">{{ healthBase > 0 ? '+' : '' }}{{ healthBase }}</span>
             <span class="tt-dps-unit">Health</span>
@@ -202,10 +253,10 @@ function onExportClick() {
           </template>
         </template>
 
-        <div class="tt-sep" :style="sepStyle()" />
+        <div v-if="!compact" class="tt-sep" :style="sepStyle()" />
 
         <!-- Skill point requirements -->
-        <div class="tt-sp-row">
+        <div v-if="!compact" class="tt-sp-row">
           <div v-for="c in spCircles" :key="c.skill" class="tt-sp">
             <div class="tt-sp-bg">
               <img :src="spUrl(c.active ? item.tier.toLowerCase() : 'disabled')" class="tt-sp-disc" alt="" aria-hidden="true">
@@ -219,7 +270,7 @@ function onExportClick() {
         </div>
 
         <!-- Class / level -->
-        <div class="tt-meta">
+        <div v-if="!compact" class="tt-meta">
           <div v-if="classReq" class="tt-meta-row">
             <span class="tt-meta-label"><img :src="miscUrl('check')" class="tt-check" alt="" aria-hidden="true"> Class Req</span>
             <span class="tt-muted">{{ classReq }}</span>
@@ -234,12 +285,32 @@ function onExportClick() {
 
         <!-- Identifications: min left, max right -->
         <ul v-if="idRows.length" class="tt-ids">
-          <li v-for="row in idRows" :key="row.label" class="tt-id">
-            <span class="tt-id-left" :style="{ color: row.color }">{{ row.left }}</span>
-            <span class="tt-id-name">{{ row.label }}</span>
-            <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
+          <li v-for="row in idRows" :key="row.key" class="tt-id" :class="{ 'tt-id--actual': row.override || hasActualIdents }">
+            <template v-if="row.override">
+              <span class="tt-id-name">{{ row.label }}</span>
+              <span class="tt-id-actual-value">
+                <span
+                  :style="{ color: row.override.rollPct == null ? row.color : pctColorVar(row.override.rollPct) }"
+                >{{ fmtActual(row.override.actual) }}{{ row.unit }}</span>
+                <span
+                  v-if="row.override.rollPct != null"
+                  :style="{ color: pctColorVar(row.override.rollPct) }"
+                >[{{ fmtPct(row.override.rollPct) }}]</span>
+              </span>
+            </template>
+            <template v-else-if="hasActualIdents">
+              <span class="tt-id-name">{{ row.label }}</span>
+              <span class="tt-id-actual-value" :style="{ color: row.color }">{{ row.right }}</span>
+            </template>
+            <template v-else>
+              <span class="tt-id-left" :style="{ color: row.color }">{{ row.left }}</span>
+              <span class="tt-id-name">{{ row.label }}</span>
+              <span class="tt-id-right" :style="{ color: row.color }">{{ row.right }}</span>
+            </template>
           </li>
         </ul>
+
+        <slot name="weights" />
 
         <!-- Major IDs -->
         <div v-if="majorIds.length" class="tt-majors">
@@ -254,7 +325,7 @@ function onExportClick() {
           Powder Slots [{{ 'o'.repeat(item.powderSlots) }}]
         </p>
 
-        <template v-if="item.lore?.length">
+        <template v-if="item.lore?.length && !compact">
           <div class="tt-sep" :style="sepStyle()" />
           <p class="tt-lore">
             <span
@@ -351,6 +422,9 @@ function onExportClick() {
   font-size: 28px;
   line-height: 1;
   text-shadow: 3px 3px 0 rgb(0 0 0 / 0.45);
+}
+.tt-name-pct {
+  font-variant-numeric: tabular-nums;
 }
 .tt-tags {
   display: flex;
@@ -519,6 +593,12 @@ function onExportClick() {
   gap: 10px;
   font-size: 18px;
 }
+.tt-id--actual {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
 .tt-id-left {
   text-align: left;
 }
@@ -528,6 +608,17 @@ function onExportClick() {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.tt-id--actual .tt-id-name {
+  text-align: left;
+  overflow: visible;
+  text-overflow: clip;
+}
+.tt-id-actual-value {
+  display: inline-flex;
+  gap: 4px;
+  align-items: baseline;
+  flex-shrink: 0;
 }
 .tt-id-right {
   text-align: right;
