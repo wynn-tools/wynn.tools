@@ -112,7 +112,10 @@ const labelColor = computed(() => {
 .cell-elements {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 2px;
+  max-width: 100%;
 }
 
 .cell-elem-icon {
