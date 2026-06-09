@@ -39,7 +39,7 @@ function readToken() {
 
 async function discord(token, method, path, body, files) {
   for (;;) {
-    const headers = { Authorization: `Bot ${token}`, 'User-Agent': UA }
+    const headers = { 'Authorization': `Bot ${token}`, 'User-Agent': UA }
     let bodyInit
     if (files && files.length > 0) {
       const fd = new FormData()
