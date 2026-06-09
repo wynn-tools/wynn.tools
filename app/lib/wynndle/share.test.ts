@@ -24,7 +24,7 @@ describe('buildShareGrid', () => {
   })
   it('emits one emoji row per guess', () => {
     const out = buildShareGrid(ROUND, 'weapon', { puzzleNumber: 42 })
-    const rows = out.split('\n').filter(l => /^[🟩🟨🟥🔺🔻]+$/u.test(l))
+    const rows = out.split('\n').filter(l => /^[🟩🟨🟥]+$/u.test(l))
     expect(rows.length).toBe(2)
   })
   it('does not leak answer or guess names', () => {

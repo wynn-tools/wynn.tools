@@ -80,10 +80,7 @@ function onDownload() {
             :key="j"
             class="grid-cell"
             :data-status="status"
-          >
-            <template v-if="status === 'higher'">▲</template>
-            <template v-else-if="status === 'lower'">▼</template>
-          </span>
+          />
         </div>
       </div>
       <div class="export-footer" data-export-only>
@@ -187,14 +184,6 @@ function onDownload() {
   background: var(--paper-light);
   border: 1px solid var(--paper-bd);
   box-shadow: inset 0 1px 0 var(--paper-bd-light);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1;
-  color: rgb(255 255 255 / 0.92);
-  text-shadow: 0 1px 0 rgb(0 0 0 / 0.35);
 }
 
 .grid-cell[data-status='correct'] {

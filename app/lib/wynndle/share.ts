@@ -4,8 +4,8 @@ const EMOJI: Record<CellStatus, string> = {
   correct: '🟩',
   partial: '🟨',
   wrong: '🟥',
-  higher: '🔺',
-  lower: '🔻',
+  higher: '🟥',
+  lower: '🟥',
 }
 
 export function buildShareGrid(
