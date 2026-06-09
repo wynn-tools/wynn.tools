@@ -51,19 +51,15 @@ onUnmounted(() => {
 function handleClick() {
   if (!auth.user) {
     state.value = 'auth-prompt'
-    open.value = true
     return
   }
   if (!props.savedId) {
     state.value = 'name-prompt'
-    open.value = true
     nextTick(() => nameInputRef.value?.focus())
     return
   }
-  if (props.isOwner) {
+  if (props.isOwner)
     state.value = 'settings'
-    open.value = true
-  }
 }
 
 async function create() {
