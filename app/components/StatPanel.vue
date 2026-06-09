@@ -60,20 +60,17 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
       </div>
     </header>
 
-    <div class="seg" role="tablist" aria-label="Stat detail level">
-      <button
-        v-for="v in (['summary', 'detailed'] as View[])"
-        :key="v"
-        type="button"
-        role="tab"
-        :aria-selected="view === v"
-        class="seg-btn"
-        :class="{ 'seg-btn--active': view === v }"
-        @click="setView(v)"
-      >
-        {{ v === 'summary' ? 'Summary' : 'Detailed' }}
-      </button>
-    </div>
+    <UiSegmented
+      :model-value="view"
+      :options="[
+        { value: 'summary' as View, label: 'Summary' },
+        { value: 'detailed' as View, label: 'Detailed' },
+      ]"
+      role="tab"
+      full-width
+      aria-label="Stat detail level"
+      @update:model-value="setView"
+    />
 
     <div
       v-for="group in groups"
@@ -151,47 +148,6 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
   padding: 14px 16px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-}
-
-/* Summary / Detailed segmented control */
-.seg {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-}
-
-.seg-btn {
-  font-family: 'Geist Mono', 'Courier New', monospace;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 0;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    background 0.12s ease-out;
-}
-
-.seg-btn:hover {
-  color: var(--color-text);
-}
-
-.seg-btn--active {
-  color: var(--color-copper);
-  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
-}
-
-.seg-btn:focus-visible {
-  outline: 2px solid var(--color-copper);
-  outline-offset: 2px;
 }
 
 .ledger {

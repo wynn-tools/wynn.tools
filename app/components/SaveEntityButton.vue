@@ -161,18 +161,14 @@ function dismiss() {
           @keydown.escape="dismiss"
           @input="error = null"
         >
-        <div class="vis-row" role="group" aria-label="Visibility">
-          <button
-            v-for="opt in visibilityOptions"
-            :key="opt.value"
-            class="vis-btn"
-            :class="{ 'vis-btn--on': selectedVisibility === opt.value }"
-            type="button"
-            @click="selectedVisibility = opt.value"
-          >
-            {{ opt.label }}
-          </button>
-        </div>
+        <UiSegmented
+          v-model="selectedVisibility"
+          :options="visibilityOptions"
+          role="radio"
+          variant="inline"
+          full-width
+          aria-label="Visibility"
+        />
         <p v-if="error" class="popover-error">
           {{ error }}
         </p>
@@ -194,19 +190,14 @@ function dismiss() {
             ✕
           </button>
         </div>
-        <div class="vis-row" role="group" aria-label="Visibility">
-          <button
-            v-for="opt in visibilityOptions"
-            :key="opt.value"
-            class="vis-btn"
-            :class="{ 'vis-btn--on': selectedVisibility === opt.value }"
-            type="button"
-            :disabled="settingsSaving"
-            @click="selectedVisibility = opt.value"
-          >
-            {{ opt.label }}
-          </button>
-        </div>
+        <UiSegmented
+          v-model="selectedVisibility"
+          :options="visibilityOptions.map(o => ({ ...o, disabled: settingsSaving }))"
+          role="radio"
+          variant="inline"
+          full-width
+          aria-label="Visibility"
+        />
         <p v-if="error" class="popover-error">
           {{ error }}
         </p>
@@ -330,45 +321,6 @@ function dismiss() {
 }
 .ui-popover .popover-input:focus {
   border-color: color-mix(in oklch, var(--color-accent) 55%, transparent);
-}
-.ui-popover .vis-row {
-  display: flex;
-  gap: 4px;
-}
-.ui-popover .vis-btn {
-  flex: 1;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 5px 4px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out,
-    background-color 0.12s ease-out;
-}
-.ui-popover .vis-btn:hover:not(:disabled) {
-  color: var(--color-text);
-  border-color: var(--color-faint);
-}
-.ui-popover .vis-btn--on {
-  color: var(--color-accent);
-  border-color: color-mix(in oklch, var(--color-accent) 50%, transparent);
-  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
-}
-.ui-popover .vis-btn--on:hover:not(:disabled) {
-  border-color: var(--color-accent);
-}
-.ui-popover .vis-btn:disabled {
-  opacity: 0.45;
-  cursor: default;
 }
 .ui-popover .popover-confirm {
   font-family: var(--font-mono);

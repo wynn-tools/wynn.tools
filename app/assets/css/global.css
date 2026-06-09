@@ -380,54 +380,6 @@
 }
 
 @layer components {
-  /* ── Pill tab strip ─────────────────────────────────────────────── */
-  .tabs {
-    display: inline-flex;
-    gap: 2px;
-    padding: 3px;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    max-width: 100%;
-  }
-
-  .tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .tabs button {
-    background: transparent;
-    border: 0;
-    border-radius: 5px;
-    color: var(--color-muted);
-    padding: 6px 14px;
-    cursor: pointer;
-    font: 600 12px/1 var(--font-mono);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition:
-      color 0.12s ease-out,
-      background 0.12s ease-out;
-  }
-
-  .tabs button:hover {
-    color: var(--color-text);
-  }
-
-  .tabs button.on {
-    color: var(--color-accent);
-    background: color-mix(in oklch, var(--color-accent) 8%, transparent);
-  }
-
-  .tabs button:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
   /* ── Filter fieldset (f-group) ──────────────────────────────────── */
   .f-group {
     border: none;
@@ -762,11 +714,6 @@
   }
 
   @media (max-width: 720px) {
-    .tabs button {
-      padding: 8px 12px;
-      min-height: 36px;
-    }
-
     .layout {
       gap: 14px;
     }

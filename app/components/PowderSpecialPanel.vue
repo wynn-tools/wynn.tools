@@ -21,6 +21,7 @@ const ELEMENTS = [
   { label: 'Fire', color: 'var(--color-elem-fire)' },
   { label: 'Air', color: 'var(--color-elem-air)' },
 ]
+const tabOptions = ELEMENTS.map((el, i) => ({ value: i, label: el.label, color: el.color }))
 const TIERS = [1, 2, 3, 4, 5, 6, 7]
 
 // Selected tab; default to the first element with an active tier, else Earth.
@@ -90,21 +91,13 @@ watch(() => route.params.hash, syncFromQuery)
       </button>
     </template>
 
-    <div class="tabs ps-tabs" role="tablist">
-      <button
-        v-for="(el, i) in ELEMENTS"
-        :key="el.label"
-        type="button"
-        role="tab"
-        :class="{ on: selected === i }"
-        :aria-selected="selected === i"
-        @click="selected = i"
-      >
-        <span class="ps-dot" :style="{ background: el.color }" />
-        {{ el.label }}
-        <span v-if="tierHasSelection(i) && selected !== i" class="ps-mark" />
-      </button>
-    </div>
+    <UiSegmented v-model="selected" :options="tabOptions" role="tab" aria-label="Powder element">
+      <template #option="{ option, active }">
+        <span class="ps-dot" :style="{ background: option.color }" />
+        {{ option.label }}
+        <span v-if="tierHasSelection(option.value) && !active" class="ps-mark" />
+      </template>
+    </UiSegmented>
 
     <div class="ps-active">
       <span class="ps-sub">Active — {{ special.weaponName }}</span>
@@ -168,11 +161,6 @@ watch(() => route.params.hash, syncFromQuery)
 }
 .ps-reset:hover {
   color: var(--color-copper);
-}
-.ps-tabs button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
 }
 .ps-dot {
   width: 7px;
