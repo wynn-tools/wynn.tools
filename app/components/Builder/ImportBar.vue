@@ -176,7 +176,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .trigger:focus-visible {
-  outline: 2px solid var(--color-copper);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 3px;
 }
@@ -220,12 +220,12 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .url-input:focus {
-  border-color: oklch(78% 0.14 75 / 0.5);
-  box-shadow: 0 0 0 2px oklch(78% 0.14 75 / 0.1);
+  border-color: color-mix(in oklch, var(--color-accent) 50%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent) 10%, transparent);
 }
 
 .url-input--valid {
-  border-color: oklch(78% 0.14 75 / 0.45);
+  border-color: color-mix(in oklch, var(--color-accent) 45%, transparent);
 }
 
 .url-input--invalid {
@@ -252,8 +252,8 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .action-btn:not(:disabled):hover {
-  color: var(--color-copper);
-  border-color: var(--color-copper);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .action-btn:disabled {
@@ -262,18 +262,18 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .action-btn:focus-visible {
-  outline: 2px solid var(--color-copper);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
 .action-btn--primary {
-  color: var(--color-copper);
-  border-color: oklch(78% 0.14 75 / 0.4);
+  color: var(--color-accent);
+  border-color: color-mix(in oklch, var(--color-accent) 40%, transparent);
 }
 
 .action-btn--primary:not(:disabled):hover {
-  background: oklch(78% 0.14 75 / 0.06);
-  border-color: var(--color-copper);
+  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
+  border-color: var(--color-accent);
 }
 
 .close-btn {
@@ -293,7 +293,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .close-btn:focus-visible {
-  outline: 2px solid var(--color-copper);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -313,7 +313,7 @@ function onKeydown(e: KeyboardEvent) {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 10px;
   letter-spacing: 0.08em;
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 
 /* Confirm */
@@ -387,7 +387,7 @@ function onKeydown(e: KeyboardEvent) {
 }
 
 .cancel-btn:focus-visible {
-  outline: 2px solid var(--color-copper);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 </style>

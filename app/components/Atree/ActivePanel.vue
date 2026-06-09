@@ -92,7 +92,7 @@ const activeAbilities = computed<AtreeNode[]>(() =>
 .count {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 12px;
-  color: var(--color-copper);
+  color: var(--color-accent);
   font-weight: 600;
 }
 
@@ -143,7 +143,7 @@ const activeAbilities = computed<AtreeNode[]>(() =>
 .item-cost {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 11px;
-  color: var(--color-copper);
+  color: var(--color-accent);
   font-weight: 600;
 }
 

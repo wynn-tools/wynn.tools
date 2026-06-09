@@ -58,7 +58,7 @@ function handleError() {
 }
 
 .domain .dot {
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 
 .label {
@@ -98,7 +98,7 @@ function handleError() {
 }
 
 .links a:focus-visible {
-  outline: 1px solid var(--color-copper);
+  outline: 1px solid var(--color-accent);
   outline-offset: 4px;
   border-radius: 2px;
   color: var(--color-text);

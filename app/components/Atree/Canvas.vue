@@ -655,7 +655,7 @@ onMounted(() => {
     background 0.12s;
 }
 .atree-zoom-btn:hover:not(:disabled) {
-  color: var(--color-copper);
+  color: var(--color-accent);
   background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 .atree-zoom-btn:disabled {

@@ -403,7 +403,7 @@ const powderSlotMax = computed(() =>
 }
 
 .slot--active {
-  border-color: var(--color-copper);
+  border-color: var(--color-accent);
 }
 
 .rolls-btn {
@@ -456,7 +456,7 @@ const powderSlotMax = computed(() =>
   border-color: var(--color-muted);
 }
 .slot--active .slot-icon--empty {
-  border-color: var(--color-copper);
+  border-color: var(--color-accent);
 }
 
 .slot-name {
@@ -537,9 +537,9 @@ const powderSlotMax = computed(() =>
   color: var(--color-faint);
 }
 .powder-chips--empty:hover {
-  border-color: var(--color-copper);
+  border-color: var(--color-accent);
   background: color-mix(in oklch, var(--color-accent) 6%, transparent);
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 .powder-cta-plus {
   font-family: 'Geist Mono', 'Courier New', monospace;

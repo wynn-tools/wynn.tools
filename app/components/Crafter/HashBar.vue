@@ -208,8 +208,8 @@ async function copy() {
 }
 
 .hash-bar__copy:not(:disabled):hover {
-  color: var(--color-copper);
-  border-color: var(--color-copper);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .hash-bar__copy:disabled {
@@ -218,7 +218,7 @@ async function copy() {
 }
 
 .hash-bar__copy:focus-visible {
-  outline: 2px solid var(--color-copper);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 

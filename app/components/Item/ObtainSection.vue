@@ -77,8 +77,8 @@ const KIND_TAG: Record<ObtainKind, string> = {
   align-items: center;
 }
 .method--quest {
-  border-color: oklch(62% 0.11 75 / 0.5);
-  background: oklch(62% 0.11 75 / 0.06);
+  border-color: color-mix(in oklch, var(--color-gold-dim) 50%, transparent);
+  background: color-mix(in oklch, var(--color-gold-dim) 6%, transparent);
 }
 .method--unknown {
   opacity: 0.7;
@@ -95,8 +95,8 @@ const KIND_TAG: Record<ObtainKind, string> = {
   flex-shrink: 0;
 }
 .method--quest .glyph {
-  color: oklch(78% 0.14 75);
-  background: oklch(62% 0.11 75 / 0.12);
+  color: var(--color-gold);
+  background: color-mix(in oklch, var(--color-gold-dim) 12%, transparent);
 }
 .method--unknown .glyph {
   color: var(--color-faint);
@@ -120,7 +120,7 @@ const KIND_TAG: Record<ObtainKind, string> = {
 }
 .quest {
   font: 600 13px/1.3 var(--font-body);
-  color: oklch(78% 0.14 75);
+  color: var(--color-gold);
   margin-top: 2px;
 }
 

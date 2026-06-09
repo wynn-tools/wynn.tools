@@ -160,7 +160,7 @@ const filled = computed(() => {
 .tomes-count {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 12px;
-  color: var(--color-copper);
+  color: var(--color-accent);
   font-weight: 600;
 }
 

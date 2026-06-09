@@ -578,7 +578,7 @@ async function selectSavedItem(item: ApiItemSummary) {
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 13px;
   color: var(--color-text);
-  caret-color: var(--color-copper);
+  caret-color: var(--color-accent);
 }
 
 .picker-search::placeholder {

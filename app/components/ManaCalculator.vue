@@ -249,8 +249,8 @@ const netTone = computed(() => (sustain.value.netPerSec >= 0 ? 'pos' : 'neg'))
   width: 100%;
 }
 .field-input:focus {
-  border-color: var(--color-copper);
-  color: var(--color-copper);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button {
@@ -309,7 +309,7 @@ const netTone = computed(() => (sustain.value.netPerSec >= 0 ? 'pos' : 'neg'))
   justify-content: center;
   font-size: 10px;
   font-weight: 600;
-  color: var(--color-copper);
+  color: var(--color-accent);
   border: 1px solid var(--color-accent-dim);
   border-radius: 3px;
   align-self: center;

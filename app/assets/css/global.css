@@ -102,9 +102,6 @@
   --color-card: var(--color-surface);
   --color-card-hover: var(--color-surface-hi);
 
-  /* ── Legacy alias — existing builder components use this ── */
-  --color-copper: oklch(78% 0.14 75);
-
   /* ── Typography ── */
   --font-display: 'Barlow Semi Condensed', system-ui, sans-serif;
   --font-body: 'Figtree', system-ui, sans-serif;
@@ -157,7 +154,6 @@
 
   --color-gold: oklch(58% 0.13 75);
   --color-gold-dim: oklch(50% 0.11 75);
-  --color-copper: oklch(58% 0.13 75);
 }
 
 /* ── Play envelope ─────────────────────────────────────────────────────
@@ -314,17 +310,6 @@
 
 @utility shadow-accent-lg {
   box-shadow: 0 0 56px color-mix(in oklch, var(--color-accent) 40%, transparent);
-}
-
-/* Legacy alias — existing components using --color-copper still work */
-@utility shadow-copper-sm {
-  box-shadow: 0 0 16px oklch(62% 0.11 245 / 0.2);
-}
-@utility shadow-copper-md {
-  box-shadow: 0 0 32px oklch(62% 0.11 245 / 0.32);
-}
-@utility shadow-copper-lg {
-  box-shadow: 0 0 56px oklch(62% 0.11 245 / 0.45);
 }
 
 @layer base {

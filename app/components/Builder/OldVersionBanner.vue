@@ -70,9 +70,9 @@ const visible = computed(() => store.isOldVersion)
 }
 
 .update-btn:not(:disabled):hover {
-  color: var(--color-copper);
-  border-color: var(--color-copper);
-  background: oklch(78% 0.14 75 / 0.06);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
 }
 
 .update-btn:disabled {
@@ -81,7 +81,7 @@ const visible = computed(() => store.isOldVersion)
 }
 
 .update-btn:focus-visible {
-  outline: 2px solid var(--color-copper);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 </style>

@@ -160,7 +160,7 @@ watch(() => route.params.hash, syncFromQuery)
   padding: 0;
 }
 .ps-reset:hover {
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 .ps-dot {
   width: 7px;
@@ -212,9 +212,9 @@ watch(() => route.params.hash, syncFromQuery)
   color: var(--color-text);
 }
 .ps-tier--on {
-  background: color-mix(in oklch, var(--color-copper) 18%, transparent);
-  border-color: var(--color-copper);
-  color: var(--color-copper);
+  background: color-mix(in oklch, var(--color-accent) 18%, transparent);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 .ps-readout {
   font-size: 11px;
@@ -233,7 +233,7 @@ watch(() => route.params.hash, syncFromQuery)
 }
 .ps-slider input {
   width: 100%;
-  accent-color: var(--color-copper);
+  accent-color: var(--color-accent);
 }
 .ps-slider-val {
   text-align: right;

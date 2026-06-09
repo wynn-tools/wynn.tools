@@ -366,8 +366,8 @@ onBeforeUnmount(clearAtreeConfirmTimer)
     border-color 0.12s;
 }
 .toggle:hover {
-  color: var(--color-copper);
-  border-color: var(--color-copper);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 .toggle:disabled {
   opacity: 0.4;

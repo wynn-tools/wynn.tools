@@ -120,7 +120,7 @@ watch(() => route.params.hash, syncFromQuery)
   padding: 0;
 }
 .boost-reset:hover {
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 .boost-group {
   display: flex;
@@ -145,8 +145,8 @@ watch(() => route.params.hash, syncFromQuery)
   color: var(--color-text);
 }
 .chip--on {
-  background: color-mix(in oklch, var(--color-copper) 18%, transparent);
-  border-color: var(--color-copper);
-  color: var(--color-copper);
+  background: color-mix(in oklch, var(--color-accent) 18%, transparent);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 </style>

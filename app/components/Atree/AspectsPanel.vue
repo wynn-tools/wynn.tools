@@ -199,7 +199,7 @@ function descSegments(entry: AspectTier | null): NormalizedText[] | string | nul
 .count {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 .mono {
   font-family: 'Geist Mono', 'Courier New', monospace;

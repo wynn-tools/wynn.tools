@@ -240,7 +240,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 
 .acc-chevron--open {
   transform: rotate(90deg);
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 
 .acc-title {
@@ -267,7 +267,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-copper);
+  color: var(--color-accent);
   flex-shrink: 0;
 }
 
@@ -299,7 +299,7 @@ const ELEM_GLYPHS = ['○', '✤', '✦', '❉', '✹', '❋']
 }
 
 .value--copper {
-  color: var(--color-copper);
+  color: var(--color-accent);
   font-weight: 600;
 }
 

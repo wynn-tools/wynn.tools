@@ -339,7 +339,7 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
   font-family: 'Geist Mono', 'Courier New', monospace;
   font-size: 14px;
   letter-spacing: 0.04em;
-  color: var(--color-copper);
+  color: var(--color-accent);
   background: color-mix(in oklch, var(--color-bg) 90%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 6px;
@@ -350,7 +350,7 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
     box-shadow 0.12s;
 }
 .shorthand-input:focus {
-  border-color: var(--color-copper);
+  border-color: var(--color-accent);
   box-shadow: 0 0 0 2px color-mix(in oklch, var(--color-accent) 20%, transparent);
 }
 .shorthand-input--bad {
@@ -377,8 +377,8 @@ const TIERS = Array.from({ length: POWDER_TIERS }, (_, i) => i + 1)
     border-color 0.12s;
 }
 .copy-btn:hover:not(:disabled) {
-  color: var(--color-copper);
-  border-color: var(--color-copper);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 .copy-btn:disabled {
   opacity: 0.4;

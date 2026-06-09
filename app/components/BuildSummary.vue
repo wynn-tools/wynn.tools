@@ -168,7 +168,7 @@ const activeSetBonuses = computed<Array<{ name: string, count: number }>>(() => 
 
 .set-count {
   font-size: 11px;
-  color: var(--color-copper);
+  color: var(--color-accent);
 }
 
 .mono {

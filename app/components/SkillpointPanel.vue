@@ -181,8 +181,8 @@ function onLevel(e: Event) {
     color 0.12s;
 }
 .sp-level-input:focus {
-  border-color: var(--color-copper);
-  color: var(--color-copper);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .sp-remaining-info {
@@ -224,7 +224,7 @@ function onLevel(e: Event) {
   align-self: center;
 }
 .sp-remaining-info--warn .sp-flag {
-  color: oklch(78% 0.14 75);
+  color: var(--color-gold);
 }
 .sp-remaining-info--error .sp-flag,
 .sp-remaining-info--over .sp-flag {
