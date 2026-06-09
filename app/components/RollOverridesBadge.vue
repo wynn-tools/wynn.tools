@@ -23,13 +23,9 @@ const store = useBuildStore()
         store.itemsWithOverridesCount === 1 ? "" : "s"
       }}
     </div>
-    <button
-      class="roll-overrides-popover__clear"
-      type="button"
-      @click="store.clearAllOverrides()"
-    >
+    <UiButton @click="store.clearAllOverrides()">
       Clear all
-    </button>
+    </UiButton>
   </UiPopover>
 </template>
 
@@ -59,21 +55,5 @@ const store = useBuildStore()
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-muted);
-}
-.ui-popover .roll-overrides-popover__clear {
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 4px 10px;
-  color: var(--color-text);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-}
-.ui-popover .roll-overrides-popover__clear:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
 }
 </style>

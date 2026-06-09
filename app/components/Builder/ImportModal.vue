@@ -169,17 +169,12 @@ function statusLabel(warnings: string[]): string {
           Nothing applies
         </template>
       </span>
-      <button type="button" class="btn-cancel" @click="close">
+      <UiButton @click="close">
         Cancel
-      </button>
-      <button
-        type="button"
-        class="btn-apply"
-        :disabled="!canApply"
-        @click="apply"
-      >
+      </UiButton>
+      <UiButton variant="accent" :disabled="!canApply" @click="apply">
         Apply{{ canApply ? ` ${preview.applied.length}` : '' }}
-      </button>
+      </UiButton>
     </template>
   </UiDialog>
 </template>
@@ -287,50 +282,5 @@ function statusLabel(warnings: string[]): string {
   text-transform: uppercase;
   color: var(--color-faint);
   margin-right: auto;
-}
-.ui-dialog .btn-cancel,
-.ui-dialog .btn-apply {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  border-radius: 5px;
-  padding: 7px 14px;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out,
-    background 0.12s ease-out;
-}
-.ui-dialog .btn-cancel {
-  background: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-muted);
-}
-.ui-dialog .btn-cancel:hover {
-  color: var(--color-text);
-  border-color: var(--color-faint);
-}
-.ui-dialog .btn-apply {
-  background: color-mix(in oklch, var(--color-accent) 12%, transparent);
-  border: 1px solid color-mix(in oklch, var(--color-accent) 70%, transparent);
-  color: var(--color-accent);
-}
-.ui-dialog .btn-apply:hover:not(:disabled) {
-  background: color-mix(in oklch, var(--color-accent) 20%, transparent);
-  border-color: var(--color-accent);
-}
-.ui-dialog .btn-apply:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: transparent;
-  border-color: var(--color-border);
-  color: var(--color-faint);
-}
-.ui-dialog .btn-apply:focus-visible,
-.ui-dialog .btn-cancel:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
 }
 </style>

@@ -172,14 +172,9 @@ function dismiss() {
         <p v-if="error" class="popover-error">
           {{ error }}
         </p>
-        <button
-          class="popover-confirm"
-          type="button"
-          :disabled="!name.trim()"
-          @click="create"
-        >
+        <UiButton variant="accent" full-width :disabled="!name.trim()" @click="create">
           Save
-        </button>
+        </UiButton>
       </template>
 
       <!-- Settings (owner update) -->
@@ -201,14 +196,9 @@ function dismiss() {
         <p v-if="error" class="popover-error">
           {{ error }}
         </p>
-        <button
-          class="popover-confirm"
-          type="button"
-          :disabled="settingsSaving"
-          @click="save"
-        >
+        <UiButton variant="accent" full-width :disabled="settingsSaving" @click="save">
           {{ settingsSaving ? 'Saving…' : 'Save' }}
-        </button>
+        </UiButton>
       </template>
     </UiPopover>
   </div>
@@ -321,29 +311,6 @@ function dismiss() {
 }
 .ui-popover .popover-input:focus {
   border-color: color-mix(in oklch, var(--color-accent) 55%, transparent);
-}
-.ui-popover .popover-confirm {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  background: transparent;
-  border: 1px solid color-mix(in oklch, var(--color-accent) 40%, transparent);
-  border-radius: 5px;
-  padding: 7px 12px;
-  cursor: pointer;
-  white-space: nowrap;
-  width: 100%;
-  transition: border-color 0.12s ease-out;
-}
-.ui-popover .popover-confirm:hover:not(:disabled) {
-  border-color: var(--color-accent);
-}
-.ui-popover .popover-confirm:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 .ui-popover .popover-actions {
   display: flex;

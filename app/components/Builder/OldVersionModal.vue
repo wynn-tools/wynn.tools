@@ -44,21 +44,12 @@ async function upgrade() {
     </p>
 
     <template #footer>
-      <button
-        class="action-btn action-btn--primary"
-        type="button"
-        :disabled="store.loading"
-        @click="upgrade"
-      >
+      <UiButton variant="accent" size="md" :disabled="store.loading" @click="upgrade">
         Update to {{ store.latestGameVersion }}
-      </button>
-      <button
-        class="action-btn"
-        type="button"
-        @click="keep"
-      >
+      </UiButton>
+      <UiButton size="md" @click="keep">
         Keep viewing
-      </button>
+      </UiButton>
     </template>
   </UiDialog>
 </template>
@@ -75,43 +66,5 @@ async function upgrade() {
 .ui-dialog .modal-body strong {
   color: var(--color-text);
   font-weight: 600;
-}
-.ui-dialog .action-btn {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: 5px;
-  padding: 8px 16px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out,
-    background 0.12s ease-out;
-}
-.ui-dialog .action-btn:not(:disabled):hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-.ui-dialog .action-btn:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-.ui-dialog .action-btn:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-.ui-dialog .action-btn--primary {
-  color: var(--color-accent);
-  border-color: color-mix(in oklch, var(--color-accent) 40%, transparent);
-}
-.ui-dialog .action-btn--primary:not(:disabled):hover {
-  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
-  border-color: var(--color-accent);
 }
 </style>
