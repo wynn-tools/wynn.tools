@@ -14,7 +14,7 @@
 // name ("changelog") in the wynn.tools guild, so it survives channel re-creation.
 
 import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+import { basename, dirname, isAbsolute, resolve } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
@@ -25,7 +25,9 @@ const API = 'https://discord.com/api/v10'
 const GUILD_ID = '1507798652654190622' // wynn.tools
 const CHANNEL_NAME = 'changelog'
 const ACCENT = 0x2D7FF0 // brand electric blue
+const SITE_BASE = 'https://wynn.tools'
 const UA = 'wynn.tools-changelog (https://wynn.tools, 1.0)'
+const IS_COMPONENTS_V2 = 1 << 15
 
 function readToken() {
   const env = readFileSync(resolve(ROOT, 'api/.env'), 'utf8')
@@ -35,17 +37,21 @@ function readToken() {
   return line.slice('DISCORD_TOKEN='.length).trim()
 }
 
-async function discord(token, method, path, body) {
+async function discord(token, method, path, body, files) {
   for (;;) {
-    const res = await fetch(API + path, {
-      method,
-      headers: {
-        'Authorization': `Bot ${token}`,
-        'Content-Type': 'application/json',
-        'User-Agent': UA,
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    })
+    const headers = { Authorization: `Bot ${token}`, 'User-Agent': UA }
+    let bodyInit
+    if (files && files.length > 0) {
+      const fd = new FormData()
+      fd.append('payload_json', JSON.stringify(body))
+      files.forEach((f, i) => fd.append(`files[${i}]`, new Blob([f.data], { type: f.contentType }), f.filename))
+      bodyInit = fd
+    }
+    else if (body) {
+      headers['Content-Type'] = 'application/json'
+      bodyInit = JSON.stringify(body)
+    }
+    const res = await fetch(API + path, { method, headers, body: bodyInit })
     if (res.status === 429) {
       const info = await res.json()
       const wait = (info.retry_after ?? 1) * 1000 + 250
@@ -67,10 +73,53 @@ async function resolveChannelId(token) {
   return ch.id
 }
 
-function toEmbed(entry) {
+function resolveUrl(link) {
+  if (!link)
+    return null
+  return link.startsWith('/') ? `${SITE_BASE}${link}` : link
+}
+
+const IMAGE_MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp' }
+
+function resolveImage(entry, baseDir) {
+  if (!entry.image)
+    return null
+  if (/^https?:\/\//.test(entry.image))
+    return { url: entry.image }
+  const abs = isAbsolute(entry.image) ? entry.image : resolve(baseDir, entry.image)
+  const filename = basename(abs)
+  const ext = filename.split('.').pop()?.toLowerCase() ?? ''
+  const contentType = IMAGE_MIME[ext]
+  if (!contentType)
+    throw new Error(`unsupported image extension for ${entry.image}; supported: ${Object.keys(IMAGE_MIME).join(', ')}`)
+  return { attachment: { path: abs, filename, contentType }, url: `attachment://${filename}` }
+}
+
+function toMessage(entry, baseDir) {
   if (!entry.title || !entry.description)
     throw new Error(`each entry needs { title, description }; got ${JSON.stringify(entry)}`)
-  return { title: entry.title, description: entry.description, color: entry.color ?? ACCENT }
+  const inner = [
+    { type: 10, content: `## ${entry.title}` },
+    { type: 10, content: entry.description },
+  ]
+  const image = resolveImage(entry, baseDir)
+  if (image)
+    inner.push({ type: 12, items: [{ media: { url: image.url } }] })
+  const url = resolveUrl(entry.link)
+  if (url) {
+    inner.push({
+      type: 1,
+      components: [{ type: 2, style: 5, label: entry.linkLabel ?? 'Open', url }],
+    })
+  }
+  const body = {
+    flags: IS_COMPONENTS_V2,
+    components: [{ type: 17, accent_color: entry.color ?? ACCENT, components: inner }],
+  }
+  const files = image?.attachment
+    ? [{ filename: image.attachment.filename, contentType: image.attachment.contentType, data: readFileSync(image.attachment.path) }]
+    : []
+  return { body, files }
 }
 
 async function main() {
@@ -82,23 +131,30 @@ async function main() {
     process.exit(1)
   }
 
-  const entries = JSON.parse(readFileSync(resolve(process.cwd(), file), 'utf8'))
+  const filePath = resolve(process.cwd(), file)
+  const baseDir = dirname(filePath)
+  const entries = JSON.parse(readFileSync(filePath, 'utf8'))
   if (!Array.isArray(entries))
     throw new Error('entries file must be a JSON array')
-  const embeds = entries.map(toEmbed)
+  const messages = entries.map(e => toMessage(e, baseDir))
 
   if (dryRun) {
-    console.log(`[dry-run] would post ${embeds.length} entr${embeds.length === 1 ? 'y' : 'ies'}:`)
-    for (const e of embeds) console.log(`  • ${e.title}\n      ${e.description.replace(/\n/g, '\n      ')}`)
+    console.log(`[dry-run] would post ${messages.length} entr${messages.length === 1 ? 'y' : 'ies'}:`)
+    for (let i = 0; i < entries.length; i++) {
+      const e = entries[i]
+      const url = resolveUrl(e.link)
+      console.log(`  • ${e.title}\n      ${e.description.replace(/\n/g, '\n      ')}${e.image ? `\n      [image] ${e.image}` : ''}${url ? `\n      [button] ${e.linkLabel ?? 'Open'} -> ${url}` : ''}`)
+    }
     return
   }
 
   const token = readToken()
   const channelId = await resolveChannelId(token)
-  for (const embed of embeds) {
-    const msg = await discord(token, 'POST', `/channels/${channelId}/messages`, { embeds: [embed] })
-    console.log(`posted ${msg.id}  ${embed.title}`)
-    await new Promise(r => setTimeout(r, 600)) // gentle spacing
+  for (let i = 0; i < messages.length; i++) {
+    const { body, files } = messages[i]
+    const msg = await discord(token, 'POST', `/channels/${channelId}/messages`, body, files)
+    console.log(`posted ${msg.id}  ${entries[i].title}`)
+    await new Promise(r => setTimeout(r, 600))
   }
   console.log('done.')
 }
