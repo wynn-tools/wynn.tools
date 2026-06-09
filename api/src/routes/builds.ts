@@ -213,6 +213,13 @@ export const builds = new Hono()
     const next = hasMore ? buildNextCursor(sort, page[page.length - 1]) : null
     return c.json({ data: page.map(r => ({ id: r.id, name: r.name, visibility: r.visibility, gameVersion: r.gameVersion, tags: r.tags ?? [], hasTutorial: !!r.tutorialUrl })), nextCursor: next })
   })
+  .get('/stats', async (c) => {
+    const [row] = await getDb()
+      .select({ totalPublic: sql<number>`count(*)::int` })
+      .from(schema.builds)
+      .where(eq(schema.builds.visibility, 'public'))
+    return c.json({ totalPublic: row?.totalPublic ?? 0 })
+  })
   .get('/:id', async (c) => {
     const id = c.req.param('id')
     const build = await getDb().query.builds.findFirst({ where: (b, { eq }) => eq(b.id, id) })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronDown, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
+import { Compass, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
 import { onClickOutside } from '@vueuse/core'
 import { useDiscordJoin } from '~/composables/useDiscordJoin'
 
@@ -23,19 +23,26 @@ const dropdownGroups = [
       { name: 'Crafted', href: '/crafted', icon: Package, desc: 'Browse community crafted' },
     ],
   },
+  {
+    label: 'Discover',
+    icon: Compass,
+    items: [
+      { name: 'Items', href: '/items', icon: Search, desc: 'Search Wynncraft items and ingredients' },
+      { name: 'Inspect', href: '/inspect', icon: ScanLine, desc: 'Render a Wynntils inspect link' },
+      { name: 'Map', href: '/map', icon: Map, desc: 'Explore the Province of Wynn' },
+      { name: 'Changelog', href: '/changelog', icon: FileClock, desc: 'Track Wynncraft item data changes' },
+    ],
+  },
 ]
 
-type StandaloneItem
-  = | { name: string, href: string, icon: typeof Search, action?: undefined }
-    | { name: string, iconName: string, action: 'discord' }
+interface StandaloneItem {
+  name: string
+  href: string
+  icon: typeof Search
+}
 
 const standalone: StandaloneItem[] = [
-  { name: 'Items', href: '/items', icon: Search },
-  { name: 'Inspect', href: '/inspect', icon: ScanLine },
-  { name: 'Map', href: '/map', icon: Map },
   { name: 'Play', href: '/play', icon: Gamepad2 },
-  { name: 'Changelog', href: '/changelog', icon: FileClock },
-  { name: 'Discord', iconName: 'logos:discord-icon', action: 'discord' },
 ]
 
 // Desktop dropdowns
@@ -108,16 +115,7 @@ watch(() => route.path, () => {
 
         <ul class="nav-group" role="list">
           <li v-for="tool in standalone" :key="tool.name">
-            <button
-              v-if="tool.action === 'discord'"
-              type="button"
-              class="nav-link"
-              @click="onDiscord"
-            >
-              <Icon :name="tool.iconName" size="16" class="nav-icon" aria-hidden="true" />
-              <span class="nav-label">{{ tool.name }}</span>
-            </button>
-            <NuxtLink v-else :to="tool.href" class="nav-link">
+            <NuxtLink :to="tool.href" class="nav-link">
               <component :is="tool.icon" :size="16" class="nav-icon" aria-hidden="true" />
               <span class="nav-label">{{ tool.name }}</span>
             </NuxtLink>
@@ -126,6 +124,15 @@ watch(() => route.path, () => {
       </div>
 
       <div class="nav-trailing">
+        <button
+          type="button"
+          class="nav-utility"
+          aria-label="Join Discord"
+          title="Join Discord"
+          @click="onDiscord"
+        >
+          <Icon name="logos:discord-icon" size="16" aria-hidden="true" />
+        </button>
         <ThemePicker />
         <NavUser />
       </div>
@@ -167,21 +174,23 @@ watch(() => route.path, () => {
 
         <!-- Standalone links -->
         <div class="mobile-section mobile-section--flat">
-          <template v-for="tool in standalone" :key="tool.name">
-            <button
-              v-if="tool.action === 'discord'"
-              type="button"
-              class="mobile-item mobile-item--flat"
-              @click="onDiscord"
-            >
-              <Icon :name="tool.iconName" size="16" class="mobile-item-icon" aria-hidden="true" />
-              <span class="mobile-item-name">{{ tool.name }}</span>
-            </button>
-            <NuxtLink v-else :to="tool.href" class="mobile-item mobile-item--flat">
-              <component :is="tool.icon" :size="16" class="mobile-item-icon" aria-hidden="true" />
-              <span class="mobile-item-name">{{ tool.name }}</span>
-            </NuxtLink>
-          </template>
+          <NuxtLink
+            v-for="tool in standalone"
+            :key="tool.name"
+            :to="tool.href"
+            class="mobile-item mobile-item--flat"
+          >
+            <component :is="tool.icon" :size="16" class="mobile-item-icon" aria-hidden="true" />
+            <span class="mobile-item-name">{{ tool.name }}</span>
+          </NuxtLink>
+          <button
+            type="button"
+            class="mobile-item mobile-item--flat"
+            @click="onDiscord"
+          >
+            <Icon name="logos:discord-icon" size="16" class="mobile-item-icon" aria-hidden="true" />
+            <span class="mobile-item-name">Discord</span>
+          </button>
         </div>
       </div>
     </Transition>
@@ -248,6 +257,31 @@ watch(() => route.path, () => {
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
+}
+
+.nav-utility {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    color 0.12s ease-out,
+    background 0.12s ease-out;
+}
+
+.nav-utility:hover {
+  background: var(--color-surface);
+}
+
+.nav-utility:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .nav-group {
@@ -601,6 +635,11 @@ button.mobile-item {
     display: flex;
     width: 44px;
     height: 44px;
+  }
+
+  /* Discord is reached through the mobile sheet instead of the trailing cluster. */
+  .nav-utility {
+    display: none;
   }
 }
 </style>
