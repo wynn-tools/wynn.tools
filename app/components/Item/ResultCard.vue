@@ -15,9 +15,9 @@ const equippedLabel = computed(() => equippedSlot.value != null ? SLOT_LABELS[eq
 <template>
   <div class="card-wrap" :class="{ 'is-equipped': equipped }">
     <NuxtLink
-      :to="{ path: `/items/${itemSlug(item)}`, query: { name: item.displayName } }"
+      :to="`/items/${itemSlug(item)}`"
       class="card-link"
-      :aria-label="`Open ${item.displayName} details`"
+      :aria-label="`Open ${item.name} details`"
     >
       <ItemTooltip :item="item" :exportable="false" />
     </NuxtLink>

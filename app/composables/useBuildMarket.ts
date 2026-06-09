@@ -42,7 +42,7 @@ function init() {
         const item = ctx.rawItemIndex.resolveId(id)
         const name = item?.name as string | undefined
         if (name)
-          gear.push({ label: (item?.displayName as string) ?? name, name, crafted: false })
+          gear.push({ label: name, name, crafted: false })
       }
       const powders = rb.powders.flat()
       collected.value = collectBuildItems({ gear, powders })

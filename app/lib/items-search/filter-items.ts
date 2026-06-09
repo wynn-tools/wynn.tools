@@ -7,7 +7,7 @@ import { playerFavoredValue } from './roll-basis'
 import { sumPreset } from './stat-sums'
 
 function matchesScalarFilters(item: SearchItem, c: ItemCriteria): boolean {
-  if (c.name && !item.displayName.toLowerCase().includes(c.name.toLowerCase()))
+  if (c.name && !item.name.toLowerCase().includes(c.name.toLowerCase()))
     return false
   if (c.types.length && !c.types.includes(item.subType))
     return false

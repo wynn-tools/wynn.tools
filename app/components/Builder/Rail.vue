@@ -53,7 +53,7 @@ const slots = computed(() =>
                 class="cell cell--filled"
                 :class="{ 'cell--wide': s.area === 'weapon' }"
                 :style="{ 'gridArea': s.area, '--tier': s.tier ?? 'var(--color-border)' }"
-                :aria-label="`Remove ${s.item.displayName} from ${s.label}`"
+                :aria-label="`Remove ${s.item.name} from ${s.label}`"
                 @click="rail.removeSlot(s.i)"
               >
                 <img v-if="s.icon" :src="s.icon" class="cell-icon" alt="" aria-hidden="true">

@@ -76,7 +76,7 @@ export function useBuilderRail() {
     return id == null ? null : (index.value.get(id) ?? null)
   }
   function nameForId(id: number | null): string {
-    return itemFor(id)?.displayName ?? 'item'
+    return itemFor(id)?.name ?? 'item'
   }
 
   function writeSlot(slot: number, id: number | null) {
@@ -89,14 +89,14 @@ export function useBuilderRail() {
   function commitToSlot(item: SearchItem, slot: number) {
     const prev = previewIds.value[slot] ?? null
     if (prev === item.id) {
-      push('info', `${item.displayName} is already in ${SLOT_LABELS[slot]}`)
+      push('info', `${item.name} is already in ${SLOT_LABELS[slot]}`)
       return
     }
     writeSlot(slot, item.id)
     const verb = prev != null ? `replaced ${nameForId(prev)}` : null
     pushAction(
       'info',
-      verb ? `Equipped ${item.displayName}, ${verb}` : `Equipped ${item.displayName} in ${SLOT_LABELS[slot]}`,
+      verb ? `Equipped ${item.name}, ${verb}` : `Equipped ${item.name} in ${SLOT_LABELS[slot]}`,
       { label: 'Undo', run: () => writeSlot(slot, prev) },
     )
   }

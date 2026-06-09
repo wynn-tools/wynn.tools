@@ -209,7 +209,7 @@ function onExportClick() {
           </div>
           <div class="tt-headtext">
             <span class="tt-name" :style="{ color: theme.color }">
-              {{ item.displayName }}<span
+              {{ item.name }}<span
                 v-if="overallRollPct != null"
                 class="tt-name-pct"
                 :style="{ color: pctColorVar(overallRollPct) }"

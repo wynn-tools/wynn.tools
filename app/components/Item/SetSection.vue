@@ -54,11 +54,11 @@ const bonuses = computed<BonusRow[]>(() => {
       <li v-for="p in pieces" :key="p.name" :class="{ current: p.isCurrent, missing: !p.item }">
         <NuxtLink
           v-if="p.item"
-          :to="{ path: `/items/${itemSlug(p.item)}`, query: { name: p.item.displayName } }"
+          :to="`/items/${itemSlug(p.item)}`"
           class="piece"
         >
           <span class="piece-mark" aria-hidden="true" />
-          <span class="piece-name">{{ p.item.displayName }}</span>
+          <span class="piece-name">{{ p.item.name }}</span>
           <span class="piece-meta">{{ p.item.subType }}</span>
         </NuxtLink>
         <span v-else class="piece piece--missing">

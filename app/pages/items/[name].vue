@@ -9,7 +9,6 @@ import { buildSlugIndex, resolveSlug } from '~/lib/items-search/slug'
 const route = useRoute()
 const config = useRuntimeConfig()
 const slug = computed(() => String(route.params.name))
-const nameHint = computed(() => (route.query.name ? String(route.query.name) : undefined))
 
 const { data: seoItem } = await useAsyncData(
   () => `seo-item-${slug.value}`,
@@ -19,7 +18,7 @@ const { data: seoItem } = await useAsyncData(
     const gameVersion = resolveVersionSegment(latestVersionId(versions), versions)
     const itemsFile = await client.fetchJson<Parameters<typeof adaptItems>[0]>(cdnPathFor(gameVersion, 'items.json'))
     const items = adaptItems(itemsFile)
-    return resolveSlug(buildSlugIndex(items), slug.value, nameHint.value) ?? null
+    return resolveSlug(buildSlugIndex(items), slug.value) ?? null
   },
   { watch: [slug] },
 )
@@ -28,7 +27,7 @@ const { data: searchData, pending } = useItemSearchData()
 const { data: changelogs } = useItemHistorySource()
 
 const slugIndex = computed(() => searchData.value ? buildSlugIndex(searchData.value.items) : new Map())
-const item = computed(() => resolveSlug(slugIndex.value, slug.value, nameHint.value))
+const item = computed(() => resolveSlug(slugIndex.value, slug.value))
 const history = computed(() => (item.value && changelogs.value) ? itemHistory(item.value.name, changelogs.value) : [])
 
 const pieceLookup = computed(() => {
@@ -46,7 +45,7 @@ function getSet(name: string) {
 }
 const seoSource = computed(() => item.value ?? seoItem.value ?? null)
 const pageTitle = computed(() =>
-  seoSource.value ? `${seoSource.value.displayName} — wynn.tools` : 'Item — wynn.tools',
+  seoSource.value ? `${seoSource.value.name} — wynn.tools` : 'Item — wynn.tools',
 )
 const pageDesc = computed(() =>
   seoSource.value

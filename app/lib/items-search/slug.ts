@@ -7,8 +7,8 @@ export function slugify(name: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-export function itemSlug(item: Pick<SearchItem, 'displayName'>): string {
-  return slugify(item.displayName)
+export function itemSlug(item: Pick<SearchItem, 'name'>): string {
+  return slugify(item.name)
 }
 
 export function buildSlugIndex(items: SearchItem[]): Map<string, SearchItem[]> {
@@ -27,12 +27,6 @@ export function buildSlugIndex(items: SearchItem[]): Map<string, SearchItem[]> {
 export function resolveSlug(
   index: Map<string, SearchItem[]>,
   slug: string,
-  name?: string,
 ): SearchItem | undefined {
-  const bucket = index.get(slug)
-  if (!bucket || bucket.length === 0)
-    return undefined
-  if (bucket.length === 1 || !name)
-    return bucket[0]
-  return bucket.find(i => i.displayName === name) ?? bucket[0]
+  return index.get(slug)?.[0]
 }

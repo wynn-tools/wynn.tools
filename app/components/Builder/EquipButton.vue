@@ -19,7 +19,7 @@ const ringSlots = computed(() =>
   [SLOT.ring1, SLOT.ring2].map(slot => ({
     slot,
     label: SLOT_LABELS[slot],
-    occupant: rail.itemFor(rail.previewIds.value[slot] ?? null)?.displayName ?? null,
+    occupant: rail.itemFor(rail.previewIds.value[slot] ?? null)?.name ?? null,
   })),
 )
 
@@ -42,7 +42,7 @@ function onUnequip() {
     v-if="equippable && equipped"
     type="button"
     class="equip equip--on"
-    :aria-label="`Unequip ${item.displayName}`"
+    :aria-label="`Unequip ${item.name}`"
     @click.stop.prevent="onUnequip"
   >
     <span class="equip-plus" aria-hidden="true">−</span>
@@ -54,7 +54,7 @@ function onUnequip() {
       <button
         type="button"
         class="equip"
-        :aria-label="`Equip ${item.displayName}`"
+        :aria-label="`Equip ${item.name}`"
         @click.stop.prevent="onEquip"
       >
         <span class="equip-plus" aria-hidden="true">+</span>
@@ -89,7 +89,7 @@ function onUnequip() {
     v-else-if="equippable"
     type="button"
     class="equip"
-    :aria-label="`Equip ${item.displayName}`"
+    :aria-label="`Equip ${item.name}`"
     @click.stop.prevent="onEquip"
   >
     <span class="equip-plus" aria-hidden="true">+</span>

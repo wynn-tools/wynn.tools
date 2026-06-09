@@ -43,7 +43,7 @@ const baseCriteria: ItemCriteria = {
 
 describe('filterItems — scalar', () => {
   it('filters by name substring case-insensitively', () => {
-    const items = [mk({ displayName: 'Idol' }), mk({ displayName: 'Sword' })]
+    const items = [mk({ name: 'Idol', displayName: 'Idol' }), mk({ name: 'Sword', displayName: 'Sword' })]
     expect(filterItems(items, { ...baseCriteria, name: 'ido' })).toHaveLength(1)
   })
   it('filters by type and level range', () => {

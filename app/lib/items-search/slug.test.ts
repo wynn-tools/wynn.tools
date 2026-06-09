@@ -2,8 +2,8 @@ import type { SearchItem } from './types'
 import { describe, expect, it } from 'vitest'
 import { buildSlugIndex, itemSlug, resolveSlug, slugify } from './slug'
 
-function item(displayName: string, id: number): SearchItem {
-  return { displayName, id } as SearchItem
+function item(name: string, id: number, displayName?: string): SearchItem {
+  return { name, id, displayName: displayName ?? name } as SearchItem
 }
 
 describe('slug', () => {
@@ -17,8 +17,13 @@ describe('slug', () => {
     expect(resolveSlug(index, 'idol')!.id).toBe(1)
   })
 
-  it('disambiguates collisions by name', () => {
-    const index = buildSlugIndex([item('Idol', 1), item('Idol', 2)])
-    expect(resolveSlug(index, itemSlug(item('Idol', 0)), 'Idol')!.displayName).toBe('Idol')
+  it('gives masterwork variants their own slug via full name', () => {
+    const regular = item('Apocalypse', 1)
+    const master = item('Masterwork Apocalypse', 2, 'Apocalypse')
+    const index = buildSlugIndex([regular, master])
+    expect(itemSlug(regular)).toBe('apocalypse')
+    expect(itemSlug(master)).toBe('masterwork-apocalypse')
+    expect(resolveSlug(index, 'apocalypse')!.id).toBe(1)
+    expect(resolveSlug(index, 'masterwork-apocalypse')!.id).toBe(2)
   })
 })
