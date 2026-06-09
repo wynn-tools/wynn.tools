@@ -4,6 +4,7 @@
 // the BottomHotbar fixed at the bottom of the viewport for navigation.
 
 import { ArrowLeft } from '@lucide/vue'
+import NavPlayUser from './NavPlayUser.vue'
 
 const route = useRoute()
 
@@ -13,10 +14,14 @@ const route = useRoute()
 // own pages, not in the envelope chrome). Promoting one game into the
 // envelope nav would pin the architecture to "this is the Wynndle envelope"
 // — wrong shape for the multi-game hub the Play Hall is.
+//
+// Identity moved out of the sub-nav and into the chrome (NavPlayUser on the
+// right of the band). Hub is the only remaining pill; the rail hides when
+// solo so the wordmark — which already links to /play — isn't doubled.
 const navItems: { name: string, href: string, match: (path: string) => boolean }[] = [
   { name: 'Hub', href: '/play', match: p => p === '/play' },
-  { name: 'Me', href: '/play/me', match: p => p === '/play/me' || p.startsWith('/play/me/') },
 ]
+const showRail = computed(() => navItems.length > 1)
 </script>
 
 <template>
@@ -31,9 +36,9 @@ const navItems: { name: string, href: string, match: (path: string) => boolean }
         <span class="wordmark-sep">·</span>
         <span class="wordmark-section">PLAY</span>
       </NuxtLink>
-      <div class="trailing" aria-hidden="true" />
+      <NavPlayUser />
     </div>
-    <nav class="pill-rail" aria-label="Play sections">
+    <nav v-if="showRail" class="pill-rail" aria-label="Play sections">
       <NuxtLink
         v-for="item in navItems"
         :key="item.href"
@@ -139,9 +144,11 @@ const navItems: { name: string, href: string, match: (path: string) => boolean }
   letter-spacing: 0.02em;
 }
 
-.trailing {
-  justify-self: end;
-  width: 40px;
+/* When the pill rail is hidden (only Hub left, redundant with the wordmark)
+   the band absorbs the rail's 28px bottom-margin so the band-to-content gap
+   stays constant whether the rail is present or not. */
+.envelope-nav:not(:has(.pill-rail)) .band {
+  margin-bottom: 50px;
 }
 
 /* Parchment pill rail: 44px tall, centered, pills flow inline. Active pill
@@ -207,7 +214,7 @@ const navItems: { name: string, href: string, match: (path: string) => boolean }
     height: 48px;
     margin: 14px 10px 16px;
     padding: 0 14px;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 30px 1fr 30px;
   }
 
   .exit span {

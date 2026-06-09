@@ -1,35 +1,71 @@
 <script setup lang="ts">
-// Fixed-position bottom navigation visible only below 720px. Five inventory
-// slot cells (Hub / Wynndle / Archive / Leaderboard / Me) sit in a wood-frame
-// strip. Identity-persistent: never hides on scroll. Replaces the desktop
-// pill rail on phones.
+// Fixed-position bottom navigation visible only below 720px. Two inventory
+// slot cells (Hub + identity) in a wood-frame strip. Identity-persistent:
+// never hides on scroll. Replaces the desktop pill rail on phones.
 
-import { House, UserRound } from '@lucide/vue'
+import { House, LogIn, UserRound } from '@lucide/vue'
+import { useAuthStore } from '~/stores/auth'
 
 const route = useRoute()
+const auth = useAuthStore()
 
-// Envelope nav stays game-agnostic — Hub + Me only. Individual games own
-// their internal navigation (archive, leaderboard, mode tabs) inside their
-// own sub-routes.
-const navItems: { name: string, href: string, icon: typeof House, match: (path: string) => boolean }[] = [
-  { name: 'Hub', href: '/play', icon: House, match: p => p === '/play' },
-  { name: 'Me', href: '/play/me', icon: UserRound, match: p => p === '/play/me' || p.startsWith('/play/me/') },
-]
+const onMePage = computed(() => {
+  const p = route.path
+  return p === '/play/me' || p.startsWith('/play/me/')
+})
+
+const onHubPage = computed(() => route.path === '/play')
+
+function avatarUrl(discordId: string, avatar: string) {
+  return `https://cdn.discordapp.com/avatars/${discordId}/${avatar}.webp?size=64`
+}
 </script>
 
 <template>
   <nav class="hotbar" aria-label="Play navigation">
     <div class="strip">
       <NuxtLink
-        v-for="item in navItems"
-        :key="item.href"
-        :to="item.href"
+        to="/play"
         class="slot"
-        :class="{ 'is-active': item.match(route.path) }"
+        :class="{ 'is-active': onHubPage }"
       >
-        <component :is="item.icon" :size="22" :stroke-width="2" class="slot-icon" />
-        <span class="slot-label">{{ item.name }}</span>
+        <House :size="22" :stroke-width="2" class="slot-icon" />
+        <span class="slot-label">Hub</span>
       </NuxtLink>
+
+      <!-- Right slot: pending → empty placeholder; signed-in → /play/me link
+           with avatar; signed-out → gold-edged sign-in button. -->
+      <span v-if="auth.pending" class="slot slot--placeholder" aria-hidden="true" />
+
+      <NuxtLink
+        v-else-if="auth.user"
+        to="/play/me"
+        class="slot"
+        :class="{ 'is-active': onMePage }"
+        :aria-label="`Open your Play profile, signed in as ${auth.user.displayName ?? auth.user.username}`"
+      >
+        <img
+          v-if="auth.user.avatar"
+          :src="avatarUrl(auth.user.discordId, auth.user.avatar)"
+          alt=""
+          class="slot-avatar"
+          width="22"
+          height="22"
+        >
+        <UserRound v-else :size="22" :stroke-width="2" class="slot-icon" />
+        <span class="slot-label">Me</span>
+      </NuxtLink>
+
+      <button
+        v-else
+        type="button"
+        class="slot slot--signin"
+        aria-label="Sign in with Discord"
+        @click="auth.login()"
+      >
+        <LogIn :size="22" :stroke-width="2" class="slot-icon" />
+        <span class="slot-label">Sign in</span>
+      </button>
     </div>
   </nav>
 </template>
@@ -65,6 +101,8 @@ const navItems: { name: string, href: string, icon: typeof House, match: (path: 
   color: rgb(232 220 198);
   border: 2px solid var(--paper-bd);
   text-decoration: none;
+  font: inherit;
+  cursor: pointer;
   transition:
     background-color 0.12s ease-out,
     color 0.12s ease-out,
@@ -76,7 +114,22 @@ const navItems: { name: string, href: string, icon: typeof House, match: (path: 
   outline-offset: 2px;
 }
 
+.slot--placeholder {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
 .slot-icon {
+  flex-shrink: 0;
+}
+
+.slot-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgb(232 220 198 / 0.6);
   flex-shrink: 0;
 }
 
@@ -95,6 +148,25 @@ const navItems: { name: string, href: string, icon: typeof House, match: (path: 
   box-shadow:
     inset 0 1px 0 var(--ingot-gold),
     inset 0 -2px 0 rgb(120 86 14);
+}
+
+.slot.is-active .slot-avatar {
+  border-color: rgb(82 60 18);
+}
+
+/* Signed-out sign-in slot: gold-active treatment as the primary action,
+   matching the /play/me .me-pill.gold and the desktop NavPlayUser pill. */
+.slot--signin {
+  background: var(--ingot-gold-dim);
+  color: rgb(40 26 8);
+  border-color: rgb(82 60 18);
+  box-shadow:
+    inset 0 1px 0 var(--ingot-gold),
+    inset 0 -2px 0 rgb(120 86 14);
+}
+
+.slot--signin:hover {
+  background: var(--ingot-gold);
 }
 
 @media (max-width: 720px) {
