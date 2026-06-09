@@ -1,14 +1,5 @@
-<!-- app/components/RollOverridePanel.vue -->
 <script setup lang="ts">
 import type { ExpandedItem } from '~/lib/math/expand-item'
-import {
-  DialogClose,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogRoot,
-  DialogTitle,
-} from 'reka-ui'
 import { computed, ref } from 'vue'
 import { humanizeShortId } from '~/lib/data/identifications'
 import { idRound } from '~/lib/math/expand-item'
@@ -19,13 +10,9 @@ import { useBuildStore } from '~/stores/build'
 
 const props = defineProps<{
   open: boolean
-  /** 'item' or 'tome' — picks which override map to read/write. */
   kind: 'item' | 'tome'
-  /** Slot index (0..8 for items, 0..6 for tomes). */
   slotIdx: number
-  /** The resolved ExpandedItem for this slot (carries minRolls/maxRolls). */
   item: ExpandedItem
-  /** Display name for the modal title. */
   itemName: string
 }>()
 const emit = defineEmits<{ 'update:open': [v: boolean] }>()
@@ -140,7 +127,7 @@ function setValue(row: Row, rawInput: string) {
 
 function presetFor(p: 'min' | 'avg' | 'max', row: Row): number {
   if (p === 'min')
-    return row.loEnd // numerically; the row treats endpoints as numbers
+    return row.loEnd
   if (p === 'max')
     return row.hiEnd
   return idRound((row.loEnd + row.hiEnd) / 2)
@@ -163,143 +150,85 @@ function clearAll() {
 </script>
 
 <template>
-  <DialogRoot :open="props.open" @update:open="emit('update:open', $event)">
-    <DialogPortal>
-      <DialogOverlay class="overlay" />
-      <DialogContent class="dialog">
-        <header class="head">
-          <DialogTitle class="title">
-            {{ itemName }} · Rolls
-          </DialogTitle>
-          <DialogClose class="x" aria-label="Close">
-            ×
-          </DialogClose>
-        </header>
-        <label v-if="props.kind === 'item'" class="wynntils-paste">
-          <span class="kicker">Paste from Wynntils</span>
-          <input
-            v-model="pasteValue"
-            type="text"
-            placeholder="In-game item code"
-            class="paste-input f-input"
-            spellcheck="false"
-            autocomplete="off"
-            @paste="onPaste"
-          >
-          <p v-if="pasteError" class="paste-error" role="alert">
-            {{ pasteError }}
-          </p>
-        </label>
-        <div class="bulk">
-          <span class="kicker">Set all to</span>
-          <button type="button" @click="setAllTo('min')">
-            Min
-          </button>
-          <button type="button" @click="setAllTo('avg')">
-            Avg
-          </button>
-          <button type="button" @click="setAllTo('max')">
-            Max
-          </button>
-          <button class="clear" type="button" @click="clearAll">
-            Clear all
-          </button>
-        </div>
-        <ul class="rows">
-          <li v-for="row in rows" :key="row.id" class="row">
-            <span class="label">
-              {{ row.label }}<span v-if="row.unit" class="unit">{{ row.unit }}</span>
-            </span>
-            <span class="lo">{{ row.loEnd }}</span>
-            <input
-              class="input"
-              type="number"
-              inputmode="numeric"
-              :placeholder="String(row.presetValue)"
-              :value="overrideOf(row.id) ?? ''"
-              @blur="setValue(row, ($event.target as HTMLInputElement).value)"
-              @keydown.enter="($event.target as HTMLInputElement).blur()"
-            >
-            <span class="hi">{{ row.hiEnd }}</span>
-            <button
-              v-if="overrideOf(row.id) !== undefined"
-              class="reset"
-              type="button"
-              :aria-label="`Reset ${row.label}`"
-              @click="
-                props.kind === 'item'
-                  ? store.clearOverride(props.slotIdx, row.id)
-                  : store.clearTomeOverride(props.slotIdx, row.id)
-              "
-            >
-              ↺
-            </button>
-            <span v-else class="reset-spacer" />
-          </li>
-        </ul>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+  <UiDialog
+    :open="props.open"
+    :title="`${itemName} · Rolls`"
+    @update:open="emit('update:open', $event)"
+  >
+    <label v-if="props.kind === 'item'" class="wynntils-paste">
+      <span class="kicker">Paste from Wynntils</span>
+      <input
+        v-model="pasteValue"
+        type="text"
+        placeholder="In-game item code"
+        class="paste-input f-input"
+        spellcheck="false"
+        autocomplete="off"
+        @paste="onPaste"
+      >
+      <p v-if="pasteError" class="paste-error" role="alert">
+        {{ pasteError }}
+      </p>
+    </label>
+    <div class="bulk">
+      <span class="kicker">Set all to</span>
+      <button type="button" @click="setAllTo('min')">
+        Min
+      </button>
+      <button type="button" @click="setAllTo('avg')">
+        Avg
+      </button>
+      <button type="button" @click="setAllTo('max')">
+        Max
+      </button>
+      <button class="clear" type="button" @click="clearAll">
+        Clear all
+      </button>
+    </div>
+    <ul class="rows">
+      <li v-for="row in rows" :key="row.id" class="row">
+        <span class="label">
+          {{ row.label }}<span v-if="row.unit" class="unit">{{ row.unit }}</span>
+        </span>
+        <span class="lo">{{ row.loEnd }}</span>
+        <input
+          class="input"
+          type="number"
+          inputmode="numeric"
+          :placeholder="String(row.presetValue)"
+          :value="overrideOf(row.id) ?? ''"
+          @blur="setValue(row, ($event.target as HTMLInputElement).value)"
+          @keydown.enter="($event.target as HTMLInputElement).blur()"
+        >
+        <span class="hi">{{ row.hiEnd }}</span>
+        <button
+          v-if="overrideOf(row.id) !== undefined"
+          class="reset"
+          type="button"
+          :aria-label="`Reset ${row.label}`"
+          @click="
+            props.kind === 'item'
+              ? store.clearOverride(props.slotIdx, row.id)
+              : store.clearTomeOverride(props.slotIdx, row.id)
+          "
+        >
+          ↺
+        </button>
+        <span v-else class="reset-spacer" />
+      </li>
+    </ul>
+  </UiDialog>
 </template>
 
-<style scoped>
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: oklch(0% 0 0 / 0.55);
-  z-index: 50;
-}
-.dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(520px, 92vw);
-  max-height: 86vh;
-  overflow: auto;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 16px;
-  z-index: 51;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.title {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text);
-}
-.x {
-  background: transparent;
-  border: 0;
-  color: var(--color-muted);
-  font-size: 18px;
-  cursor: pointer;
-}
-.bulk {
+<!-- Unscoped: lives inside UiDialog's portaled content. -->
+<style>
+.ui-dialog .bulk {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
-.bulk .kicker {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--color-faint);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.bulk button {
+.ui-dialog .bulk button {
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: 4px;
@@ -311,14 +240,14 @@ function clearAll() {
   color: var(--color-muted);
   cursor: pointer;
 }
-.bulk button:hover {
+.ui-dialog .bulk button:hover {
   color: var(--color-accent);
   border-color: var(--color-accent);
 }
-.bulk .clear {
+.ui-dialog .bulk .clear {
   margin-left: auto;
 }
-.rows {
+.ui-dialog .rows {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -326,7 +255,7 @@ function clearAll() {
   flex-direction: column;
   gap: 6px;
 }
-.row {
+.ui-dialog .row {
   display: grid;
   grid-template-columns: 1fr 36px 80px 36px 20px;
   align-items: center;
@@ -334,20 +263,20 @@ function clearAll() {
   font-family: var(--font-mono);
   font-size: 11px;
 }
-.label {
+.ui-dialog .row .label {
   color: var(--color-text);
 }
-.unit {
+.ui-dialog .row .unit {
   color: var(--color-faint);
   margin-left: 2px;
 }
-.lo,
-.hi {
+.ui-dialog .row .lo,
+.ui-dialog .row .hi {
   color: var(--color-faint);
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
-.input {
+.ui-dialog .row .input {
   width: 100%;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -358,10 +287,10 @@ function clearAll() {
   font-size: 11px;
   text-align: center;
 }
-.input:focus {
+.ui-dialog .row .input:focus {
   outline: 1px solid var(--color-accent);
 }
-.reset {
+.ui-dialog .row .reset {
   background: transparent;
   border: 0;
   color: var(--color-muted);
@@ -369,24 +298,24 @@ function clearAll() {
   font-size: 13px;
   padding: 0;
 }
-.reset:hover {
+.ui-dialog .row .reset:hover {
   color: var(--color-accent);
 }
-.reset-spacer {
+.ui-dialog .row .reset-spacer {
   width: 20px;
 }
-.wynntils-paste {
+.ui-dialog .wynntils-paste {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.paste-input {
+.ui-dialog .paste-input {
   width: 100%;
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.02em;
 }
-.paste-error {
+.ui-dialog .paste-error {
   color: oklch(62% 0.15 20);
   font-family: var(--font-mono);
   font-size: 11px;
