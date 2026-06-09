@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { RoundState, WynndleMode } from '~/lib/wynndle/types'
-import { Check, Clipboard } from '@lucide/vue'
+import { Check, Clipboard, Download } from '@lucide/vue'
+import { useTooltipExport } from '~/composables/useTooltipExport'
 import { buildShareGrid } from '~/lib/wynndle/share'
 
 // Visual share grid uses Wynncraft-trio-tinted parchment cells per Q9.
@@ -36,31 +37,74 @@ async function onCopy() {
     copied.value = false
   }, 1500)
 }
+
+const modeLabel = computed(() => props.mode === 'weapon' ? 'Weapon' : 'Armor')
+const scoreText = computed(() => props.round.won ? `${props.round.guesses.length}/10` : 'X/10')
+const hintText = computed(() => {
+  const n = props.round.hintsRevealed ?? 0
+  if (n <= 0)
+    return ''
+  return ` (${n} hint${n === 1 ? '' : 's'})`
+})
+const titleText = computed(
+  () => `Wynndle ${modeLabel.value} #${props.puzzleNumber} — ${scoreText.value}${hintText.value}`,
+)
+
+const cardRef = ref<HTMLElement | null>(null)
+const { exporting, exportTooltip } = useTooltipExport()
+
+function onDownload() {
+  if (!cardRef.value)
+    return
+  const slug = `wynndle-${props.mode}-${props.puzzleNumber}-${props.round.won ? props.round.guesses.length : 'X'}.png`
+  exportTooltip(cardRef.value, slug)
+}
 </script>
 
 <template>
   <div class="share">
-    <div class="grid" role="img" :aria-label="`Share grid: ${grid.length} of 10 guesses`">
-      <div
-        v-for="(row, i) in grid"
-        :key="i"
-        class="grid-row"
-        :data-final-row="isFinalRow(i) ? 'true' : null"
-        :style="{ '--row-i': i }"
-      >
-        <span
-          v-for="(status, j) in row"
-          :key="j"
-          class="grid-cell"
-          :data-status="status"
-        />
+    <div ref="cardRef" class="share-card">
+      <div class="export-header" data-export-only>
+        <span class="export-title">{{ titleText }}</span>
+      </div>
+      <div class="grid" role="img" :aria-label="`Share grid: ${grid.length} of 10 guesses`">
+        <div
+          v-for="(row, i) in grid"
+          :key="i"
+          class="grid-row"
+          :data-final-row="isFinalRow(i) ? 'true' : null"
+          :style="{ '--row-i': i }"
+        >
+          <span
+            v-for="(status, j) in row"
+            :key="j"
+            class="grid-cell"
+            :data-status="status"
+          >
+            <template v-if="status === 'higher'">▲</template>
+            <template v-else-if="status === 'lower'">▼</template>
+          </span>
+        </div>
+      </div>
+      <div class="export-footer" data-export-only>
+        <span>wynn.tools/play/wynndle</span>
       </div>
     </div>
-    <div class="share-actions">
+    <div class="share-actions" data-export-ignore>
       <button type="button" class="copy-btn" :data-copied="copied" @click="onCopy">
         <Check v-if="copied" :size="14" :stroke-width="2.5" />
         <Clipboard v-else :size="14" :stroke-width="2.2" />
         <span>{{ copied ? 'COPIED' : 'COPY RESULT' }}</span>
+      </button>
+      <button
+        type="button"
+        class="copy-btn png-btn"
+        :disabled="exporting"
+        :aria-label="exporting ? 'Generating PNG' : 'Download PNG'"
+        @click="onDownload"
+      >
+        <Download :size="14" :stroke-width="2.2" />
+        <span>{{ exporting ? 'RENDERING…' : 'DOWNLOAD PNG' }}</span>
       </button>
     </div>
   </div>
@@ -71,6 +115,51 @@ async function onCopy() {
   display: grid;
   gap: 14px;
   justify-items: center;
+}
+
+.share-card {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+/* Header + footer rendered only into the PNG. They mount in the DOM (so
+   html-to-image can capture them) but stay collapsed on screen — the card
+   becomes .is-exporting during the export pass and reveals them. */
+.export-header,
+.export-footer {
+  display: none;
+}
+
+.share-card.is-exporting {
+  padding: 18px 22px;
+  background: var(--paper-base);
+  border: 2px solid var(--paper-bd);
+  box-shadow:
+    inset 0 1px 0 var(--paper-bd-light),
+    inset 0 -1px 0 var(--paper-bd);
+}
+
+.share-card.is-exporting .export-header,
+.share-card.is-exporting .export-footer {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono);
+  color: var(--paper-text);
+}
+
+.share-card.is-exporting .export-title {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--paper-text-strong);
+  text-transform: uppercase;
+}
+
+.share-card.is-exporting .export-footer {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  opacity: 0.75;
+  text-transform: uppercase;
 }
 
 .grid {
@@ -98,6 +187,14 @@ async function onCopy() {
   background: var(--paper-light);
   border: 1px solid var(--paper-bd);
   box-shadow: inset 0 1px 0 var(--paper-bd-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+  color: rgb(255 255 255 / 0.92);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.35);
 }
 
 .grid-cell[data-status='correct'] {
@@ -202,6 +299,18 @@ async function onCopy() {
 .copy-btn:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 3px;
+}
+
+.copy-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.share-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 @media (max-width: 720px) {

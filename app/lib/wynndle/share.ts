@@ -3,9 +3,9 @@ import type { CellStatus, RoundState, WynndleMode } from './types'
 const EMOJI: Record<CellStatus, string> = {
   correct: '🟩',
   partial: '🟨',
-  wrong: '⬛',
-  higher: '🔼',
-  lower: '🔽',
+  wrong: '🟥',
+  higher: '🔺',
+  lower: '🔻',
 }
 
 export function buildShareGrid(
