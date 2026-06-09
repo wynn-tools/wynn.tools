@@ -241,19 +241,32 @@ const modes = [
   color: var(--paper-text);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .wynndle-hub {
-    padding: 14px 0 96px;
-    gap: 20px;
+    padding: 12px 0 24px;
+    gap: 18px;
+  }
+
+  .wh-header {
+    padding: 10px 0;
   }
 
   .wh-modes {
     grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
+    gap: 14px;
   }
 
   .wh-mode {
-    padding: 22px 18px 18px;
+    padding: 20px 18px 16px;
+  }
+
+  .wh-mode-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .wh-mode-label {
+    font-size: 26px;
   }
 
   .wh-extras {

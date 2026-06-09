@@ -50,14 +50,15 @@ function rarityColor(rarity?: string) {
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .identity {
-    min-height: 52px;
-    padding: 4px 8px;
+    min-height: 40px;
+    padding: 8px 12px;
   }
 
   .identity-name {
-    font-size: 13px;
+    font-size: 16px;
+    line-height: 1;
   }
 }
 </style>

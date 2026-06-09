@@ -302,10 +302,22 @@ function onDownload() {
   justify-content: center;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .grid-cell {
     width: 18px;
     height: 18px;
+  }
+
+  .copy-btn {
+    padding: 12px 18px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .grid-cell {
+    width: 16px;
+    height: 16px;
   }
 }
 </style>

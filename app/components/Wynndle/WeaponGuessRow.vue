@@ -50,10 +50,14 @@ defineProps<{ guess: GuessRecord }>()
   gap: 4px;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .row {
-    grid-template-columns: minmax(140px, 1.6fr) repeat(7, minmax(0, 1fr));
-    gap: 2px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .row > :first-child {
+    grid-column: 1 / -1;
   }
 }
 </style>

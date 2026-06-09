@@ -225,7 +225,18 @@ function openCard(s: SlotState) {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .hints-kicker {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  .hint-card {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 400px) {
   .hint-list {
     grid-template-columns: minmax(0, 1fr);
   }

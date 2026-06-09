@@ -105,14 +105,15 @@ const attrs = computed(() => props.mode === 'weapon' ? weaponAttrs : armorAttrs)
         </li>
       </ul>
 
-      <ItemCombobox
-        v-if="!finished"
-        :mode="mode"
-        :game-version="puzzle.gameVersion"
-        :disabled="busy"
-        :exclude="exclude"
-        @submit="(id: string) => emit('submit', id)"
-      />
+      <div v-if="!finished" class="combobox-mount">
+        <ItemCombobox
+          :mode="mode"
+          :game-version="puzzle.gameVersion"
+          :disabled="busy"
+          :exclude="exclude"
+          @submit="(id: string) => emit('submit', id)"
+        />
+      </div>
     </div>
 
     <!-- Hint aside is mid-game only. When the round finishes the WinScreen
@@ -336,29 +337,90 @@ const attrs = computed(() => props.mode === 'weapon' ? weaponAttrs : armorAttrs)
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .board {
-    padding: 14px 0 96px;
+    padding: 12px 0 24px;
   }
 
   .board-frame {
-    padding: 20px 14px 16px;
-    gap: 12px;
+    padding: 18px 12px 14px;
+    gap: 10px;
   }
 
-  .legend {
-    grid-template-columns: minmax(140px, 1.6fr) repeat(7, minmax(0, 1fr));
-    gap: 2px;
+  /* Challenge header tightens: line wraps to two rows naturally on 360px,
+     counter stays right-aligned via the existing flex. */
+  .challenge {
+    gap: 10px;
+    align-items: flex-start;
   }
 
-  .legend-identity,
-  .legend-cell {
-    padding: 4px 2px;
-    font-size: 8px;
+  .challenge-line {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    gap: 5px;
+    line-height: 1.4;
   }
 
   .counter {
-    font-size: 16px;
+    font-size: 15px;
+    padding: 3px 10px;
+    flex-shrink: 0;
+  }
+
+  /* Legend mirrors the row's stacked shape: identity word as a full-width
+     band, then the 7 attribute headers in their own grid below. */
+  .legend {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+  }
+
+  .legend-identity {
+    grid-column: 1 / -1;
+    text-align: left;
+    padding: 5px 12px;
+    font-size: 9px;
+  }
+
+  .legend-cell {
+    padding: 4px 2px;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  /* Sticky guess input: lifts to the viewport so the player can keep
+     submitting while scrolling through guesses. Sits above the play
+     envelope's bottom hotbar (96px reserve + safe-area inset). */
+  .combobox-mount {
+    position: sticky;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 100px);
+    z-index: 4;
+    margin-top: 4px;
+  }
+
+  .guesses {
+    gap: 3px;
+  }
+
+  .mode-tabs {
+    align-self: stretch;
+  }
+
+  .mode-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .legend-cell {
+    font-size: 7px;
+    letter-spacing: 0.04em;
+  }
+
+  .challenge-line {
+    font-size: 9px;
   }
 }
 </style>

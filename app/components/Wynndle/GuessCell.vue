@@ -160,21 +160,27 @@ const labelColor = computed(() => {
     inset 0 -1px 0 rgb(0 0 0 / 0.25);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .cell {
-    min-height: 52px;
-    padding: 4px 4px;
+    min-height: 48px;
+    padding: 4px 2px;
   }
 
   .cell-value {
-    /* Mobile cells run ~40–60px wide; widen the clamp range so the value
-       scales further down without going illegible. */
-    font-size: clamp(9px, 14cqi, 13px);
+    /* In the stacked row layout each cell is ~44-50px wide on a 360-414px
+       viewport. Widen the clamp so long values stay legible without clipping. */
+    font-size: clamp(10px, 18cqi, 13px);
+    gap: 2px;
   }
 
   .cell-elem-icon {
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
+  }
+
+  .cell-arrow {
+    width: 11px;
+    height: 11px;
   }
 }
 </style>

@@ -12,6 +12,7 @@ import {
   ComboboxViewport,
 } from 'reka-ui'
 import { computed, onMounted, ref, watch } from 'vue'
+import { useMediaQuery } from '~/composables/useMediaQuery'
 import { useWynndlePool } from '~/composables/useWynndlePool'
 import { itemIconUrl } from '~/lib/items/icon'
 import { TIER_COLORS } from '~/lib/items/tooltip'
@@ -85,6 +86,11 @@ onBeforeUnmount(() => {
   if (typeof window !== 'undefined')
     window.removeEventListener('resize', measureAnchor)
 })
+
+// On mobile the soft keyboard occludes a dropdown opened below the input;
+// flip it above the input so suggestions remain visible while typing.
+const isMobile = useMediaQuery('(max-width: 640px)')
+const dropdownSide = computed<'top' | 'bottom'>(() => isMobile.value ? 'top' : 'bottom')
 </script>
 
 <template>
@@ -103,6 +109,8 @@ onBeforeUnmount(() => {
           autocomplete="off"
           autocapitalize="off"
           spellcheck="false"
+          inputmode="search"
+          enterkeyhint="go"
         />
         <Search :size="18" :stroke-width="2.2" class="combo-magnifier" />
       </div>
@@ -111,6 +119,7 @@ onBeforeUnmount(() => {
       <ComboboxContent
         class="combo-content"
         position="popper"
+        :side="dropdownSide"
         :side-offset="8"
         :style="anchorWidth ? { width: `${anchorWidth}px` } : undefined"
       >
@@ -194,6 +203,15 @@ onBeforeUnmount(() => {
   right: 14px;
   color: rgb(255 255 255 / 0.7);
   pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .combo-input {
+    /* 16px suppresses iOS Safari's auto-zoom on focus. The next visible
+       smaller value (15px) still triggers the zoom. */
+    font-size: 16px;
+    padding: 14px 50px 14px 14px;
+  }
 }
 </style>
 
@@ -282,9 +300,18 @@ onBeforeUnmount(() => {
   white-space: nowrap;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
+  .combo-item {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    padding: 10px 12px;
+  }
+
   .combo-item-name {
-    font-size: 14px;
+    font-size: 15px;
+  }
+
+  .combo-item-rarity {
+    font-size: 9px;
   }
 }
 </style>

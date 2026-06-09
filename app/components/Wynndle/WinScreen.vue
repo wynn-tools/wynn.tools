@@ -394,9 +394,14 @@ onBeforeUnmount(() => {
   transform: translateY(8px);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .reveal {
-    padding: 22px 16px 18px;
+    padding: 22px 14px 18px;
+    gap: 14px;
+  }
+
+  .answer-card {
+    padding: 18px 16px;
   }
 
   .countdown-time {
@@ -409,6 +414,23 @@ onBeforeUnmount(() => {
 
   .footer-pill {
     justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .countdown {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+  }
+
+  .countdown-label {
+    font-size: 10px;
+  }
+
+  .countdown-time {
+    font-size: 20px;
   }
 }
 </style>
