@@ -11,6 +11,8 @@ export function rewriteWynnbuilderUrls(src: string): string {
 export async function renderMarkdown(src: string): Promise<string> {
   if (!src)
     return ''
+  if (import.meta.server)
+    return ''
   const html = marked.parse(rewriteWynnbuilderUrls(src), { async: false }) as string
   const { default: DOMPurify } = await import('isomorphic-dompurify')
   return DOMPurify.sanitize(html, { USE_PROFILES: { html: true } })
