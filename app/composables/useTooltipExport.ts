@@ -40,25 +40,20 @@ async function inlineBorderImages(root: HTMLElement): Promise<() => void> {
 
 export function useTooltipExport() {
   const exporting = ref(false)
+  const copying = ref(false)
+  const copied = ref(false)
   const toast = useToast()
 
-  async function exportTooltip(el: HTMLElement, filename: string): Promise<void> {
-    if (!el.isConnected)
-      return
-    if (exporting.value)
-      return
-
-    exporting.value = true
+  async function renderBlob(el: HTMLElement): Promise<Blob | null> {
     const footer = el.querySelector<HTMLElement>('[data-export-footer]')
     const prevDisplay = footer?.style.display ?? ''
     if (footer)
       footer.style.display = 'flex'
     el.classList.add('is-exporting')
     const restoreBorders = await inlineBorderImages(el)
-
     try {
       await document.fonts.ready
-      const blob = await toBlob(el, {
+      return await toBlob(el, {
         pixelRatio: 2,
         cacheBust: true,
         filter: (node) => {
@@ -67,9 +62,23 @@ export function useTooltipExport() {
           return !node.hasAttribute('data-export-ignore')
         },
       })
+    }
+    finally {
+      restoreBorders()
+      el.classList.remove('is-exporting')
+      if (footer)
+        footer.style.display = prevDisplay
+    }
+  }
+
+  async function exportTooltip(el: HTMLElement, filename: string): Promise<void> {
+    if (!el.isConnected || exporting.value || copying.value)
+      return
+    exporting.value = true
+    try {
+      const blob = await renderBlob(el)
       if (!blob)
         throw new Error('html-to-image returned a null blob')
-
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -84,13 +93,36 @@ export function useTooltipExport() {
       toast.push('error', 'Couldn\'t export image — try again.')
     }
     finally {
-      restoreBorders()
-      el.classList.remove('is-exporting')
-      if (footer)
-        footer.style.display = prevDisplay
       exporting.value = false
     }
   }
 
-  return { exporting, exportTooltip }
+  async function copyTooltip(el: HTMLElement): Promise<void> {
+    if (!el.isConnected || exporting.value || copying.value)
+      return
+    if (typeof ClipboardItem === 'undefined' || !navigator.clipboard?.write) {
+      toast.push('error', 'Clipboard images aren\'t supported in this browser.')
+      return
+    }
+    copying.value = true
+    try {
+      const blob = await renderBlob(el)
+      if (!blob)
+        throw new Error('html-to-image returned a null blob')
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      copied.value = true
+      setTimeout(() => {
+        copied.value = false
+      }, 1500)
+    }
+    catch (err) {
+      console.error('[tooltip-export] copy failed:', err)
+      toast.push('error', 'Couldn\'t copy image — try again.')
+    }
+    finally {
+      copying.value = false
+    }
+  }
+
+  return { exporting, copying, copied, exportTooltip, copyTooltip }
 }

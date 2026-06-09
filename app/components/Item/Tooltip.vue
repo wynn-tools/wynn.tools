@@ -169,34 +169,47 @@ function sepStyle() {
 }
 
 const containerRef = ref<HTMLElement | null>(null)
-const { exporting, exportTooltip } = useTooltipExport()
+const { exporting, copying, copied, exportTooltip, copyTooltip } = useTooltipExport()
 
 function onExportClick() {
   if (!containerRef.value)
     return
-  if (props.exportFilename) {
-    exportTooltip(containerRef.value, props.exportFilename)
+  const filename = props.exportFilename
+    ?? `${props.item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item'}.png`
+  exportTooltip(containerRef.value, filename)
+}
+
+function onCopyClick() {
+  if (!containerRef.value)
     return
-  }
-  const slug = props.item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-  exportTooltip(containerRef.value, `${slug || 'item'}.png`)
+  copyTooltip(containerRef.value)
 }
 </script>
 
 <template>
   <div ref="containerRef" class="tt-wrap">
-    <button
-      v-if="exportable"
-      type="button"
-      class="tt-export-btn"
-      data-export-ignore
-      :disabled="exporting"
-      :aria-label="exporting ? 'Exporting tooltip as PNG' : 'Export tooltip as PNG'"
-      @click="onExportClick"
-    >
-      <span v-if="exporting" class="tt-export-spinner" aria-hidden="true" />
-      <span v-else>Export PNG</span>
-    </button>
+    <div v-if="exportable" class="tt-export-actions" data-export-ignore>
+      <button
+        type="button"
+        class="tt-export-btn"
+        :disabled="exporting || copying"
+        :aria-label="copying ? 'Copying tooltip as PNG' : 'Copy tooltip as PNG'"
+        @click="onCopyClick"
+      >
+        <span v-if="copying" class="tt-export-spinner" aria-hidden="true" />
+        <span v-else>{{ copied ? 'Copied' : 'Copy PNG' }}</span>
+      </button>
+      <button
+        type="button"
+        class="tt-export-btn"
+        :disabled="exporting || copying"
+        :aria-label="exporting ? 'Exporting tooltip as PNG' : 'Download tooltip as PNG'"
+        @click="onExportClick"
+      >
+        <span v-if="exporting" class="tt-export-spinner" aria-hidden="true" />
+        <span v-else>Download PNG</span>
+      </button>
+    </div>
 
     <div class="tt-container">
       <div class="tt-frame" :style="frameStyle" />
@@ -751,12 +764,16 @@ function onExportClick() {
   }
 }
 
-.tt-export-btn {
+.tt-export-actions {
   position: absolute;
   top: -10px;
   right: 6px;
   transform: translateY(-100%);
   z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+.tt-export-btn {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;

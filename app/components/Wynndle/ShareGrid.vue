@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RoundState, WynndleMode } from '~/lib/wynndle/types'
-import { Check, Clipboard, Download } from '@lucide/vue'
+import { Check, Clipboard, Copy, Download } from '@lucide/vue'
 import { useTooltipExport } from '~/composables/useTooltipExport'
 import { buildShareGrid } from '~/lib/wynndle/share'
 
@@ -51,13 +51,19 @@ const titleText = computed(
 )
 
 const cardRef = ref<HTMLElement | null>(null)
-const { exporting, exportTooltip } = useTooltipExport()
+const { exporting, copying, copied: pngCopied, exportTooltip, copyTooltip } = useTooltipExport()
 
 function onDownload() {
   if (!cardRef.value)
     return
   const slug = `wynndle-${props.mode}-${props.puzzleNumber}-${props.round.won ? props.round.guesses.length : 'X'}.png`
   exportTooltip(cardRef.value, slug)
+}
+
+function onCopyPng() {
+  if (!cardRef.value)
+    return
+  copyTooltip(cardRef.value)
 }
 </script>
 
@@ -96,12 +102,24 @@ function onDownload() {
       <button
         type="button"
         class="copy-btn png-btn"
-        :disabled="exporting"
+        :disabled="exporting || copying"
         :aria-label="exporting ? 'Generating PNG' : 'Download PNG'"
         @click="onDownload"
       >
         <Download :size="14" :stroke-width="2.2" />
         <span>{{ exporting ? 'RENDERING…' : 'DOWNLOAD PNG' }}</span>
+      </button>
+      <button
+        type="button"
+        class="copy-btn png-btn"
+        :disabled="exporting || copying"
+        :data-copied="pngCopied"
+        :aria-label="copying ? 'Generating PNG' : 'Copy PNG to clipboard'"
+        @click="onCopyPng"
+      >
+        <Check v-if="pngCopied" :size="14" :stroke-width="2.5" />
+        <Copy v-else :size="14" :stroke-width="2.2" />
+        <span>{{ pngCopied ? 'COPIED' : copying ? 'RENDERING…' : 'COPY PNG' }}</span>
       </button>
     </div>
   </div>
