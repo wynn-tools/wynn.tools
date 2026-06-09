@@ -115,6 +115,7 @@ watch(
           <NuxtLink to="/crafted" class="toolbar-browse">
             Browse crafted <span class="toolbar-browse-arrow" aria-hidden="true">→</span>
           </NuxtLink>
+          <CrafterDuplicateMenu v-if="props.savedId && props.isOwner" />
           <CrafterSaveButton :saved-id="props.savedId" :is-owner="props.isOwner" :visibility="props.visibility" />
         </div>
       </div>
