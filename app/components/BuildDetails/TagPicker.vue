@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, ref } from 'vue'
 import { BUILD_TAGS, DENY_TAGS, normalizeTags, TAG_LIMITS, tagAxis, tagDisplayLabel } from '~/lib/build-tags'
 
@@ -68,37 +67,33 @@ const AXIS_LABELS: Record<string, string> = { role: 'Role', playstyle: 'Playstyl
       {{ tagDisplayLabel(t) }}
       <button type="button" class="chip-remove" :aria-label="`Remove ${t}`" @click="removeTag(t)">×</button>
     </span>
-    <PopoverRoot v-model:open="open">
-      <PopoverTrigger as-child>
+    <UiPopover v-model:open="open" :width="320" aria-label="Add tag">
+      <template #trigger>
         <button type="button" class="tag-chip add-tag" :disabled="atCap">+ Add tag</button>
-      </PopoverTrigger>
-      <PopoverPortal>
-        <PopoverContent class="picker-pop" :side-offset="6">
-          <input v-model="query" type="text" class="picker-input" placeholder="Search tags…" autofocus>
-          <p v-if="atCap" class="picker-hint">Max {{ TAG_LIMITS.MAX_PER_BUILD }} tags — remove one to add more.</p>
-          <p v-else-if="queryIsDenied" class="picker-warn">Class is auto-tagged from the build.</p>
-          <div v-for="axis in AXIS_ORDER" :key="axis" class="picker-group">
-            <p v-if="grouped[axis].length > 0" class="picker-axis">{{ AXIS_LABELS[axis] }}</p>
-            <div class="picker-options">
-              <button
-                v-for="opt in grouped[axis]"
-                :key="opt.slug"
-                type="button"
-                class="picker-opt"
-                :disabled="atCap"
-                @click="addTag(opt.slug)"
-              >{{ opt.label }}</button>
-            </div>
-          </div>
+      </template>
+      <input v-model="query" type="text" class="picker-input" placeholder="Search tags…" autofocus>
+      <p v-if="atCap" class="picker-hint">Max {{ TAG_LIMITS.MAX_PER_BUILD }} tags — remove one to add more.</p>
+      <p v-else-if="queryIsDenied" class="picker-warn">Class is auto-tagged from the build.</p>
+      <div v-for="axis in AXIS_ORDER" :key="axis" class="picker-group">
+        <p v-if="grouped[axis].length > 0" class="picker-axis">{{ AXIS_LABELS[axis] }}</p>
+        <div class="picker-options">
           <button
-            v-if="query.trim() && !queryIsDenied && !atCap"
+            v-for="opt in grouped[axis]"
+            :key="opt.slug"
             type="button"
-            class="picker-custom"
-            @click="addCustom"
-          >+ Add custom "{{ query.trim() }}"</button>
-        </PopoverContent>
-      </PopoverPortal>
-    </PopoverRoot>
+            class="picker-opt"
+            :disabled="atCap"
+            @click="addTag(opt.slug)"
+          >{{ opt.label }}</button>
+        </div>
+      </div>
+      <button
+        v-if="query.trim() && !queryIsDenied && !atCap"
+        type="button"
+        class="picker-custom"
+        @click="addCustom"
+      >+ Add custom "{{ query.trim() }}"</button>
+    </UiPopover>
   </span>
 </template>
 
@@ -143,26 +138,19 @@ const AXIS_LABELS: Record<string, string> = { role: 'Role', playstyle: 'Playstyl
   opacity: 0.4;
   cursor: not-allowed;
 }
-.picker-pop {
-  width: 320px;
-  max-height: 400px;
-  overflow-y: auto;
-  background: var(--color-surface-hi);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 10px;
-  z-index: 50;
-}
-.picker-input {
+</style>
+
+<!-- Unscoped: lives inside UiPopover's portaled content. -->
+<style>
+.ui-popover .picker-input {
   width: 100%;
   padding: 6px 10px;
-  background: var(--color-surface);
+  background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   color: var(--color-text);
-  margin-bottom: 8px;
 }
-.picker-axis {
+.ui-popover .picker-axis {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.1em;
@@ -170,12 +158,12 @@ const AXIS_LABELS: Record<string, string> = { role: 'Role', playstyle: 'Playstyl
   color: var(--color-faint);
   margin: 6px 0 4px 0;
 }
-.picker-options {
+.ui-popover .picker-options {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
-.picker-opt {
+.ui-popover .picker-opt {
   font-size: 11px;
   padding: 3px 8px;
   border-radius: 999px;
@@ -184,29 +172,29 @@ const AXIS_LABELS: Record<string, string> = { role: 'Role', playstyle: 'Playstyl
   color: var(--color-text);
   cursor: pointer;
 }
-.picker-opt:hover:not(:disabled) {
+.ui-popover .picker-opt:hover:not(:disabled) {
   border-color: var(--color-accent);
   color: var(--color-accent);
 }
-.picker-opt:disabled {
+.ui-popover .picker-opt:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
-.picker-hint,
-.picker-warn {
+.ui-popover .picker-hint,
+.ui-popover .picker-warn {
   font-size: 11px;
   color: var(--color-muted);
   margin: 4px 0;
 }
-.picker-warn {
+.ui-popover .picker-warn {
   color: oklch(70% 0.15 35);
 }
-.picker-custom {
+.ui-popover .picker-custom {
   margin-top: 8px;
   display: block;
   width: 100%;
   padding: 6px;
-  background: var(--color-surface);
+  background: var(--color-bg);
   border: 1px dashed var(--color-border);
   border-radius: 6px;
   color: var(--color-text);

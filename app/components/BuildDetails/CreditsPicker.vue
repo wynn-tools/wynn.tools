@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ApiBuildCredit, ApiUserSearchResult } from '~/composables/useApi'
-import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 
@@ -70,48 +69,44 @@ function moveDown(i: number) {
 </script>
 
 <template>
-  <PopoverRoot v-model:open="open">
-    <PopoverTrigger as-child>
+  <UiPopover v-model:open="open" :width="340" aria-label="Edit credits">
+    <template #trigger>
       <button type="button" class="credits-trigger">
         {{ credits.length === 0 ? '+ Add credit' : 'Edit credits' }}
       </button>
-    </PopoverTrigger>
-    <PopoverPortal>
-      <PopoverContent class="credits-pop" :side-offset="6">
-        <input
-          v-model="query"
-          type="text"
-          class="credits-input"
-          :placeholder="atCap ? 'Max 10 credits' : 'Search users…'"
-          :disabled="atCap"
-          autofocus
-        >
-        <ul v-if="results.length > 0" class="credits-results">
-          <li v-for="u in results" :key="u.id">
-            <button type="button" class="result-btn" @click="add(u)">
-              <img v-if="u.avatar" :src="u.avatar" alt="" class="avatar">
-              <span>{{ u.name }}</span>
-            </button>
-          </li>
-        </ul>
-        <p v-else-if="query && !searching" class="credits-empty">
-          No matches
-        </p>
+    </template>
+    <input
+      v-model="query"
+      type="text"
+      class="credits-input"
+      :placeholder="atCap ? 'Max 10 credits' : 'Search users…'"
+      :disabled="atCap"
+      autofocus
+    >
+    <ul v-if="results.length > 0" class="credits-results">
+      <li v-for="u in results" :key="u.id">
+        <button type="button" class="result-btn" @click="add(u)">
+          <img v-if="u.avatar" :src="u.avatar" alt="" class="avatar">
+          <span>{{ u.name }}</span>
+        </button>
+      </li>
+    </ul>
+    <p v-else-if="query && !searching" class="credits-empty">
+      No matches
+    </p>
 
-        <ul v-if="credits.length > 0" class="credits-current">
-          <li v-for="(c, i) in credits" :key="c.id" class="current-row">
-            <img v-if="c.avatar" :src="c.avatar" alt="" class="avatar">
-            <span class="current-name">{{ c.displayName }}</span>
-            <span class="row-actions">
-              <button type="button" class="row-btn" :disabled="i === 0" aria-label="Move up" @click="moveUp(i)">↑</button>
-              <button type="button" class="row-btn" :disabled="i === credits.length - 1" aria-label="Move down" @click="moveDown(i)">↓</button>
-              <button type="button" class="row-btn remove" aria-label="Remove" @click="remove(c.id)">×</button>
-            </span>
-          </li>
-        </ul>
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+    <ul v-if="credits.length > 0" class="credits-current">
+      <li v-for="(c, i) in credits" :key="c.id" class="current-row">
+        <img v-if="c.avatar" :src="c.avatar" alt="" class="avatar">
+        <span class="current-name">{{ c.displayName }}</span>
+        <span class="row-actions">
+          <button type="button" class="row-btn" :disabled="i === 0" aria-label="Move up" @click="moveUp(i)">↑</button>
+          <button type="button" class="row-btn" :disabled="i === credits.length - 1" aria-label="Move down" @click="moveDown(i)">↓</button>
+          <button type="button" class="row-btn remove" aria-label="Remove" @click="remove(c.id)">×</button>
+        </span>
+      </li>
+    </ul>
+  </UiPopover>
 </template>
 
 <style scoped>
@@ -128,35 +123,30 @@ function moveDown(i: number) {
   color: var(--color-accent);
   border-color: var(--color-accent);
 }
-.credits-pop {
-  width: 340px;
-  background: var(--color-surface-hi);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 10px;
-  z-index: 50;
-}
-.credits-input {
+</style>
+
+<!-- Unscoped: lives inside UiPopover's portaled content. -->
+<style>
+.ui-popover .credits-input {
   width: 100%;
   padding: 6px 10px;
-  background: var(--color-surface);
+  background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 6px;
   color: var(--color-text);
-  margin-bottom: 8px;
 }
-.credits-results,
-.credits-current {
+.ui-popover .credits-results,
+.ui-popover .credits-current {
   list-style: none;
   padding: 0;
-  margin: 0 0 8px 0;
+  margin: 0;
 }
-.credits-current {
+.ui-popover .credits-current {
   border-top: 1px solid var(--color-border);
   padding-top: 8px;
 }
-.result-btn,
-.current-row {
+.ui-popover .result-btn,
+.ui-popover .current-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -165,35 +155,30 @@ function moveDown(i: number) {
   width: 100%;
   text-align: left;
 }
-.result-btn {
+.ui-popover .result-btn {
   background: transparent;
   border: none;
   cursor: pointer;
   color: var(--color-text);
 }
-.result-btn:hover {
-  background: var(--color-surface);
+.ui-popover .result-btn:hover {
+  background: var(--color-surface-hi);
 }
-.avatar {
+.ui-popover .avatar {
   width: 24px;
   height: 24px;
   border-radius: 50%;
 }
-.result-user,
-.current-user {
-  color: var(--color-faint);
-  font-size: 11px;
-}
-.current-name {
+.ui-popover .current-name {
   color: var(--color-text);
   font-size: 13px;
 }
-.row-actions {
+.ui-popover .row-actions {
   margin-left: auto;
   display: inline-flex;
   gap: 2px;
 }
-.row-btn {
+.ui-popover .row-btn {
   background: transparent;
   border: none;
   color: var(--color-faint);
@@ -201,17 +186,17 @@ function moveDown(i: number) {
   padding: 2px 6px;
   font-size: 12px;
 }
-.row-btn:hover:not(:disabled) {
+.ui-popover .row-btn:hover:not(:disabled) {
   color: var(--color-text);
 }
-.row-btn:disabled {
+.ui-popover .row-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
-.row-btn.remove:hover {
+.ui-popover .row-btn.remove:hover {
   color: oklch(70% 0.18 25);
 }
-.credits-empty {
+.ui-popover .credits-empty {
   color: var(--color-muted);
   font-size: 12px;
   margin: 4px 0;

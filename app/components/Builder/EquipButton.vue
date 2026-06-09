@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { SearchItem } from '~/lib/items-search/types'
-import { PopoverAnchor, PopoverContent, PopoverPortal, PopoverRoot } from 'reka-ui'
 import { computed, ref } from 'vue'
 import { useBuilderRail } from '~/composables/useBuilderRail'
 import { SLOT, SLOT_LABELS, slotsForItem } from '~/lib/builder-draft/routing'
@@ -49,8 +48,14 @@ function onUnequip() {
     <span class="equip-label">Unequip</span>
   </button>
 
-  <PopoverRoot v-else-if="equippable && isRing" v-model:open="ringOpen">
-    <PopoverAnchor as-child>
+  <UiPopover
+    v-else-if="equippable && isRing"
+    v-model:open="ringOpen"
+    variant="elevated"
+    :min-width="160"
+    align="end"
+  >
+    <template #trigger>
       <button
         type="button"
         class="equip"
@@ -60,30 +65,19 @@ function onUnequip() {
         <span class="equip-plus" aria-hidden="true">+</span>
         <span class="equip-label">Equip</span>
       </button>
-    </PopoverAnchor>
-    <PopoverPortal>
-      <PopoverContent
-        class="ring-menu"
-        side="bottom"
-        align="end"
-        :side-offset="6"
-        @click.stop
-        @open-auto-focus.prevent
-      >
-        <span class="ring-menu-head">Both rings full — replace</span>
-        <button
-          v-for="r in ringSlots"
-          :key="r.slot"
-          type="button"
-          class="ring-opt"
-          @click.stop.prevent="chooseRing(r.slot)"
-        >
-          <span class="ring-opt-name">{{ r.label }}</span>
-          <span class="ring-opt-occ">{{ r.occupant ?? 'empty' }}</span>
-        </button>
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+    </template>
+    <span class="ring-menu-head">Both rings full — replace</span>
+    <button
+      v-for="r in ringSlots"
+      :key="r.slot"
+      type="button"
+      class="ring-opt"
+      @click.stop.prevent="chooseRing(r.slot)"
+    >
+      <span class="ring-opt-name">{{ r.label }}</span>
+      <span class="ring-opt-occ">{{ r.occupant ?? 'empty' }}</span>
+    </button>
+  </UiPopover>
 
   <button
     v-else-if="equippable"
@@ -142,29 +136,18 @@ function onUnequip() {
   line-height: 1;
   margin-top: -1px;
 }
+</style>
 
-.ring-menu {
-  z-index: 70;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 160px;
-  padding: 6px;
-  background: color-mix(in oklch, var(--color-surface-hi) 96%, transparent);
-  backdrop-filter: blur(12px);
-  border-radius: 8px;
-  box-shadow:
-    0 4px 24px oklch(0% 0 0 / 0.3),
-    inset 0 0 0 1px color-mix(in oklch, var(--color-accent) 20%, transparent);
-}
-.ring-menu-head {
+<!-- Unscoped: lives inside UiPopover's portaled content. -->
+<style>
+.ui-popover .ring-menu-head {
   font: 500 10px/1 var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-faint);
   padding: 4px 8px 6px;
 }
-.ring-opt {
+.ui-popover .ring-opt {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -179,19 +162,19 @@ function onUnequip() {
     background 0.12s ease-out,
     border-color 0.12s ease-out;
 }
-.ring-opt:hover {
+.ui-popover .ring-opt:hover {
   background: color-mix(in oklch, var(--color-accent) 10%, var(--color-surface));
   border-color: var(--color-accent);
 }
-.ring-opt:focus-visible {
+.ui-popover .ring-opt:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: -2px;
 }
-.ring-opt-name {
+.ui-popover .ring-opt-name {
   font: 600 13px/1 var(--font-display);
   color: var(--color-text);
 }
-.ring-opt-occ {
+.ui-popover .ring-opt-occ {
   font-size: 11px;
   color: var(--color-muted);
 }
