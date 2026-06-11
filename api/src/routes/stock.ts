@@ -11,6 +11,7 @@ import { AppError } from '../lib/errors'
 import { hasScope, requireAuth } from '../middleware/auth'
 import { readBlobStream, writeBlob } from '../services/blob-store'
 import { sniffImageMime } from '../services/stock-image-guard'
+import { isStockEmoji, toggleReaction } from '../services/stock-reactions'
 import { getCreationBySlug, getRawPart, getVersion, listCreations } from '../services/stock-read'
 
 import {
@@ -228,6 +229,22 @@ stock.delete('/:slug', requireAuth, async (c) => {
     throw new AppError(404, 'not_found', 'creation not found')
   await softDeleteCreation(row.id, auth.user.id)
   return c.body(null, 204)
+})
+
+const reactionBody = z.object({
+  emoji: z.string().refine(isStockEmoji, { message: 'unknown emoji' }),
+})
+
+stock.post('/:slug/reactions', requireAuth, zValidator('json', reactionBody), async (c) => {
+  const auth = c.get('auth')
+  const creation = await getDb().query.stockCreation.findFirst({
+    where: (cc, { and, eq, isNull }) => and(eq(cc.slug, c.req.param('slug')), isNull(cc.deletedAt)),
+    columns: { id: true },
+  })
+  if (!creation)
+    throw new AppError(404, 'not_found', 'creation not found')
+  const counts = await toggleReaction(creation.id, auth.user.id, c.req.valid('json').emoji as never)
+  return c.json(counts)
 })
 
 stock.post('/uploads', requireAuth, async (c) => {
