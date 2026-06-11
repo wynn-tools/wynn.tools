@@ -27,6 +27,7 @@ export interface StockReactionCounts {
 
 export interface StockAuthor {
   id: string
+  discordId: string
   username: string
   displayName: string | null
   avatar: string | null

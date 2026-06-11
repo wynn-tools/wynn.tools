@@ -138,7 +138,7 @@ export async function getCreationBySlug(slug: string) {
   const c = await getDb().query.stockCreation.findFirst({
     where: (c, { and, eq, isNull }) => and(eq(c.slug, slug), isNull(c.deletedAt)),
     with: {
-      author: { columns: { id: true, username: true, displayName: true, avatar: true } },
+      author: { columns: { id: true, username: true, displayName: true, avatar: true, discordId: true } },
       versions: {
         where: (v, { eq }) => eq(v.status, 'published'),
         orderBy: (v, { desc }) => [desc(v.number)],
