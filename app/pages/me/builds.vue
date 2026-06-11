@@ -86,14 +86,16 @@ async function deleteBuild(id: string) {
 <template>
   <div class="page">
     <div class="toolbar">
-      <div class="tabs" role="tablist">
-        <button role="tab" class="on" aria-selected="true" @click="navigateTo('/me/builds')">
-          My Builds
-        </button>
-        <button role="tab" aria-selected="false" @click="navigateTo('/me/items')">
-          My Items
-        </button>
-      </div>
+      <UiSegmented
+        model-value="builds"
+        :options="[
+          { value: 'builds', label: 'My Builds' },
+          { value: 'items', label: 'My Items' },
+        ]"
+        role="tab"
+        aria-label="My library"
+        @update:model-value="v => v === 'items' && navigateTo('/me/items')"
+      />
       <NuxtLink to="/builder" class="page-cta">
         New build
       </NuxtLink>

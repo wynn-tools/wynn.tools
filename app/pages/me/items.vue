@@ -86,14 +86,16 @@ async function deleteItem(id: string) {
 <template>
   <div class="page">
     <div class="toolbar">
-      <div class="tabs" role="tablist">
-        <button role="tab" aria-selected="false" @click="navigateTo('/me/builds')">
-          My Builds
-        </button>
-        <button role="tab" class="on" aria-selected="true" @click="navigateTo('/me/items')">
-          My Items
-        </button>
-      </div>
+      <UiSegmented
+        model-value="items"
+        :options="[
+          { value: 'builds', label: 'My Builds' },
+          { value: 'items', label: 'My Items' },
+        ]"
+        role="tab"
+        aria-label="My library"
+        @update:model-value="v => v === 'builds' && navigateTo('/me/builds')"
+      />
       <NuxtLink to="/crafter" class="page-cta">
         New item
       </NuxtLink>

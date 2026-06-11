@@ -113,23 +113,18 @@ const setOptions = computed(() =>
 <template>
   <div class="page">
     <div class="toolbar">
-      <div class="tabs" role="tablist">
-        <button :class="{ on: tab === 'items' }" role="tab" :aria-selected="tab === 'items'" @click="tab = 'items'">
-          Items
-        </button>
-        <button :class="{ on: tab === 'ingredients' }" role="tab" :aria-selected="tab === 'ingredients'" @click="tab = 'ingredients'">
-          Ingredients
-        </button>
-        <button :class="{ on: tab === 'tomes' }" role="tab" :aria-selected="tab === 'tomes'" @click="tab = 'tomes'">
-          Tomes
-        </button>
-        <button :class="{ on: tab === 'charms' }" role="tab" :aria-selected="tab === 'charms'" @click="tab = 'charms'">
-          Charms
-        </button>
-        <button :class="{ on: tab === 'materials' }" role="tab" :aria-selected="tab === 'materials'" @click="tab = 'materials'">
-          Materials
-        </button>
-      </div>
+      <UiSegmented
+        v-model="tab"
+        :options="[
+          { value: 'items' as Tab, label: 'Items' },
+          { value: 'ingredients' as Tab, label: 'Ingredients' },
+          { value: 'tomes' as Tab, label: 'Tomes' },
+          { value: 'charms' as Tab, label: 'Charms' },
+          { value: 'materials' as Tab, label: 'Materials' },
+        ]"
+        role="tab"
+        aria-label="Item category"
+      />
     </div>
 
     <div v-if="pending" class="state">

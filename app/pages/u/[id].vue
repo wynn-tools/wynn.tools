@@ -177,26 +177,15 @@ if (!isPrivate.value) {
         </div>
       </header>
 
-      <div class="tabs" role="tablist">
-        <button
-          :class="{ on: activeTab === 'builds' }"
-          type="button"
-          role="tab"
-          :aria-selected="activeTab === 'builds'"
-          @click="activeTab = 'builds'"
-        >
-          Builds
-        </button>
-        <button
-          :class="{ on: activeTab === 'items' }"
-          type="button"
-          role="tab"
-          :aria-selected="activeTab === 'items'"
-          @click="activeTab = 'items'"
-        >
-          Items
-        </button>
-      </div>
+      <UiSegmented
+        v-model="activeTab"
+        :options="[
+          { value: 'builds', label: 'Builds' },
+          { value: 'items', label: 'Items' },
+        ]"
+        role="tab"
+        aria-label="Profile library"
+      />
 
       <div v-if="activeTab === 'builds'" role="tabpanel">
         <div v-if="builds.length === 0 && !buildsLoading" class="empty-state">

@@ -87,14 +87,16 @@ function clearAllFilters() {
 <template>
   <div class="page">
     <div class="toolbar">
-      <div class="tabs" role="tablist">
-        <button role="tab" aria-selected="false" @click="navigateTo('/builds')">
-          Builds
-        </button>
-        <button role="tab" class="on" aria-selected="true" @click="navigateTo('/crafted')">
-          Crafted Items
-        </button>
-      </div>
+      <UiSegmented
+        model-value="crafted"
+        :options="[
+          { value: 'builds', label: 'Builds' },
+          { value: 'crafted', label: 'Crafted Items' },
+        ]"
+        role="tab"
+        aria-label="Community library"
+        @update:model-value="v => v === 'builds' && navigateTo('/builds')"
+      />
       <p class="page-desc">
         Community crafted items — hover any card for a full stat preview.
       </p>
