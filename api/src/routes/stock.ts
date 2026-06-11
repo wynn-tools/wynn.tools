@@ -1,13 +1,15 @@
 import { Buffer } from 'node:buffer'
+import { Readable } from 'node:stream'
 import { zValidator } from '@hono/zod-validator'
+import { sql as drizzleSql, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
 import { AppError } from '../lib/errors'
 import { hasScope, requireAuth } from '../middleware/auth'
-import { writeBlob } from '../services/blob-store'
+import { readBlobStream, writeBlob } from '../services/blob-store'
 import { sniffImageMime } from '../services/stock-image-guard'
-import { getCreationBySlug, getVersion, listCreations } from '../services/stock-read'
+import { getCreationBySlug, getRawPart, getVersion, listCreations } from '../services/stock-read'
 import { assertSafeZip } from '../services/stock-zip-guard'
 
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024
@@ -56,6 +58,33 @@ stock.get('/:slug/versions/:n', async (c) => {
   if (!version)
     throw new AppError(404, 'not_found', 'version not found')
   return c.json(version)
+})
+
+stock.get('/:slug/versions/:n/parts/:partId/raw', async (c) => {
+  const n = Number(c.req.param('n'))
+  if (!Number.isInteger(n) || n < 1)
+    throw new AppError(400, 'bad_request', 'version must be a positive integer')
+
+  const part = await getRawPart(c.req.param('slug'), n, c.req.param('partId'))
+  if (!part)
+    throw new AppError(404, 'not_found', 'part not found')
+
+  await getDb()
+    .update(schema.stockCreation)
+    .set({ installCount: drizzleSql`${schema.stockCreation.installCount} + 1` })
+    .where(eq(schema.stockCreation.id, part.creationId))
+
+  c.header('Cache-Control', 'public, max-age=31536000, immutable')
+
+  if (part.role === 'resourcepack' && part.blobSha256) {
+    c.header('Content-Type', 'application/zip')
+    c.header('Content-Disposition', `attachment; filename="${(part.blobFilename ?? 'pack.zip').replace(/"/g, '')}"`)
+    const node = readBlobStream(part.blobSha256)
+    return c.body(Readable.toWeb(node) as ReadableStream)
+  }
+
+  c.header('Content-Type', 'text/plain; charset=utf-8')
+  return c.body(part.textContent ?? '')
 })
 
 stock.post('/uploads', requireAuth, async (c) => {
