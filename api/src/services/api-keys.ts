@@ -2,7 +2,7 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { getDb, schema } from '../db/client'
 import { generateApiKey, hashApiKey } from '../lib/ids'
 
-export const ALL_SCOPES = ['builds:read', 'builds:write', 'items:read', 'items:write'] as const
+export const ALL_SCOPES = ['builds:read', 'builds:write', 'items:read', 'items:write', 'stock:read', 'stock:write'] as const
 export type Scope = (typeof ALL_SCOPES)[number]
 
 export async function createApiKey(userId: string, label: string, scopes: Scope[]) {

@@ -19,6 +19,7 @@ const schema = z.object({
   WYNNVENTORY_BASE_URL: z.string().url().default('https://wynnventory.com'),
   NORI_BASE_URL: z.string().url().default('https://nori.fish'),
   WYNNPOOL_BASE_URL: z.string().url().default('https://api.wynnpool.com'),
+  UPLOAD_DIR: z.string().min(1).default('/var/lib/wynn-api/uploads'),
   PORT: z.coerce.number().int().positive().default(8080),
 })
 

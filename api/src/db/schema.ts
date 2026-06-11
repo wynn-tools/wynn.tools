@@ -1,6 +1,7 @@
 import type { Buffer } from 'node:buffer'
 import { relations, sql } from 'drizzle-orm'
 import {
+  boolean,
   customType,
   index,
   integer,
@@ -43,6 +44,7 @@ export const users = pgTable('users', {
   profileVisibility: text('profile_visibility', { enum: profileVisibility }).notNull().default('public'),
   discordJoinStatus: text('discord_join_status', { enum: discordJoinStatus }).notNull().default('unset'),
   discordJoinedAt: timestamp('discord_joined_at', { withTimezone: true }),
+  isAdmin: boolean('is_admin').notNull().default(false),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [
