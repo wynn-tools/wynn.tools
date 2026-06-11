@@ -172,6 +172,14 @@ export async function getVersion(slug: string, number: number) {
   return version ?? null
 }
 
+export async function getDraftVersion(creationId: string) {
+  const version = await getDb().query.stockVersion.findFirst({
+    where: (v, { and, eq }) => and(eq(v.creationId, creationId), eq(v.status, 'draft')),
+    with: { parts: { orderBy: (p, { asc }) => [asc(p.order)] } },
+  })
+  return version ?? null
+}
+
 export async function getRawPart(slug: string, versionNumber: number, partId: string) {
   const row = await getDb()
     .select({

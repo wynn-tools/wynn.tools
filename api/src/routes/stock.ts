@@ -12,7 +12,7 @@ import { hasScope, requireAuth } from '../middleware/auth'
 import { readBlobStream, writeBlob } from '../services/blob-store'
 import { sniffImageMime } from '../services/stock-image-guard'
 import { isStockEmoji, toggleReaction } from '../services/stock-reactions'
-import { getCreationBySlug, getRawPart, getVersion, listCreations } from '../services/stock-read'
+import { getCreationBySlug, getDraftVersion, getRawPart, getVersion, listCreations } from '../services/stock-read'
 
 import {
   createDraftCreation,
@@ -170,6 +170,15 @@ stock.patch('/:slug', requireAuth, zValidator('json', patchCreationBody), async 
   const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
   await patchCreationMeta(id, c.req.valid('json'))
   return c.json({ ok: true })
+})
+
+stock.get('/:slug/draft', requireAuth, async (c) => {
+  assertWriteScope(c)
+  const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  const draft = await getDraftVersion(id)
+  if (!draft)
+    throw new AppError(404, 'not_found', 'no draft version')
+  return c.json(draft)
 })
 
 const createVersionBody = z.object({ label: z.string().min(1).max(40) })

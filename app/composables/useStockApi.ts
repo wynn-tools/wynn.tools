@@ -60,9 +60,16 @@ function buildQuery(filters: ListFilters): string {
 
 export function useStockApi() {
   const baseUrl = useRuntimeConfig().public.apiBaseUrl as string
+  const defaultHeaders: Record<string, string> = {}
+  if (import.meta.server) {
+    const cookie = useRequestHeaders(['cookie']).cookie
+    if (cookie)
+      defaultHeaders.cookie = cookie
+  }
 
   async function request<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetch(`${baseUrl}${path}`, { credentials: 'include', ...init })
+    const headers = { ...defaultHeaders, ...(init?.headers as Record<string, string> | undefined) }
+    const res = await fetch(`${baseUrl}${path}`, { credentials: 'include', ...init, headers })
     const json = await res.json().catch(() => null)
     if (!res.ok) {
       const code = (json as { error?: { code?: string } })?.error?.code ?? `http_${res.status}`
@@ -82,6 +89,7 @@ export function useStockApi() {
     get: (slug: string) => request<StockCreation>(`/v1/stock/${slug}`),
     getVersion: (slug: string, n: number) =>
       request<StockVersion>(`/v1/stock/${slug}/versions/${n}`),
+    getDraft: (slug: string) => request<StockVersion>(`/v1/stock/${slug}/draft`),
     create: (body: CreateInput) =>
       request<{ id: string, slug: string }>('/v1/stock', jsonInit('POST', body)),
     patch: (slug: string, body: Partial<CreateInput & { creditsNote: string }>) =>

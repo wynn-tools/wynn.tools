@@ -161,9 +161,10 @@ export class ApiError extends Error {
   }
 }
 
-export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch) {
+export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch, defaultHeaders: Record<string, string> = {}) {
   async function request<T>(path: string, init?: RequestInit): Promise<T> {
-    const res = await fetchImpl(`${baseUrl}${path}`, { credentials: 'include', ...init })
+    const headers = { ...defaultHeaders, ...(init?.headers as Record<string, string> | undefined) }
+    const res = await fetchImpl(`${baseUrl}${path}`, { credentials: 'include', ...init, headers })
     const json = await res.json().catch(() => null)
     if (!res.ok) {
       const code = (json as { error?: { code?: string } })?.error?.code ?? `http_${res.status}`
@@ -285,5 +286,11 @@ export function createApiClient(baseUrl: string, fetchImpl: typeof fetch = fetch
 
 export function useApi() {
   const config = useRuntimeConfig()
-  return createApiClient(config.public.apiBaseUrl as string)
+  const defaultHeaders: Record<string, string> = {}
+  if (import.meta.server) {
+    const cookie = useRequestHeaders(['cookie']).cookie
+    if (cookie)
+      defaultHeaders.cookie = cookie
+  }
+  return createApiClient(config.public.apiBaseUrl as string, fetch, defaultHeaders)
 }

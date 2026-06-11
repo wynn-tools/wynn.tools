@@ -30,9 +30,10 @@ const message = ref<string | null>(null)
 
 async function ensureDraft() {
   const latest = creation.value!.latestVersion
-  if (latest && latest.status === 'draft') {
-    draftVersionNumber.value = latest.number
-    parts.value = latest.parts.map(p => ({
+  try {
+    const draft = await api.getDraft(slug)
+    draftVersionNumber.value = draft.number
+    parts.value = draft.parts.map(p => ({
       role: p.role,
       name: p.name,
       description: p.description,
@@ -42,6 +43,11 @@ async function ensureDraft() {
       blobFilename: p.blobFilename,
     }))
     return
+  }
+  catch (err) {
+    const code = (err as { code?: string }).code
+    if (code !== 'not_found')
+      throw err
   }
   const next = await api.createVersion(slug, `v${(latest?.number ?? 0) + 1}`)
   draftVersionNumber.value = next.number
