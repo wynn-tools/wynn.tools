@@ -72,6 +72,20 @@ stock.get('/:slug/versions/:n', async (c) => {
   return c.json(version)
 })
 
+stock.get('/blobs/:sha', async (c) => {
+  const sha = c.req.param('sha')
+  if (!/^[0-9a-f]{64}$/.test(sha))
+    throw new AppError(400, 'bad_sha', 'invalid sha256')
+  const blob = await getDb().query.stockBlob.findFirst({
+    where: (b, { eq }) => eq(b.sha256, sha),
+  })
+  if (!blob)
+    throw new AppError(404, 'not_found', 'blob not found')
+  c.header('Cache-Control', 'public, max-age=31536000, immutable')
+  c.header('Content-Type', blob.mimeType)
+  return c.body(Readable.toWeb(readBlobStream(sha)) as ReadableStream)
+})
+
 stock.get('/:slug/versions/:n/parts/:partId/raw', async (c) => {
   const n = Number(c.req.param('n'))
   if (!Number.isInteger(n) || n < 1)
