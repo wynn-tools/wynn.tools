@@ -1,3 +1,5 @@
+import type { Context } from 'hono'
+import type { Auth } from '../middleware/auth'
 import { Buffer } from 'node:buffer'
 import { Readable } from 'node:stream'
 import { zValidator } from '@hono/zod-validator'
@@ -10,6 +12,15 @@ import { hasScope, requireAuth } from '../middleware/auth'
 import { readBlobStream, writeBlob } from '../services/blob-store'
 import { sniffImageMime } from '../services/stock-image-guard'
 import { getCreationBySlug, getRawPart, getVersion, listCreations } from '../services/stock-read'
+
+import {
+  createDraftCreation,
+  createDraftVersion,
+  patchCreationMeta,
+  publishVersion,
+  replaceDraftParts,
+  softDeleteCreation,
+} from '../services/stock-write'
 import { assertSafeZip } from '../services/stock-zip-guard'
 
 const MAX_UPLOAD_BYTES = 15 * 1024 * 1024
@@ -85,6 +96,138 @@ stock.get('/:slug/versions/:n/parts/:partId/raw', async (c) => {
 
   c.header('Content-Type', 'text/plain; charset=utf-8')
   return c.body(part.textContent ?? '')
+})
+
+function assertWriteScope(c: Context) {
+  const auth = c.get('auth') as Auth
+  const usedBearer = /^Bearer /i.test(c.req.header('authorization') ?? '')
+  if (usedBearer && !hasScope(auth, 'stock:write'))
+    throw new AppError(403, 'forbidden', 'stock:write scope required')
+}
+
+async function requireAuthorBySlug(c: Context, slug: string): Promise<{ id: string, authorUserId: string }> {
+  const auth = c.get('auth') as Auth
+  const row = await getDb().query.stockCreation.findFirst({
+    where: (cc, { and, eq, isNull }) => and(eq(cc.slug, slug), isNull(cc.deletedAt)),
+    columns: { id: true, authorUserId: true },
+  })
+  if (!row)
+    throw new AppError(404, 'not_found', 'creation not found')
+  if (row.authorUserId !== auth.user.id)
+    throw new AppError(403, 'forbidden', 'only the author may modify this creation')
+  return row
+}
+
+const createBody = z.object({
+  title: z.string().min(1).max(120),
+  kind: z.enum(['infobox', 'custom-bar', 'bundle']),
+  category: z.enum(['combat', 'party-ui', 'raid', 'lootrun', 'dps-meter', 'cooldown-tracker', 'resource-tracker', 'qol']),
+  classes: z.array(z.enum(['mage', 'archer', 'warrior', 'shaman', 'assassin'])).max(5).optional().default([]),
+  description: z.string().max(8000).optional(),
+})
+
+stock.post('/', requireAuth, zValidator('json', createBody), async (c) => {
+  assertWriteScope(c)
+  const auth = c.get('auth')
+  const body = c.req.valid('json')
+  const { id, slug } = await createDraftCreation({
+    userId: auth.user.id,
+    title: body.title,
+    kind: body.kind,
+    category: body.category,
+    classes: body.classes,
+    description: body.description,
+  })
+  return c.json({ id, slug })
+})
+
+const patchCreationBody = z.object({
+  title: z.string().min(1).max(120).optional(),
+  description: z.string().max(8000).optional(),
+  kind: z.enum(['infobox', 'custom-bar', 'bundle']).optional(),
+  category: z.enum(['combat', 'party-ui', 'raid', 'lootrun', 'dps-meter', 'cooldown-tracker', 'resource-tracker', 'qol']).optional(),
+  classes: z.array(z.enum(['mage', 'archer', 'warrior', 'shaman', 'assassin'])).max(5).optional(),
+  creditsNote: z.string().max(8000).optional(),
+})
+
+stock.patch('/:slug', requireAuth, zValidator('json', patchCreationBody), async (c) => {
+  assertWriteScope(c)
+  const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  await patchCreationMeta(id, c.req.valid('json'))
+  return c.json({ ok: true })
+})
+
+const createVersionBody = z.object({ label: z.string().min(1).max(40) })
+
+stock.post('/:slug/versions', requireAuth, zValidator('json', createVersionBody), async (c) => {
+  assertWriteScope(c)
+  const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  const v = await createDraftVersion(id, c.get('auth').user.id, c.req.valid('json').label)
+  return c.json(v)
+})
+
+const partBody = z.object({
+  role: z.enum(['function', 'infobox', 'resourcepack']),
+  name: z.string().min(1).max(80),
+  description: z.string().max(2000).nullable().optional(),
+  group: z.string().min(1).max(40).nullable().optional(),
+  textContent: z.string().max(64 * 1024).nullable().optional(),
+  blobSha256: z.string().regex(/^[0-9a-f]{64}$/).nullable().optional(),
+  blobFilename: z.string().max(200).nullable().optional(),
+})
+const patchVersionBody = z.object({
+  label: z.string().min(1).max(40).optional(),
+  changelog: z.string().max(8000).optional(),
+  parts: z.array(partBody).max(20).optional(),
+})
+
+stock.patch('/:slug/versions/:n', requireAuth, zValidator('json', patchVersionBody), async (c) => {
+  assertWriteScope(c)
+  const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  const n = Number(c.req.param('n'))
+  const v = await getDb().query.stockVersion.findFirst({
+    where: (vv, { and, eq }) => and(eq(vv.creationId, id), eq(vv.number, n)),
+  })
+  if (!v)
+    throw new AppError(404, 'not_found', 'version not found')
+  if (v.status !== 'draft')
+    throw new AppError(409, 'not_draft', 'cannot edit published version')
+  const body = c.req.valid('json')
+  if (body.label !== undefined || body.changelog !== undefined) {
+    await getDb().update(schema.stockVersion).set({
+      ...(body.label ? { label: body.label } : {}),
+      ...(body.changelog !== undefined ? { changelog: body.changelog } : {}),
+    }).where(eq(schema.stockVersion.id, v.id))
+  }
+  if (body.parts)
+    await replaceDraftParts(v.id, body.parts)
+  return c.json({ ok: true })
+})
+
+stock.post('/:slug/versions/:n/publish', requireAuth, async (c) => {
+  assertWriteScope(c)
+  const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  const n = Number(c.req.param('n'))
+  const v = await getDb().query.stockVersion.findFirst({
+    where: (vv, { and, eq }) => and(eq(vv.creationId, id), eq(vv.number, n)),
+  })
+  if (!v)
+    throw new AppError(404, 'not_found', 'version not found')
+  await publishVersion(v.id)
+  return c.json({ ok: true })
+})
+
+stock.delete('/:slug', requireAuth, async (c) => {
+  assertWriteScope(c)
+  const auth = c.get('auth')
+  const row = await getDb().query.stockCreation.findFirst({
+    where: (cc, { eq, and, isNull }) => and(eq(cc.slug, c.req.param('slug')), isNull(cc.deletedAt)),
+    columns: { id: true },
+  })
+  if (!row)
+    throw new AppError(404, 'not_found', 'creation not found')
+  await softDeleteCreation(row.id, auth.user.id)
+  return c.body(null, 204)
 })
 
 stock.post('/uploads', requireAuth, async (c) => {
