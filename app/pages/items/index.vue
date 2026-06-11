@@ -57,8 +57,6 @@ watch(() => buildStore.currentHash, (hash) => {
   }
 })
 
-const layoutMode = computed(() => (showSidebar.value ? '' : 'layout--full'))
-
 // Esc minimises the overlay panel.
 function onKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && railOpen.value)
@@ -111,8 +109,8 @@ const setOptions = computed(() =>
 </script>
 
 <template>
-  <div class="page">
-    <div class="toolbar">
+  <SearchPage gap="28px">
+    <template #toolbar>
       <UiSegmented
         v-model="tab"
         :options="[
@@ -125,19 +123,10 @@ const setOptions = computed(() =>
         role="tab"
         aria-label="Item category"
       />
-    </div>
+    </template>
 
-    <div v-if="pending" class="state">
-      Loading…
-    </div>
-    <div v-else-if="error" class="state">
-      Failed to load item data. <button @click="refresh()">
-        Retry
-      </button>
-    </div>
-
-    <div v-else class="layout" :class="layoutMode">
-      <FiltersSidebar v-if="showSidebar" panel-id="search-filters-panel">
+    <template v-if="!pending && !error && showSidebar" #sidebar>
+      <FiltersSidebar panel-id="search-filters-panel">
         <template #name>
           <input
             v-if="tab === 'items'"
@@ -177,200 +166,131 @@ const setOptions = computed(() =>
         <TomeSearchFilters v-else-if="tab === 'tomes'" v-model="tomeCriteria" />
         <MaterialSearchFilters v-else-if="tab === 'materials'" v-model="materialCriteria" />
       </FiltersSidebar>
+    </template>
 
-      <section class="results">
-        <template v-if="tab === 'items'">
-          <header class="results-head">
-            <span class="count">{{ itemResults.length.toLocaleString() }} items</span>
-            <span v-if="itemResults.length > RESULT_CAP" class="count count--dim">Showing first {{ RESULT_CAP }} of {{ itemResults.length.toLocaleString() }} — add identification filters to narrow further.</span>
-          </header>
-          <div v-if="itemResults.length" class="results-list">
-            <ItemResultCard
-              v-for="it in itemResults.slice(0, RESULT_CAP)"
-              :key="it.id"
-              :item="it"
-            />
-          </div>
-          <p v-else class="state">
-            No items match these filters.
-          </p>
-        </template>
-
-        <template v-else-if="tab === 'ingredients'">
-          <header class="results-head">
-            <span class="count">{{ ingredientResults.length.toLocaleString() }} ingredients</span>
-            <span v-if="ingredientResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
-          </header>
-          <div v-if="ingredientResults.length" class="results-list">
-            <IngredientResultCard v-for="ing in ingredientResults.slice(0, RESULT_CAP)" :key="ing.id" :ingredient="ing" />
-          </div>
-          <p v-else class="state">
-            No ingredients match these filters.
-          </p>
-        </template>
-
-        <template v-else-if="tab === 'tomes'">
-          <header class="results-head">
-            <span class="count">{{ tomeResults.length.toLocaleString() }} tomes</span>
-            <span v-if="tomeResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
-          </header>
-          <div v-if="tomeResults.length" class="results-list">
-            <TomeResultCard v-for="tome in tomeResults.slice(0, RESULT_CAP)" :key="tome.id" :tome="tome" />
-          </div>
-          <p v-else class="state">
-            No tomes match these filters.
-          </p>
-        </template>
-
-        <template v-else-if="tab === 'charms'">
-          <header class="results-head">
-            <span class="count">{{ data?.charms.length ?? 0 }} charms</span>
-          </header>
-          <div v-if="data?.charms.length" class="results-list">
-            <CharmResultCard v-for="charm in data.charms" :key="charm.id" :charm="charm" />
-          </div>
-          <p v-else class="state">
-            No charms available.
-          </p>
-        </template>
-
-        <template v-else-if="tab === 'materials'">
-          <header class="results-head">
-            <span class="count">{{ materialResults.length.toLocaleString() }} materials</span>
-            <span v-if="materialResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
-          </header>
-          <div v-if="materialResults.length" class="results-list">
-            <MaterialResultCard v-for="mat in materialResults.slice(0, RESULT_CAP)" :key="mat.id" :material="mat" />
-          </div>
-          <p v-else class="state">
-            No materials match these filters.
-          </p>
-        </template>
-      </section>
-
-      <!-- Slim build preview rail (desktop only; mobile uses the FAB). Stays
-           put when the panel expands — the panel slides over it. -->
+    <template #rail>
       <BuilderRail class="rail-col" @expand="rail.openBuilder()" />
+    </template>
+
+    <div v-if="pending" class="state">
+      Loading…
     </div>
+    <div v-else-if="error" class="state">
+      Failed to load item data. <button @click="refresh()">
+        Retry
+      </button>
+    </div>
+    <template v-else-if="tab === 'items'">
+      <header class="results-head">
+        <span class="count">{{ itemResults.length.toLocaleString() }} items</span>
+        <span v-if="itemResults.length > RESULT_CAP" class="count count--dim">Showing first {{ RESULT_CAP }} of {{ itemResults.length.toLocaleString() }} — add identification filters to narrow further.</span>
+      </header>
+      <div v-if="itemResults.length" class="results-list">
+        <ItemResultCard
+          v-for="it in itemResults.slice(0, RESULT_CAP)"
+          :key="it.id"
+          :item="it"
+        />
+      </div>
+      <p v-else class="state">
+        No items match these filters.
+      </p>
+    </template>
 
-    <!-- Expanded: the full builder slides in from the right, overlaying the
-         results. Results stay put; the user expands and minimises the panel. -->
-    <Teleport to="body">
-      <Transition name="build-panel">
-        <div v-if="railOpen" class="build-overlay">
-          <div class="build-scrim" @click="rail.closeBuilder()" />
-          <section class="build-panel" aria-label="Build workspace">
-            <header class="build-panel-head">
-              <span class="kicker">Build</span>
-              <span class="build-panel-count">{{ rail.count.value }}/9</span>
-              <button
-                type="button"
-                class="build-copy"
-                :class="{ 'build-copy--copied': copied }"
-                :disabled="!buildStore.currentHash || rail.promoting.value"
-                :aria-label="copied ? 'Copied to clipboard' : (buildStore.currentHash ? 'Copy build link' : 'No build to copy')"
-                @click="copyBuildLink"
-              >
-                {{ copied ? 'Copied' : 'Copy link' }}
-              </button>
-              <button type="button" class="build-min" @click="rail.closeBuilder()">
-                Minimise <span class="build-min-arrow" aria-hidden="true">›</span>
-              </button>
-            </header>
-            <div class="build-panel-body">
-              <p v-if="rail.promoting.value" class="build-panel-loading">
-                Loading builder…
-              </p>
-              <BuilderWorkspace v-else embedded />
-            </div>
-          </section>
-        </div>
-      </Transition>
-    </Teleport>
+    <template v-else-if="tab === 'ingredients'">
+      <header class="results-head">
+        <span class="count">{{ ingredientResults.length.toLocaleString() }} ingredients</span>
+        <span v-if="ingredientResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+      </header>
+      <div v-if="ingredientResults.length" class="results-list">
+        <IngredientResultCard v-for="ing in ingredientResults.slice(0, RESULT_CAP)" :key="ing.id" :ingredient="ing" />
+      </div>
+      <p v-else class="state">
+        No ingredients match these filters.
+      </p>
+    </template>
 
-    <BuilderFab v-if="!railOpen" />
-    <AppToasts />
-  </div>
+    <template v-else-if="tab === 'tomes'">
+      <header class="results-head">
+        <span class="count">{{ tomeResults.length.toLocaleString() }} tomes</span>
+        <span v-if="tomeResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+      </header>
+      <div v-if="tomeResults.length" class="results-list">
+        <TomeResultCard v-for="tome in tomeResults.slice(0, RESULT_CAP)" :key="tome.id" :tome="tome" />
+      </div>
+      <p v-else class="state">
+        No tomes match these filters.
+      </p>
+    </template>
+
+    <template v-else-if="tab === 'charms'">
+      <header class="results-head">
+        <span class="count">{{ data?.charms.length ?? 0 }} charms</span>
+      </header>
+      <div v-if="data?.charms.length" class="results-list">
+        <CharmResultCard v-for="charm in data.charms" :key="charm.id" :charm="charm" />
+      </div>
+      <p v-else class="state">
+        No charms available.
+      </p>
+    </template>
+
+    <template v-else-if="tab === 'materials'">
+      <header class="results-head">
+        <span class="count">{{ materialResults.length.toLocaleString() }} materials</span>
+        <span v-if="materialResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
+      </header>
+      <div v-if="materialResults.length" class="results-list">
+        <MaterialResultCard v-for="mat in materialResults.slice(0, RESULT_CAP)" :key="mat.id" :material="mat" />
+      </div>
+      <p v-else class="state">
+        No materials match these filters.
+      </p>
+    </template>
+  </SearchPage>
+
+  <!-- Expanded: the full builder slides in from the right, overlaying the
+       results. Results stay put; the user expands and minimises the panel. -->
+  <Teleport to="body">
+    <Transition name="build-panel">
+      <div v-if="railOpen" class="build-overlay">
+        <div class="build-scrim" @click="rail.closeBuilder()" />
+        <section class="build-panel" aria-label="Build workspace">
+          <header class="build-panel-head">
+            <span class="kicker">Build</span>
+            <span class="build-panel-count">{{ rail.count.value }}/9</span>
+            <button
+              type="button"
+              class="build-copy"
+              :class="{ 'build-copy--copied': copied }"
+              :disabled="!buildStore.currentHash || rail.promoting.value"
+              :aria-label="copied ? 'Copied to clipboard' : (buildStore.currentHash ? 'Copy build link' : 'No build to copy')"
+              @click="copyBuildLink"
+            >
+              {{ copied ? 'Copied' : 'Copy link' }}
+            </button>
+            <button type="button" class="build-min" @click="rail.closeBuilder()">
+              Minimise <span class="build-min-arrow" aria-hidden="true">›</span>
+            </button>
+          </header>
+          <div class="build-panel-body">
+            <p v-if="rail.promoting.value" class="build-panel-loading">
+              Loading builder…
+            </p>
+            <BuilderWorkspace v-else embedded />
+          </div>
+        </section>
+      </div>
+    </Transition>
+  </Teleport>
+
+  <BuilderFab v-if="!railOpen" />
+  <AppToasts />
 </template>
 
 <style scoped>
-/* Lock the page to the viewport below the global nav so the sidebar and results
-   each scroll inside their own column instead of forcing the whole page to scroll. */
-.page {
-  height: calc(100dvh - 76px);
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0 0;
-  overflow: hidden;
-}
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding-bottom: 20px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--color-border);
-  flex-shrink: 0;
-}
-/* Add the build rail as a third column. Scoped specificity beats the global
-   `.layout` rule, so these widths win at desktop sizes. */
-.layout {
-  --rail-w: 124px;
-  /* The third track stays reserved (124px) for the build rail, which is
-     position: fixed and viewport-centred, so results never run under it. */
-  grid-template-columns: 248px minmax(0, 1fr) var(--rail-w);
-  gap: 28px;
-  flex: 1;
-  min-height: 0;
-}
-.layout--full {
-  grid-template-columns: minmax(0, 1fr) var(--rail-w);
-}
-/* `:deep()` because the `<aside class="sidebar">` element is rendered by the
-   FiltersSidebar child component, so page-scoped selectors don't reach it
-   directly. Without this the global `position: sticky; top: 76px` wins and
-   the sidebar refuses to scroll. The shell fills the column; the aside inside
-   it flexes to fill the remaining height below the always-visible name input. */
-.layout :deep(.filters-shell) {
-  height: 100%;
-  min-height: 0;
-}
-.layout :deep(.sidebar) {
-  position: static;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 8px;
-  padding-bottom: 24px;
-  scrollbar-width: thin;
-}
-.results {
-  height: 100%;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 4px;
-  padding-bottom: 24px;
-  scrollbar-width: thin;
-}
-.results-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 16px;
-  height: 22px;
-}
-.count {
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text);
-}
-.count--dim {
-  color: var(--color-muted);
-}
 /* CSS-columns masonry: each card has break-inside: avoid + margin-bottom for
-   the row gap. Columns reflow with the container width — no JS measurement. */
+   the row gap. Columns reflow with the container width, no JS measurement. */
 .results-list {
   column-width: 280px;
   column-gap: 12px;
@@ -526,48 +446,16 @@ const setOptions = computed(() =>
   }
 }
 
-/* Below the side-rail breakpoint, the rail collapses to the floating FAB and
-   the search returns to a single stacked column. */
+/* Below the side-rail breakpoint, the rail collapses to the floating FAB. */
 @media (max-width: 900px) {
-  /* Below the desktop breakpoint the sidebar moves into a sheet and the page
-     reverts to natural scrolling — the locked-viewport layout only makes sense
-     when both columns are visible side-by-side. */
-  .page {
-    height: auto;
-    overflow: visible;
-    padding-bottom: 64px;
-  }
-  .layout,
-  .layout--full {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    min-height: 0;
-  }
-  .layout :deep(.sidebar),
-  .results {
-    height: auto;
-    overflow: visible;
-    padding-right: 0;
-    padding-bottom: 0;
-  }
   .rail-col {
     display: none;
   }
 }
 
 @media (max-width: 720px) {
-  .page {
-    padding: 12px 0 48px;
-  }
-  .toolbar {
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
   .results-list--charms {
     grid-template-columns: 1fr;
-  }
-  .results-head {
-    margin-bottom: 10px;
   }
 }
 </style>

@@ -503,22 +503,95 @@
     cursor: grabbing;
   }
 
+  /* ── Search-page shell: viewport-locked by default ──────────────────
+     The shell binds its height to the viewport (minus the global nav) so
+     the filters column and results column each scroll inside their own
+     track instead of pushing the page. The <SearchPage> wrapper renders
+     the structure; the utility classes here own the styling so that any
+     sidebar / results element (including FiltersSidebar's own <aside>)
+     plugs in without extra rules.
+
+     Below 900px the layout collapses to a single column and the shell
+     reverts to natural scrolling — viewport-locking a stacked layout
+     would just bury the results below the filter sheet.
+
+     This class is scoped to <SearchPage> consumers only. Generic pages
+     keep using the bare `.page` div they already own. */
+  .search-page {
+    height: calc(100dvh - 76px);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0 0;
+    overflow: hidden;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .results-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+    height: 22px;
+  }
+
+  .count {
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+  .count--dim {
+    color: var(--color-muted);
+  }
+
+  /* Result grid for card-based result lists (builds, crafted, stock).
+     Items uses CSS columns instead and skips this. */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
   /* ── Search page layout ─────────────────────────────────────────── */
   .layout {
     display: grid;
     grid-template-columns: 248px minmax(0, 1fr);
     gap: 40px;
-    align-items: start;
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
   }
 
+  /* The <aside class="sidebar"> sits inside FiltersSidebar's `.filters-shell`
+     flex column. flex:1 lets it fill what's left below the optional name input
+     header without forcing the whole shell to overflow the grid track. */
   .sidebar {
-    position: sticky;
-    top: 76px;
-    align-self: start;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+    padding-bottom: 24px;
+    scrollbar-width: thin;
   }
 
   .results {
     min-width: 0;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    padding-bottom: 24px;
+    scrollbar-width: thin;
   }
 
   .filters {
@@ -688,13 +761,23 @@
 
   /* ── Responsive layout ──────────────────────────────────────────── */
   @media (max-width: 900px) {
+    .search-page {
+      height: auto;
+      overflow: visible;
+      padding-bottom: 64px;
+    }
+
     .layout {
       grid-template-columns: 1fr;
       gap: 24px;
     }
 
-    .sidebar {
-      position: static;
+    .sidebar,
+    .results {
+      height: auto;
+      overflow: visible;
+      padding-right: 0;
+      padding-bottom: 0;
     }
   }
 
@@ -722,6 +805,25 @@
     .f-slider-thumb {
       height: 20px;
       width: 20px;
+    }
+
+    .search-page {
+      padding: 12px 0 48px;
+    }
+
+    .toolbar {
+      gap: 14px;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+
+    .results-head {
+      margin-bottom: 10px;
+    }
+
+    .card-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
     }
   }
 }

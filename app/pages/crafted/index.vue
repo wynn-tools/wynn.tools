@@ -85,8 +85,8 @@ function clearAllFilters() {
 </script>
 
 <template>
-  <div class="page">
-    <div class="toolbar">
+  <SearchPage>
+    <template #toolbar>
       <UiSegmented
         model-value="crafted"
         :options="[
@@ -98,14 +98,14 @@ function clearAllFilters() {
         @update:model-value="v => v === 'builds' && navigateTo('/builds')"
       />
       <p class="page-desc">
-        Community crafted items — hover any card for a full stat preview.
+        Community crafted items, hover any card for a full stat preview.
       </p>
       <NuxtLink to="/crafter" class="page-cta">
         New item
       </NuxtLink>
-    </div>
+    </template>
 
-    <div class="layout">
+    <template #sidebar>
       <FiltersSidebar panel-id="crafted-filters-panel">
         <div class="filters">
           <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
@@ -115,86 +115,50 @@ function clearAllFilters() {
           </fieldset>
         </div>
       </FiltersSidebar>
+    </template>
 
-      <section class="results">
-        <p v-if="loadError" class="state">
-          {{ loadError }}
-        </p>
-        <div v-else-if="items.length === 0 && !loading && hasActiveFilters" class="state-block">
-          <span>No crafted items match these filters.</span>
-          <button type="button" class="state-action" @click="clearAllFilters">
-            Clear filters
-          </button>
-        </div>
-        <div v-else-if="items.length === 0 && !loading" class="state-block">
-          <span>No crafted items shared yet.</span>
-          <NuxtLink to="/crafter" class="state-action">
-            Create the first item
-          </NuxtLink>
-        </div>
-        <template v-else>
-          <div class="card-grid">
-            <ItemCard
-              v-for="item in items"
-              :id="item.id"
-              :key="item.id"
-              :name="item.name"
-              :game-version="item.gameVersion"
-              :owner-id="item.owner?.id"
-              :owner-username="item.owner?.username"
-              :owner-name="item.owner?.name"
-              :show-owner="true"
-              :craft-hash="item.craftHash"
-              :tags="item.tags"
-            />
-          </div>
-          <div v-if="nextCursor" class="load-more">
-            <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
-              {{ loading ? 'Loading…' : 'Load more' }}
-            </button>
-          </div>
-        </template>
-      </section>
+    <p v-if="loadError" class="state">
+      {{ loadError }}
+    </p>
+    <div v-else-if="items.length === 0 && !loading && hasActiveFilters" class="state-block">
+      <span>No crafted items match these filters.</span>
+      <button type="button" class="state-action" @click="clearAllFilters">
+        Clear filters
+      </button>
     </div>
-  </div>
+    <div v-else-if="items.length === 0 && !loading" class="state-block">
+      <span>No crafted items shared yet.</span>
+      <NuxtLink to="/crafter" class="state-action">
+        Create the first item
+      </NuxtLink>
+    </div>
+    <template v-else>
+      <div class="card-grid">
+        <ItemCard
+          v-for="item in items"
+          :id="item.id"
+          :key="item.id"
+          :name="item.name"
+          :game-version="item.gameVersion"
+          :owner-id="item.owner?.id"
+          :owner-username="item.owner?.username"
+          :owner-name="item.owner?.name"
+          :show-owner="true"
+          :craft-hash="item.craftHash"
+          :tags="item.tags"
+        />
+      </div>
+      <div v-if="nextCursor" class="load-more">
+        <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
+          {{ loading ? 'Loading…' : 'Load more' }}
+        </button>
+      </div>
+    </template>
+  </SearchPage>
 </template>
 
 <style scoped>
-.page {
-  padding: 20px 0 64px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-bottom: 20px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
 @media (max-width: 720px) {
-  .page {
-    padding: 12px 0 48px;
-  }
-
-  .toolbar {
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
-
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 8px;
-  }
-
   .page-desc {
     display: none;
   }

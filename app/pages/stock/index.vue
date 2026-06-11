@@ -226,8 +226,8 @@ void _sortBarShape
 </script>
 
 <template>
-  <div class="page">
-    <div class="toolbar">
+  <SearchPage>
+    <template #toolbar>
       <span class="toolbar-title">Stock</span>
       <p class="page-desc">
         Info boxes, custom bars and bundles shared by the community.
@@ -235,9 +235,9 @@ void _sortBarShape
       <NuxtLink to="/stock/new" class="page-cta">
         + New creation
       </NuxtLink>
-    </div>
+    </template>
 
-    <div class="layout">
+    <template #sidebar>
       <FiltersSidebar panel-id="stock-filters-panel">
         <div class="filters">
           <div class="search-row">
@@ -367,57 +367,42 @@ void _sortBarShape
           </fieldset>
         </div>
       </FiltersSidebar>
+    </template>
 
-      <section class="results">
-        <header class="results-head">
-          <span class="count">{{ items.length.toLocaleString() }} {{ items.length === 1 ? 'creation' : 'creations' }}</span>
-          <span v-if="loading && items.length === 0" class="count count--dim">loading…</span>
-        </header>
+    <header class="results-head">
+      <span class="count">{{ items.length.toLocaleString() }} {{ items.length === 1 ? 'creation' : 'creations' }}</span>
+      <span v-if="loading && items.length === 0" class="count count--dim">loading…</span>
+    </header>
 
-        <p v-if="loadError" class="state">
-          {{ loadError }}
-        </p>
-        <div v-else-if="items.length === 0 && !loading && hasActiveFilters" class="state-block">
-          <span>No creations match these filters.</span>
-          <button type="button" class="state-action" @click="clearAllFilters">
-            Clear filters
-          </button>
-        </div>
-        <div v-else-if="items.length === 0 && !loading" class="state-block">
-          <span>Nothing in the library yet.</span>
-          <NuxtLink to="/stock/new" class="state-action">
-            Be the first to share
-          </NuxtLink>
-        </div>
-        <template v-else>
-          <div class="card-grid">
-            <StockCard v-for="item in items" :key="item.id" :item="item" />
-          </div>
-          <div v-if="nextCursor" class="load-more">
-            <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
-              {{ loading ? 'Loading…' : 'Load more' }}
-            </button>
-          </div>
-        </template>
-      </section>
+    <p v-if="loadError" class="state">
+      {{ loadError }}
+    </p>
+    <div v-else-if="items.length === 0 && !loading && hasActiveFilters" class="state-block">
+      <span>No creations match these filters.</span>
+      <button type="button" class="state-action" @click="clearAllFilters">
+        Clear filters
+      </button>
     </div>
-  </div>
+    <div v-else-if="items.length === 0 && !loading" class="state-block">
+      <span>Nothing in the library yet.</span>
+      <NuxtLink to="/stock/new" class="state-action">
+        Be the first to share
+      </NuxtLink>
+    </div>
+    <template v-else>
+      <div class="card-grid">
+        <StockCard v-for="item in items" :key="item.id" :item="item" />
+      </div>
+      <div v-if="nextCursor" class="load-more">
+        <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
+          {{ loading ? 'Loading…' : 'Load more' }}
+        </button>
+      </div>
+    </template>
+  </SearchPage>
 </template>
 
 <style scoped>
-.page {
-  padding: 20px 0 64px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-bottom: 20px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--color-border);
-}
-
 .toolbar-title {
   font: 600 11px/1 var(--font-mono);
   letter-spacing: 0.14em;
@@ -631,45 +616,12 @@ void _sortBarShape
   padding: 8px 10px;
 }
 
-.results-head {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 16px;
-  height: 22px;
-}
-.count {
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text);
-}
-.count--dim {
-  color: var(--color-muted);
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
 @media (max-width: 720px) {
-  .page {
-    padding: 12px 0 48px;
-  }
   .toolbar {
-    padding-bottom: 14px;
-    margin-bottom: 16px;
     gap: 12px;
   }
   .page-desc {
     display: none;
-  }
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 8px;
   }
 }
 </style>

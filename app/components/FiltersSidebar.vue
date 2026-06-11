@@ -59,7 +59,10 @@ const isMobile = useMediaQuery('(max-width: 900px)')
   gap: 12px;
   min-width: 0;
   min-height: 0;
-  align-self: start;
+  height: 100%;
+}
+.filters-name {
+  flex-shrink: 0;
 }
 .filters-name :deep(.f-input) {
   width: 100%;

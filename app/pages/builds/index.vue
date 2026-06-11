@@ -274,8 +274,8 @@ function clearAllFilters() {
 </script>
 
 <template>
-  <div class="page">
-    <div class="toolbar">
+  <SearchPage>
+    <template #toolbar>
       <UiSegmented
         model-value="builds"
         :options="[
@@ -287,14 +287,14 @@ function clearAllFilters() {
         @update:model-value="v => v === 'crafted' && navigateTo('/crafted')"
       />
       <p class="page-desc">
-        Community builds — hover any card for a stat preview.
+        Community builds, hover any card for a stat preview.
       </p>
       <NuxtLink to="/builder" class="page-cta">
         New build
       </NuxtLink>
-    </div>
+    </template>
 
-    <div class="layout">
+    <template #sidebar>
       <FiltersSidebar panel-id="builds-filters-panel">
         <div class="filters">
           <SearchSortBar :q="q" :sort="sort" @update:q="onQ" @update:sort="onSort" />
@@ -454,64 +454,49 @@ function clearAllFilters() {
           </fieldset>
         </div>
       </FiltersSidebar>
+    </template>
 
-      <section class="results">
-        <p v-if="loadError" class="state">
-          {{ loadError }}
-        </p>
-        <div v-else-if="builds.length === 0 && !loading && hasActiveFilters" class="state-block">
-          <span>No builds match these filters.</span>
-          <button type="button" class="state-action" @click="clearAllFilters">
-            Clear filters
-          </button>
-        </div>
-        <div v-else-if="builds.length === 0 && !loading" class="state-block">
-          <span>No builds shared yet.</span>
-          <NuxtLink to="/builder" class="state-action">
-            Create the first build
-          </NuxtLink>
-        </div>
-        <template v-else>
-          <div class="card-grid">
-            <BuildCard
-              v-for="b in builds"
-              :id="b.id"
-              :key="b.id"
-              :name="b.name"
-              :game-version="b.gameVersion"
-              :owner-id="b.owner?.id"
-              :owner-name="b.owner?.name"
-              :owner-username="b.owner?.username"
-              :show-owner="true"
-              :tags="b.tags"
-              :has-tutorial="b.hasTutorial"
-            />
-          </div>
-          <div v-if="nextCursor" class="load-more">
-            <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
-              {{ loading ? 'Loading…' : 'Load more' }}
-            </button>
-          </div>
-        </template>
-      </section>
+    <p v-if="loadError" class="state">
+      {{ loadError }}
+    </p>
+    <div v-else-if="builds.length === 0 && !loading && hasActiveFilters" class="state-block">
+      <span>No builds match these filters.</span>
+      <button type="button" class="state-action" @click="clearAllFilters">
+        Clear filters
+      </button>
     </div>
-  </div>
+    <div v-else-if="builds.length === 0 && !loading" class="state-block">
+      <span>No builds shared yet.</span>
+      <NuxtLink to="/builder" class="state-action">
+        Create the first build
+      </NuxtLink>
+    </div>
+    <template v-else>
+      <div class="card-grid">
+        <BuildCard
+          v-for="b in builds"
+          :id="b.id"
+          :key="b.id"
+          :name="b.name"
+          :game-version="b.gameVersion"
+          :owner-id="b.owner?.id"
+          :owner-name="b.owner?.name"
+          :owner-username="b.owner?.username"
+          :show-owner="true"
+          :tags="b.tags"
+          :has-tutorial="b.hasTutorial"
+        />
+      </div>
+      <div v-if="nextCursor" class="load-more">
+        <button class="load-more-btn" type="button" :disabled="loading" @click="load(nextCursor ?? undefined)">
+          {{ loading ? 'Loading…' : 'Load more' }}
+        </button>
+      </div>
+    </template>
+  </SearchPage>
 </template>
 
 <style scoped>
-.page {
-  padding: 20px 0 64px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-bottom: 20px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--color-border);
-}
-
 /* Class filter buttons: per-class color via --cls-color */
 .f-group--class button {
   display: inline-flex;
@@ -735,28 +720,7 @@ function clearAllFilters() {
   background: transparent;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
 @media (max-width: 720px) {
-  .page {
-    padding: 12px 0 48px;
-  }
-
-  .toolbar {
-    padding-bottom: 14px;
-    margin-bottom: 16px;
-  }
-
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 8px;
-  }
-
   .page-desc {
     display: none;
   }
