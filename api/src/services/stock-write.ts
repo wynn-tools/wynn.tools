@@ -216,6 +216,85 @@ export async function publishVersion(versionId: string): Promise<void> {
   })()
 }
 
+export interface MediaInput {
+  blobSha256: string
+  caption: string | null
+}
+
+const MAX_MEDIA = 8
+const MAX_CAPTION = 200
+const IMAGE_MIMES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif'])
+
+export async function replaceMedia(creationId: string, media: MediaInput[]): Promise<void> {
+  if (media.length > MAX_MEDIA)
+    throw new AppError(400, 'bad_media', `max ${MAX_MEDIA} media items`)
+  for (const m of media) {
+    if (m.caption !== null && m.caption.length > MAX_CAPTION)
+      throw new AppError(400, 'bad_media', `caption max ${MAX_CAPTION} chars`)
+  }
+
+  const db = getDb()
+  const shaSet = [...new Set(media.map(m => m.blobSha256))]
+  if (shaSet.length > 0) {
+    const blobs = await db.query.stockBlob.findMany({
+      where: (b, { inArray }) => inArray(b.sha256, shaSet),
+      columns: { sha256: true, mimeType: true },
+    })
+    const byHash = new Map(blobs.map(b => [b.sha256, b.mimeType]))
+    for (const sha of shaSet) {
+      const mime = byHash.get(sha)
+      if (!mime)
+        throw new AppError(400, 'bad_media', `blob ${sha} not found`)
+      if (!IMAGE_MIMES.has(mime))
+        throw new AppError(400, 'bad_media', `blob ${sha} is not an image`)
+    }
+  }
+
+  await db.transaction(async (tx) => {
+    const existing = await tx.query.stockMedia.findMany({
+      where: (m, { eq }) => eq(m.creationId, creationId),
+      columns: { blobSha256: true },
+    })
+
+    const oldCounts = countShas(existing.map(e => e.blobSha256))
+    const newCounts = countShas(media.map(m => m.blobSha256))
+
+    await tx.delete(schema.stockMedia).where(eq(schema.stockMedia.creationId, creationId))
+
+    if (media.length > 0) {
+      await tx.insert(schema.stockMedia).values(media.map((m, i) => ({
+        id: newResourceId(),
+        creationId,
+        order: i,
+        blobSha256: m.blobSha256,
+        caption: m.caption,
+      })))
+    }
+
+    const allShas = new Set([...oldCounts.keys(), ...newCounts.keys()])
+    for (const sha of allShas) {
+      const delta = (newCounts.get(sha) ?? 0) - (oldCounts.get(sha) ?? 0)
+      if (delta === 0)
+        continue
+      await tx.update(schema.stockBlob)
+        .set({ refCount: sql`${schema.stockBlob.refCount} + ${delta}` })
+        .where(eq(schema.stockBlob.sha256, sha))
+    }
+
+    const now = new Date()
+    await tx.update(schema.stockCreation)
+      .set({ updatedAt: now, lastActivityAt: now })
+      .where(eq(schema.stockCreation.id, creationId))
+  })
+}
+
+function countShas(shas: string[]): Map<string, number> {
+  const m = new Map<string, number>()
+  for (const s of shas)
+    m.set(s, (m.get(s) ?? 0) + 1)
+  return m
+}
+
 export async function softDeleteCreation(creationId: string, actorUserId: string): Promise<void> {
   const db = getDb()
   await db.transaction(async (tx) => {
