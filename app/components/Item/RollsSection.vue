@@ -290,20 +290,6 @@ function toggleAllReqs(direction: 'enable' | 'disable') {
 
 const activeReqCount = computed(() => activeRequirementCount(requirements.value))
 
-const reidCost = computed(() => {
-  const tier = props.item.tier.toLowerCase()
-  const lvl = props.item.level
-  switch (tier) {
-    case 'mythic': return Math.floor(90 + lvl * 18)
-    case 'fabled': return Math.floor(16 + lvl * 8)
-    case 'legendary': return Math.floor(12 + lvl * 4.5)
-    case 'rare': return Math.floor(8 + lvl * 1.2)
-    case 'unique': return Math.floor(3 + lvl * 0.5)
-    case 'set': return Math.floor(8 + lvl * 1.5)
-    default: return 0
-  }
-})
-
 const AMP_LABELS = ['0', 'I', 'II', 'III', 'IV']
 const AUGMENTS: { value: Augment, label: string }[] = [
   { value: 'none', label: 'None' },
@@ -491,12 +477,6 @@ function onKeydown(e: KeyboardEvent) {
         />
       </div>
     </details>
-
-    <footer v-if="reidCost > 0" class="footer">
-      <span class="footer-label">Re-ID</span>
-      <EmeraldIcon unit="eb" />
-      <span class="footer-amt">{{ reidCost }}</span>
-    </footer>
   </section>
 </template>
 
@@ -894,27 +874,6 @@ function onKeydown(e: KeyboardEvent) {
 }
 .reqs-tool:hover {
   color: var(--color-text);
-}
-
-.footer {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid color-mix(in oklch, var(--color-border) 60%, transparent);
-  font: 500 10px/1 var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-.footer-label {
-  color: var(--color-faint);
-}
-.footer-amt {
-  font-size: 13px;
-  color: var(--color-text);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0;
 }
 
 @media (max-width: 720px) {
