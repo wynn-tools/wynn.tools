@@ -378,7 +378,6 @@ button.nav-link {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid color-mix(in oklch, var(--color-accent) 20%, transparent);
-  border-top: 4px solid transparent;
   border-radius: 8px;
   padding: 4px;
   min-width: 200px;
