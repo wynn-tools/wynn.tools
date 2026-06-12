@@ -371,6 +371,13 @@ export const stockReport = pgTable('stock_report', {
   index('stock_report_creation_idx').on(t.creationId),
 ])
 
+export const stockRateBucket = pgTable('stock_rate_bucket', {
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  action: text('action').notNull(),
+  windowStart: timestamp('window_start', { withTimezone: true }).notNull(),
+  count: integer('count').notNull().default(0),
+}, t => [primaryKey({ columns: [t.userId, t.action, t.windowStart] })])
+
 export const stockAdminAuditLog = pgTable('stock_admin_audit_log', {
   id: text('id').primaryKey(),
   actorUserId: text('actor_user_id').notNull().references(() => users.id, { onDelete: 'set null' }),

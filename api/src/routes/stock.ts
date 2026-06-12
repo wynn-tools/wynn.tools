@@ -20,6 +20,7 @@ import {
 } from '../services/stock-admin'
 import { sniffImageMime } from '../services/stock-image-guard'
 import { postModReport } from '../services/stock-mod-webhook'
+import { assertWithin } from '../services/stock-rate-limit'
 import { isStockEmoji, toggleReaction } from '../services/stock-reactions'
 import { getCreationBySlug, getDraftVersion, getRawPart, getVersion, listCreations } from '../services/stock-read'
 
@@ -153,6 +154,7 @@ const createBody = z.object({
 stock.post('/', requireAuth, zValidator('json', createBody), async (c) => {
   assertWriteScope(c)
   const auth = c.get('auth')
+  await assertWithin(auth.user.id, 'publish')
   const body = c.req.valid('json')
   const { id, slug } = await createDraftCreation({
     userId: auth.user.id,
@@ -240,6 +242,7 @@ stock.patch('/:slug/versions/:n', requireAuth, zValidator('json', patchVersionBo
 stock.post('/:slug/versions/:n/publish', requireAuth, async (c) => {
   assertWriteScope(c)
   const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  await assertWithin(c.get('auth').user.id, 'version-publish')
   const n = Number(c.req.param('n'))
   const v = await getDb().query.stockVersion.findFirst({
     where: (vv, { and, eq }) => and(eq(vv.creationId, id), eq(vv.number, n)),
@@ -269,6 +272,7 @@ const reactionBody = z.object({
 
 stock.post('/:slug/reactions', requireAuth, zValidator('json', reactionBody), async (c) => {
   const auth = c.get('auth')
+  await assertWithin(auth.user.id, 'reaction')
   const creation = await getDb().query.stockCreation.findFirst({
     where: (cc, { and, eq, isNull }) => and(eq(cc.slug, c.req.param('slug')), isNull(cc.deletedAt)),
     columns: { id: true },
@@ -328,6 +332,7 @@ const reportBody = z.object({ reason: z.string().min(1).max(2000) })
 
 stock.post('/:slug/report', requireAuth, zValidator('json', reportBody), async (c) => {
   const auth = c.get('auth')
+  await assertWithin(auth.user.id, 'report')
   const creation = await getDb().query.stockCreation.findFirst({
     where: (cc, { and, eq, isNull }) => and(eq(cc.slug, c.req.param('slug')), isNull(cc.deletedAt)),
     columns: { id: true, slug: true, title: true },
