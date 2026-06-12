@@ -3,6 +3,7 @@ import { getDb, schema } from '../db/client'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
 import { slugForTitle } from '../lib/slug'
+import { createCreationThread, postVersionReply } from './stock-discord-bridge'
 
 export interface CreateDraftCreationInput {
   userId: string
@@ -167,7 +168,7 @@ export async function replaceDraftParts(versionId: string, parts: PartInput[]): 
 
 export async function publishVersion(versionId: string): Promise<void> {
   const db = getDb()
-  await db.transaction(async (tx) => {
+  const result = await db.transaction(async (tx) => {
     const v = await tx.query.stockVersion.findFirst({
       where: (vv, { eq }) => eq(vv.id, versionId),
       with: { parts: { columns: { blobSha256: true } } },
@@ -191,7 +192,22 @@ export async function publishVersion(versionId: string): Promise<void> {
     await tx.update(schema.stockCreation)
       .set({ lastActivityAt: new Date(), updatedAt: new Date() })
       .where(eq(schema.stockCreation.id, v.creationId))
+
+    return { creationId: v.creationId, versionNumber: v.number }
   })
+
+  void (async () => {
+    const creation = await getDb().query.stockCreation.findFirst({
+      where: (c, { eq }) => eq(c.id, result.creationId),
+      columns: { id: true, discordThreadId: true },
+    })
+    if (!creation)
+      return
+    if (!creation.discordThreadId)
+      await createCreationThread(creation.id)
+    else
+      await postVersionReply(creation.id, result.versionNumber)
+  })()
 }
 
 export async function softDeleteCreation(creationId: string, actorUserId: string): Promise<void> {

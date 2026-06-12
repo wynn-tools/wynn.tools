@@ -20,6 +20,8 @@ const schema = z.object({
   NORI_BASE_URL: z.string().url().default('https://nori.fish'),
   WYNNPOOL_BASE_URL: z.string().url().default('https://api.wynnpool.com'),
   UPLOAD_DIR: z.string().min(1).default('/var/lib/wynn-api/uploads'),
+  DISCORD_FUNCTION_STOCK_CHANNEL_ID: z.string().regex(/^\d+$/).optional(),
+  DISCORD_STOCK_MOD_WEBHOOK_URL: z.string().url().optional(),
   PORT: z.coerce.number().int().positive().default(8080),
 })
 
