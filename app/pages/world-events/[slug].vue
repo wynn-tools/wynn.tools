@@ -42,205 +42,314 @@ const mapHref = computed(() => {
   const loc = firstLocation.value
   return loc ? `/map?x=${loc.x}&z=${loc.z}&zoom=2` : '/map'
 })
+const lootSections = computed(() => {
+  const r = event.value?.resolved
+  if (!r)
+    return []
+  return [
+    { label: 'Common Ingredients', drops: r.commonIngredients },
+    { label: 'Possible Ingredients', drops: r.possibleIngredients },
+    { label: 'Exclusive Ingredients', drops: r.exclusiveIngredients },
+    { label: 'Exclusive Items', drops: r.exclusiveItems },
+    { label: 'Rare Mob Drops', drops: r.rareMobDrops },
+    { label: 'Rare Random Loots', drops: r.rareRandomLoots },
+  ].filter(s => s.drops.length)
+})
 </script>
 
 <template>
-  <article v-if="event" class="we-detail">
+  <article v-if="event" class="we">
     <NuxtLink to="/world-events" class="back">
-      ← World Events
+      ← All world events
     </NuxtLink>
-    <header class="we-header">
-      <h1>{{ event.event.name }}</h1>
-      <div class="chips">
-        <span v-if="event.loot?.region" class="badge badge--region">{{ event.loot.region }}</span>
-        <span class="badge">Lv {{ event.event.level }}</span>
-        <span class="badge" :class="`badge--diff-${event.event.difficulty.toLowerCase()}`">{{ event.event.difficulty }}</span>
-        <span class="badge">{{ event.event.length }}</span>
-        <Countdown :schedule="event.event.schedule" />
+
+    <header class="hero">
+      <div class="hero__text">
+        <div class="hero__rail">
+          <span v-if="event.loot?.region" class="region">{{ event.loot.region }}</span>
+          <Countdown :schedule="event.event.schedule" />
+        </div>
+        <h1 class="title">
+          {{ event.event.name }}
+        </h1>
+        <div class="stats">
+          <span class="stat"><span class="stat__k">Level</span><span class="stat__v">{{ event.event.level }}</span></span>
+          <span class="stat"><span class="stat__k">Difficulty</span><span class="stat__v" :data-diff="event.event.difficulty">{{ event.event.difficulty.toLowerCase() }}</span></span>
+          <span class="stat"><span class="stat__k">Length</span><span class="stat__v">{{ event.event.length.toLowerCase() }}</span></span>
+          <span v-if="event.loot?.countdown" class="stat"><span class="stat__k">Countdown</span><span class="stat__v">{{ event.loot.countdown }}</span></span>
+          <span v-if="event.loot?.delay" class="stat"><span class="stat__k">Delay</span><span class="stat__v">{{ event.loot.delay }}</span></span>
+        </div>
+        <p v-if="event.event.lore" class="lore">
+          {{ event.event.lore }}
+        </p>
       </div>
+      <NuxtLink v-if="firstLocation" :to="mapHref" class="hero__map" :aria-label="`Open ${event.event.name} on the map`">
+        <MapThumbnail :x="firstLocation.x" :z="firstLocation.z" />
+        <span class="map-cta">Open in map →</span>
+      </NuxtLink>
     </header>
 
-    <blockquote v-if="event.event.lore" class="lore">
-      {{ event.event.lore }}
-    </blockquote>
+    <section v-if="!event.loot" class="notice">
+      <span class="kicker">Loot</span>
+      <p>Loot data hasn't been documented for this event yet.</p>
+    </section>
 
-    <div v-if="!event.loot" class="notice">
-      Loot data not yet documented.
-    </div>
+    <section v-if="lootSections.length" class="loot">
+      <h2 class="kicker">
+        Loot tables
+      </h2>
+      <div class="loot__sections">
+        <LootSection v-for="s in lootSections" :key="s.label" :label="s.label" :drops="s.drops" />
+      </div>
+    </section>
 
-    <template v-if="event.resolved">
-      <LootSection label="Common Ingredients" :drops="event.resolved.commonIngredients" />
-      <LootSection label="Possible Ingredients" :drops="event.resolved.possibleIngredients" />
-      <LootSection label="Exclusive Ingredients" :drops="event.resolved.exclusiveIngredients" />
-      <LootSection label="Exclusive Items" :drops="event.resolved.exclusiveItems" />
-      <LootSection label="Rare Mob Drops" :drops="event.resolved.rareMobDrops" />
-      <LootSection label="Rare Random Loots" :drops="event.resolved.rareRandomLoots" />
-    </template>
-
-    <section class="meta">
-      <h3 class="kicker">
-        Details
-      </h3>
+    <section v-if="event.event.requirements.length || event.event.location.length" class="meta">
+      <h2 class="kicker">
+        Encounter
+      </h2>
       <dl>
-        <template v-if="event.loot?.countdown">
-          <dt>Countdown</dt>
-          <dd>{{ event.loot.countdown }}</dd>
-        </template>
-        <template v-if="event.loot?.delay">
-          <dt>Delay</dt>
-          <dd>{{ event.loot.delay }}</dd>
-        </template>
         <template v-if="event.event.requirements.length">
           <dt>Requirements</dt>
           <dd>
-            <span v-for="r in event.event.requirements" :key="r.type">{{ r.type }} {{ r.value }}</span>
+            <span v-for="r in event.event.requirements" :key="r.type" class="reqs">{{ r.type.toLowerCase().replace(/_/g, ' ') }} <strong>{{ r.value }}</strong></span>
           </dd>
         </template>
         <template v-if="event.event.location.length">
-          <dt>Location</dt>
+          <dt>{{ event.event.location.length > 1 ? 'Locations' : 'Location' }}</dt>
           <dd>
-            <span v-for="(l, i) in event.event.location" :key="i">{{ l.event.x }}, {{ l.event.y }}, {{ l.event.z }}</span>
+            <span v-for="(l, i) in event.event.location" :key="i" class="coord">
+              <span class="coord__n">{{ l.event.x }}</span>,
+              <span class="coord__n">{{ l.event.y }}</span>,
+              <span class="coord__n">{{ l.event.z }}</span>
+            </span>
           </dd>
         </template>
       </dl>
-      <NuxtLink v-if="firstLocation" :to="mapHref" class="map-thumb-link" :aria-label="`Open ${event.event.name} on the map`">
-        <MapThumbnail :x="firstLocation.x" :z="firstLocation.z" />
-        <span class="map-thumb-cta">Open in map →</span>
-      </NuxtLink>
     </section>
 
     <section v-if="others.length" class="others">
-      <h3 class="kicker">
-        Other events in {{ event.loot?.region }}
-      </h3>
-      <div class="others-grid">
+      <h2 class="kicker">
+        More in {{ event.loot?.region }}
+      </h2>
+      <div class="others__grid">
         <EventCard v-for="o in others" :key="o.slug" :event="o" />
       </div>
     </section>
   </article>
 
-  <div v-else-if="loading" class="muted">
-    Loading…
+  <div v-else-if="loading" class="state-block">
+    <span>Loading…</span>
   </div>
-  <div v-else class="muted">
-    Event not found.
+  <div v-else class="state-block">
+    <span>Event not found.</span>
+    <NuxtLink to="/world-events" class="state-action">
+      Back to events
+    </NuxtLink>
   </div>
 </template>
 
 <style scoped>
-.we-detail {
-  max-width: 880px;
+.we {
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 20px 96px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 40px;
 }
 .back {
-  display: inline-block;
   font: 500 11px/1 var(--font-mono);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-muted);
   text-decoration: none;
-  padding: 6px 0;
   transition: color 0.12s ease-out;
 }
 .back:hover {
   color: var(--color-accent);
 }
-.we-header h1 {
-  font-size: 28px;
-  margin: 0 0 12px;
+
+/* ── Hero ── */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: 32px;
+  align-items: start;
 }
-.chips {
+@media (max-width: 800px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+.hero__rail {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.region {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0 0 18px;
+  color: var(--color-text);
+}
+
+.stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+  gap: 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 0;
+  margin-bottom: 20px;
 }
-.badge {
-  display: inline-flex;
-  padding: 3px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  font-size: 12px;
-  color: var(--color-muted);
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 18px;
+  border-right: 1px solid var(--color-border);
 }
-.badge--region {
+.stat:last-child {
+  border-right: 0;
+}
+.stat:first-child {
+  padding-left: 0;
+}
+.stat__k {
+  font: 500 10px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+.stat__v {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+.stat__v[data-diff='HARD'] {
   color: var(--color-accent);
+}
+
+.lore {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--color-muted);
+  max-width: 60ch;
+}
+
+.hero__map {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  color: var(--color-text);
+}
+.hero__map :deep(.map-thumb) {
+  height: 260px;
+  border-radius: 10px;
+  transition: border-color 0.14s ease-out;
+}
+.hero__map:hover :deep(.map-thumb) {
   border-color: var(--color-accent);
 }
-.badge--diff-hard {
-  color: oklch(0.65 0.2 5);
-}
-.badge--diff-medium {
-  color: oklch(0.8 0.12 90);
-}
-.badge--diff-easy {
-  color: oklch(0.7 0.16 145);
-}
-.lore {
-  border-left: 2px solid var(--color-accent);
+.map-cta {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 800;
   padding: 6px 12px;
-  color: var(--color-muted);
-  font-style: italic;
-  margin: 0;
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  background: var(--color-accent);
+  border-radius: 4px;
+  pointer-events: none;
 }
+
+/* ── Sections ── */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0 0 14px;
+}
+
 .notice {
-  padding: 12px;
-  border: 1px dashed var(--color-border);
+  padding: 20px;
+  background: var(--color-surface);
   border-radius: 8px;
-  color: var(--color-muted);
 }
+.notice p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.loot__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .meta dl {
   display: grid;
   grid-template-columns: 140px 1fr;
-  gap: 6px 16px;
+  gap: 12px 24px;
   font-size: 13px;
+  margin: 0;
 }
 .meta dt {
-  color: var(--color-muted);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  padding-top: 4px;
 }
 .meta dd {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px 18px;
 }
-.map-thumb-link {
-  display: block;
-  margin-top: 12px;
-  text-decoration: none;
-  color: var(--color-text);
-  position: relative;
-}
-.map-thumb-link:hover :deep(.map-thumb) {
-  border-color: var(--color-accent);
-}
-.map-thumb-cta {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  z-index: 800;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--color-accent);
-  background: color-mix(in oklch, var(--color-bg) 75%, transparent);
-  border: 1px solid var(--color-accent);
-  border-radius: 9999px;
-  backdrop-filter: blur(4px);
-  pointer-events: none;
-}
-.others-grid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  margin-top: 8px;
-}
-.muted {
-  padding: 40px;
-  text-align: center;
+.reqs {
+  text-transform: capitalize;
   color: var(--color-muted);
+}
+.reqs strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.coord {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.coord__n {
+  display: inline-block;
+  min-width: 1ch;
+}
+
+.others__grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
 </style>

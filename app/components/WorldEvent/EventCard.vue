@@ -5,95 +5,120 @@ import Countdown from './Countdown.vue'
 
 const props = defineProps<{ event: JoinedWorldEvent }>()
 const preview = computed(() => props.event.resolved?.exclusiveItems.slice(0, 3) ?? [])
+const lengthChar = computed(() => ({ SHORT: 'S', MEDIUM: 'M', LONG: 'L' } as const)[props.event.event.length])
 </script>
 
 <template>
-  <NuxtLink :to="`/world-events/${event.slug}`" class="event-card">
-    <header>
-      <h2>{{ event.event.name }}</h2>
+  <NuxtLink :to="`/world-events/${event.slug}`" class="row" :class="{ 'row--hard': event.event.difficulty === 'HARD' }">
+    <div class="row__head">
+      <span v-if="event.loot?.region" class="row__region">{{ event.loot.region }}</span>
+      <h2 class="row__name">
+        {{ event.event.name }}
+      </h2>
       <Countdown :schedule="event.event.schedule" />
-    </header>
-    <div class="chips">
-      <span v-if="event.loot?.region" class="badge badge--region">{{ event.loot.region }}</span>
-      <span class="badge">Lv {{ event.event.level }}</span>
-      <span class="badge" :class="`badge--diff-${event.event.difficulty.toLowerCase()}`">{{ event.event.difficulty }}</span>
-      <span class="badge">{{ event.event.length }}</span>
     </div>
-    <div v-if="preview.length" class="preview">
-      <span v-for="p in preview" :key="p.name" class="preview__item">{{ p.name }}</span>
-    </div>
-    <div v-else-if="!event.loot" class="preview preview--missing">
-      Loot data not yet documented
+    <div class="row__meta">
+      <span class="meta meta--lvl">Lv {{ event.event.level }}</span>
+      <span class="meta meta--diff" :data-diff="event.event.difficulty">{{ event.event.difficulty.toLowerCase() }}</span>
+      <span class="meta meta--len" :title="event.event.length.toLowerCase()">{{ lengthChar }}</span>
+      <span v-if="preview.length" class="row__preview">
+        <span v-for="(p, i) in preview" :key="p.name">{{ p.name }}<span v-if="i < preview.length - 1" aria-hidden="true"> · </span></span>
+      </span>
+      <span v-else-if="!event.loot" class="row__preview row__preview--missing">Loot data not yet documented</span>
     </div>
   </NuxtLink>
 </template>
 
 <style scoped>
-.event-card {
+.row {
   display: block;
   padding: 14px 16px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-text);
   text-decoration: none;
-  transition: border-color 120ms;
+  transition:
+    border-color 0.14s ease-out,
+    background 0.14s ease-out;
 }
-.event-card:hover {
-  border-color: var(--color-accent);
+.row:hover {
+  border-color: color-mix(in oklch, var(--color-accent) 50%, var(--color-border));
+  background: var(--color-surface-hi);
 }
-.event-card + .event-card {
-  margin-top: 10px;
+.row:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
-.event-card header {
+.row--hard {
+  border-color: color-mix(in oklch, var(--color-faint) 60%, var(--color-border));
+}
+
+.row__head {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
   gap: 12px;
 }
-.event-card h2 {
-  font-size: 15px;
+.row__region {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+.row__name {
+  font-family: var(--font-display);
+  font-size: 16px;
   font-weight: 600;
+  letter-spacing: -0.01em;
   margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.chips {
+
+.row__meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
 }
-.badge {
+.meta {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  font-size: 11px;
-  color: var(--color-muted);
-  background: var(--color-bg);
+  white-space: nowrap;
 }
-.badge--region {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+.meta--diff[data-diff='HARD'] {
+  color: var(--color-text);
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
-.badge--diff-hard {
-  color: oklch(0.65 0.2 5);
+.meta--len {
+  font-variant-numeric: tabular-nums;
+  width: 12px;
+  text-align: center;
 }
-.badge--diff-medium {
-  color: oklch(0.8 0.12 90);
-}
-.badge--diff-easy {
-  color: oklch(0.7 0.16 145);
-}
-.preview {
-  margin-top: 8px;
+
+.row__preview {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-body);
   font-size: 12px;
-  color: var(--color-muted);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-faint);
 }
-.preview__item:not(:last-child)::after {
-  content: ' · ';
-}
-.preview--missing {
+.row__preview--missing {
   font-style: italic;
 }
 </style>

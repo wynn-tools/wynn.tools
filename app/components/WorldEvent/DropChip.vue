@@ -93,9 +93,12 @@ const hasTooltip = computed(() => Boolean(props.drop.ingredient ?? props.drop.it
   border-color: oklch(0.7 0.16 145);
 }
 .drop-hover {
-  z-index: 200;
+  background: var(--color-bg);
+  border-radius: 4px;
+  overflow: hidden;
 }
 .drop-hover__scale {
   zoom: 0.75;
+  display: block;
 }
 </style>
