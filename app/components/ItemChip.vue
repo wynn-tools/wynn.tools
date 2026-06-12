@@ -66,6 +66,12 @@ const ringStyle = computed(() => {
   }
 })
 
+const chipClasses = computed(() => [
+  ringColor.value ? 'chip--rarity' : null,
+  props.diffState ? `chip--${props.diffState}` : null,
+  !ringColor.value && !props.diffState ? 'chip--plain' : null,
+])
+
 const ariaLabel = computed(() => {
   const parts: string[] = []
   if (props.diffState)
@@ -82,15 +88,11 @@ const ariaLabel = computed(() => {
 <template>
   <Quickview :disabled="!showQuickview">
     <template #trigger>
-      <component
-        :is="href ? 'NuxtLink' : 'span'"
+      <NuxtLink
+        v-if="href"
         :to="href"
         class="chip"
-        :class="[
-          ringColor ? 'chip--rarity' : null,
-          diffState ? `chip--${diffState}` : null,
-          !ringColor && !diffState ? 'chip--plain' : null,
-        ]"
+        :class="chipClasses"
         :style="ringStyle"
         :title="note ?? undefined"
         :aria-label="ariaLabel"
@@ -106,7 +108,27 @@ const ariaLabel = computed(() => {
         >
         <span v-if="stars" class="chip__stars" aria-hidden="true">{{ stars }}</span>
         <span class="chip__name">{{ displayName }}</span>
-      </component>
+      </NuxtLink>
+      <span
+        v-else
+        class="chip"
+        :class="chipClasses"
+        :style="ringStyle"
+        :title="note ?? undefined"
+        :aria-label="ariaLabel"
+      >
+        <span v-if="diffGlyph" class="chip__diff" aria-hidden="true">{{ diffGlyph }}</span>
+        <img
+          v-if="iconUrl"
+          :src="iconUrl"
+          class="chip__icon"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        >
+        <span v-if="stars" class="chip__stars" aria-hidden="true">{{ stars }}</span>
+        <span class="chip__name">{{ displayName }}</span>
+      </span>
     </template>
     <IngredientTooltip v-if="ingredient" :ingredient="ingredient" />
     <ItemTooltip v-else-if="item" :item="item" :exportable="false" />
