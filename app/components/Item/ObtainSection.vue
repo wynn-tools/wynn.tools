@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { ObtainKind } from '~/lib/items-search/obtain'
 import type { SearchItem } from '~/lib/items-search/types'
+import { useItemSources } from '~/composables/useItemSources'
 import { useWorldEventLoot } from '~/composables/useWorldEvents'
+import { mobsForItem } from '~/lib/item-sources/lookup'
 import { obtainInfo } from '~/lib/items-search/obtain'
 import { worldEventDropsForItem } from '~/lib/world-events/item-drops'
 
@@ -11,11 +13,18 @@ const baseMethods = computed(() => obtainInfo(props.item))
 const { loot } = useWorldEventLoot()
 const worldEventDrops = computed(() => worldEventDropsForItem(props.item.name, loot.value))
 
+const { sources } = useItemSources()
+const wikiMobs = computed(() => mobsForItem(props.item.name, sources.value))
+
 const hasWorldEvent = computed(() => worldEventDrops.value.length > 0)
+const hasWikiMobs = computed(() => wikiMobs.value.length > 0)
 const methods = computed(() => {
-  if (!hasWorldEvent.value)
-    return baseMethods.value
-  return baseMethods.value.filter(m => m.kind !== 'unknown')
+  let m = baseMethods.value
+  if (hasWorldEvent.value || hasWikiMobs.value)
+    m = m.filter(x => x.kind !== 'unknown')
+  if (hasWikiMobs.value)
+    m = m.filter(x => x.kind !== 'mobs')
+  return m
 })
 
 const KIND_GLYPH: Record<ObtainKind, string> = {
@@ -53,6 +62,17 @@ const SOURCE_TAG: Record<'exclusiveItems' | 'rareRandomLoots', string> = {
           <span class="tag">{{ KIND_TAG[m.kind] }}</span>
           <span class="desc">{{ m.description }}</span>
           <span v-if="m.quest" class="quest">{{ m.quest }}</span>
+        </div>
+      </li>
+      <li
+        v-for="d in wikiMobs"
+        :key="`wiki-${d.mob}`"
+        class="method method--mobs"
+      >
+        <span class="glyph" aria-hidden="true">⚔</span>
+        <div class="body">
+          <span class="tag">{{ d.kind === 'guaranteed' ? 'Guaranteed drop' : 'Mob drop' }}</span>
+          <a class="mob-link" :href="d.wiki" target="_blank" rel="noopener">{{ d.mob }}</a>
         </div>
       </li>
       <li
@@ -144,13 +164,15 @@ const SOURCE_TAG: Record<'exclusiveItems' | 'rareRandomLoots', string> = {
   color: var(--color-gold);
   margin-top: 1px;
 }
-.event-link {
+.event-link,
+.mob-link {
   font: 600 13.5px/1.3 var(--font-body);
   color: var(--color-text);
   text-decoration: none;
   transition: color 0.12s ease-out;
 }
-.event-link:hover {
+.event-link:hover,
+.mob-link:hover {
   color: var(--color-accent);
 }
 .note {
