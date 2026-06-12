@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterAll, beforeEach, describe, expect, it } from 'vitest'
 import { env } from '../src/env'
 import { testApp } from './helpers/app'
 import { makeUserWithSession } from './helpers/auth'
@@ -6,6 +6,7 @@ import { resetDb } from './helpers/db'
 
 describe('rate limit', () => {
   beforeEach(resetDb)
+  afterAll(resetDb)
 
   it('caps creations at 3/day', async () => {
     const u = await makeUserWithSession()
