@@ -175,8 +175,8 @@ watch(activeCreator, async (id) => {
 }, { immediate: true })
 
 // ── List state ───────────────────────────────────────────────────────────
-const items = ref<StockListItem[]>([])
-const nextCursor = ref<string | null>(null)
+const items = useState<StockListItem[]>('public-stock-items', () => [])
+const nextCursor = useState<string | null>('public-stock-next', () => null)
 const loading = ref(false)
 const loadError = ref<string | null>(null)
 
@@ -196,9 +196,11 @@ async function load(cursor?: string) {
     const res = await api.list({ ...filters.value, cursor, limit: 24 })
     items.value = cursor ? [...items.value, ...res.items] : res.items
     nextCursor.value = res.nextCursor
+    return res
   }
   catch (e) {
     loadError.value = e instanceof Error ? e.message : 'Failed to load creations.'
+    return null
   }
   finally {
     loading.value = false
