@@ -371,4 +371,75 @@ const hasLoot = computed(() =>
   gap: 8px;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 }
+
+@media (max-width: 720px) {
+  .we {
+    padding: 16px 14px 64px;
+    gap: 28px;
+  }
+  .hero {
+    gap: 22px;
+  }
+  .title {
+    font-size: clamp(28px, 8vw, 38px);
+    margin-bottom: 14px;
+  }
+  .hero__rail {
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    row-gap: 12px;
+    padding: 14px 0;
+    margin-bottom: 18px;
+  }
+  .stat {
+    padding: 0;
+    border-right: 0;
+  }
+  .stat:first-child {
+    padding-left: 0;
+  }
+  .stat__v {
+    font-size: 14px;
+  }
+
+  .lore {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .hero__map :deep(.map-thumb) {
+    height: 180px;
+  }
+  .map-cta {
+    right: 8px;
+    bottom: 8px;
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .meta dl {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .meta dt {
+    padding-top: 12px;
+  }
+  .meta dt:first-of-type {
+    padding-top: 0;
+  }
+  .meta dd {
+    gap: 4px 14px;
+  }
+
+  .others__grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

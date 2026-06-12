@@ -84,8 +84,8 @@ const liveCount = computed(() => joined.value.filter(j => j.event.schedule).leng
           {{ liveCount }} live
         </span>
         <label class="sort">
-          <span>Sort</span>
-          <select v-model="sort" class="f-input sort-select">
+          <span class="sort__label">Sort</span>
+          <select v-model="sort" class="f-input sort-select" aria-label="Sort events">
             <option value="level">
               Level
             </option>
@@ -199,6 +199,19 @@ const liveCount = computed(() => joined.value.filter(j => j.event.schedule).leng
 @media (max-width: 720px) {
   .page-desc {
     display: none;
+  }
+  .toolbar-tail {
+    gap: 12px;
+  }
+  .sort {
+    gap: 6px;
+  }
+  .sort__label {
+    display: none;
+  }
+  .sort-select {
+    padding: 6px 24px 6px 8px;
+    background-position: right 8px center;
   }
 }
 </style>
