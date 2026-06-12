@@ -46,6 +46,9 @@ const mapHref = computed(() => {
 
 <template>
   <article v-if="event" class="we-detail">
+    <NuxtLink to="/world-events" class="back">
+      ← World Events
+    </NuxtLink>
     <header class="we-header">
       <h1>{{ event.event.name }}</h1>
       <div class="chips">
@@ -133,6 +136,19 @@ const mapHref = computed(() => {
   flex-direction: column;
   gap: 24px;
 }
+.back {
+  display: inline-block;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color 0.12s ease-out;
+}
+.back:hover {
+  color: var(--color-accent);
+}
 .we-header h1 {
   font-size: 28px;
   margin: 0 0 12px;
@@ -206,6 +222,7 @@ const mapHref = computed(() => {
   position: absolute;
   right: 10px;
   bottom: 10px;
+  z-index: 800;
   padding: 4px 10px;
   font-size: 12px;
   color: var(--color-accent);
@@ -213,6 +230,7 @@ const mapHref = computed(() => {
   border: 1px solid var(--color-accent);
   border-radius: 9999px;
   backdrop-filter: blur(4px);
+  pointer-events: none;
 }
 .others-grid {
   display: grid;
