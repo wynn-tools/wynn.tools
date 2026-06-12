@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ResolvedDrop } from '~/lib/world-events/types'
+import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { computed } from 'vue'
+import { itemSlug } from '~/lib/items-search/slug'
 
 const props = defineProps<{ drop: ResolvedDrop }>()
 
@@ -9,28 +11,38 @@ const stars = computed(() => {
   return t > 0 ? '★'.repeat(t) : ''
 })
 
-const href = computed(() => {
-  if (props.drop.ingredient)
-    return `/items?ingredient=${encodeURIComponent(props.drop.name)}`
-  if (props.drop.item)
-    return `/items/${encodeURIComponent(props.drop.name)}`
-  return null
-})
-
-const rarityClass = computed(() => props.drop.item?.rarity ? `chip--rarity-${props.drop.item.rarity}` : null)
+const itemHref = computed(() => props.drop.item ? `/items/${itemSlug({ name: props.drop.name })}` : null)
+const rarityClass = computed(() => props.drop.item?.tier ? `chip--rarity-${props.drop.item.tier}` : null)
+const hasTooltip = computed(() => Boolean(props.drop.ingredient ?? props.drop.item))
 </script>
 
 <template>
-  <NuxtLink
-    v-if="href"
-    :to="href"
-    class="chip"
-    :class="[rarityClass]"
-    :title="drop.note ?? undefined"
-  >
-    <span v-if="stars" class="chip__stars">{{ stars }}</span>
-    <span class="chip__name">{{ drop.name }}</span>
-  </NuxtLink>
+  <HoverCardRoot v-if="hasTooltip" :open-delay="120" :close-delay="0">
+    <HoverCardTrigger as-child>
+      <NuxtLink
+        v-if="itemHref"
+        :to="itemHref"
+        class="chip"
+        :class="[rarityClass]"
+        :title="drop.note ?? undefined"
+      >
+        <span v-if="stars" class="chip__stars">{{ stars }}</span>
+        <span class="chip__name">{{ drop.name }}</span>
+      </NuxtLink>
+      <span v-else class="chip chip--ingredient" :title="drop.note ?? undefined">
+        <span v-if="stars" class="chip__stars">{{ stars }}</span>
+        <span class="chip__name">{{ drop.name }}</span>
+      </span>
+    </HoverCardTrigger>
+    <HoverCardPortal>
+      <HoverCardContent :side-offset="8" side="top" align="start" class="drop-hover">
+        <div class="drop-hover__scale">
+          <IngredientTooltip v-if="drop.ingredient" :ingredient="drop.ingredient" />
+          <ItemTooltip v-else-if="drop.item" :item="drop.item" :exportable="false" />
+        </div>
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
   <span v-else class="chip chip--unresolved" :title="drop.note ?? undefined">
     <span class="chip__name">{{ drop.name }}</span>
   </span>
@@ -48,12 +60,14 @@ const rarityClass = computed(() => props.drop.item?.rarity ? `chip--rarity-${pro
   color: var(--color-text);
   text-decoration: none;
   font-size: 13px;
+  cursor: pointer;
 }
 .chip:hover {
   border-color: var(--color-accent);
 }
 .chip--unresolved {
   color: var(--color-muted);
+  cursor: default;
 }
 .chip__stars {
   color: var(--color-accent);
@@ -77,5 +91,11 @@ const rarityClass = computed(() => props.drop.item?.rarity ? `chip--rarity-${pro
 }
 .chip--rarity-set {
   border-color: oklch(0.7 0.16 145);
+}
+.drop-hover {
+  z-index: 200;
+}
+.drop-hover__scale {
+  zoom: 0.75;
 }
 </style>

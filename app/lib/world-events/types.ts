@@ -1,3 +1,4 @@
+import type { SearchIngredient, SearchItem } from '~/lib/items-search/types'
 import type { WorldEvent } from '~/types/map'
 
 export interface DropEntryWithNote { name: string, note: string | null }
@@ -24,9 +25,9 @@ export type WorldEventLootMap = Record<string, WorldEventLoot>
 export interface ResolvedDrop {
   name: string
   /** present iff the name resolves to an ingredient in the current snapshot */
-  ingredient?: { tier: number, displayName?: string }
+  ingredient?: SearchIngredient
   /** present iff the name resolves to an item in the current snapshot */
-  item?: { rarity?: string, type?: string }
+  item?: SearchItem
   /** freeform note (rareRandomLoots only) */
   note?: string | null
 }

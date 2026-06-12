@@ -1,4 +1,5 @@
 import type { WorldEventLootMap } from './types'
+import type { SearchIngredient, SearchItem } from '~/lib/items-search/types'
 import type { WorldEvent } from '~/types/map'
 import { describe, expect, it, vi } from 'vitest'
 import { joinWorldEvents } from './join'
@@ -18,11 +19,14 @@ function ev(name: string): WorldEvent {
   }
 }
 
-const ingredients = new Map([
-  ['Blood of the Nivlan Beauty', { tier: 3 }],
+const bloodIng = { name: 'Blood of the Nivlan Beauty', tier: 3 } as unknown as SearchIngredient
+const guardItem = { name: 'Guard\'s Garment', tier: 'unique', type: 'armour' } as unknown as SearchItem
+
+const ingredients = new Map<string, SearchIngredient>([
+  ['Blood of the Nivlan Beauty', bloodIng],
 ])
-const items = new Map([
-  ['Guard\'s Garment', { rarity: 'unique', type: 'chestplate' }],
+const items = new Map<string, SearchItem>([
+  ['Guard\'s Garment', guardItem],
 ])
 
 const loot: WorldEventLootMap = {
@@ -60,9 +64,9 @@ describe('joinWorldEvents', () => {
     expect(out).toHaveLength(1)
     expect(out[0].slug).toBe('haywire-defender')
     expect(out[0].loot?.region).toBe('Ragni')
-    expect(out[0].resolved?.commonIngredients[0]).toEqual({ name: 'Blood of the Nivlan Beauty', ingredient: { tier: 3 } })
+    expect(out[0].resolved?.commonIngredients[0]).toEqual({ name: 'Blood of the Nivlan Beauty', ingredient: bloodIng })
     expect(out[0].resolved?.commonIngredients[1]).toEqual({ name: 'Unknown Thing' })
-    expect(out[0].resolved?.exclusiveItems[0].item?.rarity).toBe('unique')
+    expect(out[0].resolved?.exclusiveItems[0].item).toBe(guardItem)
     expect(out[0].resolved?.exclusiveItems[1]).toEqual({ name: 'Mystery Item' })
     expect(out[0].resolved?.rareRandomLoots[0]).toEqual({ name: 'Lunar Charm', note: 'sometimes' })
   })

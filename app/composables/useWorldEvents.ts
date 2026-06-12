@@ -1,10 +1,9 @@
 import type { CdnClient } from '~/lib/data/cdn-client'
-import type { IngredientRef, ItemRef } from '~/lib/world-events/join'
+import type { SearchIngredient, SearchItem } from '~/lib/items-search/types'
 import type { JoinedWorldEvent, WorldEventLootMap } from '~/lib/world-events/types'
 import type { WorldEvent } from '~/types/map'
 import { computed, ref, shallowRef } from 'vue'
-import { resolveLatestVersion } from '~/composables/useBuildData'
-import { cdnPathFor } from '~/lib/data/cdn-adapter/version-paths'
+import { useItemSearchData } from '~/composables/useItemSearchData'
 import { createCdnClient } from '~/lib/data/cdn-client'
 import { joinWorldEvents } from '~/lib/world-events/join'
 import { loadWorldEventLoot } from '~/lib/world-events/load-loot'
@@ -17,9 +16,7 @@ const loading = ref(false)
 const error = ref<string | null>(null)
 
 const loot = shallowRef<WorldEventLootMap>({})
-const ingredients = shallowRef<Map<string, IngredientRef>>(new Map())
-const items = shallowRef<Map<string, ItemRef>>(new Map())
-const joinReady = ref(false)
+const lootReady = ref(false)
 
 let initialized = false
 let athenaUrl = ''
@@ -42,7 +39,7 @@ async function fetchEvents() {
   }
 }
 
-async function loadJoinSources() {
+async function loadLoot() {
   if (!cdnClient)
     return
   try {
@@ -51,22 +48,8 @@ async function loadJoinSources() {
   catch {
     loot.value = {}
   }
-  try {
-    const { gameVersion } = await resolveLatestVersion(cdnClient)
-    const ingFile = await cdnClient
-      .fetchJson<{ ingredients: Array<{ name: string, tier: number, displayName?: string }> }>(cdnPathFor(gameVersion, 'ingredients.json'))
-      .catch(() => ({ ingredients: [] }))
-    const itemFile = await cdnClient
-      .fetchJson<{ items: Array<{ name: string, rarity?: string, type?: string }> }>(cdnPathFor(gameVersion, 'items.json'))
-      .catch(() => ({ items: [] }))
-    ingredients.value = new Map(ingFile.ingredients.map(i => [i.name, { tier: i.tier, displayName: i.displayName }]))
-    items.value = new Map(itemFile.items.map(i => [i.name, { rarity: i.rarity, type: i.type }]))
-  }
-  catch {
-    /* leave the maps empty; resolved drops degrade to plain names */
-  }
   finally {
-    joinReady.value = true
+    lootReady.value = true
   }
 }
 
@@ -78,7 +61,7 @@ function initialize() {
   athenaUrl = cfg.athenaUrl as string
   cdnClient = createCdnClient(cfg.cdnBaseUrl as string)
   fetchEvents()
-  loadJoinSources()
+  loadLoot()
   setInterval(fetchEvents, REFRESH_MS)
 }
 
@@ -89,10 +72,17 @@ export function useWorldEvents() {
 
 export function useJoinedWorldEvents() {
   initialize()
+  const { data: searchData } = useItemSearchData()
+  const ingredientMap = computed(() => new Map<string, SearchIngredient>(
+    (searchData.value?.ingredients ?? []).map(i => [i.name, i]),
+  ))
+  const itemMap = computed(() => new Map<string, SearchItem>(
+    (searchData.value?.items ?? []).map(i => [i.name, i]),
+  ))
   const joined = computed<JoinedWorldEvent[]>(() => {
-    if (!joinReady.value)
+    if (!lootReady.value)
       return []
-    return joinWorldEvents(events.value, loot.value, ingredients.value, items.value, (name) => {
+    return joinWorldEvents(events.value, loot.value, ingredientMap.value, itemMap.value, (name) => {
       if (import.meta.dev)
         console.warn(`[world-events] loot entry "${name}" has no matching API event`)
     })
@@ -103,4 +93,9 @@ export function useJoinedWorldEvents() {
 export function useWorldEvent(slug: string) {
   const { joined } = useJoinedWorldEvents()
   return computed(() => joined.value.find(j => j.slug === slug))
+}
+
+export function useWorldEventLoot() {
+  initialize()
+  return { loot, ready: lootReady }
 }

@@ -1,14 +1,12 @@
 import type { JoinedWorldEvent, ResolvedDrop, ResolvedDrops, WorldEventDrops, WorldEventLootMap } from './types'
+import type { SearchIngredient, SearchItem } from '~/lib/items-search/types'
 import type { WorldEvent } from '~/types/map'
 import { slugify } from './slug'
 
-export interface IngredientRef { tier: number, displayName?: string }
-export interface ItemRef { rarity?: string, type?: string }
-
 function resolveList(
   names: string[],
-  ingredients: ReadonlyMap<string, IngredientRef>,
-  items: ReadonlyMap<string, ItemRef>,
+  ingredients: ReadonlyMap<string, SearchIngredient>,
+  items: ReadonlyMap<string, SearchItem>,
 ): ResolvedDrop[] {
   return names.map((name): ResolvedDrop => {
     const ing = ingredients.get(name)
@@ -23,8 +21,8 @@ function resolveList(
 
 function resolveDrops(
   drops: WorldEventDrops,
-  ingredients: ReadonlyMap<string, IngredientRef>,
-  items: ReadonlyMap<string, ItemRef>,
+  ingredients: ReadonlyMap<string, SearchIngredient>,
+  items: ReadonlyMap<string, SearchItem>,
 ): ResolvedDrops {
   return {
     commonIngredients: resolveList(drops.commonIngredients, ingredients, items),
@@ -42,8 +40,8 @@ function resolveDrops(
 export function joinWorldEvents(
   events: ReadonlyArray<WorldEvent>,
   loot: WorldEventLootMap,
-  ingredients: ReadonlyMap<string, IngredientRef>,
-  items: ReadonlyMap<string, ItemRef>,
+  ingredients: ReadonlyMap<string, SearchIngredient>,
+  items: ReadonlyMap<string, SearchItem>,
   onOrphanLoot: (name: string) => void = () => {},
 ): JoinedWorldEvent[] {
   const apiNames = new Set(events.map(e => e.name))
