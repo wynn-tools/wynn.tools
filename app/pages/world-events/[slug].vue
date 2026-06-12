@@ -4,6 +4,7 @@ import Countdown from '~/components/WorldEvent/Countdown.vue'
 import EventCard from '~/components/WorldEvent/EventCard.vue'
 import LootSection from '~/components/WorldEvent/LootSection.vue'
 import MapThumbnail from '~/components/WorldEvent/MapThumbnail.vue'
+import RareMobBlock from '~/components/WorldEvent/RareMobBlock.vue'
 import { useJoinedWorldEvents, useWorldEvent } from '~/composables/useWorldEvents'
 
 definePageMeta({ ssr: false })
@@ -42,7 +43,7 @@ const mapHref = computed(() => {
   const loc = firstLocation.value
   return loc ? `/map?x=${loc.x}&z=${loc.z}&zoom=2` : '/map'
 })
-const lootSections = computed(() => {
+const lootBeforeMobs = computed(() => {
   const r = event.value?.resolved
   if (!r)
     return []
@@ -51,10 +52,20 @@ const lootSections = computed(() => {
     { label: 'Possible Ingredients', drops: r.possibleIngredients },
     { label: 'Exclusive Ingredients', drops: r.exclusiveIngredients },
     { label: 'Exclusive Items', drops: r.exclusiveItems },
-    { label: 'Rare Mob Drops', drops: r.rareMobDrops },
+  ].filter(s => s.drops.length)
+})
+const rareMobs = computed(() => event.value?.resolved?.rareMobs ?? [])
+const lootAfterMobs = computed(() => {
+  const r = event.value?.resolved
+  if (!r)
+    return []
+  return [
     { label: 'Rare Random Loots', drops: r.rareRandomLoots },
   ].filter(s => s.drops.length)
 })
+const hasLoot = computed(() =>
+  lootBeforeMobs.value.length > 0 || rareMobs.value.length > 0 || lootAfterMobs.value.length > 0,
+)
 </script>
 
 <template>
@@ -94,12 +105,16 @@ const lootSections = computed(() => {
       <p>Loot data hasn't been documented for this event yet.</p>
     </section>
 
-    <section v-if="lootSections.length" class="loot">
+    <section v-if="hasLoot" class="loot">
       <h2 class="kicker">
         Loot tables
       </h2>
       <div class="loot__sections">
-        <LootSection v-for="s in lootSections" :key="s.label" :label="s.label" :drops="s.drops" />
+        <LootSection v-for="s in lootBeforeMobs" :key="s.label" :label="s.label" :drops="s.drops" />
+        <div v-if="rareMobs.length" class="loot__mobs">
+          <RareMobBlock v-for="(m, i) in rareMobs" :key="`${m.name}-${i}`" :mob="m" />
+        </div>
+        <LootSection v-for="s in lootAfterMobs" :key="s.label" :label="s.label" :drops="s.drops" />
       </div>
     </section>
 
@@ -307,6 +322,10 @@ const lootSections = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+.loot__mobs {
+  display: flex;
+  flex-direction: column;
 }
 
 .meta dl {

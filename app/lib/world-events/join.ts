@@ -1,22 +1,46 @@
-import type { JoinedWorldEvent, ResolvedDrop, ResolvedDrops, WorldEventDrops, WorldEventLootMap } from './types'
+import type { JoinedWorldEvent, RareMobEntry, ResolvedDrop, ResolvedDrops, ResolvedRareMob, ResolvedRareMobDrop, WorldEventDrops, WorldEventLootMap } from './types'
 import type { SearchIngredient, SearchItem } from '~/lib/items-search/types'
 import type { WorldEvent } from '~/types/map'
 import { slugify } from './slug'
+
+function resolveOne(
+  name: string,
+  ingredients: ReadonlyMap<string, SearchIngredient>,
+  items: ReadonlyMap<string, SearchItem>,
+): ResolvedDrop {
+  const ing = ingredients.get(name)
+  if (ing)
+    return { name, ingredient: ing }
+  const item = items.get(name)
+  if (item)
+    return { name, item }
+  return { name }
+}
 
 function resolveList(
   names: string[],
   ingredients: ReadonlyMap<string, SearchIngredient>,
   items: ReadonlyMap<string, SearchItem>,
 ): ResolvedDrop[] {
-  return names.map((name): ResolvedDrop => {
-    const ing = ingredients.get(name)
-    if (ing)
-      return { name, ingredient: ing }
-    const item = items.get(name)
-    if (item)
-      return { name, item }
-    return { name }
-  })
+  return names.map(n => resolveOne(n, ingredients, items))
+}
+
+function resolveRareMobs(
+  mobs: RareMobEntry[],
+  ingredients: ReadonlyMap<string, SearchIngredient>,
+  items: ReadonlyMap<string, SearchItem>,
+): ResolvedRareMob[] {
+  return mobs.map((m): ResolvedRareMob => ({
+    name: m.name,
+    count: m.count,
+    drops: m.drops.map((d): ResolvedRareMobDrop => {
+      const base = resolveOne(d.name, ingredients, items)
+      const out: ResolvedRareMobDrop = { ...base, note: d.note ?? null }
+      if (typeof d.tier === 'number')
+        out.tier = d.tier
+      return out
+    }),
+  }))
 }
 
 function resolveDrops(
@@ -29,9 +53,9 @@ function resolveDrops(
     possibleIngredients: resolveList(drops.possibleIngredients, ingredients, items),
     exclusiveIngredients: resolveList(drops.exclusiveIngredients, ingredients, items),
     exclusiveItems: resolveList(drops.exclusiveItems, ingredients, items),
-    rareMobDrops: resolveList(drops.rareMobDrops, ingredients, items),
+    rareMobs: resolveRareMobs(drops.rareMobDrops, ingredients, items),
     rareRandomLoots: drops.rareRandomLoots.map((entry): ResolvedDrop => {
-      const base = resolveList([entry.name], ingredients, items)[0]
+      const base = resolveOne(entry.name, ingredients, items)
       return { ...base, note: entry.note }
     }),
   }

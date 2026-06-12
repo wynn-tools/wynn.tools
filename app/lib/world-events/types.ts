@@ -3,12 +3,24 @@ import type { WorldEvent } from '~/types/map'
 
 export interface DropEntryWithNote { name: string, note: string | null }
 
+export interface RareMobDrop {
+  name: string
+  tier?: number
+  note?: string
+}
+
+export interface RareMobEntry {
+  name: string
+  count: number
+  drops: RareMobDrop[]
+}
+
 export interface WorldEventDrops {
   commonIngredients: string[]
   possibleIngredients: string[]
   exclusiveIngredients: string[]
   exclusiveItems: string[]
-  rareMobDrops: string[]
+  rareMobDrops: RareMobEntry[]
   rareRandomLoots: DropEntryWithNote[]
 }
 
@@ -32,12 +44,22 @@ export interface ResolvedDrop {
   note?: string | null
 }
 
+export interface ResolvedRareMobDrop extends ResolvedDrop {
+  tier?: number
+}
+
+export interface ResolvedRareMob {
+  name: string
+  count: number
+  drops: ResolvedRareMobDrop[]
+}
+
 export interface ResolvedDrops {
   commonIngredients: ResolvedDrop[]
   possibleIngredients: ResolvedDrop[]
   exclusiveIngredients: ResolvedDrop[]
   exclusiveItems: ResolvedDrop[]
-  rareMobDrops: ResolvedDrop[]
+  rareMobs: ResolvedRareMob[]
   rareRandomLoots: ResolvedDrop[]
 }
 

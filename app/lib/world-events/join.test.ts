@@ -39,7 +39,16 @@ const loot: WorldEventLootMap = {
       possibleIngredients: [],
       exclusiveIngredients: [],
       exclusiveItems: ['Guard\'s Garment', 'Mystery Item'],
-      rareMobDrops: [],
+      rareMobDrops: [
+        {
+          name: 'Timelost Sanctum Key Guardian',
+          count: 1,
+          drops: [
+            { name: 'Blood of the Nivlan Beauty', tier: 3 },
+            { name: 'Mystery Drop' },
+          ],
+        },
+      ],
       rareRandomLoots: [{ name: 'Lunar Charm', note: 'sometimes' }],
     },
   },
@@ -69,6 +78,12 @@ describe('joinWorldEvents', () => {
     expect(out[0].resolved?.exclusiveItems[0].item).toBe(guardItem)
     expect(out[0].resolved?.exclusiveItems[1]).toEqual({ name: 'Mystery Item' })
     expect(out[0].resolved?.rareRandomLoots[0]).toEqual({ name: 'Lunar Charm', note: 'sometimes' })
+    const mobs = out[0].resolved?.rareMobs ?? []
+    expect(mobs).toHaveLength(1)
+    expect(mobs[0]).toMatchObject({ name: 'Timelost Sanctum Key Guardian', count: 1 })
+    expect(mobs[0].drops[0]).toMatchObject({ name: 'Blood of the Nivlan Beauty', tier: 3, ingredient: bloodIng })
+    expect(mobs[0].drops[1]).toMatchObject({ name: 'Mystery Drop' })
+    expect(mobs[0].drops[1].tier).toBeUndefined()
   })
 
   it('keeps API events without loot (loot=null)', () => {
