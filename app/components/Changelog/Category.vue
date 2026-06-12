@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { CategorySection } from '~/lib/data/changelog/types'
-import { itemSlug } from '~/lib/items-search/slug'
+import { computed } from 'vue'
+import { useItemSearchData } from '~/composables/useItemSearchData'
 
 const props = defineProps<{
   id?: string
   title: string
   section: CategorySection
-  /** When true, name chips link to /items/[slug]. */
+  /** When true, names are linked + rarity-resolved via the current item snapshot. */
   linkItems?: boolean
 }>()
 
@@ -14,10 +15,18 @@ const total = computed(
   () => props.section.added.length + props.section.removed.length + props.section.changed.length,
 )
 
-function itemHref(name: string): string | undefined {
-  if (!props.linkItems)
-    return undefined
-  return `/items/${itemSlug({ displayName: name })}`
+const { data: searchData } = useItemSearchData()
+const itemByName = computed(() => {
+  const map = new Map<string, NonNullable<typeof searchData['value']>['items'][number]>()
+  if (props.linkItems) {
+    for (const it of searchData.value?.items ?? [])
+      map.set(it.name, it)
+  }
+  return map
+})
+
+function lookup(name: string) {
+  return props.linkItems ? itemByName.value.get(name) : undefined
 }
 </script>
 
@@ -38,12 +47,12 @@ function itemHref(name: string): string | undefined {
           Added <span class="ml-1 text-faint/70 tabular-nums">{{ section.added.length }}</span>
         </p>
         <div class="flex flex-wrap gap-1.5">
-          <ChangelogNameChip
+          <ItemChip
             v-for="n in section.added"
             :key="n"
             :name="n"
-            variant="added"
-            :href="itemHref(n)"
+            :item="lookup(n)"
+            diff-state="added"
           />
         </div>
       </div>
@@ -53,12 +62,12 @@ function itemHref(name: string): string | undefined {
           Removed <span class="ml-1 text-faint/70 tabular-nums">{{ section.removed.length }}</span>
         </p>
         <div class="flex flex-wrap gap-1.5">
-          <ChangelogNameChip
+          <ItemChip
             v-for="n in section.removed"
             :key="n"
             :name="n"
-            variant="removed"
-            :href="itemHref(n)"
+            :item="lookup(n)"
+            diff-state="removed"
           />
         </div>
       </div>

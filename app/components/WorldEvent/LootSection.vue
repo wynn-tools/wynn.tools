@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ResolvedDrop } from '~/lib/world-events/types'
-import DropChip from './DropChip.vue'
 
 defineProps<{ label: string, drops: ResolvedDrop[] }>()
 </script>
@@ -11,7 +10,14 @@ defineProps<{ label: string, drops: ResolvedDrop[] }>()
       {{ label }}
     </h3>
     <div class="chips">
-      <DropChip v-for="(d, i) in drops" :key="`${d.name}-${i}`" :drop="d" />
+      <ItemChip
+        v-for="(d, i) in drops"
+        :key="`${d.name}-${i}`"
+        :name="d.name"
+        :item="d.item"
+        :ingredient="d.ingredient"
+        :note="d.note ?? null"
+      />
     </div>
   </section>
 </template>
