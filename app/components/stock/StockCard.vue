@@ -4,6 +4,8 @@ import { CLASS_THEMES, classWeaponUrl } from '~/lib/build/class-theme'
 
 const props = defineProps<{ item: StockListItem }>()
 
+const api = useStockApi()
+
 const KIND_LABELS: Record<StockListItem['kind'], string> = {
   'infobox': 'Info box',
   'custom-bar': 'Custom bar',
@@ -18,6 +20,16 @@ const classDisplay = computed(() =>
 <template>
   <article class="stock-card">
     <NuxtLink :to="`/stock/${item.slug}`" class="card-link">
+      <img
+        v-if="item.thumbnailSha"
+        class="card-thumb"
+        :src="api.blobUrl(item.thumbnailSha)"
+        :width="item.thumbnailWidth ?? undefined"
+        :height="item.thumbnailHeight ?? undefined"
+        loading="lazy"
+        decoding="async"
+        alt=""
+      >
       <span class="card-head">
         <span class="card-name">{{ item.title }}</span>
         <span class="card-kind">{{ KIND_LABELS[item.kind] }}</span>
@@ -67,6 +79,16 @@ const classDisplay = computed(() =>
   gap: 8px;
   padding: 14px 16px;
   text-decoration: none;
+}
+
+.card-thumb {
+  display: block;
+  width: calc(100% + 32px);
+  margin: -14px -16px 0;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--color-bg);
+  border-radius: 6px 6px 0 0;
 }
 
 .card-head {
