@@ -16,8 +16,6 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
 })
 
-const RESULT_CAP = 200
-
 const { data, pending, error, refresh } = useItemSearchData()
 const { criteria } = useItemSearchQuery()
 const ingredientCriteria = ref<IngredientCriteria>(defaultIngredientCriteria())
@@ -193,15 +191,16 @@ const setOptions = computed(() =>
     <template v-else-if="tab === 'items'">
       <header class="results-head">
         <span class="count">{{ itemResults.length.toLocaleString() }} items</span>
-        <span v-if="itemResults.length > RESULT_CAP" class="count count--dim">Showing first {{ RESULT_CAP }} of {{ itemResults.length.toLocaleString() }} — add identification filters to narrow further.</span>
       </header>
-      <div v-if="itemResults.length" class="results-list">
-        <ItemResultCard
-          v-for="it in itemResults.slice(0, RESULT_CAP)"
-          :key="it.id"
-          :item="it"
-        />
-      </div>
+      <VirtualMasonry
+        v-if="itemResults.length"
+        :items="itemResults"
+        :get-key="(it: typeof itemResults.value[number]) => it.id"
+      >
+        <template #default="{ item }">
+          <ItemResultCard :item="(item as typeof itemResults.value[number])" />
+        </template>
+      </VirtualMasonry>
       <p v-else class="state">
         No items match these filters.
       </p>
@@ -210,11 +209,16 @@ const setOptions = computed(() =>
     <template v-else-if="tab === 'ingredients'">
       <header class="results-head">
         <span class="count">{{ ingredientResults.length.toLocaleString() }} ingredients</span>
-        <span v-if="ingredientResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
       </header>
-      <div v-if="ingredientResults.length" class="results-list">
-        <IngredientResultCard v-for="ing in ingredientResults.slice(0, RESULT_CAP)" :key="ing.id" :ingredient="ing" />
-      </div>
+      <VirtualMasonry
+        v-if="ingredientResults.length"
+        :items="ingredientResults"
+        :get-key="(ing: typeof ingredientResults.value[number]) => ing.id"
+      >
+        <template #default="{ item }">
+          <IngredientResultCard :ingredient="(item as typeof ingredientResults.value[number])" />
+        </template>
+      </VirtualMasonry>
       <p v-else class="state">
         No ingredients match these filters.
       </p>
@@ -223,11 +227,16 @@ const setOptions = computed(() =>
     <template v-else-if="tab === 'tomes'">
       <header class="results-head">
         <span class="count">{{ tomeResults.length.toLocaleString() }} tomes</span>
-        <span v-if="tomeResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
       </header>
-      <div v-if="tomeResults.length" class="results-list">
-        <TomeResultCard v-for="tome in tomeResults.slice(0, RESULT_CAP)" :key="tome.id" :tome="tome" />
-      </div>
+      <VirtualMasonry
+        v-if="tomeResults.length"
+        :items="tomeResults"
+        :get-key="(tome: typeof tomeResults.value[number]) => tome.id"
+      >
+        <template #default="{ item }">
+          <TomeResultCard :tome="(item as typeof tomeResults.value[number])" />
+        </template>
+      </VirtualMasonry>
       <p v-else class="state">
         No tomes match these filters.
       </p>
@@ -248,11 +257,16 @@ const setOptions = computed(() =>
     <template v-else-if="tab === 'materials'">
       <header class="results-head">
         <span class="count">{{ materialResults.length.toLocaleString() }} materials</span>
-        <span v-if="materialResults.length > RESULT_CAP" class="count count--dim">showing first {{ RESULT_CAP }}</span>
       </header>
-      <div v-if="materialResults.length" class="results-list">
-        <MaterialResultCard v-for="mat in materialResults.slice(0, RESULT_CAP)" :key="mat.id" :material="mat" />
-      </div>
+      <VirtualMasonry
+        v-if="materialResults.length"
+        :items="materialResults"
+        :get-key="(mat: typeof materialResults.value[number]) => mat.id"
+      >
+        <template #default="{ item }">
+          <MaterialResultCard :material="(item as typeof materialResults.value[number])" />
+        </template>
+      </VirtualMasonry>
       <p v-else class="state">
         No materials match these filters.
       </p>
