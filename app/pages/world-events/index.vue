@@ -72,7 +72,7 @@ const liveCount = computed(() => joined.value.filter(j => j.event.schedule).leng
 <template>
   <SearchPage>
     <template #toolbar>
-      <h1 class="we-title">
+      <h1 class="toolbar-title">
         World Events
       </h1>
       <p class="page-desc">
@@ -125,14 +125,15 @@ const liveCount = computed(() => joined.value.filter(j => j.event.schedule).leng
 </template>
 
 <style scoped>
-.we-title {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-muted);
+.toolbar-title {
   margin: 0;
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
 }
 .toolbar-tail {
   display: flex;

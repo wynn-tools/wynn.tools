@@ -206,7 +206,7 @@ const hasLoot = computed(() =>
   font: 500 11px/1 var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-muted);
 }
 .title {
   font-family: var(--font-display);
@@ -298,12 +298,6 @@ const hasLoot = computed(() =>
 
 /* ── Sections ── */
 .kicker {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-muted);
   margin: 0 0 14px;
 }
 
@@ -360,10 +354,6 @@ const hasLoot = computed(() =>
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
-}
-.coord__n {
-  display: inline-block;
-  min-width: 1ch;
 }
 
 .others__grid {
