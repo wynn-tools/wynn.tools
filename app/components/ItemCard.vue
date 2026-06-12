@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import type { CraftedItem } from '~/lib/crafter/types'
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger,
-} from 'reka-ui'
 
 defineProps<{
   id: string
@@ -41,8 +35,8 @@ async function onHoverOpen(open: boolean, craftHash: string | null | undefined) 
 </script>
 
 <template>
-  <HoverCardRoot :open-delay="120" :close-delay="0" @update:open="open => onHoverOpen(open, craftHash)">
-    <HoverCardTrigger as-child>
+  <Quickview :disabled="!craftHash" @open-change="open => onHoverOpen(open, craftHash)">
+    <template #trigger>
       <article class="item-card">
         <NuxtLink :to="`/c/${id}`" class="card-link">
           <span class="card-name">{{ name }}</span>
@@ -57,18 +51,12 @@ async function onHoverOpen(open: boolean, craftHash: string | null | undefined) 
           </span>
         </NuxtLink>
       </article>
-    </HoverCardTrigger>
-    <HoverCardPortal v-if="craftHash">
-      <HoverCardContent :side-offset="8" side="right" align="start" class="quickview">
-        <div class="quickview-scale">
-          <CrafterItemPreview v-if="crafted" :crafted="crafted" hide-equip-button />
-          <div v-else class="quickview-loading">
-            Loading…
-          </div>
-        </div>
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
+    </template>
+    <CrafterItemPreview v-if="crafted" :crafted="crafted" hide-equip-button />
+    <div v-else class="quickview-loading">
+      Loading…
+    </div>
+  </Quickview>
 </template>
 
 <style scoped>
@@ -126,14 +114,6 @@ async function onHoverOpen(open: boolean, craftHash: string | null | undefined) 
 .card-owner-anon {
   color: var(--color-faint);
   font-style: italic;
-}
-
-.quickview {
-  z-index: 60;
-}
-
-.quickview-scale {
-  zoom: 0.7;
 }
 
 .quickview-loading {

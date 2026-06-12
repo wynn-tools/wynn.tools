@@ -4,12 +4,6 @@ import type { CleanedRawItem } from '~/lib/build/resolve'
 import type { CraftedItem } from '~/lib/crafter/types'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import Fuse from 'fuse.js'
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger,
-} from 'reka-ui'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useApi } from '~/composables/useApi'
 import { itemIconUrl } from '~/lib/items/icon'
@@ -406,34 +400,27 @@ async function selectSavedItem(item: ApiItemSummary) {
           No saved crafted items.
         </div>
         <ul v-else class="picker-list">
-          <HoverCardRoot
+          <Quickview
             v-for="item in savedItems"
             :key="item.id"
-            :open-delay="120"
-            :close-delay="0"
-            @update:open="open => onSavedHoverOpen(open, item.craftHash)"
+            :disabled="!item.craftHash"
+            @open-change="open => onSavedHoverOpen(open, item.craftHash)"
           >
-            <HoverCardTrigger as-child>
+            <template #trigger>
               <li class="picker-item" @click="selectSavedItem(item)">
                 <span class="picker-item-name">{{ item.name }}</span>
                 <span class="picker-item-version">{{ item.gameVersion }}</span>
               </li>
-            </HoverCardTrigger>
-            <HoverCardPortal v-if="item.craftHash">
-              <HoverCardContent :side-offset="8" side="right" align="start" class="saved-quickview">
-                <div class="saved-quickview-scale">
-                  <CrafterItemPreview
-                    v-if="savedCraftedCache.get(item.craftHash)"
-                    :crafted="savedCraftedCache.get(item.craftHash)!"
-                    hide-equip-button
-                  />
-                  <div v-else class="saved-tooltip-loading">
-                    Loading…
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCardPortal>
-          </HoverCardRoot>
+            </template>
+            <CrafterItemPreview
+              v-if="item.craftHash && savedCraftedCache.get(item.craftHash)"
+              :crafted="savedCraftedCache.get(item.craftHash)!"
+              hide-equip-button
+            />
+            <div v-else class="saved-tooltip-loading">
+              Loading…
+            </div>
+          </Quickview>
         </ul>
         <div v-if="savedNextCursor" class="saved-loadmore">
           <button type="button" :disabled="savedLoading" class="saved-loadmore-btn" @click="loadSaved(savedNextCursor ?? undefined)">
@@ -767,14 +754,6 @@ async function selectSavedItem(item: ApiItemSummary) {
   color: var(--color-accent);
   padding: 8px 14px;
   border-top: 1px solid var(--color-border);
-}
-
-.saved-quickview {
-  z-index: 60;
-}
-
-.saved-quickview-scale {
-  zoom: 0.7;
 }
 
 .saved-tooltip-loading {

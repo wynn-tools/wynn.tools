@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ResolvedDrop } from '~/lib/world-events/types'
-import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { itemSlug } from '~/lib/items-search/slug'
 
@@ -13,12 +12,12 @@ const stars = computed(() => {
 
 const itemHref = computed(() => props.drop.item ? `/items/${itemSlug({ name: props.drop.name })}` : null)
 const rarityClass = computed(() => props.drop.item?.tier ? `chip--rarity-${props.drop.item.tier}` : null)
-const hasTooltip = computed(() => Boolean(props.drop.ingredient ?? props.drop.item))
+const hasPreview = computed(() => Boolean(props.drop.ingredient ?? props.drop.item))
 </script>
 
 <template>
-  <HoverCardRoot v-if="hasTooltip" :open-delay="120" :close-delay="0">
-    <HoverCardTrigger as-child>
+  <Quickview :disabled="!hasPreview">
+    <template #trigger>
       <NuxtLink
         v-if="itemHref"
         :to="itemHref"
@@ -29,23 +28,17 @@ const hasTooltip = computed(() => Boolean(props.drop.ingredient ?? props.drop.it
         <span v-if="stars" class="chip__stars">{{ stars }}</span>
         <span class="chip__name">{{ drop.name }}</span>
       </NuxtLink>
-      <span v-else class="chip chip--ingredient" :title="drop.note ?? undefined">
+      <span v-else-if="hasPreview" class="chip chip--ingredient" :title="drop.note ?? undefined">
         <span v-if="stars" class="chip__stars">{{ stars }}</span>
         <span class="chip__name">{{ drop.name }}</span>
       </span>
-    </HoverCardTrigger>
-    <HoverCardPortal>
-      <HoverCardContent :side-offset="8" side="top" align="start" class="drop-hover">
-        <div class="drop-hover__scale">
-          <IngredientTooltip v-if="drop.ingredient" :ingredient="drop.ingredient" />
-          <ItemTooltip v-else-if="drop.item" :item="drop.item" :exportable="false" />
-        </div>
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
-  <span v-else class="chip chip--unresolved" :title="drop.note ?? undefined">
-    <span class="chip__name">{{ drop.name }}</span>
-  </span>
+      <span v-else class="chip chip--unresolved" :title="drop.note ?? undefined">
+        <span class="chip__name">{{ drop.name }}</span>
+      </span>
+    </template>
+    <IngredientTooltip v-if="drop.ingredient" :ingredient="drop.ingredient" />
+    <ItemTooltip v-else-if="drop.item" :item="drop.item" :exportable="false" />
+  </Quickview>
 </template>
 
 <style scoped>
@@ -91,14 +84,5 @@ const hasTooltip = computed(() => Boolean(props.drop.ingredient ?? props.drop.it
 }
 .chip--rarity-set {
   border-color: oklch(0.7 0.16 145);
-}
-.drop-hover {
-  background: var(--color-bg);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.drop-hover__scale {
-  zoom: 0.75;
-  display: block;
 }
 </style>

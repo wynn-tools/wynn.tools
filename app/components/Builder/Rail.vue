@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { useBuilderRail } from '~/composables/useBuilderRail'
 import { EQUIP_SLOT_COUNT, SLOT_LABELS } from '~/lib/builder-draft/routing'
@@ -46,8 +45,8 @@ const slots = computed(() =>
 
       <div class="rail-grid">
         <template v-for="s in slots" :key="s.i">
-          <HoverCardRoot v-if="s.item" :open-delay="200" :close-delay="0">
-            <HoverCardTrigger as-child>
+          <Quickview v-if="s.item" :open-delay="200" side="left" align="center" :side-offset="10">
+            <template #trigger>
               <button
                 type="button"
                 class="cell cell--filled"
@@ -60,15 +59,9 @@ const slots = computed(() =>
                 <span v-else class="cell-glyph" aria-hidden="true">{{ s.caption }}</span>
                 <span class="cell-remove" aria-hidden="true">×</span>
               </button>
-            </HoverCardTrigger>
-            <HoverCardPortal>
-              <HoverCardContent side="left" align="center" :side-offset="10" class="rail-quickview">
-                <div class="rail-quickview-scale">
-                  <ItemTooltip :item="s.item" />
-                </div>
-              </HoverCardContent>
-            </HoverCardPortal>
-          </HoverCardRoot>
+            </template>
+            <ItemTooltip :item="s.item" />
+          </Quickview>
 
           <div
             v-else
@@ -299,13 +292,6 @@ const slots = computed(() =>
   text-align: right;
   color: var(--color-muted);
   max-width: 17ch;
-}
-
-.rail-quickview {
-  z-index: 60;
-}
-.rail-quickview-scale {
-  zoom: 0.7;
 }
 
 /* Touch: the rail renders inside the mobile bottom sheet, where the cells are

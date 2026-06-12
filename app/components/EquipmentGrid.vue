@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import type { CraftedItem } from '~/lib/crafter/types'
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger,
-} from 'reka-ui'
 import { computed } from 'vue'
 import { useCdnClient } from '~/composables/useBuildData'
 import { useBuildMarket } from '~/composables/useBuildMarket'
@@ -171,8 +165,8 @@ const powderSlotMax = computed(() =>
   <div class="equipment-grid-wrapper">
     <div class="equipment-grid">
       <template v-for="(label, idx) in SLOT_LABELS" :key="idx">
-        <HoverCardRoot v-if="slotSearchItem(idx) || slotCrafted(idx)" :open-delay="300" :close-delay="0">
-          <HoverCardTrigger as-child>
+        <Quickview v-if="slotSearchItem(idx) || slotCrafted(idx)" :open-delay="300" :avoid-collisions="false">
+          <template #trigger>
             <div
               class="slot"
               :class="{ 'slot--active': openSlot === idx }"
@@ -237,20 +231,14 @@ const powderSlotMax = computed(() =>
                 ✎
               </button>
             </div>
-          </HoverCardTrigger>
-          <HoverCardPortal>
-            <HoverCardContent side="right" align="start" :side-offset="8" :avoid-collisions="false" class="quickview">
-              <div class="quickview-scale">
-                <ItemTooltip v-if="slotSearchItem(idx)" :item="slotSearchItem(idx)!" />
-                <CrafterItemPreview
-                  v-else
-                  :crafted="slotCrafted(idx)"
-                  hide-equip-button
-                />
-              </div>
-            </HoverCardContent>
-          </HoverCardPortal>
-        </HoverCardRoot>
+          </template>
+          <ItemTooltip v-if="slotSearchItem(idx)" :item="slotSearchItem(idx)!" />
+          <CrafterItemPreview
+            v-else
+            :crafted="slotCrafted(idx)"
+            hide-equip-button
+          />
+        </Quickview>
 
         <div
           v-else
@@ -573,19 +561,5 @@ const powderSlotMax = computed(() =>
     align-items: flex-end;
     justify-content: stretch;
   }
-}
-
-.quickview {
-  z-index: 9999;
-}
-
-@media (hover: none), (pointer: coarse) {
-  .quickview {
-    display: none !important;
-  }
-}
-
-.quickview-scale {
-  zoom: 0.7;
 }
 </style>

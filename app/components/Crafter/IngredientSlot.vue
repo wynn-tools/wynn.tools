@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import type { Ingredient } from '~/lib/data/cdn-adapter/ingredient-adapter'
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger,
-} from 'reka-ui'
 import { computed } from 'vue'
 import { toSearchIngredient } from '~/lib/items-search/ingredient-to-search'
 import { ID_BAD_COLOR, ID_GOOD_COLOR } from '~/lib/items/tooltip'
@@ -91,8 +85,8 @@ function onClear(e: MouseEvent) {
 </script>
 
 <template>
-  <HoverCardRoot v-if="ingredient && searchIngredient" :open-delay="0" :close-delay="0">
-    <HoverCardTrigger as-child>
+  <Quickview v-if="ingredient && searchIngredient" :open-delay="0" :side="tooltipSide">
+    <template #trigger>
       <button
         type="button"
         class="slot slot--filled"
@@ -124,15 +118,9 @@ function onClear(e: MouseEvent) {
           ✕
         </button>
       </button>
-    </HoverCardTrigger>
-    <HoverCardPortal>
-      <HoverCardContent :side-offset="8" :side="tooltipSide" align="start" class="quickview">
-        <div class="quickview-scale">
-          <IngredientTooltip :ingredient="searchIngredient" />
-        </div>
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
+    </template>
+    <IngredientTooltip :ingredient="searchIngredient" />
+  </Quickview>
   <button
     v-else
     type="button"
@@ -294,22 +282,6 @@ function onClear(e: MouseEvent) {
 
 .eff--neutral {
   color: var(--color-muted);
-}
-
-.quickview {
-  z-index: 60;
-}
-
-.quickview-scale {
-  zoom: 0.7;
-}
-
-/* Hover quickview is a desktop affordance. On touch a tap fires it stuck
-   behind the ingredient picker, hiding the actual chooser. */
-@media (hover: none), (pointer: coarse) {
-  .quickview {
-    display: none !important;
-  }
 }
 
 @media (max-width: 720px) {

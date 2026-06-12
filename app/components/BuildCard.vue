@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import type { ApiBuild } from '~/composables/useApi'
-import {
-  HoverCardContent,
-  HoverCardPortal,
-  HoverCardRoot,
-  HoverCardTrigger,
-} from 'reka-ui'
 
 defineProps<{
   id: string
@@ -40,8 +34,8 @@ async function onHoverOpen(open: boolean, id: string) {
 </script>
 
 <template>
-  <HoverCardRoot :open-delay="120" :close-delay="0" @update:open="open => onHoverOpen(open, id)">
-    <HoverCardTrigger as-child>
+  <Quickview unscaled @open-change="open => onHoverOpen(open, id)">
+    <template #trigger>
       <article class="build-card">
         <NuxtLink :to="`/b/${id}`" class="card-link">
           <span class="card-name-row">
@@ -59,23 +53,19 @@ async function onHoverOpen(open: boolean, id: string) {
           </span>
         </NuxtLink>
       </article>
-    </HoverCardTrigger>
-    <HoverCardPortal>
-      <HoverCardContent :side-offset="8" side="right" align="start" class="quickview">
-        <BuildTooltip
-          v-if="buildData"
-          :name="buildData.name"
-          :player-class="buildData.playerClass"
-          :level="buildData.level"
-          :equip-names="buildData.equipNames"
-          :decoded="buildData.decoded"
-        />
-        <div v-else class="quickview-loading">
-          Loading…
-        </div>
-      </HoverCardContent>
-    </HoverCardPortal>
-  </HoverCardRoot>
+    </template>
+    <BuildTooltip
+      v-if="buildData"
+      :name="buildData.name"
+      :player-class="buildData.playerClass"
+      :level="buildData.level"
+      :equip-names="buildData.equipNames"
+      :decoded="buildData.decoded"
+    />
+    <div v-else class="quickview-loading">
+      Loading…
+    </div>
+  </Quickview>
 </template>
 
 <style scoped>
@@ -142,10 +132,6 @@ async function onHoverOpen(open: boolean, id: string) {
 .card-owner-anon {
   color: var(--color-faint);
   font-style: italic;
-}
-
-.quickview {
-  z-index: 50;
 }
 
 .quickview-loading {
