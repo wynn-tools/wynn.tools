@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import type { MediaInput } from '~/composables/useStockApi'
 import type { StockCategory, StockClass, StockKind } from '~/lib/types/stock'
+import ScreenshotsEditor from '~/components/stock/ScreenshotsEditor.vue'
 
 definePageMeta({ middleware: ['auth'] })
 
@@ -34,6 +36,8 @@ const form = reactive({
   description: '',
 })
 
+const media = ref<MediaInput[]>([])
+
 const api = useStockApi()
 const router = useRouter()
 const submitting = ref(false)
@@ -53,7 +57,7 @@ async function submit() {
   submitting.value = true
   error.value = null
   try {
-    const { slug } = await api.create({ ...form })
+    const { slug } = await api.create({ ...form, media: media.value })
     await router.push(`/stock/${slug}/edit`)
   }
   catch (e) {
@@ -152,6 +156,16 @@ useHead({ title: 'New stock creation — wynn.tools' })
             </button>
           </div>
         </fieldset>
+      </section>
+
+      <section class="block">
+        <h2 class="kicker block-head">
+          Screenshots
+        </h2>
+        <p class="field-hint">
+          Up to 8 images, max 2 MB each. PNG, JPEG, WebP, or GIF.
+        </p>
+        <ScreenshotsEditor v-model="media" />
       </section>
 
       <div class="actions">
