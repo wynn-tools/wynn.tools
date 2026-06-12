@@ -10,8 +10,14 @@ import { getDb, schema } from '../db/client'
 import { env } from '../env'
 import { AppError } from '../lib/errors'
 import { newResourceId } from '../lib/ids'
-import { hasScope, requireAuth } from '../middleware/auth'
+import { hasScope, requireAdmin, requireAuth } from '../middleware/auth'
 import { readBlobStream, writeBlob } from '../services/blob-store'
+import {
+  adminBanUser,
+  adminRebridge,
+  adminRestoreBySlug,
+  adminSoftDeleteBySlug,
+} from '../services/stock-admin'
 import { sniffImageMime } from '../services/stock-image-guard'
 import { postModReport } from '../services/stock-mod-webhook'
 import { isStockEmoji, toggleReaction } from '../services/stock-reactions'
@@ -337,5 +343,25 @@ stock.post('/:slug/report', requireAuth, zValidator('json', reportBody), async (
   })
   const url = `${env().FRONTEND_URL}/stock/${creation.slug}`
   void postModReport(`**Report** on **${creation.title}** (${url})\nby <@${auth.user.id}>\nReason: ${reason}`)
+  return c.json({ ok: true })
+})
+
+stock.post('/admin/:slug/soft-delete', requireAdmin, async (c) => {
+  await adminSoftDeleteBySlug(c.get('auth').user.id, c.req.param('slug'))
+  return c.json({ ok: true })
+})
+
+stock.post('/admin/:slug/restore', requireAdmin, async (c) => {
+  await adminRestoreBySlug(c.get('auth').user.id, c.req.param('slug'))
+  return c.json({ ok: true })
+})
+
+stock.post('/admin/:slug/rebridge', requireAdmin, async (c) => {
+  await adminRebridge(c.get('auth').user.id, c.req.param('slug'))
+  return c.json({ ok: true })
+})
+
+stock.post('/admin/users/:id/ban', requireAdmin, async (c) => {
+  await adminBanUser(c.get('auth').user.id, c.req.param('id'))
   return c.json({ ok: true })
 })

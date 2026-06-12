@@ -45,6 +45,7 @@ export const users = pgTable('users', {
   discordJoinStatus: text('discord_join_status', { enum: discordJoinStatus }).notNull().default('unset'),
   discordJoinedAt: timestamp('discord_joined_at', { withTimezone: true }),
   isAdmin: boolean('is_admin').notNull().default(false),
+  bannedAt: timestamp('banned_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, t => [
