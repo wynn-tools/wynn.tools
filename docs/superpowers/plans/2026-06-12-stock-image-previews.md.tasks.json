@@ -1,0 +1,74 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-12-stock-image-previews.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Add width/height to stock_blob + migration",
+      "status": "pending",
+      "description": "**Goal:** Schema change for image dimensions, generated migration committed.\n\n**Files:**\n- Modify: api/src/db/schema.ts\n- Create: api/drizzle/<n>_stock_blob_dimensions.sql (generated)\n\n**Verify:** `cd api && pnpm db:migrate && pnpm test:run stock-schema`\n\n```json:metadata\n{\"files\":[\"api/src/db/schema.ts\",\"api/drizzle/\"],\"verifyCommand\":\"cd api && pnpm db:migrate && pnpm test:run stock-schema\",\"acceptanceCriteria\":[\"width/height columns added\",\"migration file committed\",\"existing rows NULL\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Probe image dimensions on POST /uploads",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Populate width/height on stock_blob rows for image uploads.\n\n**Files:**\n- Modify: api/package.json\n- Modify: api/src/routes/stock.ts\n- Modify: api/test/stock-uploads-route.test.ts\n\n**Verify:** `cd api && pnpm test:run stock-uploads-route`\n\n```json:metadata\n{\"files\":[\"api/package.json\",\"api/src/routes/stock.ts\",\"api/test/stock-uploads-route.test.ts\"],\"verifyCommand\":\"cd api && pnpm test:run stock-uploads-route\",\"acceptanceCriteria\":[\"PNG upload records width/height\",\"zip leaves null\",\"probe failure non-fatal\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: replaceMedia service function",
+      "status": "pending",
+      "description": "**Goal:** Pure service that bulk-replaces a creation's media rows in a transaction, diffs refCount, enforces validation.\n\n**Files:**\n- Modify: api/src/services/stock-write.ts\n- Create: api/test/stock-media-service.test.ts\n\n**Verify:** `cd api && pnpm test:run stock-media-service`\n\n```json:metadata\n{\"files\":[\"api/src/services/stock-write.ts\",\"api/test/stock-media-service.test.ts\"],\"verifyCommand\":\"cd api && pnpm test:run stock-media-service\",\"acceptanceCriteria\":[\"replaces atomically\",\"refcount diff correct\",\"8-cap\",\"non-image rejected\",\"empty clears\",\"updatedAt advances\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: PUT /v1/stock/:slug/media route + extend create",
+      "status": "pending",
+      "blockedBy": [3],
+      "description": "**Goal:** HTTP surface for the editor + optional media on create.\n\n**Files:**\n- Modify: api/src/routes/stock.ts\n- Create: api/test/stock-media-route.test.ts\n\n**Verify:** `cd api && pnpm test:run stock-media-route stock-write-routes`\n\n```json:metadata\n{\"files\":[\"api/src/routes/stock.ts\",\"api/test/stock-media-route.test.ts\"],\"verifyCommand\":\"cd api && pnpm test:run stock-media-route stock-write-routes\",\"acceptanceCriteria\":[\"auth required\",\"owner-only\",\"bearer scope\",\"8-cap\",\"create-with-media\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: List endpoint surfaces thumbnail fields",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Include thumbnailSha/Width/Height (order=0 row) on every StockListItem.\n\n**Files:**\n- Modify: api/src/services/stock-read.ts\n- Modify: api/test/stock-read-routes.test.ts\n\n**Verify:** `cd api && pnpm test:run stock-read`\n\n```json:metadata\n{\"files\":[\"api/src/services/stock-read.ts\",\"api/test/stock-read-routes.test.ts\"],\"verifyCommand\":\"cd api && pnpm test:run stock-read\",\"acceptanceCriteria\":[\"fields present\",\"matches first media\",\"null when no media\",\"sort unchanged\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Frontend types + useStockApi extensions",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Type-safe access to new fields/endpoints.\n\n**Files:**\n- Modify: app/lib/types/stock.ts\n- Modify: app/composables/useStockApi.ts\n\n**Verify:** `pnpm lint && pnpm build`\n\n```json:metadata\n{\"files\":[\"app/lib/types/stock.ts\",\"app/composables/useStockApi.ts\"],\"verifyCommand\":\"pnpm lint && pnpm build\",\"acceptanceCriteria\":[\"StockListItem has thumbnail fields\",\"create accepts media\",\"replaceMedia exists\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: ScreenshotsEditor.vue shared component",
+      "status": "pending",
+      "blockedBy": [6],
+      "description": "**Goal:** v-model editor with upload, caption, reorder, remove; 8-cap; token-only styling.\n\n**Files:**\n- Create: app/components/stock/ScreenshotsEditor.vue\n\n**Verify:** `pnpm lint && pnpm build`\n\n```json:metadata\n{\"files\":[\"app/components/stock/ScreenshotsEditor.vue\"],\"verifyCommand\":\"pnpm lint && pnpm build\",\"acceptanceCriteria\":[\"v-model works\",\"upload via api.upload\",\"drag reorder\",\"caption 200 cap\",\"cap disables add\",\"tokens only\"]}\n```"
+    },
+    {
+      "id": 8,
+      "subject": "Task 8: Wire ScreenshotsEditor into /stock/new",
+      "status": "pending",
+      "blockedBy": [7],
+      "description": "**Goal:** Optional screenshots section on create page; passes media into api.create().\n\n**Files:**\n- Modify: app/pages/stock/new.vue\n\n**Verify:** `pnpm lint && pnpm build`; manual smoke at /stock/new.\n\n```json:metadata\n{\"files\":[\"app/pages/stock/new.vue\"],\"verifyCommand\":\"pnpm lint && pnpm build\",\"acceptanceCriteria\":[\"section renders\",\"media uploaded\",\"submit attaches media\",\"zero-media submit still works\"]}\n```"
+    },
+    {
+      "id": 9,
+      "subject": "Task 9: Wire ScreenshotsEditor into /stock/[slug]/edit",
+      "status": "pending",
+      "blockedBy": [4, 7],
+      "description": "**Goal:** Edit existing media via shared component; explicit save calls replaceMedia.\n\n**Files:**\n- Modify: app/pages/stock/[slug]/edit.vue\n\n**Verify:** `pnpm lint && pnpm build`; manual smoke at /stock/<slug>/edit.\n\n```json:metadata\n{\"files\":[\"app/pages/stock/[slug]/edit.vue\"],\"verifyCommand\":\"pnpm lint && pnpm build\",\"acceptanceCriteria\":[\"seeded from creation.media\",\"save calls replaceMedia\",\"reorder persists\",\"save disabled while in flight\"]}\n```"
+    },
+    {
+      "id": 10,
+      "subject": "Task 10: Card thumbnails on /stock",
+      "status": "pending",
+      "blockedBy": [5, 6],
+      "description": "**Goal:** Render first image as thumbnail on StockCard with no layout shift.\n\n**Files:**\n- Modify: app/components/stock/StockCard.vue\n\n**Verify:** `pnpm lint && pnpm build`; manual smoke at /stock.\n\n```json:metadata\n{\"files\":[\"app/components/stock/StockCard.vue\"],\"verifyCommand\":\"pnpm lint && pnpm build\",\"acceptanceCriteria\":[\"img when thumbnailSha\",\"width/height attrs when known\",\"aspect-ratio fallback\",\"loading=lazy\",\"unchanged when no media\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-12"
+}
