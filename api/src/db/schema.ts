@@ -273,6 +273,8 @@ export const stockBlob = pgTable('stock_blob', {
   mimeType: text('mime_type').notNull(),
   originalFilename: text('original_filename').notNull(),
   refCount: integer('ref_count').notNull().default(0),
+  width: integer('width'),
+  height: integer('height'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
