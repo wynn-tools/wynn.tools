@@ -3,6 +3,7 @@ import { computed, watchEffect } from 'vue'
 import Countdown from '~/components/WorldEvent/Countdown.vue'
 import EventCard from '~/components/WorldEvent/EventCard.vue'
 import LootSection from '~/components/WorldEvent/LootSection.vue'
+import MapThumbnail from '~/components/WorldEvent/MapThumbnail.vue'
 import { useJoinedWorldEvents, useWorldEvent } from '~/composables/useWorldEvents'
 
 definePageMeta({ ssr: false })
@@ -34,6 +35,12 @@ const others = computed(() => {
     return []
   const region = event.value.loot.region
   return joined.value.filter(j => j.slug !== slug.value && j.loot?.region === region).slice(0, 4)
+})
+
+const firstLocation = computed(() => event.value?.event.location?.[0]?.event ?? null)
+const mapHref = computed(() => {
+  const loc = firstLocation.value
+  return loc ? `/map?x=${loc.x}&z=${loc.z}&zoom=2` : '/map'
 })
 </script>
 
@@ -90,12 +97,13 @@ const others = computed(() => {
           <dt>Location</dt>
           <dd>
             <span v-for="(l, i) in event.event.location" :key="i">{{ l.event.x }}, {{ l.event.y }}, {{ l.event.z }}</span>
-            <NuxtLink :to="`/map?event=${event.slug}`" class="map-link">
-              Map →
-            </NuxtLink>
           </dd>
         </template>
       </dl>
+      <NuxtLink v-if="firstLocation" :to="mapHref" class="map-thumb-link" :aria-label="`Open ${event.event.name} on the map`">
+        <MapThumbnail :x="firstLocation.x" :z="firstLocation.z" />
+        <span class="map-thumb-cta">Open in map →</span>
+      </NuxtLink>
     </section>
 
     <section v-if="others.length" class="others">
@@ -184,8 +192,27 @@ const others = computed(() => {
   flex-wrap: wrap;
   gap: 8px;
 }
-.map-link {
+.map-thumb-link {
+  display: block;
+  margin-top: 12px;
+  text-decoration: none;
+  color: var(--color-text);
+  position: relative;
+}
+.map-thumb-link:hover :deep(.map-thumb) {
+  border-color: var(--color-accent);
+}
+.map-thumb-cta {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  font-size: 12px;
   color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-bg) 75%, transparent);
+  border: 1px solid var(--color-accent);
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
 }
 .others-grid {
   display: grid;
