@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CalendarClock, Compass, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
+import { CalendarClock, ChevronDown, Compass, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
 import { onClickOutside } from '@vueuse/core'
 import { useDiscordJoin } from '~/composables/useDiscordJoin'
 
