@@ -83,6 +83,30 @@ describe('pOST /v1/stock/uploads', () => {
     expect(r.status).toBe(415)
   })
 
+  it('records width/height for image uploads', async () => {
+    const u = await makeUserWithSession()
+    // 8x8 transparent PNG
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4//8/w38GIAXDASc08wAAAABJRU5ErkJggg==',
+      'base64',
+    )
+    const r = await postUpload(testApp(), png, 'a.png', { Cookie: u.cookie })
+    expect(r.status).toBe(200)
+    const rows = await getDb().query.stockBlob.findMany()
+    expect(rows).toHaveLength(1)
+    expect(rows[0].width).toBe(8)
+    expect(rows[0].height).toBe(8)
+  })
+
+  it('leaves dimensions null for zip uploads', async () => {
+    const u = await makeUserWithSession()
+    const r = await postUpload(testApp(), zipBytes(), 'p.zip', { Cookie: u.cookie })
+    expect(r.status).toBe(200)
+    const rows = await getDb().query.stockBlob.findMany()
+    expect(rows[0].width).toBeNull()
+    expect(rows[0].height).toBeNull()
+  })
+
   it('deduplicates by content hash', async () => {
     const u = await makeUserWithSession()
     const a = await postUpload(testApp(), pngBytes(), 'a.png', { Cookie: u.cookie })

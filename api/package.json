@@ -30,6 +30,7 @@
     "drizzle-kit": "^0.28.0",
     "drizzle-orm": "^0.36.0",
     "hono": "^4.6.0",
+    "image-size": "^2.0.2",
     "nanoid": "^5.1.11",
     "pg": "^8.13.0",
     "seedrandom": "^3.0.5",

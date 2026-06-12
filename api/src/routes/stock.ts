@@ -5,6 +5,7 @@ import { Readable } from 'node:stream'
 import { zValidator } from '@hono/zod-validator'
 import { sql as drizzleSql, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
+import { imageSize } from 'image-size'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
 import { env } from '../env'
@@ -299,12 +300,22 @@ stock.post('/uploads', requireAuth, async (c) => {
 
   const buf = Buffer.from(await file.arrayBuffer())
   let mimeType: string
+  let width: number | null = null
+  let height: number | null = null
 
   const image = sniffImageMime(buf)
   if (image) {
     if (buf.length > IMAGE_MAX)
       throw new AppError(413, 'too_large', `image max is ${IMAGE_MAX} bytes`)
     mimeType = image
+    try {
+      const dims = imageSize(buf)
+      if (dims.width && dims.height) {
+        width = dims.width
+        height = dims.height
+      }
+    }
+    catch {}
   }
   else {
     try {
@@ -323,6 +334,8 @@ stock.post('/uploads', requireAuth, async (c) => {
     mimeType,
     originalFilename: file.name || 'upload',
     refCount: 0,
+    width,
+    height,
   }).onConflictDoNothing({ target: schema.stockBlob.sha256 })
 
   return c.json({ sha256, byteSize, mimeType })
