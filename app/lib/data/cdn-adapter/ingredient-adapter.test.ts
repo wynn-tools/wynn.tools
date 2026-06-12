@@ -32,7 +32,7 @@ const ACID_MAGMA_RAW = {
     agilityRequirement: 0,
     defenceRequirement: 8,
     dexterityRequirement: 0,
-    durabilityModifier: -49000,
+    durabilityModifier: -49,
     intelligenceRequirement: 0,
     strengthRequirement: 0,
   },
