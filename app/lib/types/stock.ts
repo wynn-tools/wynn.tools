@@ -70,6 +70,9 @@ export interface StockListItem {
   createdAt: string
   updatedAt: string
   authorId: string
+  thumbnailSha: string | null
+  thumbnailWidth: number | null
+  thumbnailHeight: number | null
 }
 
 export interface StockMedia {

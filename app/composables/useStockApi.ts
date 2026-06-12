@@ -23,12 +23,18 @@ export interface ListFilters {
   cursor?: string
 }
 
+export interface MediaInput {
+  blobSha256: string
+  caption: string | null
+}
+
 export interface CreateInput {
   title: string
   kind: StockKind
   category: StockCategory
   classes?: StockClass[]
   description?: string
+  media?: MediaInput[]
 }
 
 export interface PartInput {
@@ -105,6 +111,8 @@ export function useStockApi() {
       request<{ ok: true }>(`/v1/stock/${slug}/versions/${n}/publish`, { method: 'POST' }),
     del: (slug: string) =>
       request<unknown>(`/v1/stock/${slug}`, { method: 'DELETE' }),
+    replaceMedia: (slug: string, media: MediaInput[]) =>
+      request<{ ok: true }>(`/v1/stock/${slug}/media`, jsonInit('PUT', { media })),
     react: (slug: string, emoji: StockEmoji) =>
       request<StockReactionCounts>(`/v1/stock/${slug}/reactions`, jsonInit('POST', { emoji })),
     upload: async (file: File): Promise<UploadResult> => {
