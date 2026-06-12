@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-import { useVirtualizer } from '@tanstack/vue-virtual'
+import { useVirtualizer, useWindowVirtualizer } from '@tanstack/vue-virtual'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
@@ -18,7 +18,9 @@ const props = withDefaults(defineProps<{
 
 const rootEl = ref<HTMLDivElement | null>(null)
 const scrollEl = ref<HTMLElement | null>(null)
+const useWindow = ref(false)
 const containerWidth = ref(0)
+const scrollMargin = ref(0)
 
 const lanes = computed(() => {
   const w = containerWidth.value
@@ -46,25 +48,49 @@ function findScrollParent(el: HTMLElement | null): HTMLElement | null {
   return null
 }
 
+function recomputeScrollMargin() {
+  if (!rootEl.value)
+    return
+  scrollMargin.value = rootEl.value.getBoundingClientRect().top + window.scrollY
+}
+
 let resizeObs: ResizeObserver | null = null
+
+function onWindowResize() {
+  containerWidth.value = rootEl.value?.clientWidth ?? 0
+  if (useWindow.value)
+    recomputeScrollMargin()
+}
 
 onMounted(() => {
   resizeObs = new ResizeObserver(() => {
     containerWidth.value = rootEl.value?.clientWidth ?? 0
+    if (useWindow.value)
+      recomputeScrollMargin()
   })
   if (rootEl.value)
     resizeObs.observe(rootEl.value)
   containerWidth.value = rootEl.value?.clientWidth ?? 0
-  scrollEl.value = findScrollParent(rootEl.value)
+
+  const sp = findScrollParent(rootEl.value)
+  if (sp) {
+    scrollEl.value = sp
+    useWindow.value = false
+  }
+  else {
+    useWindow.value = true
+    recomputeScrollMargin()
+  }
+  window.addEventListener('resize', onWindowResize)
 })
 
 onBeforeUnmount(() => {
   resizeObs?.disconnect()
+  window.removeEventListener('resize', onWindowResize)
 })
 
-const virtualizer = useVirtualizer(computed(() => ({
+const sharedOptions = computed(() => ({
   count: props.items.length,
-  getScrollElement: () => scrollEl.value,
   estimateSize: () => props.estimateSize,
   overscan: props.overscan,
   lanes: lanes.value,
@@ -73,13 +99,28 @@ const virtualizer = useVirtualizer(computed(() => ({
     const item = props.items[i] as T
     return props.getKey ? props.getKey(item, i) : i
   },
+}))
+
+const elementVirt = useVirtualizer(computed(() => ({
+  ...sharedOptions.value,
+  getScrollElement: () => scrollEl.value,
 })))
 
+const windowVirt = useWindowVirtualizer(computed(() => ({
+  ...sharedOptions.value,
+  scrollMargin: scrollMargin.value,
+})))
+
+const virtualizer = computed(() => (useWindow.value ? windowVirt.value : elementVirt.value))
 const totalSize = computed(() => virtualizer.value.getTotalSize())
 const virtualItems = computed(() => virtualizer.value.getVirtualItems())
+const startOffset = computed(() => (useWindow.value ? scrollMargin.value : 0))
 
 watch(() => props.items, () => {
-  scrollEl.value?.scrollTo({ top: 0 })
+  if (useWindow.value)
+    window.scrollTo({ top: 0 })
+  else
+    scrollEl.value?.scrollTo({ top: 0 })
 })
 </script>
 
@@ -94,7 +135,7 @@ watch(() => props.items, () => {
         class="vmasonry-cell"
         :style="{
           width: `${columnWidth}px`,
-          transform: `translate(${(v.lane ?? 0) * (columnWidth + gap)}px, ${v.start}px)`,
+          transform: `translate(${(v.lane ?? 0) * (columnWidth + gap)}px, ${v.start - startOffset}px)`,
         }"
       >
         <slot :item="items[v.index]" :index="v.index" />
