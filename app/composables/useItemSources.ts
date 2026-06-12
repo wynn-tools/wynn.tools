@@ -4,7 +4,7 @@ import { ref, shallowRef } from 'vue'
 import { createCdnClient } from '~/lib/data/cdn-client'
 import { loadItemSources } from '~/lib/item-sources/load'
 
-const sources = shallowRef<ItemSourcesFile>({ mobs: {} })
+const sources = shallowRef<ItemSourcesFile>({ items: {} })
 const ready = ref(false)
 let initialized = false
 let cdnClient: CdnClient | null = null
@@ -16,7 +16,7 @@ async function load() {
     sources.value = await loadItemSources(cdnClient)
   }
   catch {
-    sources.value = { mobs: {} }
+    sources.value = { items: {} }
   }
   finally {
     ready.value = true

@@ -1,12 +1,5 @@
-import type { ItemSourcesFile, MobDropRef } from './types'
+import type { ItemSourcesFile, SourceEntry } from './types'
 
-export function mobsForItem(itemName: string, file: ItemSourcesFile): MobDropRef[] {
-  const out: MobDropRef[] = []
-  for (const [mob, entry] of Object.entries(file.mobs)) {
-    if (entry.drops.guaranteed.includes(itemName))
-      out.push({ mob, wiki: entry.wiki, kind: 'guaranteed' })
-    else if (entry.drops.exclusive.includes(itemName))
-      out.push({ mob, wiki: entry.wiki, kind: 'exclusive' })
-  }
-  return out
+export function sourcesForItem(itemName: string, file: ItemSourcesFile): SourceEntry[] {
+  return file.items[itemName] ?? []
 }
