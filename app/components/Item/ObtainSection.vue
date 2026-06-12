@@ -76,10 +76,8 @@ const SOURCE_TAG: Record<'exclusiveItems' | 'rareRandomLoots', string> = {
 
 <style scoped>
 .obtain {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-surface);
-  padding: 18px 20px 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
 }
 .head {
   display: flex;
@@ -97,75 +95,44 @@ const SOURCE_TAG: Record<'exclusiveItems' | 'rareRandomLoots', string> = {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 .method {
   display: flex;
   gap: 14px;
-  padding: 12px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
+  padding: 12px 0;
   align-items: center;
+  border-top: 1px solid color-mix(in oklch, var(--color-border) 55%, transparent);
 }
-.method--quest {
-  border-color: color-mix(in oklch, var(--color-gold-dim) 50%, transparent);
-  background: color-mix(in oklch, var(--color-gold-dim) 6%, transparent);
-}
-.method--worldEvent {
-  border-color: color-mix(in oklch, var(--color-accent) 40%, var(--color-border));
-  background: color-mix(in oklch, var(--color-accent) 5%, transparent);
-}
-.method--worldEvent .glyph {
-  color: var(--color-accent);
-  background: color-mix(in oklch, var(--color-accent) 12%, transparent);
-}
-.event-link {
-  font: 600 13px/1.3 var(--font-body);
-  color: var(--color-accent);
-  text-decoration: none;
-  margin-top: 2px;
-}
-.event-link:hover {
-  text-decoration: underline;
-}
-.note {
-  font-size: 12px;
-  color: var(--color-muted);
-  font-style: italic;
+.method:first-child {
+  border-top: 0;
+  padding-top: 4px;
 }
 .method--unknown {
-  opacity: 0.7;
+  opacity: 0.65;
 }
 .glyph {
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-accent);
-  font-size: 16px;
+  background: color-mix(in oklch, var(--color-border) 35%, transparent);
+  color: var(--color-muted);
+  font-size: 15px;
   flex-shrink: 0;
-}
-.method--quest .glyph {
-  color: var(--color-gold);
-  background: color-mix(in oklch, var(--color-gold-dim) 12%, transparent);
-}
-.method--unknown .glyph {
-  color: var(--color-faint);
 }
 .body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
+  flex: 1;
 }
 .tag {
   font: 500 10px/1 var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--color-faint);
 }
 .desc {
   font-size: 13.5px;
@@ -175,20 +142,34 @@ const SOURCE_TAG: Record<'exclusiveItems' | 'rareRandomLoots', string> = {
 .quest {
   font: 600 13px/1.3 var(--font-body);
   color: var(--color-gold);
-  margin-top: 2px;
+  margin-top: 1px;
+}
+.event-link {
+  font: 600 13.5px/1.3 var(--font-body);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.12s ease-out;
+}
+.event-link:hover {
+  color: var(--color-accent);
+}
+.note {
+  font-size: 12px;
+  color: var(--color-muted);
+  font-style: italic;
 }
 
 @media (max-width: 720px) {
   .obtain {
-    padding: 14px 14px 16px;
+    padding-top: 20px;
   }
   .method {
-    padding: 10px 12px;
+    padding: 10px 0;
     gap: 12px;
   }
   .glyph {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     font-size: 14px;
   }
   .desc {

@@ -3,7 +3,7 @@ import type { MarketHistoryPoint } from '~/composables/useMarket'
 import type { RawMarketPrice } from '~/lib/market/types'
 import { computed, ref, watch } from 'vue'
 import { useMarket } from '~/composables/useMarket'
-import { formatEmeralds, formatEmeraldsCompact } from '~/lib/market/format-emeralds'
+import { formatEmeraldsCompact, formatEmeraldsParts } from '~/lib/market/format-emeralds'
 import { sparklinePoints } from '~/lib/market/sparkline'
 
 const props = defineProps<{ name: string }>()
@@ -164,6 +164,10 @@ const lastPoint = computed(() => geo.value[geo.value.length - 1] ?? null)
 function fmt(v: number | null) {
   return v == null ? '—' : formatEmeraldsCompact(v)
 }
+
+function parts(v: number | null) {
+  return v == null ? null : formatEmeraldsParts(v, 2)
+}
 </script>
 
 <template>
@@ -193,7 +197,15 @@ function fmt(v: number | null) {
         <div class="col col--primary">
           <span class="col-label">Identified</span>
           <div class="price-line">
-            <span class="value">{{ fmt(idNow) }}</span>
+            <span class="value">
+              <template v-if="parts(idNow)">
+                <span v-for="p in parts(idNow)" :key="p.unit" class="vpart">
+                  <span class="vamt">{{ p.amount }}</span>
+                  <EmeraldIcon :unit="p.unit" />
+                </span>
+              </template>
+              <span v-else>—</span>
+            </span>
             <span
               v-if="delta"
               class="delta"
@@ -209,7 +221,15 @@ function fmt(v: number | null) {
 
         <div class="col">
           <span class="col-label">Unidentified</span>
-          <span class="value value--sm">{{ fmt(unidNow) }}</span>
+          <span class="value value--sm">
+            <template v-if="parts(unidNow)">
+              <span v-for="p in parts(unidNow)" :key="p.unit" class="vpart">
+                <span class="vamt">{{ p.amount }}</span>
+                <EmeraldIcon :unit="p.unit" />
+              </span>
+            </template>
+            <span v-else>—</span>
+          </span>
           <span class="sub">{{ raw?.unidentified_count ?? 0 }} listed</span>
         </div>
 
@@ -278,7 +298,12 @@ function fmt(v: number | null) {
             :style="{ left: `${Math.min(86, Math.max(14, hover.leftPct))}%`, top: `${hover.topPct}%` }"
           >
             <span class="tip-date">{{ shortDate(hover.row.date) }}</span>
-            <span class="tip-price">{{ formatEmeralds(Math.round(hover.row.value)) }}</span>
+            <span class="tip-price">
+              <span v-for="p in formatEmeraldsParts(Math.round(hover.row.value), 3)" :key="p.unit" class="tip-part">
+                <span class="tip-amt">{{ p.amount }}</span>
+                <EmeraldIcon :unit="p.unit" />
+              </span>
+            </span>
             <span v-if="hover.row.count != null" class="tip-count">{{ hover.row.count }} listed</span>
           </div>
         </div>
@@ -295,7 +320,7 @@ function fmt(v: number | null) {
 <style scoped>
 .market {
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--color-surface);
   padding: 18px 20px 16px;
 }
@@ -360,10 +385,49 @@ function fmt(v: number | null) {
   letter-spacing: -0.02em;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
 }
 
 .value--sm {
   font-size: 18px;
+  gap: 6px;
+}
+
+.vpart {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.vamt {
+  font-variant-numeric: tabular-nums;
+}
+.value :deep(.emerald-icon) {
+  width: 0.72em;
+  height: 0.72em;
+  vertical-align: baseline;
+  align-self: center;
+}
+
+.tip-part {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.tip-amt {
+  font-variant-numeric: tabular-nums;
+}
+.tip-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.tip-price :deep(.emerald-icon) {
+  width: 0.85em;
+  height: 0.85em;
+  align-self: center;
 }
 
 .sub {

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { SearchItem } from '~/lib/items-search/types'
-import { tierTheme } from '~/lib/items/tooltip'
 
 const props = defineProps<{ item: SearchItem }>()
 
@@ -73,7 +72,7 @@ const rerolls = computed<RerollEntry[]>(() => {
   return out
 })
 
-const theme = computed(() => tierTheme(props.item.tier))
+const UNITS = ['stx', 'le', 'eb', 'e'] as const
 </script>
 
 <template>
@@ -82,41 +81,33 @@ const theme = computed(() => tierTheme(props.item.tier))
       <h2 class="kicker">
         Identification Costs
       </h2>
+      <span class="count">{{ rerolls.length }} rolls</span>
     </header>
 
-    <div class="grid">
-      <div v-for="entry in rerolls" :key="entry.label" class="entry">
-        <span class="entry-label">{{ entry.label }}</span>
-        <span class="entry-total" :style="{ color: theme.light }">{{ entry.total.toLocaleString() }} E</span>
-        <div class="currency">
-          <span v-if="entry.currency.stx" class="denom denom--stx">
-            <span class="denom-dot" />
-            {{ entry.currency.stx }} LE Stacks
-          </span>
-          <span v-if="entry.currency.le" class="denom denom--le">
-            <span class="denom-dot" />
-            {{ entry.currency.le }} LE
-          </span>
-          <span v-if="entry.currency.eb" class="denom denom--eb">
-            <span class="denom-dot" />
-            {{ entry.currency.eb }} EB
-          </span>
-          <span v-if="entry.currency.e" class="denom denom--e">
-            <span class="denom-dot" />
-            {{ entry.currency.e }} E
-          </span>
-        </div>
-      </div>
-    </div>
+    <ol class="rolls">
+      <li v-for="(entry, i) in rerolls" :key="entry.label" class="row">
+        <span class="row-rank">{{ i === 0 ? '—' : `×${i + 1}` }}</span>
+        <span class="row-label">{{ entry.label }}</span>
+        <span class="row-total">
+          {{ entry.total.toLocaleString() }}<span class="row-total-unit">e</span>
+        </span>
+        <span class="row-denoms">
+          <template v-for="u in UNITS" :key="u">
+            <span v-if="entry.currency[u]" class="denom">
+              <EmeraldIcon :unit="u" />
+              <span class="denom-amt">{{ entry.currency[u] }}</span>
+            </span>
+          </template>
+        </span>
+      </li>
+    </ol>
   </section>
 </template>
 
 <style scoped>
 .costs {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-surface);
-  padding: 18px 20px 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
 }
 
 .head {
@@ -129,89 +120,91 @@ const theme = computed(() => tierTheme(props.item.tier))
   margin: 0;
   line-height: 1;
 }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 8px;
+.count {
+  margin-left: auto;
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
 }
 
-.entry {
+.rolls {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: color-mix(in oklch, var(--color-bg) 50%, transparent);
 }
-.entry-label {
-  font: 500 10px/1 var(--font-mono);
+
+.row {
+  display: grid;
+  grid-template-columns: 32px minmax(96px, auto) minmax(110px, auto) 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  border-top: 1px solid color-mix(in oklch, var(--color-border) 55%, transparent);
+}
+.row:first-child {
+  border-top: 0;
+}
+
+.row-rank {
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  color: var(--color-faint);
+  text-align: left;
+}
+.row-label {
+  font: 500 11px/1 var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
 }
-.entry-total {
-  font: 700 16px/1 var(--font-mono);
-  margin-top: 2px;
+.row-total {
+  font: 600 15px/1 var(--font-mono);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.row-total-unit {
+  font-size: 11px;
+  color: var(--color-faint);
+  margin-left: 2px;
+  letter-spacing: 0;
 }
 
-.currency {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid var(--color-border);
+.row-denoms {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end;
 }
 .denom {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font: 500 12px/1 var(--font-mono);
-  color: var(--color-text);
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
 }
-.denom-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-.denom--stx .denom-dot {
-  background: oklch(65% 0.2 170);
-}
-.denom--le .denom-dot {
-  background: oklch(70% 0.18 145);
-}
-.denom--eb .denom-dot {
-  background: oklch(55% 0.16 145);
-}
-.denom--e .denom-dot {
-  background: oklch(65% 0.14 140);
-}
-.denom--stx {
-  color: oklch(65% 0.2 170);
-}
-.denom--le {
-  color: oklch(70% 0.18 145);
-}
-.denom--eb {
-  color: oklch(58% 0.15 145);
-}
-.denom--e {
-  color: oklch(72% 0.13 140);
+.denom-amt {
+  font-size: 12px;
 }
 
 @media (max-width: 720px) {
-  .costs {
-    padding: 14px 14px 16px;
+  .row {
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    padding: 10px 0;
   }
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 6px;
-  }
-  .entry {
-    padding: 10px 12px;
+  .row-denoms {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    margin-top: 2px;
+    padding-left: 38px;
+    gap: 10px;
   }
 }
 </style>

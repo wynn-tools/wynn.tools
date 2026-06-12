@@ -2,6 +2,23 @@ const STX = 262144 // emeralds per stack of liquid emeralds (64 le)
 const EB = 64 // emeralds per emerald block
 const LE = 4096 // emeralds per liquid emerald (64 blocks)
 
+export type EmeraldUnit = 'stx' | 'le' | 'eb' | 'e'
+export interface EmeraldPart { amount: number, unit: EmeraldUnit }
+
+/** Structured breakdown for components that render denomination icons inline. */
+export function formatEmeraldsParts(raw: number, maxUnits = 4): EmeraldPart[] {
+  const n = Math.max(0, Math.round(raw))
+  if (n === 0)
+    return [{ amount: 0, unit: 'e' }]
+  const units: EmeraldPart[] = [
+    { amount: Math.floor(n / STX), unit: 'stx' },
+    { amount: Math.floor((n % STX) / LE), unit: 'le' },
+    { amount: Math.floor((n % LE) / EB), unit: 'eb' },
+    { amount: n % EB, unit: 'e' },
+  ]
+  return units.filter(p => p.amount > 0).slice(0, maxUnits)
+}
+
 /** Render a raw integer emerald price as Wynncraft currency, e.g. 15623 → "3le 52eb 7e". */
 export function formatEmeralds(raw: number): string {
   const n = Math.max(0, Math.round(raw))

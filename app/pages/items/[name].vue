@@ -72,6 +72,14 @@ const itemSets = computed<ResolvedSet[]>(() => {
   }
   return out
 })
+
+const crumbType = computed(() => {
+  const i = item.value ?? seoItem.value
+  if (!i)
+    return null
+  return i.subType?.toUpperCase() ?? i.type?.toUpperCase() ?? null
+})
+const crumbName = computed(() => item.value?.name ?? seoItem.value?.name ?? null)
 </script>
 
 <template>
@@ -85,9 +93,16 @@ const itemSets = computed<ResolvedSet[]>(() => {
       </NuxtLink>
     </div>
     <div v-else class="detail">
-      <NuxtLink to="/items" class="back">
-        ← Search
-      </NuxtLink>
+      <nav class="crumb" aria-label="Breadcrumb">
+        <NuxtLink to="/items" class="crumb-link">
+          <span class="crumb-arrow" aria-hidden="true">←</span>
+          <span>Items</span>
+        </NuxtLink>
+        <span v-if="crumbType" class="crumb-sep" aria-hidden="true">/</span>
+        <span v-if="crumbType" class="crumb-seg">{{ crumbType }}</span>
+        <span v-if="crumbName" class="crumb-sep" aria-hidden="true">/</span>
+        <span v-if="crumbName" class="crumb-seg crumb-current">{{ crumbName }}</span>
+      </nav>
 
       <div class="grid">
         <aside class="hero">
@@ -95,19 +110,23 @@ const itemSets = computed<ResolvedSet[]>(() => {
         </aside>
 
         <div class="panes">
-          <ItemSetSection
-            v-for="s in itemSets"
-            :key="s.name"
-            :set-name="s.name"
-            :set="s.set"
-            :current="item"
-            :piece-lookup="pieceLookup"
-          />
-          <ItemRollsSection :item="item" />
-          <ItemMarketSection :name="item.name" />
-          <ItemIdCostsSection :item="item" />
-          <ItemObtainSection :item="item" />
-          <ItemHistoryTimeline :entries="history" />
+          <div class="primary">
+            <ItemRollsSection :item="item" />
+            <ItemMarketSection :name="item.name" />
+          </div>
+          <div class="support">
+            <ItemSetSection
+              v-for="s in itemSets"
+              :key="s.name"
+              :set-name="s.name"
+              :set="s.set"
+              :current="item"
+              :piece-lookup="pieceLookup"
+            />
+            <ItemIdCostsSection :item="item" />
+            <ItemObtainSection :item="item" />
+            <ItemHistoryTimeline :entries="history" />
+          </div>
         </div>
       </div>
     </div>
@@ -118,20 +137,48 @@ const itemSets = computed<ResolvedSet[]>(() => {
 .page {
   padding: 20px 0 80px;
 }
-.back {
-  display: inline-block;
+
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font: 500 11px/1 var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-muted);
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.crumb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
   text-decoration: none;
-  padding: 6px 0;
-  margin-bottom: 18px;
+  padding: 4px 0;
   transition: color 0.12s ease-out;
 }
-.back:hover {
+.crumb-link:hover {
   color: var(--color-accent);
 }
+.crumb-arrow {
+  font-size: 12px;
+}
+.crumb-sep {
+  color: var(--color-faint);
+  opacity: 0.6;
+}
+.crumb-seg {
+  color: var(--color-faint);
+}
+.crumb-current {
+  color: var(--color-text);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font: 600 13px/1 var(--font-display);
+  letter-spacing: -0.01em;
+}
+
 .grid {
   display: grid;
   grid-template-columns: 482px minmax(0, 1fr);
@@ -147,14 +194,26 @@ const itemSets = computed<ResolvedSet[]>(() => {
 .panes {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 32px;
   min-width: 0;
 }
+.primary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.support {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .state {
   padding: 80px 20px;
   text-align: center;
   color: var(--color-muted);
 }
+
 @media (max-width: 1024px) {
   .grid {
     grid-template-columns: minmax(0, 1fr);
@@ -172,14 +231,20 @@ const itemSets = computed<ResolvedSet[]>(() => {
   .page {
     padding: 12px 0 56px;
   }
-  .back {
-    margin-bottom: 10px;
-    padding: 8px 0;
+  .crumb {
+    margin-bottom: 14px;
+    gap: 6px;
+  }
+  .crumb-current {
+    font-size: 12px;
   }
   .grid {
     gap: 16px;
   }
   .panes {
+    gap: 24px;
+  }
+  .primary {
     gap: 12px;
   }
   .hero {

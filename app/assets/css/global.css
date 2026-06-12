@@ -91,6 +91,13 @@
   --color-elem-fire: oklch(68% 0.18 35);
   --color-elem-air: oklch(85% 0.04 250);
 
+  /* ── Stat polarity (UI chrome, not in-game tooltip) ──
+     Used wherever a stat value's sign carries meaning outside the sealed
+     tooltip — set bonuses, identification deltas, history diffs. Lower chroma
+     than the pixel-tooltip greens/reds so they read as chrome, not game data. */
+  --color-good: oklch(74% 0.15 145);
+  --color-bad: oklch(66% 0.17 25);
+
   /* ── Wynntils roll % tier colors (item inspector) ── */
   --inspect-roll-red: #ff5555;
   --inspect-roll-gold: #ffaa00;
@@ -154,6 +161,9 @@
 
   --color-gold: oklch(58% 0.13 75);
   --color-gold-dim: oklch(50% 0.11 75);
+
+  --color-good: oklch(54% 0.16 145);
+  --color-bad: oklch(52% 0.18 25);
 }
 
 /* ── Play envelope ─────────────────────────────────────────────────────

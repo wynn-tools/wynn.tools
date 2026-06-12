@@ -57,10 +57,8 @@ function fmt(v: number | null, unit: string): string {
 
 <style scoped>
 .history {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-surface);
-  padding: 18px 20px 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
 }
 .head {
   display: flex;
@@ -124,10 +122,10 @@ function fmt(v: number | null, unit: string): string {
   color: var(--color-accent);
 }
 .entry--added .kind {
-  color: oklch(74% 0.16 145);
+  color: var(--color-good);
 }
 .entry--removed .kind {
-  color: oklch(66% 0.18 25);
+  color: var(--color-bad);
 }
 .deltas {
   list-style: none;
@@ -173,10 +171,10 @@ function fmt(v: number | null, unit: string): string {
   color: var(--color-text);
 }
 .delta.good .d-to {
-  color: oklch(74% 0.16 145);
+  color: var(--color-good);
 }
 .delta.bad .d-to {
-  color: oklch(66% 0.18 25);
+  color: var(--color-bad);
 }
 .bare {
   margin: 2px 0 0;
@@ -209,7 +207,7 @@ function fmt(v: number | null, unit: string): string {
 }
 @media (max-width: 720px) {
   .history {
-    padding: 14px 14px 16px;
+    padding-top: 20px;
   }
   .entry {
     padding: 12px 0;

@@ -85,10 +85,8 @@ const bonuses = computed<BonusRow[]>(() => {
 
 <style scoped>
 .set {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-surface);
-  padding: 18px 20px 20px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
 }
 .head {
   display: flex;
@@ -123,13 +121,11 @@ const bonuses = computed<BonusRow[]>(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 10px;
-  border-radius: 6px;
+  padding: 7px 0;
+  border-radius: 0;
   text-decoration: none;
   color: var(--color-muted);
-  transition:
-    background 0.12s ease-out,
-    color 0.12s ease-out;
+  transition: color 0.12s ease-out;
 }
 .piece-mark {
   width: 6px;
@@ -139,8 +135,10 @@ const bonuses = computed<BonusRow[]>(() => {
   flex-shrink: 0;
 }
 .piece:hover {
-  background: color-mix(in oklch, var(--color-accent) 6%, transparent);
-  color: var(--color-text);
+  color: var(--color-accent);
+}
+.piece:hover .piece-mark {
+  background: var(--color-accent);
 }
 .piece-name {
   font-size: 13px;
@@ -154,7 +152,6 @@ const bonuses = computed<BonusRow[]>(() => {
   color: var(--color-faint);
 }
 .current .piece {
-  background: color-mix(in oklch, var(--color-accent) 10%, transparent);
   color: var(--color-accent);
 }
 .current .piece-mark {
@@ -215,10 +212,10 @@ const bonuses = computed<BonusRow[]>(() => {
   min-width: 48px;
 }
 .bonus-list .good .bonus-val {
-  color: oklch(74% 0.16 145);
+  color: var(--color-good);
 }
 .bonus-list .bad .bonus-val {
-  color: oklch(66% 0.18 25);
+  color: var(--color-bad);
 }
 .bonus-label {
   font-size: 12px;
@@ -226,10 +223,10 @@ const bonuses = computed<BonusRow[]>(() => {
 
 @media (max-width: 720px) {
   .set {
-    padding: 14px 14px 16px;
+    padding-top: 20px;
   }
   .piece {
-    padding: 9px 10px;
+    padding: 9px 0;
     min-height: 40px;
   }
   .bonus {

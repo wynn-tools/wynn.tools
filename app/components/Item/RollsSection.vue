@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { SearchItem } from '~/lib/items-search/types'
 import { humanizeField, isInverted } from '~/lib/data/identifications'
-import { ID_BAD_COLOR, ID_GOOD_COLOR, idIsGood } from '~/lib/items/tooltip'
+import { idIsGood } from '~/lib/items/tooltip'
 
 const props = defineProps<{ item: SearchItem }>()
 
-// Roll quality: 0 = worst (min), 100 = best (max)
 const quality = ref(70)
 
 interface RollRow {
@@ -36,16 +35,14 @@ function simFormatted(row: RollRow): string {
   return `${v > 0 ? '+' : ''}${v}${row.unit}`
 }
 
-function rollColor(q: number): string {
-  if (q >= 100)
-    return '#55ffff'
+function qualityVar(q: number): string {
   if (q >= 95)
-    return '#55ffff'
+    return 'var(--color-accent)'
   if (q >= 71)
-    return '#83f7c6'
+    return 'var(--color-good)'
   if (q >= 30)
-    return '#ffd54f'
-  return '#f78383'
+    return 'var(--color-muted)'
+  return 'var(--color-bad)'
 }
 
 function stars(q: number): number {
@@ -94,21 +91,17 @@ const displayQuality = computed(() => `${quality.value}%`)
       <h2 class="kicker">
         Identification
       </h2>
+      <span v-if="reidCost > 0" class="reid">
+        <span class="reid-label">Re-ID</span>
+        <EmeraldIcon unit="eb" />
+        <span class="reid-amt">{{ reidCost }}</span>
+      </span>
     </header>
 
-    <div class="meta-row">
-      <div class="cost-chip">
-        <span class="cost-icon" aria-hidden="true">◈</span>
-        <span class="cost-label">Re-ID cost</span>
-        <span class="cost-value">{{ reidCost }}EB</span>
-      </div>
-    </div>
-
-    <!-- Simulator slider -->
     <div class="sim-panel">
       <div class="sim-header">
         <span class="sim-label">Roll Simulator</span>
-        <span class="sim-quality" :style="{ color: rollColor(quality) }">
+        <span class="sim-quality" :style="{ color: qualityVar(quality) }">
           {{ qualityLabel }}
           <span class="sim-pct">{{ displayQuality }}</span>
         </span>
@@ -118,7 +111,7 @@ const displayQuality = computed(() => `${quality.value}%`)
           v-model.number="quality"
           type="range" min="0" max="100" step="1"
           class="slider"
-          :style="{ '--fill-color': rollColor(quality), '--fill-pct': `${quality}%` }"
+          :style="{ '--fill-color': qualityVar(quality), '--fill-pct': `${quality}%` }"
           aria-label="Roll quality"
         >
         <div class="slider-ticks">
@@ -128,11 +121,10 @@ const displayQuality = computed(() => `${quality.value}%`)
       </div>
     </div>
 
-    <!-- ID rows -->
     <ul class="id-list">
       <li v-for="row in rows" :key="row.key" class="id-row">
         <div class="id-top">
-          <span class="id-value" :style="{ color: row.good ? ID_GOOD_COLOR : ID_BAD_COLOR }">
+          <span class="id-value" :style="{ color: row.good ? 'var(--color-good)' : 'var(--color-bad)' }">
             {{ simFormatted(row) }}
             <span v-if="stars(quality) > 0" class="id-stars">{{ '★'.repeat(stars(quality)) }}</span>
           </span>
@@ -142,7 +134,7 @@ const displayQuality = computed(() => `${quality.value}%`)
         <div class="bar-track">
           <div
             class="bar-fill"
-            :style="{ width: `${quality}%`, background: rollColor(quality) }"
+            :style="{ width: `${quality}%`, background: qualityVar(quality) }"
           />
           <div class="bar-marker" style="left: 71%" />
           <div class="bar-marker bar-marker--2" style="left: 95%" />
@@ -155,55 +147,49 @@ const displayQuality = computed(() => `${quality.value}%`)
 <style scoped>
 .rolls {
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--color-surface);
   padding: 18px 20px 20px;
 }
 
 .head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .kicker {
   margin: 0;
   line-height: 1;
 }
 
-.meta-row {
-  margin-bottom: 14px;
-}
-.cost-chip {
+.reid {
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
+  padding: 4px 10px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background: color-mix(in oklch, var(--color-bg) 50%, transparent);
-  font-size: 13px;
-}
-.cost-icon {
-  color: oklch(72% 0.14 75);
   font-size: 14px;
 }
-.cost-label {
-  color: var(--color-muted);
+.reid-label {
   font: 500 10px/1 var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--color-muted);
 }
-.cost-value {
-  color: oklch(85% 0.14 75);
+.reid-amt {
   font: 600 13px/1 var(--font-mono);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 
-/* Simulator */
 .sim-panel {
   background: color-mix(in oklch, var(--color-bg) 50%, transparent);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 12px 14px;
   margin-bottom: 16px;
 }
@@ -221,7 +207,7 @@ const displayQuality = computed(() => `${quality.value}%`)
 }
 .sim-quality {
   font: 600 13px/1 var(--font-mono);
-  transition: color 0.15s ease;
+  transition: color 0.12s ease-out;
 }
 .sim-pct {
   color: var(--color-muted);
@@ -247,7 +233,7 @@ const displayQuality = computed(() => `${quality.value}%`)
   border-radius: 3px;
   outline: none;
   cursor: pointer;
-  transition: background 0.1s ease;
+  transition: background 0.12s ease-out;
 }
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -255,20 +241,23 @@ const displayQuality = computed(() => `${quality.value}%`)
   height: 14px;
   border-radius: 50%;
   background: var(--fill-color);
-  box-shadow: 0 0 6px var(--fill-color);
+  border: 2px solid var(--color-bg);
   cursor: pointer;
-  transition:
-    background 0.1s ease,
-    box-shadow 0.1s ease;
+  transition: background 0.12s ease-out;
 }
 .slider::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  border: none;
   background: var(--fill-color);
-  box-shadow: 0 0 6px var(--fill-color);
+  border: 2px solid var(--color-bg);
   cursor: pointer;
+}
+.slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 35%, transparent);
+}
+.slider:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 35%, transparent);
 }
 .slider-ticks {
   position: relative;
@@ -284,14 +273,11 @@ const displayQuality = computed(() => `${quality.value}%`)
   pointer-events: none;
 }
 
-/* ID rows */
 .id-list {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-.id-row {
 }
 .id-top {
   display: grid;
@@ -304,7 +290,8 @@ const displayQuality = computed(() => `${quality.value}%`)
 .id-value {
   font: 600 13px/1 var(--font-mono);
   text-align: left;
-  transition: color 0.1s ease;
+  transition: color 0.12s ease-out;
+  font-variant-numeric: tabular-nums;
 }
 .id-stars {
   font-size: 10px;
@@ -323,9 +310,9 @@ const displayQuality = computed(() => `${quality.value}%`)
   color: var(--color-faint);
   white-space: nowrap;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Range bar */
 .bar-track {
   position: relative;
   height: 4px;
@@ -337,8 +324,8 @@ const displayQuality = computed(() => `${quality.value}%`)
   height: 100%;
   border-radius: 2px;
   transition:
-    width 0.12s ease,
-    background 0.12s ease;
+    width 0.12s ease-out,
+    background 0.12s ease-out;
 }
 .bar-marker {
   position: absolute;
@@ -359,8 +346,6 @@ const displayQuality = computed(() => `${quality.value}%`)
   .sim-panel {
     padding: 12px 12px;
   }
-  /* id-top grid (90px 1fr auto) crowds the value column on phones; let
-     value drop onto its own row beside the range. */
   .id-top {
     grid-template-columns: 1fr auto;
     gap: 6px 10px;
@@ -385,6 +370,15 @@ const displayQuality = computed(() => `${quality.value}%`)
   }
   .slider {
     height: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sim-quality,
+  .slider,
+  .id-value,
+  .bar-fill {
+    transition: none;
   }
 }
 </style>

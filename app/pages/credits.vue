@@ -52,6 +52,11 @@ const assets = [
     description: 'All game data, icons, and assets are property of Wynncraft and Mojang. wynn.tools mirrors a subset of these on its own CDN to reduce load on Wynncraft\'s servers — we don\'t claim ownership of any of it.',
     url: 'https://wynncraft.com',
   },
+  {
+    name: 'Wynnpool',
+    description: 'Emerald currency icons (E, EB, LE, STX) used in the item identification cost panel and market price readouts.',
+    url: 'https://wynnpool.com',
+  },
 ]
 </script>
 
