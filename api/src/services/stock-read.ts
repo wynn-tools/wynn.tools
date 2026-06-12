@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer'
-import { and, desc, eq, isNull, sql } from 'drizzle-orm'
+import { aliasedTable, and, desc, eq, isNull, sql } from 'drizzle-orm'
 import { getDb, schema } from '../db/client'
 
 export interface ListFilters {
@@ -45,6 +45,9 @@ export interface ListItem {
   createdAt: Date
   updatedAt: Date
   authorId: string
+  thumbnailSha: string | null
+  thumbnailWidth: number | null
+  thumbnailHeight: number | null
 }
 
 export async function listCreations(
@@ -98,6 +101,9 @@ export async function listCreations(
     conditions.push(sql`(${tsCol}, ${c.id}) < (${ts}, ${id})`)
   }
 
+  const m0 = aliasedTable(schema.stockMedia, 'm0')
+  const b0 = aliasedTable(schema.stockBlob, 'b0')
+
   const rows = await getDb()
     .select({
       id: c.id,
@@ -113,8 +119,13 @@ export async function listCreations(
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
       authorId: c.authorUserId,
+      thumbnailSha: m0.blobSha256,
+      thumbnailWidth: b0.width,
+      thumbnailHeight: b0.height,
     })
     .from(c)
+    .leftJoin(m0, and(eq(m0.creationId, c.id), eq(m0.order, 0)))
+    .leftJoin(b0, eq(b0.sha256, m0.blobSha256))
     .where(and(...conditions))
     .orderBy(...orderBy)
     .limit(limit + 1)

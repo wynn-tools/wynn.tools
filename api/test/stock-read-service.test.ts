@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { getDb, schema } from '../src/db/client'
+import { newResourceId } from '../src/lib/ids'
 import { getCreationBySlug, getRawPart, listCreations } from '../src/services/stock-read'
 import { resetDb } from './helpers/db'
 import { insertCreation } from './helpers/stock-fixtures'
@@ -54,6 +55,40 @@ describe('stock-read', () => {
       expect(page2.items).toHaveLength(2)
       const overlap = page1.items.find(a => page2.items.find(b => b.slug === a.slug))
       expect(overlap).toBeUndefined()
+    })
+
+    it('returns null thumbnail fields when creation has no media', async () => {
+      await insertCreation({ slug: 'no-thumb' })
+      const r = await listCreations({}, 'newest', 10, null)
+      const item = r.items.find(i => i.slug === 'no-thumb')!
+      expect(item.thumbnailSha).toBeNull()
+      expect(item.thumbnailWidth).toBeNull()
+      expect(item.thumbnailHeight).toBeNull()
+    })
+
+    it('returns thumbnail fields from order=0 media row', async () => {
+      const c = await insertCreation({ slug: 'with-thumb' })
+      await getDb().insert(schema.stockBlob).values({
+        sha256: 'a'.repeat(64),
+        byteSize: 12,
+        mimeType: 'image/png',
+        originalFilename: 'x.png',
+        refCount: 1,
+        width: 320,
+        height: 200,
+      })
+      await getDb().insert(schema.stockMedia).values({
+        id: newResourceId(),
+        creationId: c.id,
+        order: 0,
+        blobSha256: 'a'.repeat(64),
+        caption: null,
+      })
+      const r = await listCreations({}, 'newest', 10, null)
+      const item = r.items.find(i => i.slug === 'with-thumb')!
+      expect(item.thumbnailSha).toBe('a'.repeat(64))
+      expect(item.thumbnailWidth).toBe(320)
+      expect(item.thumbnailHeight).toBe(200)
     })
   })
 
