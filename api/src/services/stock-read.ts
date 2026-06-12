@@ -12,6 +12,25 @@ export interface ListFilters {
 
 export type Sort = 'latest-activity' | 'most-installed' | 'most-reacted' | 'newest' | 'recently-updated'
 
+export interface ReactionCounts {
+  thumbs_up: number
+  fire: number
+  art: number
+  bug: number
+  total: number
+}
+
+function normalizeReactionCounts(raw: unknown): ReactionCounts {
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>
+  const thumbs_up = Number(r.thumbs_up) || 0
+  const fire = Number(r.fire) || 0
+  const art = Number(r.art) || 0
+  const bug = Number(r.bug) || 0
+  const totalRaw = Number(r.total)
+  const total = Number.isFinite(totalRaw) ? totalRaw : thumbs_up + fire + art + bug
+  return { thumbs_up, fire, art, bug, total }
+}
+
 export interface ListItem {
   id: string
   slug: string
@@ -21,7 +40,7 @@ export interface ListItem {
   classes: string[]
   category: string
   installCount: number
-  reactionCounts: unknown
+  reactionCounts: ReactionCounts
   lastActivityAt: Date
   createdAt: Date
   updatedAt: Date
@@ -100,7 +119,10 @@ export async function listCreations(
     .orderBy(...orderBy)
     .limit(limit + 1)
 
-  const items = rows.slice(0, limit) as ListItem[]
+  const items = rows.slice(0, limit).map(r => ({
+    ...r,
+    reactionCounts: normalizeReactionCounts(r.reactionCounts),
+  })) as ListItem[]
   const next = rows.length > limit
     ? encodeCursor(sortColumnValue(sort, items[items.length - 1]), items[items.length - 1].id)
     : null
@@ -151,7 +173,12 @@ export async function getCreationBySlug(slug: string) {
   if (!c)
     return null
   const [latest] = c.versions
-  return { ...c, latestVersion: latest ?? null, versions: undefined }
+  return {
+    ...c,
+    reactionCounts: normalizeReactionCounts(c.reactionCounts),
+    latestVersion: latest ?? null,
+    versions: undefined,
+  }
 }
 
 export async function getVersion(slug: string, number: number) {
