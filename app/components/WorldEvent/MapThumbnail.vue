@@ -61,12 +61,14 @@ watch(() => [props.x, props.z, props.zoom] as const, ([x, z, zoom]) => {
 
 <style scoped>
 .map-thumb {
+  position: relative;
   width: 100%;
   height: 180px;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--color-border);
   background: var(--color-bg);
+  isolation: isolate;
 }
 :deep(.leaflet-container) {
   background: var(--color-bg);
