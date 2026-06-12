@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Compass, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
+import { CalendarClock, Compass, FileClock, Gamepad2, Hammer, LayoutList, Map, Menu, Package, ScanLine, Search, Sword, X } from '@lucide/vue'
 import { onClickOutside } from '@vueuse/core'
 import { useDiscordJoin } from '~/composables/useDiscordJoin'
 
@@ -30,6 +30,7 @@ const dropdownGroups = [
       { name: 'Items', href: '/items', icon: Search, desc: 'Search Wynncraft items and ingredients' },
       { name: 'Inspect', href: '/inspect', icon: ScanLine, desc: 'Render a Wynntils inspect link' },
       { name: 'Map', href: '/map', icon: Map, desc: 'Explore the Province of Wynn' },
+      { name: 'World Events', href: '/world-events', icon: CalendarClock, desc: 'Browse world event schedules and loot' },
       { name: 'Changelog', href: '/changelog', icon: FileClock, desc: 'Track Wynncraft item data changes' },
     ],
   },

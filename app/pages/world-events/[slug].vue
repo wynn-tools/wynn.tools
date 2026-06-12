@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 import Countdown from '~/components/WorldEvent/Countdown.vue'
 import EventCard from '~/components/WorldEvent/EventCard.vue'
 import LootSection from '~/components/WorldEvent/LootSection.vue'
@@ -16,6 +16,17 @@ useSeoMeta({
   title: () => event.value ? `${event.value.event.name} — wynn.tools` : 'World Event — wynn.tools',
   ogTitle: () => event.value ? `${event.value.event.name} — World Event` : undefined,
   description: () => event.value?.event.lore || 'A Wynncraft world event.',
+})
+
+watchEffect(() => {
+  if (event.value && event.value.loot) {
+    defineOgImage('WorldEventCard', {
+      name: event.value.event.name,
+      region: event.value.loot.region,
+      difficulty: event.value.event.difficulty,
+      level: event.value.event.level,
+    })
+  }
 })
 
 const others = computed(() => {
