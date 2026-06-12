@@ -111,10 +111,14 @@ const windowVirt = useWindowVirtualizer(computed(() => ({
   scrollMargin: scrollMargin.value,
 })))
 
-const virtualizer = computed(() => (useWindow.value ? windowVirt.value : elementVirt.value))
-const totalSize = computed(() => virtualizer.value.getTotalSize())
-const virtualItems = computed(() => virtualizer.value.getVirtualItems())
+const totalSize = computed(() => (useWindow.value ? windowVirt.value : elementVirt.value).getTotalSize())
+const virtualItems = computed(() => (useWindow.value ? windowVirt.value : elementVirt.value).getVirtualItems())
 const startOffset = computed(() => (useWindow.value ? scrollMargin.value : 0))
+
+function measureRef(el: Element | null) {
+  const v = useWindow.value ? windowVirt.value : elementVirt.value
+  v.measureElement(el)
+}
 
 watch(() => props.items, () => {
   if (useWindow.value)
@@ -130,7 +134,7 @@ watch(() => props.items, () => {
       <div
         v-for="v in virtualItems"
         :key="v.key"
-        :ref="el => virtualizer.measureElement(el as Element | null)"
+        :ref="el => measureRef(el as Element | null)"
         :data-index="v.index"
         class="vmasonry-cell"
         :style="{
