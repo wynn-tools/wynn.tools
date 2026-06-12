@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { PartInput } from '~/composables/useStockApi'
+import type { MediaInput, PartInput } from '~/composables/useStockApi'
 import type { StockCategory, StockClass, StockKind } from '~/lib/types/stock'
+import ScreenshotsEditor from '~/components/stock/ScreenshotsEditor.vue'
 import StockPartEditor from '~/components/stock/StockPartEditor.vue'
 
 definePageMeta({ middleware: ['auth'] })
@@ -52,6 +53,13 @@ const draftVersionNumber = ref<number | null>(null)
 const versionLabel = ref('')
 const versionChangelog = ref('')
 const parts = ref<PartInput[]>([])
+const media = ref<MediaInput[]>(
+  (creation.value!.media ?? []).map(m => ({
+    blobSha256: m.blobSha256,
+    caption: m.caption,
+  })),
+)
+const savingMedia = ref(false)
 
 const saving = ref(false)
 const publishing = ref(false)
@@ -117,6 +125,23 @@ async function persist() {
     changelog: versionChangelog.value,
     parts: parts.value,
   })
+}
+
+async function saveMedia() {
+  if (savingMedia.value)
+    return
+  savingMedia.value = true
+  message.value = null
+  try {
+    await api.replaceMedia(slug, media.value)
+    message.value = { kind: 'ok', text: 'Screenshots saved.' }
+  }
+  catch (e) {
+    message.value = { kind: 'err', text: (e as Error).message }
+  }
+  finally {
+    savingMedia.value = false
+  }
 }
 
 async function saveDraft() {
@@ -290,6 +315,26 @@ useHead({ title: `Edit: ${creation.value.title}` })
         <button type="button" class="btn-add" @click="addPart">
           + Add part
         </button>
+      </section>
+
+      <section class="block">
+        <h2 class="kicker block-head">
+          Screenshots
+        </h2>
+        <p class="block-hint">
+          Up to 8 images, max 2 MB each. PNG, JPEG, WebP, or GIF.
+        </p>
+        <ScreenshotsEditor v-model="media" />
+        <div class="screenshots-actions">
+          <button
+            type="button"
+            class="btn-primary"
+            :disabled="savingMedia"
+            @click="saveMedia"
+          >
+            {{ savingMedia ? 'Saving…' : 'Save screenshots' }}
+          </button>
+        </div>
       </section>
 
       <section class="block">
@@ -588,6 +633,11 @@ useHead({ title: `Edit: ${creation.value.title}` })
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.screenshots-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 @media (max-width: 720px) {
