@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import type { ObtainKind } from '~/lib/items-search/obtain'
 import type { SearchItem } from '~/lib/items-search/types'
+import { useWorldEventLoot } from '~/composables/useWorldEvents'
 import { obtainInfo } from '~/lib/items-search/obtain'
+import { worldEventDropsForItem } from '~/lib/world-events/item-drops'
 
 const props = defineProps<{ item: SearchItem }>()
-const methods = computed(() => obtainInfo(props.item))
+const baseMethods = computed(() => obtainInfo(props.item))
+
+const { loot } = useWorldEventLoot()
+const worldEventDrops = computed(() => worldEventDropsForItem(props.item.name, loot.value))
+
+const hasWorldEvent = computed(() => worldEventDrops.value.length > 0)
+const methods = computed(() => {
+  if (!hasWorldEvent.value)
+    return baseMethods.value
+  return baseMethods.value.filter(m => m.kind !== 'unknown')
+})
 
 const KIND_GLYPH: Record<ObtainKind, string> = {
   mobs: '⚔',
@@ -19,6 +31,11 @@ const KIND_TAG: Record<ObtainKind, string> = {
   anyLootchest: 'Loot chest',
   quest: 'Quest reward',
   unknown: 'Unknown',
+}
+
+const SOURCE_TAG: Record<'exclusiveItems' | 'rareRandomLoots', string> = {
+  exclusiveItems: 'Exclusive drop',
+  rareRandomLoots: 'Rare random loot',
 }
 </script>
 
@@ -36,6 +53,21 @@ const KIND_TAG: Record<ObtainKind, string> = {
           <span class="tag">{{ KIND_TAG[m.kind] }}</span>
           <span class="desc">{{ m.description }}</span>
           <span v-if="m.quest" class="quest">{{ m.quest }}</span>
+        </div>
+      </li>
+      <li
+        v-for="d in worldEventDrops"
+        :key="`we-${d.slug}-${d.source}`"
+        class="method method--worldEvent"
+      >
+        <span class="glyph" aria-hidden="true">✺</span>
+        <div class="body">
+          <span class="tag">{{ SOURCE_TAG[d.source] }}</span>
+          <NuxtLink :to="`/world-events/${d.slug}`" class="event-link">
+            {{ d.event }}
+          </NuxtLink>
+          <span class="desc">Region: {{ d.region }}</span>
+          <span v-if="d.note" class="note">{{ d.note }}</span>
         </div>
       </li>
     </ul>
@@ -79,6 +111,28 @@ const KIND_TAG: Record<ObtainKind, string> = {
 .method--quest {
   border-color: color-mix(in oklch, var(--color-gold-dim) 50%, transparent);
   background: color-mix(in oklch, var(--color-gold-dim) 6%, transparent);
+}
+.method--worldEvent {
+  border-color: color-mix(in oklch, var(--color-accent) 40%, var(--color-border));
+  background: color-mix(in oklch, var(--color-accent) 5%, transparent);
+}
+.method--worldEvent .glyph {
+  color: var(--color-accent);
+  background: color-mix(in oklch, var(--color-accent) 12%, transparent);
+}
+.event-link {
+  font: 600 13px/1.3 var(--font-body);
+  color: var(--color-accent);
+  text-decoration: none;
+  margin-top: 2px;
+}
+.event-link:hover {
+  text-decoration: underline;
+}
+.note {
+  font-size: 12px;
+  color: var(--color-muted);
+  font-style: italic;
 }
 .method--unknown {
   opacity: 0.7;
