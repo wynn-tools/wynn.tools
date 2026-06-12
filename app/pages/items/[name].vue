@@ -112,7 +112,10 @@ const crumbName = computed(() => item.value?.name ?? seoItem.value?.name ?? null
         <div class="panes">
           <div class="primary">
             <ItemRollsSection :item="item" />
-            <ItemMarketSection :name="item.name" />
+            <ItemMarketSection
+              v-if="item.restriction !== 'untradable'"
+              :name="item.name"
+            />
           </div>
           <div class="support">
             <ItemSetSection
