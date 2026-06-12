@@ -8,8 +8,6 @@ import { filterMaterials } from '~/lib/items-search/filter-materials'
 import { filterTomes } from '~/lib/items-search/filter-tomes'
 import { useBuildStore } from '~/stores/build'
 
-definePageMeta({ ssr: false })
-
 useSeoMeta({
   title: 'Item Search — wynn.tools',
   ogTitle: 'Item Search — wynn.tools',
@@ -28,6 +26,8 @@ const materialCriteria = ref<MaterialCriteria>(defaultMaterialCriteria())
 
 type Tab = 'items' | 'ingredients' | 'tomes' | 'charms' | 'materials'
 const tab = ref<Tab>('items')
+
+const skeletonHeights = [180, 220, 160, 240, 200, 180, 260, 200, 180, 220, 160, 240, 200, 180, 260, 200, 180, 220]
 
 const showSidebar = computed(() => tab.value !== 'charms')
 
@@ -125,7 +125,7 @@ const setOptions = computed(() =>
       />
     </template>
 
-    <template v-if="!pending && !error && showSidebar" #sidebar>
+    <template v-if="showSidebar" #sidebar>
       <FiltersSidebar panel-id="search-filters-panel">
         <template #name>
           <input
@@ -172,9 +172,19 @@ const setOptions = computed(() =>
       <BuilderRail class="rail-col" @expand="rail.openBuilder()" />
     </template>
 
-    <div v-if="pending" class="state">
-      Loading…
-    </div>
+    <template v-if="pending || !data">
+      <header class="results-head">
+        <span class="count count--dim">Loading items…</span>
+      </header>
+      <div class="results-list" aria-hidden="true">
+        <div
+          v-for="(h, i) in skeletonHeights"
+          :key="i"
+          class="skeleton-card"
+          :style="{ height: `${h}px` }"
+        />
+      </div>
+    </template>
     <div v-else-if="error" class="state">
       Failed to load item data. <button @click="refresh()">
         Retry
@@ -294,6 +304,34 @@ const setOptions = computed(() =>
 .results-list {
   column-width: 280px;
   column-gap: 12px;
+}
+.skeleton-card {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 0%,
+    color-mix(in oklch, var(--color-surface-hi) 70%, var(--color-surface)) 50%,
+    var(--color-surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-card {
+    animation: none;
+    background: var(--color-surface);
+  }
 }
 /* ── Slide-out full-builder panel (overlays the results) ─────────── */
 .build-overlay {
