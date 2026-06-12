@@ -58,12 +58,18 @@ export interface PatchCreationInput {
 export async function patchCreationMeta(id: string, patch: PatchCreationInput): Promise<void> {
   const db = getDb()
   if (patch.title !== undefined) {
-    const hasPublished = await db.query.stockVersion.findFirst({
-      where: (v, { eq, and }) => and(eq(v.creationId, id), eq(v.status, 'published')),
-      columns: { id: true },
+    const current = await db.query.stockCreation.findFirst({
+      where: (c, { eq }) => eq(c.id, id),
+      columns: { title: true },
     })
-    if (hasPublished)
-      throw new AppError(409, 'title_locked', 'title is immutable after first publish')
+    if (current && patch.title !== current.title) {
+      const hasPublished = await db.query.stockVersion.findFirst({
+        where: (v, { eq, and }) => and(eq(v.creationId, id), eq(v.status, 'published')),
+        columns: { id: true },
+      })
+      if (hasPublished)
+        throw new AppError(409, 'title_locked', 'title is immutable after first publish')
+    }
   }
   await db.update(schema.stockCreation)
     .set({ ...patch, updatedAt: new Date() })
