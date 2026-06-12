@@ -38,6 +38,14 @@ const tools = [
   },
 ]
 
+const data = [
+  {
+    name: 'Sivrel Aletheis',
+    description: 'World-event loot tables — rare spawns, drop pools, ingredients, and exclusive items per event, hand-curated from in-game observation.',
+    url: 'https://cdn.wynn.tools/world-event-loot.json',
+  },
+]
+
 const assets = [
   {
     name: 'Wynncraft',
@@ -115,6 +123,31 @@ const assets = [
             rel="noopener noreferrer"
             class="credit-link"
             :aria-label="`Visit ${tool.name}`"
+          >
+            <ExternalLink :size="14" aria-hidden="true" />
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Data Contributions -->
+    <section>
+      <h2 class="section-label">
+        Data Contributions
+      </h2>
+      <ul class="credit-list" role="list">
+        <li v-for="entry in data" :key="entry.name" class="credit-card">
+          <div class="credit-card-body">
+            <span class="credit-name">{{ entry.name }}</span>
+            <span class="credit-desc">{{ entry.description }}</span>
+          </div>
+          <a
+            v-if="entry.url"
+            :href="entry.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="credit-link"
+            :aria-label="`Open ${entry.name}'s data source`"
           >
             <ExternalLink :size="14" aria-hidden="true" />
           </a>
