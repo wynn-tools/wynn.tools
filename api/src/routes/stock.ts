@@ -7,10 +7,13 @@ import { sql as drizzleSql, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { getDb, schema } from '../db/client'
+import { env } from '../env'
 import { AppError } from '../lib/errors'
+import { newResourceId } from '../lib/ids'
 import { hasScope, requireAuth } from '../middleware/auth'
 import { readBlobStream, writeBlob } from '../services/blob-store'
 import { sniffImageMime } from '../services/stock-image-guard'
+import { postModReport } from '../services/stock-mod-webhook'
 import { isStockEmoji, toggleReaction } from '../services/stock-reactions'
 import { getCreationBySlug, getDraftVersion, getRawPart, getVersion, listCreations } from '../services/stock-read'
 
@@ -313,4 +316,26 @@ stock.post('/uploads', requireAuth, async (c) => {
   }).onConflictDoNothing({ target: schema.stockBlob.sha256 })
 
   return c.json({ sha256, byteSize, mimeType })
+})
+
+const reportBody = z.object({ reason: z.string().min(1).max(2000) })
+
+stock.post('/:slug/report', requireAuth, zValidator('json', reportBody), async (c) => {
+  const auth = c.get('auth')
+  const creation = await getDb().query.stockCreation.findFirst({
+    where: (cc, { and, eq, isNull }) => and(eq(cc.slug, c.req.param('slug')), isNull(cc.deletedAt)),
+    columns: { id: true, slug: true, title: true },
+  })
+  if (!creation)
+    throw new AppError(404, 'not_found', 'creation not found')
+  const { reason } = c.req.valid('json')
+  await getDb().insert(schema.stockReport).values({
+    id: newResourceId(),
+    creationId: creation.id,
+    reporterUserId: auth.user.id,
+    reason,
+  })
+  const url = `${env().FRONTEND_URL}/stock/${creation.slug}`
+  void postModReport(`**Report** on **${creation.title}** (${url})\nby <@${auth.user.id}>\nReason: ${reason}`)
+  return c.json({ ok: true })
 })
