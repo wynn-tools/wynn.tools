@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { WorldEvent } from '~/types/map'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { formatCountdown as formatDuration, nextSpawnIn } from '~/lib/world-events/schedule'
 
 const props = defineProps<{
   events: WorldEvent[]
@@ -27,18 +28,8 @@ onBeforeUnmount(() => {
 const isFirstLoad = computed(() => props.loading && props.events.length === 0)
 
 function formatCountdown(schedule: string): string {
-  const ms = new Date(schedule).getTime() - now.value
-  if (ms <= 0)
-    return 'now'
-  const totalSec = Math.floor(ms / 1000)
-  const h = Math.floor(totalSec / 3600)
-  const m = Math.floor((totalSec % 3600) / 60)
-  const s = totalSec % 60
-  if (h > 0)
-    return `in ${h}h ${m}m`
-  if (m > 0)
-    return `in ${m}m ${s}s`
-  return `in ${s}s`
+  const seconds = nextSpawnIn(schedule, now.value)
+  return seconds == null ? 'now' : `in ${formatDuration(seconds)}`
 }
 
 const DIFFICULTY_CLASSES: Record<WorldEvent['difficulty'], string> = {

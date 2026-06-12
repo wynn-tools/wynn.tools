@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { WorldEvent } from '~/types/map'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { formatCountdown as formatDuration, nextSpawnIn } from '~/lib/world-events/schedule'
 import { useMapStore } from '~/stores/map'
 
 const props = defineProps<{
@@ -46,18 +47,8 @@ function onKey(e: KeyboardEvent) {
 }
 
 function formatCountdown(schedule: string): string {
-  const ms = new Date(schedule).getTime() - now.value
-  if (ms <= 0)
-    return 'happening now'
-  const totalSec = Math.floor(ms / 1000)
-  const h = Math.floor(totalSec / 3600)
-  const m = Math.floor((totalSec % 3600) / 60)
-  const s = totalSec % 60
-  if (h > 0)
-    return `in ${h}h ${m}m`
-  if (m > 0)
-    return `in ${m}m ${s}s`
-  return `in ${s}s`
+  const seconds = nextSpawnIn(schedule, now.value)
+  return seconds == null ? 'happening now' : `in ${formatDuration(seconds)}`
 }
 
 function formatScheduleDate(schedule: string): string {

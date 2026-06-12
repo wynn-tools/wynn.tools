@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { nextSpawnIn } from './schedule'
+import { formatCountdown, nextSpawnIn } from './schedule'
 
 describe('nextSpawnIn', () => {
   const NOW = Date.parse('2026-06-12T00:00:00Z')
@@ -11,5 +11,21 @@ describe('nextSpawnIn', () => {
   })
   it('returns null for a past schedule', () => {
     expect(nextSpawnIn('2025-01-01T00:00:00Z', NOW)).toBeNull()
+  })
+})
+
+describe('formatCountdown', () => {
+  it('formats sub-minute as seconds', () => {
+    expect(formatCountdown(30)).toBe('30s')
+  })
+  it('formats sub-hour as minutes and seconds', () => {
+    expect(formatCountdown(330)).toBe('5m 30s')
+  })
+  it('formats multi-hour as hours and minutes (no seconds)', () => {
+    expect(formatCountdown(8109)).toBe('2h 15m')
+  })
+  it('floors to 0 once exhausted', () => {
+    expect(formatCountdown(0)).toBe('0s')
+    expect(formatCountdown(-1)).toBe('0s')
   })
 })
