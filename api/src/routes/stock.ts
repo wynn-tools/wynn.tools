@@ -31,6 +31,7 @@ import {
   patchCreationMeta,
   publishVersion,
   replaceDraftParts,
+  replaceMedia,
   softDeleteCreation,
 } from '../services/stock-write'
 import { assertSafeZip } from '../services/stock-zip-guard'
@@ -144,12 +145,21 @@ async function requireAuthorBySlug(c: Context, slug: string): Promise<{ id: stri
   return row
 }
 
+const mediaItem = z.object({
+  blobSha256: z.string().regex(/^[0-9a-f]{64}$/),
+  caption: z.string().max(200).nullable().default(null),
+})
+const mediaBody = z.object({
+  media: z.array(mediaItem).max(8),
+})
+
 const createBody = z.object({
   title: z.string().min(1).max(120),
   kind: z.enum(['infobox', 'custom-bar', 'bundle']),
   category: z.enum(['combat', 'party-ui', 'raid', 'lootrun', 'dps-meter', 'cooldown-tracker', 'resource-tracker', 'qol']),
   classes: z.array(z.enum(['mage', 'archer', 'warrior', 'shaman', 'assassin'])).max(5).optional().default([]),
   description: z.string().max(8000).optional(),
+  media: z.array(mediaItem).max(8).optional().default([]),
 })
 
 stock.post('/', requireAuth, zValidator('json', createBody), async (c) => {
@@ -165,6 +175,8 @@ stock.post('/', requireAuth, zValidator('json', createBody), async (c) => {
     classes: body.classes,
     description: body.description,
   })
+  if (body.media.length > 0)
+    await replaceMedia(id, body.media)
   return c.json({ id, slug })
 })
 
@@ -181,6 +193,13 @@ stock.patch('/:slug', requireAuth, zValidator('json', patchCreationBody), async 
   assertWriteScope(c)
   const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
   await patchCreationMeta(id, c.req.valid('json'))
+  return c.json({ ok: true })
+})
+
+stock.put('/:slug/media', requireAuth, zValidator('json', mediaBody), async (c) => {
+  assertWriteScope(c)
+  const { id } = await requireAuthorBySlug(c, c.req.param('slug'))
+  await replaceMedia(id, c.req.valid('json').media)
   return c.json({ ok: true })
 })
 
