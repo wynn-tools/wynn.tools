@@ -46,7 +46,7 @@ const swatches: { value: ThemePref, label: string, bg: string, panel: string, ac
             type="button"
             role="menuitemradio"
             :aria-checked="pref === s.value"
-            @click="setTheme(s.value)"
+            @click="setTheme(s.value, { origin: $event.currentTarget as HTMLElement })"
           >
             <span
               class="swatch-chip"

@@ -166,6 +166,23 @@
   --color-bad: oklch(52% 0.18 25);
 }
 
+/* ── Theme view transition (ThemePicker clip-path reveal) ──────────────
+   Scoped to theme toggles: JS sets data-wynn-theme-vt and the duration /
+   clip-from variables only while a transition is in flight. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html[data-wynn-theme-vt='active']::view-transition-group(root) {
+  animation-duration: var(--wynn-theme-vt-duration);
+}
+
+html[data-wynn-theme-vt='active']::view-transition-new(root) {
+  clip-path: var(--wynn-theme-vt-clip-from);
+}
+
 /* ── Play envelope ─────────────────────────────────────────────────────
    /play swaps the whole token system to Wynncraft's Journey theme: parchment
    panels, wood-frame nested shadows, the wynncraft + wynn-five pixel faces,
