@@ -3,6 +3,7 @@ import type { IdentRange } from './roll-percent'
 import type { BuildContext } from '~/lib/build/compute-build'
 import type { CleanedRawItem } from '~/lib/build/resolve'
 import { IDENTIFICATION_MAP } from '~/lib/data/cdn-adapter/key-maps'
+import { isInverted } from '~/lib/data/identifications'
 import { defaultGetIdentRange } from './import'
 import { overallRollPercent, rollPercent } from './roll-percent'
 
@@ -104,7 +105,7 @@ export function analyzeItem(
         shorthand,
         actual,
         range,
-        rollPct: rollPercent(actual, range),
+        rollPct: rollPercent(actual, range, isInverted(v3)),
       })
     }
   }
