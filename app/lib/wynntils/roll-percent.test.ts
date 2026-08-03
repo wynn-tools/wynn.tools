@@ -17,13 +17,22 @@ describe('rollPercent', () => {
   it('clamps below 0', () => {
     expect(rollPercent(10, { min: 30, max: 100, raw: 100 })).toBe(0)
   })
-  it('treats purely-negative ranges as "closer to lo = higher %"', () => {
-    // E.g. Heal Cost: range raw=-4, min/max stored as -2/-6 in shorthand (lo=-6, hi=-2)
+  it('handles inversion case wherein closer to lo = higher %', () => {
+    // Detrimental stats (e.g. 1st spell cost): when inverted=true, lower values = high%
+    // This example straddles an actual 0 sitting at 50% between -20 and 20
+    expect(rollPercent(0, { min: 20, max: -20, raw: 0 }, true)).toBeCloseTo(50, 5)
+    // actual -20 (lo) = 100% (better end of range)
+    expect(rollPercent(-20, { min: 20, max: -20, raw: 0 }, true)).toBe(100)
+    // actual 20 (hi) = 0% (worst end of range)
+    expect(rollPercent(20, { min: 20, max: -20, raw: 0 }, true)).toBe(0)
+  })
+  it('handles regular negative range wherein closer to hi = higher %', () => {
+    // E.g. Heal cost range raw=-4, min/max stored as -2/-6 in shorthand (lo=-6, hi=-2).
     // actual -4 sits at 50% between -6 and -2
     expect(rollPercent(-4, { min: -2, max: -6, raw: -4 })).toBeCloseTo(50, 5)
     // actual -6 (lo) = 0% (worst end of range)
     expect(rollPercent(-6, { min: -2, max: -6, raw: -4 })).toBe(0)
-    // actual -2 (hi) = 100%
+    // actual -2 (hi) = 100% (better end of range)
     expect(rollPercent(-2, { min: -2, max: -6, raw: -4 })).toBe(100)
   })
   it('returns null for fixed-value range', () => {
