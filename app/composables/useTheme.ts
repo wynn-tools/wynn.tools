@@ -2,6 +2,9 @@
 // concrete theme applied as html[data-theme]. The CSS in global.css owns the
 // actual colors; this only persists the choice and keeps the attribute in sync.
 
+import type { ThemeTransitionOptions } from '~/lib/theme/theme-transition'
+import { runThemeTransition } from '~/lib/theme/theme-transition'
+
 export type ThemePref = 'system' | 'light' | 'dark' | 'midnight'
 export type ResolvedTheme = 'light' | 'dark' | 'midnight'
 
@@ -54,13 +57,26 @@ export function useTheme() {
     })
   }
 
-  function setTheme(p: ThemePref) {
-    pref.value = p
-    try {
-      localStorage.setItem(LS_KEY, p)
+  function setTheme(p: ThemePref, transition?: ThemeTransitionOptions) {
+    if (p === pref.value)
+      return
+
+    const commit = () => {
+      pref.value = p
+      try {
+        localStorage.setItem(LS_KEY, p)
+      }
+      catch {}
+      apply(p)
     }
-    catch {}
-    apply(p)
+
+    const visualChange = resolve(p) !== resolved.value
+    if (transition && visualChange && import.meta.client) {
+      runThemeTransition(commit, transition)
+      return
+    }
+
+    commit()
   }
 
   return {
