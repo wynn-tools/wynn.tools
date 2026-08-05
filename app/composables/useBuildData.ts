@@ -39,12 +39,13 @@ export function peekVersionId(hash: string): number {
   return decodeHeader(new BitVectorCursor(new BitVector(hash, hash.length * 6)))
 }
 
-let versionsCache: Promise<VersionEntry[]> | null = null
-
-/** Fetch (and cache) the CDN root versions.json index. */
+/**
+ * Fetch the CDN root versions.json index. Caching lives in the client, which
+ * expires this file — memoizing it here would pin a long-lived process to the
+ * releases that existed when it booted.
+ */
 function fetchVersions(client: CdnClient): Promise<VersionEntry[]> {
-  versionsCache ??= client.fetchJson<VersionEntry[]>('versions.json')
-  return versionsCache
+  return client.fetchJson<VersionEntry[]>('versions.json')
 }
 
 /** The versionId a freshly created build should encode (newest CDN snapshot). */

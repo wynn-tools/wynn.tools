@@ -29,6 +29,23 @@ describe('createCdnClient', () => {
     expect(spy).toHaveBeenCalledTimes(1)
   })
 
+  it('re-fetches versions.json once its TTL lapses, but never a snapshot file', async () => {
+    vi.useFakeTimers()
+    const spy = stubFetch(async () => new Response('{"v":1}', { status: 200 }))
+    const client = createCdnClient('https://cdn.example.com')
+
+    await client.fetchJson('versions.json')
+    await client.fetchJson('data/2.2.2.0/items.json')
+    expect(spy).toHaveBeenCalledTimes(2)
+
+    vi.advanceTimersByTime(61_000)
+    await client.fetchJson('versions.json')
+    await client.fetchJson('data/2.2.2.0/items.json')
+    expect(spy).toHaveBeenCalledTimes(3)
+    expect(spy).toHaveBeenLastCalledWith('https://cdn.example.com/versions.json')
+    vi.useRealTimers()
+  })
+
   it('throws CdnError on non-OK response', async () => {
     stubFetch(async () => new Response('nope', { status: 404 }))
     const client = createCdnClient('https://cdn.example.com')

@@ -13,14 +13,28 @@ function joinUrl(baseUrl: string, path: string): string {
   return `${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
 }
 
+/**
+ * How long the root index may be served from cache.
+ *
+ * Snapshots under `data/{gameVersion}/` never change, so they are cached for the
+ * process lifetime. `versions.json` grows with every release — caching it
+ * forever means a long-lived process (the API, the SSR server) keeps rejecting
+ * builds encoded against a snapshot published after it booted.
+ */
+const VERSIONS_TTL_MS = 60_000
+
+function isMutable(path: string): boolean {
+  return path.replace(/^\/+/, '') === 'versions.json'
+}
+
 export function createCdnClient(baseUrl: string): CdnClient {
-  const cache = new Map<string, Promise<unknown>>()
+  const cache = new Map<string, { promise: Promise<unknown>, expiresAt: number }>()
 
   function fetchJson<T>(path: string): Promise<T> {
     const url = joinUrl(baseUrl, path)
     const existing = cache.get(url)
-    if (existing)
-      return existing as Promise<T>
+    if (existing && existing.expiresAt > Date.now())
+      return existing.promise as Promise<T>
 
     const promise = (async () => {
       let response: Response
@@ -36,9 +50,14 @@ export function createCdnClient(baseUrl: string): CdnClient {
       return response.json() as Promise<T>
     })()
 
-    // Cache the promise; evict on failure so a transient error can be retried.
-    cache.set(url, promise)
-    promise.catch(() => cache.delete(url))
+    const entry = { promise, expiresAt: isMutable(path) ? Date.now() + VERSIONS_TTL_MS : Number.POSITIVE_INFINITY }
+    cache.set(url, entry)
+    // Evict on failure so a transient error can be retried — but only if this
+    // entry is still the current one.
+    promise.catch(() => {
+      if (cache.get(url) === entry)
+        cache.delete(url)
+    })
     return promise
   }
 
