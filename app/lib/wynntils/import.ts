@@ -63,10 +63,17 @@ function findItemByName(ctx: BuildContext, name: string): CleanedRawItem | null 
   return null
 }
 
-function percentileToRaw(roll: number, range: IdentRange): number {
+/**
+ * Decoded identification value → raw stat value, clamped to the item's range.
+ * Legacy strings carry the internal roll (a percentage of the base); v3 strings carry
+ * the displayed value, with spell costs sign-flipped, so it takes the base's sign.
+ */
+export function identValueToRaw(value: number, layout: 'v3' | 'legacy', range: IdentRange): number {
   const lo = Math.min(range.min, range.max)
   const hi = Math.max(range.min, range.max)
-  const v = Math.round(range.raw * (roll / 100))
+  const v = layout === 'v3'
+    ? Math.sign(range.raw) * Math.abs(value)
+    : Math.round(range.raw * (value / 100))
   return Math.max(lo, Math.min(hi, v))
 }
 
@@ -104,7 +111,7 @@ export function resolveImport(
   const identBlock = blocks.find(b => b.name === 'IdentificationData')
   if (identBlock && identBlock.name === 'IdentificationData') {
     for (const ent of identBlock.identifications) {
-      if (typeof ent.roll !== 'number')
+      if (typeof ent.value !== 'number')
         continue
       const v3 = idKeys.get(ent.kind)
       if (!v3) {
@@ -123,7 +130,7 @@ export function resolveImport(
       }
       if (range.min === range.max)
         continue
-      overrides.set(shorthand, percentileToRaw(ent.roll, range))
+      overrides.set(shorthand, identValueToRaw(ent.value, identBlock.layout, range))
     }
   }
 

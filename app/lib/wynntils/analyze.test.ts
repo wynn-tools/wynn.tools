@@ -34,6 +34,7 @@ function blocks(opts: {
   idents?: { kind: number, roll: number }[] | null
   powders?: { element: number, tier: number }[]
   reroll?: number
+  layout?: 'v3' | 'legacy'
 } = {}): Block[] {
   const out: Block[] = [
     { id: DataBlockId.StartData, name: 'StartData', version: 1 },
@@ -45,7 +46,8 @@ function blocks(opts: {
       id: DataBlockId.IdentificationData,
       name: 'IdentificationData',
       extended: false,
-      identifications: (opts.idents ?? []).map(i => ({ kind: i.kind, base: null, roll: i.roll })),
+      layout: opts.layout ?? 'legacy',
+      identifications: (opts.idents ?? []).map(i => ({ kind: i.kind, base: null, value: i.roll, preid: false })),
     })
   }
   out.push({
@@ -96,6 +98,27 @@ describe('analyzeItem', () => {
     expect(r.view.powders).toEqual([0])
     expect(r.view.rerollCount).toBe(2)
     expect(r.view.shiny).toBeNull()
+  })
+
+  it('reads v3 displayed values directly, spell costs with the base sign', () => {
+    const ctx = mkCtx([
+      mkItem(7, 'Warp', 'helmet', {
+        mdPct: { min: 10, max: 30, raw: 30 },
+        spRaw2: { min: -90, max: -389, raw: -299 },
+      }),
+    ])
+    const localKeys = new Map(idKeys).set(38, 'raw2ndSpellCost')
+    const r = analyzeItem(
+      blocks({ name: 'Warp', idents: [{ kind: 34, roll: 21 }, { kind: 38, roll: 236 }], layout: 'v3' }),
+      ctx,
+      localKeys,
+      mockGetRange,
+    )
+    expect(r.ok).toBe(true)
+    if (!r.ok)
+      return
+    expect(r.view.identifications.find(x => x.shorthand === 'mdPct')!.actual).toBe(21)
+    expect(r.view.identifications.find(x => x.shorthand === 'spRaw2')!.actual).toBe(-236)
   })
 
   it('returns identified: false for unidentified gear (no IdentificationData block)', () => {
