@@ -1,8 +1,8 @@
 /**
  * Wynntils private-use-area (PUA) item-string decoder.
  *
- * Ported from Wynnpool (https://github.com/Wynnpool/Wynnpool) — MIT License.
- * Original source: apps/api/src/lib/wynntils-decode.ts.
+ * Ported from Wynnpool (https://github.com/AiverAiva/Wynnpool) — MIT License.
+ * Original source: apps/api/src/lib/wynntils-decode.ts @ 6ffe242.
  * Underlying format defined by idmangler-lib (src/encoding/string.rs, src/block/mod.rs).
  *
  * Powder bit-ordering follows Wynnpool's implementation (MSB-first within p*5+b).
@@ -49,6 +49,10 @@ function decodeVarint(next: () => number): number {
   return (zigzag >>> 1) ^ -(zigzag & 1)
 }
 
+// Wynntils' ItemTransformingVersion is 0-based on the wire (VERSION_3 = 2);
+// upstream Wynnpool gates on `version >= 3`, which no real string reaches.
+const VERSION_3 = 2
+
 export enum DataBlockId {
   StartData = 0,
   TypeData = 1,
@@ -57,15 +61,21 @@ export enum DataBlockId {
   PowderData = 4,
   RerollData = 5,
   ShinyData = 6,
-  CraftedGearType = 7,
+  CustomGearType = 7,
   DurabilityData = 8,
   RequirementsData = 9,
   DamageData = 10,
   DefenseData = 11,
-  CraftedIdentificationData = 12,
-  CraftedConsumableTypeData = 13,
+  CustomIdentificationData = 12,
+  CustomConsumableTypeData = 13,
   UsesData = 14,
   EffectsData = 15,
+  MountTypeData = 16,
+  MountPotentialData = 17,
+  MountColorData = 18,
+  MountEnergyData = 19,
+  MountStatsData = 20,
+  MountStatsMaxData = 21,
   EndData = 255,
 }
 
@@ -97,10 +107,15 @@ export interface IdentificationDataBlock {
   id: DataBlockId.IdentificationData
   name: 'IdentificationData'
   extended: boolean
+  /** v3 stores actual identification values; legacy stores internal rolls (≈30–130). */
+  layout: 'v3' | 'legacy'
   identifications: Array<{
     kind: number
     base: number | null
-    roll: number | 'preid'
+    value: number | null
+    flags?: number
+    meter?: number
+    preid: boolean
   }>
 }
 
@@ -119,6 +134,107 @@ export interface ShinyDataBlock {
   val: number
 }
 
+export interface CustomGearTypeBlock {
+  id: DataBlockId.CustomGearType
+  name: 'CustomGearType'
+  gearType: number
+}
+
+export interface DurabilityDataBlock {
+  id: DataBlockId.DurabilityData
+  name: 'DurabilityData'
+  maxDurability: number
+  currentDurability: number
+  effectStrength?: number
+}
+
+export interface RequirementsDataBlock {
+  id: DataBlockId.RequirementsData
+  name: 'RequirementsData'
+  level: number
+  classId: number
+  skillRequirements: Array<{ skillId: number, requirement: number }>
+}
+
+export interface DamageDataBlock {
+  id: DataBlockId.DamageData
+  name: 'DamageData'
+  attackSpeedId: number
+  dps?: number // v3 only
+  damages: Array<{ damageTypeId: number, min: number, max: number }>
+}
+
+export interface DefenseDataBlock {
+  id: DataBlockId.DefenseData
+  name: 'DefenseData'
+  health: number
+  defenses: Array<{ elementId: number, value: number }>
+}
+
+export interface CustomIdentificationDataBlock {
+  id: DataBlockId.CustomIdentificationData
+  name: 'CustomIdentificationData'
+  identifications: Array<{ statId: number, value: number, flags?: number, meter?: number }>
+}
+
+export interface CustomConsumableTypeBlock {
+  id: DataBlockId.CustomConsumableTypeData
+  name: 'CustomConsumableTypeData'
+  consumableType: number
+}
+
+export interface UsesDataBlock {
+  id: DataBlockId.UsesData
+  name: 'UsesData'
+  currentUses: number
+  maxUses: number
+}
+
+export interface EffectsDataBlock {
+  id: DataBlockId.EffectsData
+  name: 'EffectsData'
+  effects: Array<{ effectId: number, value: number }>
+}
+
+export interface MountTypeDataBlock {
+  id: DataBlockId.MountTypeData
+  name: 'MountTypeData'
+  mountType: number
+}
+
+export interface MountPotentialDataBlock {
+  id: DataBlockId.MountPotentialData
+  name: 'MountPotentialData'
+  potential: number
+}
+
+export interface MountColorDataBlock {
+  id: DataBlockId.MountColorData
+  name: 'MountColorData'
+  primaryColorId: number
+  secondaryColorId: number
+}
+
+export interface MountEnergyDataBlock {
+  id: DataBlockId.MountEnergyData
+  name: 'MountEnergyData'
+  currentEnergy: number
+  maxEnergy: number
+}
+
+export interface MountStatsDataBlock {
+  id: DataBlockId.MountStatsData
+  name: 'MountStatsData'
+  stats: Array<{ statId: number, current: number, max: number }>
+}
+
+export interface MountStatsMaxDataBlock {
+  id: DataBlockId.MountStatsMaxData
+  name: 'MountStatsMaxData'
+  estimatedMaxStats: number
+  stats: Array<{ statId: number, max: number }>
+}
+
 export interface EndDataBlock {
   id: DataBlockId.EndData
   name: 'EndData'
@@ -132,7 +248,61 @@ export type Block
     | IdentificationDataBlock
     | PowderDataBlock
     | ShinyDataBlock
+    | CustomGearTypeBlock
+    | DurabilityDataBlock
+    | RequirementsDataBlock
+    | DamageDataBlock
+    | DefenseDataBlock
+    | CustomIdentificationDataBlock
+    | CustomConsumableTypeBlock
+    | UsesDataBlock
+    | EffectsDataBlock
+    | MountTypeDataBlock
+    | MountPotentialDataBlock
+    | MountColorDataBlock
+    | MountEnergyDataBlock
+    | MountStatsDataBlock
+    | MountStatsMaxDataBlock
     | EndDataBlock
+
+function readIdentificationEntries(
+  bytes: number[],
+  start: number,
+  layout: 'v3' | 'legacy',
+): { end: number, extended: boolean, entries: IdentificationDataBlock['identifications'] } {
+  let i = start
+  const next = (): number => {
+    if (i >= bytes.length)
+      throw new Error('Unexpected end of bytes')
+    return bytes[i++]
+  }
+  const identCount = next()
+  const extended = next() === 1
+  const preidCount = extended ? next() : 0
+  const total = identCount + preidCount
+  const entries: IdentificationDataBlock['identifications'] = []
+  for (let idx = 0; idx < total; idx++) {
+    const kind = next()
+    const base = extended ? decodeVarint(next) : null
+    const isPre = idx < preidCount
+    if (isPre) {
+      entries.push({ kind, base, value: null, preid: true })
+      continue
+    }
+    if (layout === 'v3') {
+      const value = decodeVarint(next)
+      const flags = next()
+      // bit0 PERFECT_INTERNAL_ROLL, bit1 ICON_PREFIX, bit2 VANILLA_METER
+      const meter = (flags & 4) !== 0 ? next() : undefined
+      entries.push({ kind, base, value, flags, meter, preid: false })
+    }
+    else {
+      const value = next()
+      entries.push({ kind, base, value, preid: false })
+    }
+  }
+  return { end: i, extended, entries }
+}
 
 export function decodeBlocks(bytes: number[]): Block[] {
   let i = 0
@@ -184,23 +354,15 @@ export function decodeBlocks(bytes: number[]): Block[] {
       }
 
       case DataBlockId.IdentificationData: {
-        const identCount = next()
-        const extended = next() === 1
-        const preidCount = extended ? next() : 0
-        const total = identCount + preidCount
-        const idents: IdentificationDataBlock['identifications'] = []
-        for (let idx = 0; idx < total; idx++) {
-          const kind = next()
-          const base = extended ? decodeVarint(next) : null
-          const isPre = idx < preidCount
-          const roll: number | 'preid' = isPre ? 'preid' : next()
-          idents.push({ kind, base, roll })
-        }
+        const layout = version >= VERSION_3 ? 'v3' : 'legacy'
+        const parsed = readIdentificationEntries(bytes, i, layout)
+        i = parsed.end
         blocks.push({
           id: DataBlockId.IdentificationData,
           name: 'IdentificationData',
-          extended,
-          identifications: idents,
+          extended: parsed.extended,
+          layout,
+          identifications: parsed.entries,
         })
         break
       }
@@ -247,6 +409,173 @@ export function decodeBlocks(bytes: number[]): Block[] {
           const val = decodeVarint(next)
           blocks.push({ id, name: 'ShinyData', shinyId, val, rerollCount })
         }
+        break
+      }
+
+      case DataBlockId.CustomGearType: {
+        const gearType = next()
+        blocks.push({ id, name: 'CustomGearType', gearType })
+        break
+      }
+
+      case DataBlockId.DurabilityData: {
+        if (version < VERSION_3) {
+          // v1/v2: [effectStrength byte, max varint, current varint]
+          const effectStrength = next()
+          const maxDurability = decodeVarint(next)
+          const currentDurability = decodeVarint(next)
+          blocks.push({ id, name: 'DurabilityData', effectStrength, maxDurability, currentDurability })
+        }
+        else {
+          // v3: [max varint, current varint] (effectStrength dropped, fixed at 100)
+          const maxDurability = decodeVarint(next)
+          const currentDurability = decodeVarint(next)
+          blocks.push({ id, name: 'DurabilityData', maxDurability, currentDurability })
+        }
+        break
+      }
+
+      case DataBlockId.RequirementsData: {
+        const level = next()
+        const classId = next()
+        const skillCount = next()
+        const skillRequirements: RequirementsDataBlock['skillRequirements'] = []
+        for (let s = 0; s < skillCount; s++) {
+          const skillId = next()
+          const requirement = decodeVarint(next)
+          skillRequirements.push({ skillId, requirement })
+        }
+        blocks.push({ id, name: 'RequirementsData', level, classId, skillRequirements })
+        break
+      }
+
+      case DataBlockId.DamageData: {
+        let dps: number | undefined
+        if (version >= VERSION_3) {
+          // v3 prepends a DPS varint before the standard layout
+          dps = decodeVarint(next)
+        }
+        const attackSpeedId = next()
+        const damageCount = next()
+        const damages: DamageDataBlock['damages'] = []
+        for (let d = 0; d < damageCount; d++) {
+          const damageTypeId = next()
+          const min = decodeVarint(next)
+          const max = decodeVarint(next)
+          damages.push({ damageTypeId, min, max })
+        }
+        blocks.push({ id, name: 'DamageData', attackSpeedId, ...(dps !== undefined ? { dps } : {}), damages })
+        break
+      }
+
+      case DataBlockId.DefenseData: {
+        const health = decodeVarint(next)
+        const defenseCount = next()
+        const defenses: DefenseDataBlock['defenses'] = []
+        for (let d = 0; d < defenseCount; d++) {
+          const elementId = next()
+          const value = decodeVarint(next)
+          defenses.push({ elementId, value })
+        }
+        blocks.push({ id, name: 'DefenseData', health, defenses })
+        break
+      }
+
+      case DataBlockId.CustomIdentificationData: {
+        const count = next()
+        const idents: CustomIdentificationDataBlock['identifications'] = []
+        for (let k = 0; k < count; k++) {
+          const statId = next()
+          if (version >= VERSION_3) {
+            // v3: [statId byte, value varint, flags byte, optional meter byte]
+            const value = decodeVarint(next)
+            const flags = next()
+            const meter = (flags & 4) !== 0 ? next() : undefined
+            idents.push({ statId, value, flags, meter })
+          }
+          else {
+            const value = decodeVarint(next)
+            idents.push({ statId, value })
+          }
+        }
+        blocks.push({ id, name: 'CustomIdentificationData', identifications: idents })
+        break
+      }
+
+      case DataBlockId.CustomConsumableTypeData: {
+        const consumableType = next()
+        blocks.push({ id, name: 'CustomConsumableTypeData', consumableType })
+        break
+      }
+
+      case DataBlockId.UsesData: {
+        const currentUses = next()
+        const maxUses = next()
+        blocks.push({ id, name: 'UsesData', currentUses, maxUses })
+        break
+      }
+
+      case DataBlockId.EffectsData: {
+        const effectCount = next()
+        const effects: EffectsDataBlock['effects'] = []
+        for (let e = 0; e < effectCount; e++) {
+          const effectId = next()
+          const value = decodeVarint(next)
+          effects.push({ effectId, value })
+        }
+        blocks.push({ id, name: 'EffectsData', effects })
+        break
+      }
+
+      case DataBlockId.MountTypeData: {
+        const mountType = next()
+        blocks.push({ id, name: 'MountTypeData', mountType })
+        break
+      }
+
+      case DataBlockId.MountPotentialData: {
+        const potential = decodeVarint(next)
+        blocks.push({ id, name: 'MountPotentialData', potential })
+        break
+      }
+
+      case DataBlockId.MountColorData: {
+        const primaryColorId = next()
+        const secondaryColorId = next()
+        blocks.push({ id, name: 'MountColorData', primaryColorId, secondaryColorId })
+        break
+      }
+
+      case DataBlockId.MountEnergyData: {
+        const currentEnergy = decodeVarint(next)
+        const maxEnergy = decodeVarint(next)
+        blocks.push({ id, name: 'MountEnergyData', currentEnergy, maxEnergy })
+        break
+      }
+
+      case DataBlockId.MountStatsData: {
+        const statCount = next()
+        const stats: MountStatsDataBlock['stats'] = []
+        for (let s = 0; s < statCount; s++) {
+          const statId = next()
+          const current = decodeVarint(next)
+          const max = decodeVarint(next)
+          stats.push({ statId, current, max })
+        }
+        blocks.push({ id, name: 'MountStatsData', stats })
+        break
+      }
+
+      case DataBlockId.MountStatsMaxData: {
+        const estimatedMaxStats = next()
+        const statCount = next()
+        const stats: MountStatsMaxDataBlock['stats'] = []
+        for (let s = 0; s < statCount; s++) {
+          const statId = next()
+          const max = decodeVarint(next)
+          stats.push({ statId, max })
+        }
+        blocks.push({ id, name: 'MountStatsMaxData', estimatedMaxStats, stats })
         break
       }
 

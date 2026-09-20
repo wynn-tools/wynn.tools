@@ -28,12 +28,12 @@ function mkCtx(items: CleanedRawItem[]) {
   } as any
 }
 
-function blocks(name: string, type = 0, idents: { kind: number, roll: number }[] = [], powders: { element: number, tier: number }[] = []): Block[] {
+function blocks(name: string, type = 0, idents: { kind: number, roll: number }[] = [], powders: { element: number, tier: number }[] = [], layout: 'v3' | 'legacy' = 'legacy'): Block[] {
   return [
     { id: DataBlockId.StartData, name: 'StartData', version: 1 },
     { id: DataBlockId.TypeData, name: 'TypeData', itemType: type },
     { id: DataBlockId.NameData, name: 'NameData', nameStr: name },
-    { id: DataBlockId.IdentificationData, name: 'IdentificationData', extended: false, identifications: idents.map(i => ({ kind: i.kind, base: null, roll: i.roll })) },
+    { id: DataBlockId.IdentificationData, name: 'IdentificationData', extended: false, layout, identifications: idents.map(i => ({ kind: i.kind, base: null, value: i.roll, preid: false })) },
     { id: DataBlockId.PowderData, name: 'PowderData', powderSlots: powders.length, powders },
     { id: DataBlockId.EndData, name: 'EndData' },
   ]
@@ -71,6 +71,19 @@ describe('resolveImport', () => {
       const v = r.row.overrides.get('spRegen')!
       expect(v).toBeGreaterThanOrEqual(-8)
       expect(v).toBeLessThanOrEqual(-2)
+    }
+  })
+
+  it('v3 layout: displayed values apply as-is, spell costs take the base sign', () => {
+    const ctx = mkCtx([
+      mkItem(7, 'Warp', 'helmet', { str: { min: 5, max: 20, raw: 20 }, spRaw2: { min: -90, max: -389, raw: -299 } }),
+    ])
+    const localKeys = new Map(idKeys).set(38, 'raw2ndSpellCost')
+    const r = resolveImport(blocks('Warp', 0, [{ kind: 12, roll: 13 }, { kind: 38, roll: 236 }], [], 'v3'), ctx, localKeys, new Set(), mockGetRange)
+    expect(r.ok).toBe(true)
+    if (r.ok) {
+      expect(r.row.overrides.get('str')).toBe(13)
+      expect(r.row.overrides.get('spRaw2')).toBe(-236)
     }
   })
 

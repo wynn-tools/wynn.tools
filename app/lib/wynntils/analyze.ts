@@ -4,7 +4,7 @@ import type { BuildContext } from '~/lib/build/compute-build'
 import type { CleanedRawItem } from '~/lib/build/resolve'
 import { IDENTIFICATION_MAP } from '~/lib/data/cdn-adapter/key-maps'
 import { isInverted } from '~/lib/data/identifications'
-import { defaultGetIdentRange } from './import'
+import { defaultGetIdentRange, identValueToRaw } from './import'
 import { overallRollPercent, rollPercent } from './roll-percent'
 
 const POWDER_TIERS_PER_ELEM = 6
@@ -81,7 +81,7 @@ export function analyzeItem(
   const identified = !!(identBlock && identBlock.name === 'IdentificationData' && identBlock.identifications.length > 0)
   if (identified && identBlock && identBlock.name === 'IdentificationData') {
     for (const ent of identBlock.identifications) {
-      if (typeof ent.roll !== 'number')
+      if (typeof ent.value !== 'number')
         continue
       const v3 = idKeys.get(ent.kind)
       if (!v3) {
@@ -98,9 +98,7 @@ export function analyzeItem(
         warnings.push(`No range for '${shorthand}' on item '${item.name}' — skipped.`)
         continue
       }
-      const lo = Math.min(range.min, range.max)
-      const hi = Math.max(range.min, range.max)
-      const actual = Math.max(lo, Math.min(hi, Math.round(range.raw * (ent.roll / 100))))
+      const actual = identValueToRaw(ent.value, identBlock.layout, range)
       identifications.push({
         shorthand,
         actual,

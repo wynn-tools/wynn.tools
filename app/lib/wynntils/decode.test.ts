@@ -1,5 +1,6 @@
+import type { Block, IdentificationDataBlock } from './decode'
 import { describe, expect, it } from 'vitest'
-import { DataBlockId, decodeString, parseIdString } from './decode'
+import { DataBlockId, decodeBlocks, decodeString, parseIdString } from './decode'
 
 describe('decodeString (PUA → bytes)', () => {
   it('throws on a non-PUA character', () => {
@@ -37,14 +38,90 @@ describe('decodeBlocks blocks', () => {
     const ident = blocks.find(b => b.name === 'IdentificationData')
     expect(ident).toBeDefined()
     if (ident && ident.name === 'IdentificationData') {
+      expect(ident.layout).toBe('legacy')
       expect(ident.identifications.length).toBeGreaterThan(0)
       for (const i of ident.identifications)
-        expect(typeof i.roll === 'number' || i.roll === 'preid').toBe(true)
+        expect(typeof i.value).toBe('number')
     }
   })
 
   it('preserves end-of-stream block ordering', () => {
     expect(blocks[0].id).toBe(DataBlockId.StartData)
     expect(blocks[blocks.length - 1].id).toBe(DataBlockId.EndData)
+  })
+})
+
+describe('decodeBlocks v3 layout (Wynntils PR #4265)', () => {
+  const findIdent = (bs: Block[]) => bs.find((b): b is IdentificationDataBlock => b.name === 'IdentificationData')!
+
+  it('decodes a v3 string to its displayed values', () => {
+    // The same Warp as the legacy example, shared by a current Wynntils.
+    const blocks = parseIdString('\u{F0002}\u{F0100}\u{F0257}\u{F6172}\u{F7000}\u{F0309}\u{F0045}\u{FDA01}\u{F041E}\u{F1152}\u{F0411}\u{F2247}\u{F041A}\u{F18D7}\u{F0104}\u{F1F19}\u{FF10A}\u{F0419}\u{F1729}\u{F0423}\u{F0420}\u{F0418}\u{F51C6}\u{F0304}\u{F1F26}\u{FD803}\u{F0410}\u{F0403}\u{F0005}\u{F0206}\u{F0100}\u{F9EE6}\u{F09FF}')
+    expect(blocks[0]).toMatchObject({ name: 'StartData', version: 2 })
+    expect(blocks.at(-1)!.name).toBe('EndData')
+    const ident = findIdent(blocks)
+    expect(ident.layout).toBe('v3')
+    // Spell costs are stored sign-flipped: raw2ndSpellCost (38) is -236 on the tooltip.
+    expect(ident.identifications.map(i => [i.kind, i.value])).toEqual([
+      [69, 109],
+      [17, 41],
+      [34, -36],
+      [24, -108],
+      [25, -697],
+      [23, -21],
+      [4, 16],
+      [81, 227],
+      [38, 236],
+    ])
+    for (const i of ident.identifications)
+      expect(i.meter).toBeTypeOf('number')
+  })
+
+  it('selects the legacy identification layout from the version byte', () => {
+    const ident = findIdent(decodeBlocks([0, 1, 3, 1, 1, 0, 5, 4, 42, 255]))
+    expect(ident.layout).toBe('legacy')
+    expect(ident.identifications).toEqual([{ kind: 5, base: 2, value: 42, preid: false }])
+  })
+
+  it('does not mistake a legacy roll followed by RerollData for a v3 entry', () => {
+    const blocks = decodeBlocks([0, 0, 3, 1, 0, 5, 42, 5, 4, 6, 1, 20, 255])
+    expect(blocks.map(b => b.name)).toEqual(['StartData', 'IdentificationData', 'RerollData', 'ShinyData', 'EndData'])
+    expect(findIdent(blocks).identifications).toEqual([{ kind: 5, base: null, value: 42, preid: false }])
+  })
+
+  it('reads v3 crafted blocks (durability, damage, custom identifications)', () => {
+    const blocks = decodeBlocks([0, 2, 8, 20, 10, 10, 200, 1, 3, 1, 0, 20, 40, 12, 1, 5, 20, 0, 255])
+    expect(blocks.slice(1, -1)).toEqual([
+      { id: DataBlockId.DurabilityData, name: 'DurabilityData', maxDurability: 10, currentDurability: 5 },
+      { id: DataBlockId.DamageData, name: 'DamageData', dps: 100, attackSpeedId: 3, damages: [{ damageTypeId: 0, min: 10, max: 20 }] },
+      { id: DataBlockId.CustomIdentificationData, name: 'CustomIdentificationData', identifications: [{ statId: 5, value: 10, flags: 0, meter: undefined }] },
+    ])
+  })
+
+  it('reads legacy crafted blocks with the effect strength byte', () => {
+    const blocks = decodeBlocks([0, 1, 8, 100, 20, 10, 10, 3, 1, 0, 20, 40, 255])
+    expect(blocks.slice(1, -1)).toEqual([
+      { id: DataBlockId.DurabilityData, name: 'DurabilityData', effectStrength: 100, maxDurability: 10, currentDurability: 5 },
+      { id: DataBlockId.DamageData, name: 'DamageData', attackSpeedId: 3, damages: [{ damageTypeId: 0, min: 10, max: 20 }] },
+    ])
+  })
+
+  it('reads the flags byte and the meter byte it announces', () => {
+    const ident = findIdent(decodeBlocks([0, 2, 3, 1, 1, 0, 5, 2, 6, 7, 1, 255]))
+    expect(ident.identifications[0]).toMatchObject({ kind: 5, base: 1, value: 3, flags: 7, meter: 1, preid: false })
+  })
+
+  it('reads pre-identified entries without a value', () => {
+    const ident = findIdent(decodeBlocks([0, 2, 3, 1, 1, 1, 5, 4, 6, 2, 20, 0, 255]))
+    expect(ident.identifications).toEqual([
+      { kind: 5, base: 2, value: null, preid: true },
+      { kind: 6, base: 1, value: 10, flags: 0, preid: false },
+    ])
+  })
+
+  it('reads the mount blocks', () => {
+    const blocks = decodeBlocks([0, 2, 16, 0, 21, 1, 1, 5, 10, 14, 3, 10, 255])
+    expect(blocks.map(b => b.name)).toEqual(['StartData', 'MountTypeData', 'MountStatsMaxData', 'UsesData', 'EndData'])
+    expect(blocks[2]).toMatchObject({ estimatedMaxStats: 1, stats: [{ statId: 5, max: 5 }] })
   })
 })
