@@ -2,10 +2,12 @@
 import type { ApiBuild } from '~/composables/useApi'
 import { useApi } from '~/composables/useApi'
 import { loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
+import { useDiscordEmbed } from '~/composables/useDiscordEmbed'
 import { extractBuildMeta } from '~/lib/build/build-meta'
 import { computeBuild } from '~/lib/build/compute-build'
 import { stripMarkdown } from '~/lib/build/markdown'
 import { decodeRawBuild } from '~/lib/codec/build-codec'
+import { buildEmbed } from '~/lib/discord/component-embed'
 import { useAuthStore } from '~/stores/auth'
 import { useBuildStore } from '~/stores/build'
 
@@ -92,6 +94,10 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   ogImage: computed(() => `${config.public.apiBaseUrl}/v1/og/build/${id.value}`),
 })
+const origin = useRequestURL().origin
+useDiscordEmbed(() => buildMeta.value
+  ? buildEmbed(buildMeta.value, stripMarkdown(build.value?.notes ?? '', 600), `${origin}/b/${id.value}`, `${origin}/builder/${build.value?.buildString}`)
+  : null)
 
 function syncBuild(b: ApiBuild | null | undefined) {
   if (b?.buildString)

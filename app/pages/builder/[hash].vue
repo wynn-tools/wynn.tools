@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
+import { useDiscordEmbed } from '~/composables/useDiscordEmbed'
 import { extractBuildMeta } from '~/lib/build/build-meta'
 import { computeBuild } from '~/lib/build/compute-build'
 import { decodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
+import { buildEmbed } from '~/lib/discord/component-embed'
 import { useBuildStore } from '~/stores/build'
 
 // Stable page key: editing a build calls router.replace('/builder/<newHash>') on
@@ -91,6 +93,8 @@ useSeoMeta({
 
 if (import.meta.server && buildMeta.value)
   defineOgImage('BuildCard', buildMeta.value)
+const origin = useRequestURL().origin
+useDiscordEmbed(() => buildMeta.value ? buildEmbed(buildMeta.value, '', `${origin}/builder/${hash.value}`) : null)
 
 // --- Existing load-from-hash logic (unchanged) ---
 function syncFromRoute(h: string) {

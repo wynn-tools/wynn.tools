@@ -3,7 +3,9 @@ import type { StockListItem } from '~/lib/types/stock'
 import StockMediaGallery from '~/components/stock/StockMediaGallery.vue'
 import StockPartView from '~/components/stock/StockPartView.vue'
 import StockReactionBar from '~/components/stock/StockReactionBar.vue'
+import { useDiscordEmbed } from '~/composables/useDiscordEmbed'
 import { CLASS_THEMES, classWeaponUrl } from '~/lib/build/class-theme'
+import { stockEmbed } from '~/lib/discord/component-embed'
 import { useAuthStore } from '~/stores/auth'
 
 function avatarUrl(discordId: string, avatar: string) {
@@ -96,6 +98,8 @@ useHead({
     },
   ],
 })
+const origin = useRequestURL().origin
+useDiscordEmbed(() => stockEmbed(c.value, `${origin}/stock/${c.value.slug}`, api.blobUrl))
 
 onBeforeUnmount(() => {
   if (copyTimer)

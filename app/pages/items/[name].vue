@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { VersionEntry } from '~/lib/data/cdn-adapter/version-paths'
 import { useCdnClient } from '~/composables/useBuildData'
+import { useDiscordEmbed } from '~/composables/useDiscordEmbed'
 import { cdnPathFor, latestVersionId, resolveVersionSegment } from '~/lib/data/cdn-adapter/version-paths'
+import { itemEmbed } from '~/lib/discord/component-embed'
 import { itemHistory } from '~/lib/items-search/history'
 import { adaptItems } from '~/lib/items-search/item-search-adapter'
 import { buildSlugIndex, resolveSlug } from '~/lib/items-search/slug'
+import { extractItemMeta } from '~/lib/items/item-meta'
 
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -60,6 +63,8 @@ useSeoMeta({
   twitterCard: 'summary_large_image',
   ogImage: computed(() => `${config.public.apiBaseUrl}/v1/og/item/${slug.value}`),
 })
+const origin = useRequestURL().origin
+useDiscordEmbed(() => seoSource.value ? itemEmbed(extractItemMeta(seoSource.value), `${origin}/items/${slug.value}`) : null)
 
 const itemSets = computed<ResolvedSet[]>(() => {
   if (!item.value)
