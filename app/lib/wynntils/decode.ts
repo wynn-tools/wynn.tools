@@ -49,6 +49,10 @@ function decodeVarint(next: () => number): number {
   return (zigzag >>> 1) ^ -(zigzag & 1)
 }
 
+// Wynntils' ItemTransformingVersion is 0-based on the wire (VERSION_3 = 2);
+// upstream Wynnpool gates on `version >= 3`, which no real string reaches.
+const VERSION_3 = 2
+
 export enum DataBlockId {
   StartData = 0,
   TypeData = 1,
@@ -261,13 +265,6 @@ export type Block
     | MountStatsMaxDataBlock
     | EndDataBlock
 
-/**
- * Parse an IdentificationData block (id 3) in either the new v3 layout
- * (value varint + flags byte + optional meter byte) or the legacy layout
- * (roll byte). @Wynntils PR #4265 made v3 the default, but strings with a
- * version byte < 3 can still carry v3 identification data, so callers must
- * try v3 first and fall back to legacy.
- */
 function readIdentificationEntries(
   bytes: number[],
   start: number,
@@ -305,10 +302,6 @@ function readIdentificationEntries(
     }
   }
   return { end: i, extended, entries }
-}
-
-function isValidBlockId(id: number): boolean {
-  return id === 255 || (id >= 1 && id <= 21)
 }
 
 export function decodeBlocks(bytes: number[]): Block[] {
@@ -361,21 +354,8 @@ export function decodeBlocks(bytes: number[]): Block[] {
       }
 
       case DataBlockId.IdentificationData: {
-        const startIdx = i
-        let layout: 'v3' | 'legacy' = 'v3'
-        let parsed: { end: number, extended: boolean, entries: IdentificationDataBlock['identifications'] }
-        try {
-          parsed = readIdentificationEntries(bytes, startIdx, 'v3')
-          // Sanity: the byte right after the block must be a valid next block id,
-          // otherwise the v3 parse desynced and we fall back to the legacy layout.
-          if (parsed.end < bytes.length && !isValidBlockId(bytes[parsed.end])) {
-            throw new Error('v3 identification parse desync')
-          }
-        }
-        catch {
-          parsed = readIdentificationEntries(bytes, startIdx, 'legacy')
-          layout = 'legacy'
-        }
+        const layout = version >= VERSION_3 ? 'v3' : 'legacy'
+        const parsed = readIdentificationEntries(bytes, i, layout)
         i = parsed.end
         blocks.push({
           id: DataBlockId.IdentificationData,
@@ -439,7 +419,7 @@ export function decodeBlocks(bytes: number[]): Block[] {
       }
 
       case DataBlockId.DurabilityData: {
-        if (version < 3) {
+        if (version < VERSION_3) {
           // v1/v2: [effectStrength byte, max varint, current varint]
           const effectStrength = next()
           const maxDurability = decodeVarint(next)
@@ -471,7 +451,7 @@ export function decodeBlocks(bytes: number[]): Block[] {
 
       case DataBlockId.DamageData: {
         let dps: number | undefined
-        if (version >= 3) {
+        if (version >= VERSION_3) {
           // v3 prepends a DPS varint before the standard layout
           dps = decodeVarint(next)
         }
@@ -506,7 +486,7 @@ export function decodeBlocks(bytes: number[]): Block[] {
         const idents: CustomIdentificationDataBlock['identifications'] = []
         for (let k = 0; k < count; k++) {
           const statId = next()
-          if (version >= 3) {
+          if (version >= VERSION_3) {
             // v3: [statId byte, value varint, flags byte, optional meter byte]
             const value = decodeVarint(next)
             const flags = next()

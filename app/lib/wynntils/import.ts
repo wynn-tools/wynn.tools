@@ -63,11 +63,6 @@ function findItemByName(ctx: BuildContext, name: string): CleanedRawItem | null 
   return null
 }
 
-/**
- * Decoded identification value → raw stat value, clamped to the item's range.
- * Legacy strings carry the internal roll (a percentage of the base); v3 strings carry
- * the displayed value, with spell costs sign-flipped, so it takes the base's sign.
- */
 export function identValueToRaw(value: number, layout: 'v3' | 'legacy', range: IdentRange): number {
   const lo = Math.min(range.min, range.max)
   const hi = Math.max(range.min, range.max)

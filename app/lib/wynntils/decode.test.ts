@@ -77,10 +77,33 @@ describe('decodeBlocks v3 layout (Wynntils PR #4265)', () => {
       expect(i.meter).toBeTypeOf('number')
   })
 
-  it('falls back to the legacy identification layout', () => {
-    const ident = findIdent(decodeBlocks([0, 2, 3, 1, 1, 0, 5, 4, 42, 255]))
+  it('selects the legacy identification layout from the version byte', () => {
+    const ident = findIdent(decodeBlocks([0, 1, 3, 1, 1, 0, 5, 4, 42, 255]))
     expect(ident.layout).toBe('legacy')
     expect(ident.identifications).toEqual([{ kind: 5, base: 2, value: 42, preid: false }])
+  })
+
+  it('does not mistake a legacy roll followed by RerollData for a v3 entry', () => {
+    const blocks = decodeBlocks([0, 0, 3, 1, 0, 5, 42, 5, 4, 6, 1, 20, 255])
+    expect(blocks.map(b => b.name)).toEqual(['StartData', 'IdentificationData', 'RerollData', 'ShinyData', 'EndData'])
+    expect(findIdent(blocks).identifications).toEqual([{ kind: 5, base: null, value: 42, preid: false }])
+  })
+
+  it('reads v3 crafted blocks (durability, damage, custom identifications)', () => {
+    const blocks = decodeBlocks([0, 2, 8, 20, 10, 10, 200, 1, 3, 1, 0, 20, 40, 12, 1, 5, 20, 0, 255])
+    expect(blocks.slice(1, -1)).toEqual([
+      { id: DataBlockId.DurabilityData, name: 'DurabilityData', maxDurability: 10, currentDurability: 5 },
+      { id: DataBlockId.DamageData, name: 'DamageData', dps: 100, attackSpeedId: 3, damages: [{ damageTypeId: 0, min: 10, max: 20 }] },
+      { id: DataBlockId.CustomIdentificationData, name: 'CustomIdentificationData', identifications: [{ statId: 5, value: 10, flags: 0, meter: undefined }] },
+    ])
+  })
+
+  it('reads legacy crafted blocks with the effect strength byte', () => {
+    const blocks = decodeBlocks([0, 1, 8, 100, 20, 10, 10, 3, 1, 0, 20, 40, 255])
+    expect(blocks.slice(1, -1)).toEqual([
+      { id: DataBlockId.DurabilityData, name: 'DurabilityData', effectStrength: 100, maxDurability: 10, currentDurability: 5 },
+      { id: DataBlockId.DamageData, name: 'DamageData', attackSpeedId: 3, damages: [{ damageTypeId: 0, min: 10, max: 20 }] },
+    ])
   })
 
   it('reads the flags byte and the meter byte it announces', () => {
@@ -89,10 +112,10 @@ describe('decodeBlocks v3 layout (Wynntils PR #4265)', () => {
   })
 
   it('reads pre-identified entries without a value', () => {
-    const ident = findIdent(decodeBlocks([0, 2, 3, 1, 1, 1, 5, 4, 6, 2, 10, 255]))
+    const ident = findIdent(decodeBlocks([0, 2, 3, 1, 1, 1, 5, 4, 6, 2, 20, 0, 255]))
     expect(ident.identifications).toEqual([
       { kind: 5, base: 2, value: null, preid: true },
-      { kind: 6, base: 1, value: 10, preid: false },
+      { kind: 6, base: 1, value: 10, flags: 0, preid: false },
     ])
   })
 
