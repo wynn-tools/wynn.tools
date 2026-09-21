@@ -52,7 +52,7 @@ const MAX_RESULTS = 100
 const items = computed<CleanedRawItem[]>(() => store.itemsForSlot(props.slotIndex))
 
 const fuse = computed(() => new Fuse(items.value, {
-  keys: ['name'],
+  keys: ['name', 'displayName'],
   threshold: 0.4,
   ignoreLocation: true,
 }))

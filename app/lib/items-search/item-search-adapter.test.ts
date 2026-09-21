@@ -56,4 +56,18 @@ describe('adaptItems', () => {
     const [bare] = adaptItems({ items: [{ ...file.items[0]!, set: null, sets: undefined, emblem: undefined, averageDps: undefined, elements: undefined } as never] })
     expect(bare).toMatchObject({ set: null, sets: [], emblem: null, averageDps: null, elements: [] })
   })
+
+  it('uses displayName as the label, falling back to name when displayName collides', () => {
+    const base = file.items[0]!
+    const items = adaptItems({
+      items: [
+        { ...base, id: 1, name: 'Wiggling Villager', displayName: 'Wiggle Room' },
+        { ...base, id: 2, name: 'Apocalypse', displayName: 'Apocalypse' },
+        { ...base, id: 3, name: 'Masterwork Apocalypse', displayName: 'Apocalypse' },
+        { ...base, id: 4, name: 'Plain', displayName: undefined } as never,
+        { remapID: 4, name: 'Plain', displayName: 'Plain' } as never,
+      ],
+    })
+    expect(items.map(i => i.displayName)).toEqual(['Wiggle Room', 'Apocalypse', 'Masterwork Apocalypse', 'Plain'])
+  })
 })

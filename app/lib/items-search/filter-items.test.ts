@@ -46,6 +46,13 @@ describe('filterItems — scalar', () => {
     const items = [mk({ name: 'Idol', displayName: 'Idol' }), mk({ name: 'Sword', displayName: 'Sword' })]
     expect(filterItems(items, { ...baseCriteria, name: 'ido' })).toHaveLength(1)
   })
+
+  it('matches the current display name and the legacy name', () => {
+    const items = [mk({ name: 'Wiggling Villager', displayName: 'Wiggle Room' })]
+    expect(filterItems(items, { ...baseCriteria, name: 'wiggle room' })).toHaveLength(1)
+    expect(filterItems(items, { ...baseCriteria, name: 'villager' })).toHaveLength(1)
+    expect(filterItems(items, { ...baseCriteria, name: 'steelworks' })).toHaveLength(0)
+  })
   it('filters by type and level range', () => {
     const items = [mk({ subType: 'bow', level: 10 }), mk({ subType: 'wand', level: 80 })]
     expect(filterItems(items, { ...baseCriteria, types: ['bow'] })).toHaveLength(1)

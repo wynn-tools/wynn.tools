@@ -4,14 +4,22 @@ import type { OutputItem } from '~/lib/data/cdn-adapter/item-adapter'
 interface RawItemFile { items: (OutputItem & { remapID?: number })[] }
 
 export function adaptItems(file: RawItemFile): SearchItem[] {
+  const displayNameCount = new Map<string, number>()
+  for (const item of file.items) {
+    if (item.remapID !== undefined)
+      continue
+    const label = item.displayName ?? item.name
+    displayNameCount.set(label, (displayNameCount.get(label) ?? 0) + 1)
+  }
   const out: SearchItem[] = []
   for (const item of file.items) {
     if (item.remapID !== undefined)
       continue
+    const label = item.displayName ?? item.name
     out.push({
       id: item.id,
       name: item.name,
-      displayName: item.displayName ?? item.name,
+      displayName: displayNameCount.get(label)! > 1 ? item.name : label,
       type: item.type,
       subType: item.subType,
       tier: item.tier,

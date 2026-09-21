@@ -58,7 +58,7 @@ const bonuses = computed<BonusRow[]>(() => {
           class="piece"
         >
           <span class="piece-mark" aria-hidden="true" />
-          <span class="piece-name">{{ p.item.name }}</span>
+          <span class="piece-name">{{ p.item.displayName }}</span>
           <span class="piece-meta">{{ p.item.subType }}</span>
         </NuxtLink>
         <span v-else class="piece piece--missing">

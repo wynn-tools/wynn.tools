@@ -175,7 +175,7 @@ function onExportClick() {
   if (!containerRef.value)
     return
   const filename = props.exportFilename
-    ?? `${props.item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item'}.png`
+    ?? `${props.item.displayName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item'}.png`
   exportTooltip(containerRef.value, filename)
 }
 
@@ -222,7 +222,7 @@ function onCopyClick() {
           </div>
           <div class="tt-headtext">
             <span class="tt-name" :style="{ color: theme.color }">
-              {{ item.name }}<span
+              {{ item.displayName }}<span
                 v-if="overallRollPct != null"
                 class="tt-name-pct"
                 :style="{ color: pctColorVar(overallRollPct) }"

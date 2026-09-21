@@ -17,7 +17,7 @@ const equippedLabel = computed(() => equippedSlot.value != null ? SLOT_LABELS[eq
     <NuxtLink
       :to="`/items/${itemSlug(item)}`"
       class="card-link"
-      :aria-label="`Open ${item.name} details`"
+      :aria-label="`Open ${item.displayName} details`"
     >
       <ItemTooltip :item="item" :exportable="false" />
     </NuxtLink>

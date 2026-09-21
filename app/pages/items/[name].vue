@@ -6,7 +6,7 @@ import { cdnPathFor, latestVersionId, resolveVersionSegment } from '~/lib/data/c
 import { itemEmbed } from '~/lib/discord/component-embed'
 import { itemHistory } from '~/lib/items-search/history'
 import { adaptItems } from '~/lib/items-search/item-search-adapter'
-import { buildSlugIndex, resolveSlug } from '~/lib/items-search/slug'
+import { buildSlugIndex, itemSlug, resolveSlug } from '~/lib/items-search/slug'
 import { extractItemMeta } from '~/lib/items/item-meta'
 
 const route = useRoute()
@@ -25,6 +25,9 @@ const { data: seoItem } = await useAsyncData(
   },
   { watch: [slug] },
 )
+
+if (seoItem.value && itemSlug(seoItem.value) !== slug.value)
+  await navigateTo(`/items/${itemSlug(seoItem.value)}`, { redirectCode: 301, replace: true })
 
 const { data: searchData, pending } = useItemSearchData()
 const { data: changelogs } = useItemHistorySource()
@@ -48,7 +51,7 @@ function getSet(name: string) {
 }
 const seoSource = computed(() => item.value ?? seoItem.value ?? null)
 const pageTitle = computed(() =>
-  seoSource.value ? `${seoSource.value.name} — wynn.tools` : 'Item — wynn.tools',
+  seoSource.value ? `${seoSource.value.displayName} — wynn.tools` : 'Item — wynn.tools',
 )
 const pageDesc = computed(() =>
   seoSource.value
@@ -84,7 +87,7 @@ const crumbType = computed(() => {
     return null
   return i.subType?.toUpperCase() ?? i.type?.toUpperCase() ?? null
 })
-const crumbName = computed(() => item.value?.name ?? seoItem.value?.name ?? null)
+const crumbName = computed(() => item.value?.displayName ?? seoItem.value?.displayName ?? null)
 </script>
 
 <template>
@@ -119,7 +122,7 @@ const crumbName = computed(() => item.value?.name ?? seoItem.value?.name ?? null
             <ItemRollsSection :item="item" />
             <ItemMarketSection
               v-if="item.restriction !== 'untradable'"
-              :name="item.name"
+              :name="item.displayName"
             />
           </div>
           <div class="support">

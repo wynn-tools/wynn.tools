@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SearchIngredient, SearchItem } from '~/lib/items-search/types'
 import { computed } from 'vue'
-import { itemSlug } from '~/lib/items-search/slug'
+import { slugify } from '~/lib/items-search/slug'
 import { itemIconUrl, spriteUrl } from '~/lib/items/icon'
 import { INGREDIENT_TIER_COLORS, rarityColor } from '~/lib/items/rarity'
 
@@ -36,7 +36,7 @@ const ringColor = computed<string | null>(() => {
 })
 
 const href = computed<string | null>(() =>
-  props.item ? `/items/${itemSlug({ name: props.item.name })}` : null,
+  props.item ? `/items/${slugify(props.item.name)}` : null,
 )
 
 const iconUrl = computed<string | null>(() => {
