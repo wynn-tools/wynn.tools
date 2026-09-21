@@ -28,6 +28,9 @@ export function createItemIndex(items: ItemSummary[]): ItemIndex {
   const byName = new Map<string, ItemSummary>()
   for (const item of items) byName.set(item.name.toLowerCase(), item)
 
+  const searchNames = (item: ItemSummary) =>
+    [...new Set([item.displayName ?? item.name, item.name])].map(n => n.toLowerCase())
+
   function suggest(query: string): ItemSummary[] {
     const q = query.trim().toLowerCase()
     if (!q)
@@ -37,18 +40,18 @@ export function createItemIndex(items: ItemSummary[]): ItemIndex {
     const substring: ItemSummary[] = []
     const fuzzy: { item: ItemSummary, d: number }[] = []
     for (const item of items) {
-      const name = item.name.toLowerCase()
-      if (name === q) {
+      const names = searchNames(item)
+      if (names.includes(q)) {
         exact.push(item)
       }
-      else if (name.startsWith(q)) {
+      else if (names.some(n => n.startsWith(q))) {
         prefix.push(item)
       }
-      else if (name.includes(q)) {
+      else if (names.some(n => n.includes(q))) {
         substring.push(item)
       }
       else {
-        const d = levenshtein(q, name.slice(0, q.length + 2))
+        const d = Math.min(...names.map(n => levenshtein(q, n.slice(0, q.length + 2))))
         if (d <= 2)
           fuzzy.push({ item, d })
       }
@@ -109,13 +112,17 @@ async function fetchLatestItems(): Promise<ItemSummary[]> {
     throw new Error('versions.json is empty or malformed')
   const latest = versions[versions.length - 1].gameVersion
   const itemsFile = await (await fetch(`${base}/data/${latest}/items.json`)).json() as CdnItemsFile
-  const list = itemsFile.items ?? []
+  const list = (itemsFile.items ?? []).filter(i => i.name)
+  const displayNameCount = new Map<string, number>()
+  for (const i of list) {
+    const label = i.displayName ?? (i.name as string)
+    displayNameCount.set(label, (displayNameCount.get(label) ?? 0) + 1)
+  }
   return list
-    .filter(i => i.name)
     .map(i => ({
       id: i.id ?? 0,
       name: i.name as string,
-      displayName: i.displayName ?? (i.name as string),
+      displayName: displayNameCount.get(i.displayName ?? (i.name as string))! > 1 ? (i.name as string) : (i.displayName ?? (i.name as string)),
       // Wynncraft v3 items use `tier` (Legendary/Fabled/...) as the rarity concept.
       rarity: (i.tier ?? 'common').toLowerCase(),
       type: i.type ?? 'unknown',

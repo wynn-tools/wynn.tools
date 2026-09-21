@@ -26,13 +26,13 @@ export async function handlePrice(interaction: Interaction, index: ItemIndex): P
 
   const e = env()
   const upstream = createWynnventoryClient({ apiKey: e.WYNNVENTORY_API_KEY, baseUrl: e.WYNNVENTORY_BASE_URL })
-  const payload = await getCachedPrice({ name: item.name }, upstream)
+  const payload = await getCachedPrice({ name: item.displayName }, upstream)
 
   if (!payload || Object.keys(payload).length === 0) {
     return {
       type: ResponseType.CHANNEL_MESSAGE,
       data: {
-        embeds: [{ title: item.name, description: 'No market data available.', footer: POWERED_BY_WYNNVENTORY }],
+        embeds: [{ title: item.displayName, description: 'No market data available.', footer: POWERED_BY_WYNNVENTORY }],
       },
     }
   }
@@ -41,7 +41,7 @@ export async function handlePrice(interaction: Interaction, index: ItemIndex): P
     type: ResponseType.CHANNEL_MESSAGE,
     data: {
       embeds: [{
-        title: item.name,
+        title: item.displayName,
         description: 'WynnVentory market summary',
         fields: [
           { name: 'Average', value: em(headline(payload)), inline: true },

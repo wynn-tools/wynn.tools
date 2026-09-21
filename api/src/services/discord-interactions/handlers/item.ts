@@ -78,7 +78,7 @@ export async function handleItem(
   const subtype = item.subType ? capitalize(item.subType) : capitalize(item.type)
 
   const upstream = createWynnventoryClient({ apiKey: e.WYNNVENTORY_API_KEY, baseUrl: e.WYNNVENTORY_BASE_URL })
-  const priceData = await getCachedPrice({ name: item.name }, upstream).catch(() => null)
+  const priceData = await getCachedPrice({ name: item.displayName }, upstream).catch(() => null)
   const prices = priceFields(priceData)
 
   const fields = [

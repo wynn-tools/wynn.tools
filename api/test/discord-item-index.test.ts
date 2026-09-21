@@ -6,6 +6,7 @@ const fixture = [
   { id: 2, name: 'Warchief', rarity: 'fabled', type: 'helmet', tier: null, requirements: {}, identifications: {} },
   { id: 3, name: 'Boreal Mantle', rarity: 'legendary', type: 'chestplate', tier: null, requirements: {}, identifications: {} },
   { id: 4, name: 'War', rarity: 'rare', type: 'spear', tier: null, requirements: {}, identifications: {} },
+  { id: 5, name: 'Wiggling Villager', displayName: 'Wiggle Room', rarity: 'unique', type: 'wand', tier: null, requirements: {}, identifications: {} },
 ]
 
 describe('itemIndex', () => {
@@ -31,6 +32,12 @@ describe('itemIndex', () => {
   it('caps at 25 results', () => {
     const big = Array.from({ length: 100 }, (_, i) => ({ id: i, name: `Item${i}`, rarity: 'common', type: 'wand', tier: null, requirements: {}, identifications: {} }))
     expect(createItemIndex(big).suggest('item').length).toBe(25)
+  })
+
+  it('matches renamed items by display name and legacy name', () => {
+    expect(index.suggest('wiggle room')[0]?.id).toBe(5)
+    expect(index.suggest('villager').map(i => i.id)).toContain(5)
+    expect(index.suggest('wigle roo').map(i => i.id)).toContain(5)
   })
 
   it('lookup by name is case-insensitive', () => {
