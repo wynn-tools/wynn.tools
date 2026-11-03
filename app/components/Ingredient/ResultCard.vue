@@ -5,11 +5,11 @@ defineProps<{ ingredient: SearchIngredient }>()
 </script>
 
 <template>
-  <div class="card-wrap">
+  <TooltipExport :name="ingredient.displayName" class="card-wrap">
     <div class="card-link">
       <IngredientTooltip :ingredient="ingredient" />
     </div>
-  </div>
+  </TooltipExport>
 </template>
 
 <style scoped>

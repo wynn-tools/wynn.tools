@@ -114,7 +114,9 @@ const crumbName = computed(() => item.value?.displayName ?? seoItem.value?.displ
 
       <div class="grid">
         <aside class="hero">
-          <ItemTooltip :item="item" />
+          <TooltipExport :name="item.displayName">
+            <ItemTooltip :item="item" />
+          </TooltipExport>
         </aside>
 
         <div class="panes">

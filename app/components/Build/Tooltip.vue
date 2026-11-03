@@ -10,6 +10,7 @@ const props = defineProps<{
   level: number
   equipNames: ({ name: string, tier: string } | null)[]
   decoded: unknown
+  shareId?: string
 }>()
 
 interface BuildDecoded {
@@ -96,7 +97,7 @@ function sepStyle() {
 </script>
 
 <template>
-  <div class="bt-container" :style="{ border: `2px solid ${theme.color}` }">
+  <div class="bt-container" :style="{ border: `2px solid ${theme.color}` }" data-export-root>
     <div class="bt-inner" :style="innerStyle">
       <!-- Header -->
       <div class="bt-header">
@@ -164,6 +165,7 @@ function sepStyle() {
           </div>
         </div>
       </div>
+      <TooltipWatermark :accent="theme.light" :path="shareId ? `b/${shareId}` : undefined" />
     </div>
   </div>
 </template>

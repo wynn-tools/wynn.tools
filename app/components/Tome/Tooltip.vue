@@ -55,7 +55,7 @@ function sepStyle() {
 </script>
 
 <template>
-  <div class="tt-container">
+  <div class="tt-container" data-export-root>
     <div class="tt-frame" :style="frameStyle" />
     <div class="tt-inner" :style="innerStyle">
       <div class="tt-header">
@@ -94,6 +94,7 @@ function sepStyle() {
           </li>
         </ul>
       </template>
+      <TooltipWatermark :accent="theme.light" />
     </div>
   </div>
 </template>

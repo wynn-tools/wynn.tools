@@ -145,12 +145,13 @@ watch(
             @close="closePicker"
             @hover-ingredient="onHoverIngredient"
           />
-          <CrafterItemPreview
-            v-else
-            :hide-equip-button="!onEquip"
-            :on-equip="onEquip"
-            :equip-disabled-reason="equipDisabledReason"
-          />
+          <TooltipExport v-else :name="store.shareHash ? `CR-${store.shareHash}` : 'crafted'">
+            <CrafterItemPreview
+              :hide-equip-button="!onEquip"
+              :on-equip="onEquip"
+              :equip-disabled-reason="equipDisabledReason"
+            />
+          </TooltipExport>
         </aside>
       </div>
       <CrafterIngredientPicker

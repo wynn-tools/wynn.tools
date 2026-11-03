@@ -52,7 +52,9 @@ async function onHoverOpen(open: boolean, craftHash: string | null | undefined) 
         </NuxtLink>
       </article>
     </template>
-    <CrafterItemPreview v-if="crafted" :crafted="crafted" hide-equip-button />
+    <TooltipExport v-if="crafted" :name="name">
+      <CrafterItemPreview :crafted="crafted" hide-equip-button />
+    </TooltipExport>
     <div v-else class="quickview-loading">
       Loading…
     </div>

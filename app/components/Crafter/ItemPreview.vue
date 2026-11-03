@@ -228,7 +228,7 @@ function handleEquipClick() {
   <div v-if="!crafted" class="cp-placeholder">
     <p>Configure your craft to see the result.</p>
   </div>
-  <div v-else class="tt-container">
+  <div v-else class="tt-container" data-export-root>
     <div class="tt-frame" :style="frameStyle" />
     <div class="tt-inner" :style="innerStyle">
       <!-- Header -->
@@ -330,8 +330,10 @@ function handleEquipClick() {
         Powder Slots [{{ 'o'.repeat(crafted.slots) }}]
       </p>
 
+      <TooltipWatermark :accent="theme.light" />
+
       <!-- Equip in builder -->
-      <div v-if="showEquipButton" class="cp-actions">
+      <div v-if="showEquipButton" class="cp-actions" data-export-ignore>
         <button
           type="button"
           class="cp-equip-btn"
@@ -560,31 +562,31 @@ function handleEquipClick() {
    the inner padding and tighten the headline scale so the tooltip stays
    readable without losing its pixel-art structure. */
 @media (max-width: 480px) {
-  .tt-inner {
+  .tt-container:not(.is-exporting) .tt-inner {
     padding: 22px 14px 14px;
   }
-  .tt-name {
+  .tt-container:not(.is-exporting) .tt-name {
     font-size: 18px;
   }
-  .tt-dps span:first-child {
+  .tt-container:not(.is-exporting) .tt-dps span:first-child {
     font-size: 22px;
   }
-  .tt-dps-unit,
-  .tt-row,
-  .tt-dmg,
-  .tt-meta-row,
-  .tt-id {
+  .tt-container:not(.is-exporting) .tt-dps-unit,
+  .tt-container:not(.is-exporting) .tt-row,
+  .tt-container:not(.is-exporting) .tt-dmg,
+  .tt-container:not(.is-exporting) .tt-meta-row,
+  .tt-container:not(.is-exporting) .tt-id {
     font-size: 15px;
   }
-  .tt-tag {
+  .tt-container:not(.is-exporting) .tt-tag {
     font-size: 15px;
   }
-  .tt-emblemwrap {
+  .tt-container:not(.is-exporting) .tt-emblemwrap {
     min-width: 64px;
     width: 64px;
     height: 64px;
   }
-  .tt-sprite {
+  .tt-container:not(.is-exporting) .tt-sprite {
     width: 36px;
     height: 36px;
   }

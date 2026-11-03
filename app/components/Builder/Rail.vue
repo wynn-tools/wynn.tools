@@ -60,7 +60,9 @@ const slots = computed(() =>
                 <span class="cell-remove" aria-hidden="true">×</span>
               </button>
             </template>
-            <ItemTooltip :item="s.item" />
+            <TooltipExport :name="s.item.displayName">
+              <ItemTooltip :item="s.item" />
+            </TooltipExport>
           </Quickview>
 
           <div

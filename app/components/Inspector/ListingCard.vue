@@ -52,7 +52,6 @@ const priceText = computed(() => formatEmeralds(props.listing.listing_price))
         :actual-idents="actualIdents"
         :overall-roll-pct="listing.overall_roll"
         :compact="true"
-        :exportable="false"
       />
     </div>
     <div v-else class="fallback" :style="{ width: `${COL_WIDTH}px` }">

@@ -38,13 +38,24 @@ async function inlineBorderImages(root: HTMLElement): Promise<() => void> {
   }
 }
 
-export function useTooltipExport() {
+function cloneOffscreen(el: HTMLElement, width: number): { clone: HTMLElement, dispose: () => void } {
+  const host = document.createElement('div')
+  host.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;pointer-events:none;`
+  const clone = el.cloneNode(true) as HTMLElement
+  host.appendChild(clone)
+  document.body.appendChild(host)
+  return { clone, dispose: () => host.remove() }
+}
+
+export function useTooltipExport(options: { width?: number } = {}) {
   const exporting = ref(false)
   const copying = ref(false)
   const copied = ref(false)
   const toast = useToast()
 
-  async function renderBlob(el: HTMLElement): Promise<Blob | null> {
+  async function renderBlob(source: HTMLElement): Promise<Blob | null> {
+    const offscreen = options.width ? cloneOffscreen(source, options.width) : null
+    const el = offscreen?.clone ?? source
     const footer = el.querySelector<HTMLElement>('[data-export-footer]')
     const prevDisplay = footer?.style.display ?? ''
     if (footer)
@@ -64,10 +75,15 @@ export function useTooltipExport() {
       })
     }
     finally {
-      restoreBorders()
-      el.classList.remove('is-exporting')
-      if (footer)
-        footer.style.display = prevDisplay
+      if (offscreen) {
+        offscreen.dispose()
+      }
+      else {
+        restoreBorders()
+        el.classList.remove('is-exporting')
+        if (footer)
+          footer.style.display = prevDisplay
+      }
     }
   }
 
@@ -106,10 +122,12 @@ export function useTooltipExport() {
     }
     copying.value = true
     try {
-      const blob = await renderBlob(el)
-      if (!blob)
-        throw new Error('html-to-image returned a null blob')
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+      const png = renderBlob(el).then((blob) => {
+        if (!blob)
+          throw new Error('html-to-image returned a null blob')
+        return blob
+      })
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': png })])
       copied.value = true
       setTimeout(() => {
         copied.value = false

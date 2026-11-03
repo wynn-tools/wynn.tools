@@ -5,11 +5,11 @@ defineProps<{ charm: SearchCharm }>()
 </script>
 
 <template>
-  <div class="card-wrap">
+  <TooltipExport :name="charm.displayName" class="card-wrap">
     <div class="card-link">
       <CharmTooltip :charm="charm" />
     </div>
-  </div>
+  </TooltipExport>
 </template>
 
 <style scoped>

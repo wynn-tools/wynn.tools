@@ -131,7 +131,7 @@ const ariaLabel = computed(() => {
       </span>
     </template>
     <IngredientTooltip v-if="ingredient" :ingredient="ingredient" />
-    <ItemTooltip v-else-if="item" :item="item" :exportable="false" />
+    <ItemTooltip v-else-if="item" :item="item" />
   </Quickview>
 </template>
 

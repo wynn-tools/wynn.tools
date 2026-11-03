@@ -54,14 +54,16 @@ async function onHoverOpen(open: boolean, id: string) {
         </NuxtLink>
       </article>
     </template>
-    <BuildTooltip
-      v-if="buildData"
-      :name="buildData.name"
-      :player-class="buildData.playerClass"
-      :level="buildData.level"
-      :equip-names="buildData.equipNames"
-      :decoded="buildData.decoded"
-    />
+    <TooltipExport v-if="buildData" :name="buildData.name" :width="340">
+      <BuildTooltip
+        :name="buildData.name"
+        :player-class="buildData.playerClass"
+        :level="buildData.level"
+        :equip-names="buildData.equipNames"
+        :decoded="buildData.decoded"
+        :share-id="id"
+      />
+    </TooltipExport>
     <div v-else class="quickview-loading">
       Loading…
     </div>

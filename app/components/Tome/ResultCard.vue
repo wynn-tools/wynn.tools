@@ -5,11 +5,11 @@ defineProps<{ tome: SearchTome }>()
 </script>
 
 <template>
-  <div class="card-wrap">
+  <TooltipExport :name="tome.displayName" class="card-wrap">
     <div class="card-link">
       <TomeTooltip :tome="tome" />
     </div>
-  </div>
+  </TooltipExport>
 </template>
 
 <style scoped>

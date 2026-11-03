@@ -24,16 +24,12 @@ export interface ActualIdentOverride {
 
 const props = withDefaults(defineProps<{
   item: SearchItem
-  exportable?: boolean
   actualIdents?: Map<string, ActualIdentOverride> | null
   overallRollPct?: number | null
-  exportFilename?: string | null
   compact?: boolean
 }>(), {
-  exportable: true,
   actualIdents: null,
   overallRollPct: null,
-  exportFilename: null,
   compact: false,
 })
 
@@ -167,50 +163,10 @@ function sepStyle() {
     background: theme.value.light,
   }
 }
-
-const containerRef = ref<HTMLElement | null>(null)
-const { exporting, copying, copied, exportTooltip, copyTooltip } = useTooltipExport()
-
-function onExportClick() {
-  if (!containerRef.value)
-    return
-  const filename = props.exportFilename
-    ?? `${props.item.displayName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item'}.png`
-  exportTooltip(containerRef.value, filename)
-}
-
-function onCopyClick() {
-  if (!containerRef.value)
-    return
-  copyTooltip(containerRef.value)
-}
 </script>
 
 <template>
-  <div ref="containerRef" class="tt-wrap">
-    <div v-if="exportable" class="tt-export-actions" data-export-ignore>
-      <button
-        type="button"
-        class="tt-export-btn"
-        :disabled="exporting || copying"
-        :aria-label="copying ? 'Copying tooltip as PNG' : 'Copy tooltip as PNG'"
-        @click="onCopyClick"
-      >
-        <span v-if="copying" class="tt-export-spinner" aria-hidden="true" />
-        <span v-else>{{ copied ? 'Copied' : 'Copy PNG' }}</span>
-      </button>
-      <button
-        type="button"
-        class="tt-export-btn"
-        :disabled="exporting || copying"
-        :aria-label="exporting ? 'Exporting tooltip as PNG' : 'Download tooltip as PNG'"
-        @click="onExportClick"
-      >
-        <span v-if="exporting" class="tt-export-spinner" aria-hidden="true" />
-        <span v-else>Download PNG</span>
-      </button>
-    </div>
-
+  <div class="tt-wrap" data-export-root>
     <div class="tt-container">
       <div class="tt-frame" :style="frameStyle" />
       <div class="tt-inner" :style="innerStyle">
@@ -371,9 +327,7 @@ function onCopyClick() {
           </p>
         </template>
 
-        <div v-if="exportable" class="tt-export-mark" data-export-footer>
-          <span>wynn<span :style="{ color: theme.light }">.</span>tools</span>
-        </div>
+        <TooltipWatermark :accent="theme.light" />
       </div>
     </div>
   </div>
@@ -715,111 +669,52 @@ function onCopyClick() {
    absolute font sizes (28/34/18px) start crowding the pixel-art frame. Scale
    the hierarchy down proportionally; the frame border-image stays intact. */
 @media (max-width: 480px) {
-  .tt-inner {
+  .tt-wrap:not(.is-exporting) .tt-inner {
     padding: 22px 14px 14px;
   }
-  .tt-name {
+  .tt-wrap:not(.is-exporting) .tt-name {
     font-size: 20px;
   }
-  .tt-dps span:first-child {
+  .tt-wrap:not(.is-exporting) .tt-dps span:first-child {
     font-size: 26px;
   }
-  .tt-dps-unit {
+  .tt-wrap:not(.is-exporting) .tt-dps-unit {
     font-size: 16px;
   }
-  .tt-row,
-  .tt-dmg,
-  .tt-meta-row,
-  .tt-id,
-  .tt-sp-val {
+  .tt-wrap:not(.is-exporting) .tt-row,
+  .tt-wrap:not(.is-exporting) .tt-dmg,
+  .tt-wrap:not(.is-exporting) .tt-meta-row,
+  .tt-wrap:not(.is-exporting) .tt-id,
+  .tt-wrap:not(.is-exporting) .tt-sp-val {
     font-size: 15px;
   }
-  .tt-tag {
+  .tt-wrap:not(.is-exporting) .tt-tag {
     font-size: 15px;
   }
-  .tt-emblemwrap {
+  .tt-wrap:not(.is-exporting) .tt-emblemwrap {
     min-width: 64px;
     width: 64px;
     height: 64px;
   }
-  .tt-sprite {
+  .tt-wrap:not(.is-exporting) .tt-sprite {
     width: 36px;
     height: 36px;
   }
-  .tt-attr {
+  .tt-wrap:not(.is-exporting) .tt-attr {
     width: 22px;
     height: 22px;
   }
-  .tt-sp-bg {
+  .tt-wrap:not(.is-exporting) .tt-sp-bg {
     width: 48px;
     height: 48px;
   }
-  .tt-sp-icon {
+  .tt-wrap:not(.is-exporting) .tt-sp-icon {
     width: 28px;
     height: 28px;
   }
-  .tt-major,
-  .tt-lore {
+  .tt-wrap:not(.is-exporting) .tt-major,
+  .tt-wrap:not(.is-exporting) .tt-lore {
     font-size: 14px;
   }
-}
-
-.tt-export-actions {
-  position: absolute;
-  top: -10px;
-  right: 6px;
-  transform: translateY(-100%);
-  z-index: 2;
-  display: flex;
-  gap: 6px;
-}
-.tt-export-btn {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 4px 8px;
-  cursor: pointer;
-  transition:
-    color 0.12s ease-out,
-    border-color 0.12s ease-out;
-}
-.tt-export-btn:hover:not(:disabled) {
-  color: var(--color-text);
-  border-color: var(--color-faint);
-}
-.tt-export-btn:disabled {
-  cursor: progress;
-  opacity: 0.6;
-}
-.tt-export-spinner {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 1.5px solid var(--color-faint);
-  border-top-color: var(--color-text);
-  border-radius: 50%;
-  animation: tt-spin 0.6s linear infinite;
-  vertical-align: middle;
-}
-@keyframes tt-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.tt-export-mark {
-  display: none;
-  justify-content: center;
-  margin-top: 14px;
-  font-family: 'wynncraft', var(--font-mono);
-  font-size: 14px;
-  letter-spacing: -1px;
-  color: #5c5c5c;
 }
 </style>

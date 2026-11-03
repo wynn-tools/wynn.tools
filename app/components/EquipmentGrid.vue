@@ -232,12 +232,12 @@ const powderSlotMax = computed(() =>
               </button>
             </div>
           </template>
-          <ItemTooltip v-if="slotSearchItem(idx)" :item="slotSearchItem(idx)!" />
-          <CrafterItemPreview
-            v-else
-            :crafted="slotCrafted(idx)"
-            hide-equip-button
-          />
+          <TooltipExport v-if="slotSearchItem(idx)" :name="slotSearchItem(idx)!.displayName">
+            <ItemTooltip :item="slotSearchItem(idx)!" />
+          </TooltipExport>
+          <TooltipExport v-else :name="slotCrafted(idx)?.hash || 'crafted'">
+            <CrafterItemPreview :crafted="slotCrafted(idx)" hide-equip-button />
+          </TooltipExport>
         </Quickview>
 
         <div

@@ -13,21 +13,21 @@ const equippedLabel = computed(() => equippedSlot.value != null ? SLOT_LABELS[eq
 </script>
 
 <template>
-  <div class="card-wrap" :class="{ 'is-equipped': equipped }">
+  <TooltipExport :name="item.displayName" class="card-wrap" :class="{ 'is-equipped': equipped }">
     <NuxtLink
       :to="`/items/${itemSlug(item)}`"
       class="card-link"
       :aria-label="`Open ${item.displayName} details`"
     >
-      <ItemTooltip :item="item" :exportable="false" />
+      <ItemTooltip :item="item" />
     </NuxtLink>
     <span v-if="equipped" class="card-tag">
       <span class="card-tag-check" aria-hidden="true">✓</span>{{ equippedLabel }}
     </span>
-    <div class="card-equip">
+    <template #actions>
       <BuilderEquipButton :item="item" />
-    </div>
-  </div>
+    </template>
+  </TooltipExport>
 </template>
 
 <style scoped>
@@ -88,32 +88,9 @@ const equippedLabel = computed(() => equippedSlot.value != null ? SLOT_LABELS[eq
   opacity: 0;
 }
 
-.card-equip {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  opacity: 0;
-  transform: translateY(-2px);
-  transition:
-    opacity 0.12s ease-out,
-    transform 0.12s ease-out;
-  z-index: 3;
-}
-.card-wrap:hover .card-equip,
-.card-wrap:focus-within .card-equip {
-  opacity: 1;
-  transform: none;
-}
-@media (hover: none) {
-  .card-equip {
-    opacity: 1;
-    transform: none;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .card-link,
-  .card-tag,
-  .card-equip {
+  .card-tag {
     transition: none;
   }
 }

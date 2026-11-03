@@ -30,22 +30,18 @@ const actualIdents = computed<Map<string, ActualIdentOverride>>(() => {
   }
   return map
 })
-
-const exportFilename = computed(() => {
-  const slug = props.view.decodedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-  return `${slug || 'item'}.png`
-})
 </script>
 
 <template>
-  <ItemTooltip
-    :item="searchItem"
-    :actual-idents="actualIdents"
-    :overall-roll-pct="view.overall"
-    :export-filename="exportFilename"
-  >
-    <template #weights>
-      <slot name="weights" />
-    </template>
-  </ItemTooltip>
+  <TooltipExport :name="view.decodedName">
+    <ItemTooltip
+      :item="searchItem"
+      :actual-idents="actualIdents"
+      :overall-roll-pct="view.overall"
+    >
+      <template #weights>
+        <slot name="weights" />
+      </template>
+    </ItemTooltip>
+  </TooltipExport>
 </template>

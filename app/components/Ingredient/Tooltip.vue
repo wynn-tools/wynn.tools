@@ -119,7 +119,7 @@ function effectivenessBg() {
 </script>
 
 <template>
-  <div class="tt-container">
+  <div class="tt-container" data-export-root>
     <div
       class="tt-frame"
       :style="frame ? { borderImage: `url(${frame}) 25 10 / 8 3 / 0 stretch` } : { border: `2px solid ${ING_GREEN}` }"
@@ -219,6 +219,7 @@ function effectivenessBg() {
           </div>
         </div>
       </template>
+      <TooltipWatermark :accent="ING_GREEN" />
     </div>
   </div>
 </template>

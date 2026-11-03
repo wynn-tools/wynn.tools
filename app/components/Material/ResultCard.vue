@@ -5,11 +5,11 @@ defineProps<{ material: SearchMaterial }>()
 </script>
 
 <template>
-  <div class="card-wrap">
+  <TooltipExport :name="material.displayName" class="card-wrap">
     <div class="card-link">
       <MaterialTooltip :material="material" />
     </div>
-  </div>
+  </TooltipExport>
 </template>
 
 <style scoped>
