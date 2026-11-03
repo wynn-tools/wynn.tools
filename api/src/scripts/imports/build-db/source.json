@@ -1087,6 +1087,38 @@
       "link": "https://wynnbuilder.github.io/builder?v=16#10_0Au01+0r50tv0uP0A50K40OH0QQ0O2C1a0O0e1g10006C00010036C0z0z0+0+0+0+0-1T2Y2Y2Z2Z2a2ajNZ-YzsO0",
       "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/dagger.thunder3.webp",
       "class": "Assassin"
+    },
+    "Riptide pot-healing raid oriented": {
+      "tag": "High DPS, High EHP, pot healing, riptide, WNTF, WTF, arcanist, mage, raids",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CV013teF-Fs8vCnBbs9KJArnE4sXeW2n7HgPA+UrhgMrgMrsanicrfErgLDk303jrKZUwt7-rqwVS",
+      "credit": "IGN: MambaDuDakora (helped by the raider Nirnir) discord:@mamba6862",
+      "weapon": "Riptide",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "The greedy sustaining Vacuum-cleaner for lootrun (and raids)": {
+      "tag": "riptide, greed, magnet, arcanist, mage, lootrun, high ehp, good dps, WFT, rainbow, spellcast, spells, spell",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CV013tm1QoDEB5JHuWTAbuO724GmwauZ8rCb+xLlgQLhQLRJ5pQMdwKpMsQejETqfs+vBTh-p1",
+      "credit": "IGN : MambaDuDakota Discord: @mamba6862",
+      "weapon": "Riptide",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.water3.webp",
+      "class": "Mage"
+    },
+    "Ultimate craft-amplified Trance TF built for lootrun \"spell-'caster\" Meta Demolition": {
+      "tag": "Trance, Melee, lootrun, riftwalker, mage, huge ehp, high dps, huge mana regen, mid hpr flat, TF, Thunder Fire Damage",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CVG4ufucqlututytid81R47JS3Bd76t47nY5z8W9XD1x8A1VXJPIH2Y0c4s4iZe4y5Eb959W2AH0JoZ1sHK2sXPodY4m8lRoFQHhgLjgLjBLSiZTgJjPDJU0X0mSh-yNRk-ThrHhZQq0",
+      "credit": "Credit: IGN; MambaDuDakota discord: @DakotaMamb Forum Post: https://forums.wynncraft.com/threads/lootruns-without-agility-hes-insane-the-trancelootrunner-present.325049/",
+      "weapon": "Trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
+    },
+    "Trance TF Lootrun viable": {
+      "tag": "Trance, Melee, lootrun, riftwalker, mage, high ehp, high dps, high mana regen, good hpr flat",
+      "link": "https://wynnbuilder-beta.github.io/builder/#CV0oCt8gZ9kXbp3ZRYZOnYE60m005KGF8Zyk9-e5jgMrgMrkKnnEsfErcrCb10pj+pVjv+tjM7jEgH3",
+      "credit": "IGN; MambaDuDakota discord: @DakotaMamb Forum Post: https://forums.wynncraft.com/threads/lootruns-without-agility-hes-insane-the-trancelootrunner-present.325049/",
+      "weapon": "Trance",
+      "icon": "https://cdn.wynncraft.com/nextgen/itemguide/3.3/wand.fire3.webp",
+      "class": "Mage"
     }
   }
 }
