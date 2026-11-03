@@ -12,7 +12,7 @@ import type { Aspect } from '~/lib/types/aspect'
 import type { ResolvedImport } from '~/lib/wynntils/types'
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
-import { loadBuildContext, peekVersionId, resolveLatestVersion } from '~/composables/useBuildData'
+import { decodeBuildHash, loadBuildContext, peekVersionId, resolveLatestVersion } from '~/composables/useBuildData'
 import { useToast } from '~/composables/useToast'
 import { getSortedClassAtree } from '~/lib/atree/build-atree'
 import { unlockPathTo } from '~/lib/atree/pathfind'
@@ -20,7 +20,7 @@ import { validateAtree } from '~/lib/atree/validate'
 import { computeBuild } from '~/lib/build/compute-build'
 import { POWDER_INDEX_BY_SLOT, resolveBuildItems, resolveTomes } from '~/lib/build/resolve'
 import { SLOT_LABELS } from '~/lib/build/slot-labels'
-import { decodeRawBuild, encodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
+import { encodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
 import { num } from '~/lib/codec/codec-util'
 import { decodeRollOverrides, encodeRollOverrides } from '~/lib/codec/roll-overrides'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
@@ -31,18 +31,6 @@ import { emptyPowderActive } from '~/lib/math/powder-specials'
 const DEFAULT_LEVEL = 120
 
 const SLOT_TYPES = ['helmet', 'chestplate', 'leggings', 'boots', 'ring', 'ring', 'bracelet', 'necklace'] as const
-
-const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
-
-function makeRecipeIsWeapon(ctx: BuildContext): (recipeId: number) => boolean {
-  const recipes = ctx.craftContext?.recipes
-  if (!recipes)
-    return () => false
-  return (recipeId: number) => {
-    const rec = recipes.get(recipeId)
-    return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
-  }
-}
 
 export const TOME_SLOT_TYPES: Record<number, string> = {
   0: 'weaponTome',
@@ -249,12 +237,7 @@ export const useBuildStore = defineStore('build', () => {
         loadBuildContext(client, versionId),
         resolveLatestVersion(client),
       ])
-      const raw = decodeRawBuild(hash, () => ({
-        enc: loaded.enc,
-        atreeData: loaded.ctx.atreeData,
-        weaponType: loaded.weaponType,
-        recipeIsWeapon: makeRecipeIsWeapon(loaded.ctx),
-      }))
+      const raw = await decodeBuildHash(client, hash, loaded)
       ctx.value = loaded.ctx
       enc.value = loaded.enc
       weaponTypeFn.value = loaded.weaponType
@@ -387,7 +370,7 @@ export const useBuildStore = defineStore('build', () => {
 
   /**
    * Equip a crafted item into a build slot. `recipeIsWeapon` is derived from the
-   * RawCraft's recipe (see `makeRecipeIsWeapon`); we expose it as a separate arg
+   * RawCraft's recipe; we expose it as a separate arg
    * so callers (typically the embedded crafter) can pass the value they already
    * have without re-resolving the recipe.
    */
@@ -757,9 +740,17 @@ export const useBuildStore = defineStore('build', () => {
     else
       sel.add(id)
     const tentative = new Map([...sel].map(x => [x, true] as [number, boolean]))
-    const reachable = validateAtree(atreeNodes.value, tentative, rawBuild.value.level).reachable
+    const { reachable, errors } = validateAtree(atreeNodes.value, tentative, rawBuild.value.level)
     rawBuild.value = { ...rawBuild.value, activeAtree: [...reachable] }
-    atreeMessage.value = null
+    if (!sel.has(id) || reachable.has(id)) {
+      atreeMessage.value = null
+      return
+    }
+    const name = atreeNodes.value.find(n => n.ability.id === id)?.ability.display_name ?? `Node ${id}`
+    const reason = errors.find(e => e.startsWith(`${name}: `))?.slice(name.length + 2) ?? 'not reachable'
+    atreeMessage.value = reason === 'not reachable'
+      ? `"${name}" isn't connected to your tree yet. Shift-click to auto-path.`
+      : `Can't unlock "${name}": ${reason}.`
   }
 
   function resetAtree() {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
+import { decodeBuildHash, loadBuildContext, peekVersionId, useCdnClient } from '~/composables/useBuildData'
 import { useDiscordEmbed } from '~/composables/useDiscordEmbed'
 import { extractBuildMeta } from '~/lib/build/build-meta'
 import { computeBuild } from '~/lib/build/compute-build'
-import { decodeRawBuild, slotItemId } from '~/lib/codec/build-codec'
+import { slotItemId } from '~/lib/codec/build-codec'
 import { WEP_TO_CLASS } from '~/lib/codec/wep-to-class'
 import { buildEmbed } from '~/lib/discord/component-embed'
 import { useBuildStore } from '~/stores/build'
@@ -31,19 +31,7 @@ const { data: buildMeta } = await useAsyncData(
       const client = useCdnClient()
       const versionId = peekVersionId(hash.value)
       const loaded = await loadBuildContext(client, versionId)
-      const recipes = loaded.ctx.craftContext?.recipes
-      const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
-      const raw = decodeRawBuild(hash.value, () => ({
-        enc: loaded.enc,
-        atreeData: loaded.ctx.atreeData,
-        weaponType: loaded.weaponType,
-        recipeIsWeapon: recipes
-          ? (id: number) => {
-              const rec = recipes.get(id)
-              return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
-            }
-          : () => false,
-      }))
+      const raw = await decodeBuildHash(client, hash.value, loaded)
       const result = computeBuild(raw, loaded.ctx)
       return extractBuildMeta(raw, loaded.ctx, loaded.weaponType, result, null)
     }

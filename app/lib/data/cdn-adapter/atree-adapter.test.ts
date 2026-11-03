@@ -43,10 +43,11 @@ describe('adaptCdnAtree', () => {
     expect(node.archetype_req).toBe(archerFile.nodes[1].archetypeRequirement)
   })
 
-  it('does not set req_archetype', () => {
-    for (const ability of archerAbilities) {
-      expect(ability.req_archetype).toBeUndefined()
-    }
+  it('maps requiredArchetype to req_archetype, leaving it unset when absent', () => {
+    const node = { ...archerFile.nodes[1], archetype: 'Fallen', archetypeRequirement: 5 }
+    const [gated, ungated] = adaptCdnAtree({ nodes: [{ ...node, requiredArchetype: 'Paladin' }, { ...node, requiredArchetype: null }] })
+    expect(gated!.req_archetype).toBe('Paladin')
+    expect(ungated!.req_archetype).toBeUndefined()
   })
 
   it('sets display from location and icon', () => {

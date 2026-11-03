@@ -11,6 +11,7 @@ export interface CdnAtreeNode {
   blockers: number[]
   archetype: string | null
   archetypeRequirement: number
+  requiredArchetype?: string | null
   icon: string | null
   /**
    * Game-mechanics fields. Present only on wynnbuilder-backfilled snapshots —
@@ -47,6 +48,8 @@ export function adaptCdnAtree(file: CdnAtreeFile): AtreeAbility[] {
 
     if (node.archetype !== null && node.archetype !== '')
       ability.archetype = node.archetype
+    if (node.requiredArchetype)
+      ability.req_archetype = node.requiredArchetype
 
     // Game-mechanics passthrough. The math layer reads `effects` / `properties`
     // / `base_abil` verbatim; when absent (live snapshots), it falls back to

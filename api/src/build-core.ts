@@ -1,4 +1,6 @@
 export {
+  decodeBuildHash,
+  fetchLegacyAtree,
   loadBuildContext,
   peekVersionId,
   resolveLatestVersion,

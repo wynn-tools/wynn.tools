@@ -1,4 +1,5 @@
 import type { BuildContext } from '~/lib/build/compute-build'
+import type { RawBuild } from '~/lib/codec/build-codec'
 import type { EncodingConstants } from '~/lib/codec/encoding-constants'
 import type { CraftContext } from '~/lib/crafter/types'
 import type { CdnAspect } from '~/lib/data/cdn-adapter/aspect-adapter'
@@ -11,8 +12,10 @@ import type { OutputTome } from '~/lib/data/cdn-adapter/tome-adapter'
 import type { VersionEntry } from '~/lib/data/cdn-adapter/version-paths'
 import type { CdnClient } from '~/lib/data/cdn-client'
 import type { SearchItem } from '~/lib/items-search/types'
+import type { AtreeAbility, AtreeData } from '~/lib/types/atree'
 import { buildRawItemIndex, buildRawTomeIndex } from '~/lib/build/resolve'
 import { BitVector, BitVectorCursor } from '~/lib/codec/bit-vector'
+import { decodeRawBuild } from '~/lib/codec/build-codec'
 import { decodeHeader } from '~/lib/codec/header'
 import { mergeClassAspects } from '~/lib/data/cdn-adapter/aspect-adapter'
 import { mergeClassAtrees } from '~/lib/data/cdn-adapter/atree-adapter'
@@ -135,6 +138,51 @@ export async function loadBuildContext(client: CdnClient, versionId: number): Pr
   cache.set(versionId, promise)
   promise.catch(() => cache.delete(versionId))
   return promise
+}
+
+const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
+
+/** Pre-alignment atree structure: class → `[id, parentIds]` in the old node order. */
+type LegacyAtreeFile = Record<string, Array<[number, number[]]>>
+
+/**
+ * The snapshot's pre-alignment atree, or null for snapshots that were never
+ * realigned with wynnbuilder. Only node ids and parents, which is all the codec reads.
+ */
+export async function fetchLegacyAtree(client: CdnClient, gameVersion: string): Promise<AtreeData | null> {
+  const legacy = await client.fetchJson<LegacyAtreeFile>(cdnPathFor(gameVersion, 'atree-legacy.json')).catch(() => null)
+  return legacy && Object.fromEntries(Object.entries(legacy).map(([cls, nodes]) =>
+    [cls, nodes.map(([id, parents]) => ({ id, parents }) as AtreeAbility)]))
+}
+
+/**
+ * Decode a build hash against its loaded snapshot. The 2.2.1.0–2.2.5.0 ability
+ * trees were realigned with wynnbuilder, so a wynn.tools link encoded before
+ * that can overrun the new tree; a failed decode retries against the snapshot's
+ * `atree-legacy.json`. Node ids are shared, so the result fits the current tree.
+ */
+export async function decodeBuildHash(client: CdnClient, hash: string, loaded: LoadedBuildData): Promise<RawBuild> {
+  const recipes = loaded.ctx.craftContext?.recipes
+  const decode = (atreeData: AtreeData) => decodeRawBuild(hash, () => ({
+    enc: loaded.enc,
+    atreeData,
+    weaponType: loaded.weaponType,
+    recipeIsWeapon: (id: number) => WEAPON_RECIPE_TYPES.has(recipes?.get(id)?.type ?? ''),
+  }))
+  try {
+    return decode(loaded.ctx.atreeData)
+  }
+  catch (err) {
+    const legacy = await fetchLegacyAtree(client, loaded.gameVersion)
+    if (!legacy)
+      throw err
+    try {
+      return decode(legacy)
+    }
+    catch {
+      throw err
+    }
+  }
 }
 
 /** Nuxt-aware helper: build a CDN client from runtime config. */

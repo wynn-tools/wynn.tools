@@ -1,7 +1,7 @@
 import {
   computeBuild,
   createCdnClient,
-  decodeRawBuild,
+  decodeBuildHash,
   loadBuildContext,
   peekVersionId,
   slotItemId,
@@ -9,8 +9,6 @@ import {
 } from '../build-core'
 import { env } from '../env'
 import { AppError } from '../lib/errors'
-
-const WEAPON_RECIPE_TYPES = new Set(['spear', 'wand', 'dagger', 'bow', 'relik'])
 
 let client: ReturnType<typeof createCdnClient> | null = null
 function cdn() {
@@ -38,16 +36,7 @@ export async function decodeBuild(buildString: string): Promise<{
   try {
     const versionId = peekVersionId(buildString)
     const loaded = await loadBuildContext(cdn(), versionId)
-    const recipes = loaded.ctx.craftContext?.recipes
-    const raw = decodeRawBuild(buildString, () => ({
-      enc: loaded.enc,
-      atreeData: loaded.ctx.atreeData,
-      weaponType: loaded.weaponType,
-      recipeIsWeapon: (recipeId: number) => {
-        const rec = recipes?.get(recipeId)
-        return rec ? WEAPON_RECIPE_TYPES.has(rec.type) : false
-      },
-    }))
+    const raw = await decodeBuildHash(cdn(), buildString, loaded)
     const decoded = computeBuild(raw, loaded.ctx)
 
     // Extract item IDs from NORMAL equipment slots 0–8; crafted/empty slots yield null and are excluded
